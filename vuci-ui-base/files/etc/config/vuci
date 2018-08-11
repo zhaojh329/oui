@@ -1,0 +1,8 @@
+config core main
+	option lang auto
+	
+config internal languages
+	option zh_cn '普通话 (Chinese)'
+	option en    'English'
+	
+config internal themes

@@ -1,0 +1,393 @@
+{
+	"unauthenticated": {
+		"description": "Functions allowed for unauthenticated requests",
+		"read": {
+			"ubus": {
+				"vuci.ui": [
+					"themes"
+				]
+			}
+		}
+	},
+
+	"core": {
+		"description": "Core functions for LuCI",
+		"read": {
+			"ubus": {
+				"vuci.ui": [
+					"*"
+				],
+				"session": [
+					"access",
+					"destroy",
+					"get"
+				],
+				"uci": [
+					"*"
+				]
+			}
+		}
+	},
+
+	"status": {
+		"description": "Status information display",
+		"read": {
+			"ubus": {
+				"iwinfo": [
+					"devices",
+					"info",
+					"assoclist",
+					"freqlist",
+					"phyname"
+				],
+				"system": [
+					"info",
+					"board"
+				],
+				"network.interface": [
+					"status",
+					"dump"
+				],
+				"vuci.network": [
+					"conntrack_count",
+					"dhcp_leases",
+					"dhcp6_leases",
+					"arp_table",
+					"eap_support",
+					"routes",
+					"routes6"
+				],
+				"vuci.system": [
+					"diskfree",
+					"syslog",
+					"dmesg",
+					"process_list"
+				],
+				"network": [
+					"get_proto_handlers"
+				]
+			},
+			"uci": [
+				"network"
+			]
+		},
+		"write": {
+			"ubus": {
+				"system": [
+					"signal"
+				]
+			}
+		}
+	},
+
+	"system": {
+		"description": "General system settings",
+		"read": {
+			"ubus": {
+				"system": [
+					"info",
+					"board"
+				],
+				"vuci.system": [
+					"init_list"
+				]
+			},
+			"uci": [
+				"luci"
+			]
+		},
+		"write": {
+			"ubus": {
+				"vuci.system": [
+					"init_action"
+				]
+			},
+			"uci": [
+				"luci"
+			]
+		}
+	},
+
+	"admin": {
+		"description": "Authentication and SSH settings",
+		"read": {
+			"ubus": {
+				"vuci.system": [
+					"sshkeys_get"
+				]
+			},
+			"uci": [
+				"dropbear"
+			]
+		},
+		"write": {
+			"ubus": {
+				"vuci.system": [
+					"sshkeys_set",
+					"password_set"
+				]
+			},
+			"uci": [
+				"dropbear"
+			]
+		}
+	},
+
+	"users": {
+		"description": "Guest login settings",
+		"read": {
+			"uci": [
+				"rpcd"
+			]
+		},
+		"write": {
+			"uci": [
+				"rpcd"
+			]
+		}
+	},
+
+	"software": {
+		"description": "Package management",
+		"read": {
+			"ubus": {
+				"system": [
+					"info",
+					"board"
+				],
+				"vuci.opkg": [
+					"list",
+					"list_installed",
+					"find",
+					"config_get",
+					"info"
+				]
+			}
+		},
+		"write": {
+			"ubus": {
+				"vuci.opkg": [
+					"install",
+					"remove",
+					"update",
+					"config_set"
+				]
+			}
+		}
+	},
+
+	"upgrade": {
+		"description": "Firmware upgrade",
+		"read": {
+			"ubus": {
+				"rpc-sys": [
+					"upgrade_test"
+				]
+			}
+		},
+		"write": {
+			"luci-io": [
+				"upload"
+			],
+			"ubus": {
+				"rpc-sys": [
+					"upgrade_start",
+					"upgrade_clean",
+					"factory",
+					"reboot"
+				]
+			}
+		}
+	},
+
+	"backup": {
+		"description": "Backup and Restore",
+		"read": {
+			"luci-io": [
+				"backup"
+			],
+			"ubus": {
+				"vuci.system": [
+					"backup_config_get",
+					"backup_list"
+				]
+			}
+		},
+		"write": {
+			"luci-io": [
+				"upload"
+			],
+			"ubus": {
+				"vuci.system": [
+					"backup_clean",
+					"backup_config_set",
+					"backup_restore",
+					"reboot"
+				]
+			}
+		}
+	},
+
+	"startup": {
+		"description": "System boot settings",
+		"read": {
+			"ubus": {
+				"vuci.system": [
+					"init_list",
+					"rclocal_get"
+				]
+			}
+		},
+		"write": {
+			"ubus": {
+				"vuci.system": [
+					"init_action",
+					"rclocal_set"
+				]
+			}
+		}
+	},
+
+	"cron": {
+		"description": "Crontab management",
+		"read": {
+			"ubus": {
+				"vuci.system": [
+					"crontab_get"
+				]
+			}
+		},
+		"write": {
+			"ubus": {
+				"vuci.system": [
+					"crontab_set"
+				]
+			}
+		}
+	},
+
+	"leds": {
+		"description": "Hardware LED configuration",
+		"read": {
+			"ubus": {
+				"network.device": [
+					"status"
+				],
+				"vuci.system": [
+					"led_list",
+					"usb_list"
+				]
+			},
+			"uci": [
+				"system"
+			]
+		},
+		"write": {
+			"uci": [
+				"system"
+			]
+		}
+	},
+
+	"diagnostics": {
+		"description": "Network diagnostic tools",
+		"read": {
+			"ubus": {
+				"vuci.network": [
+					"ping",
+					"ping6",
+					"traceroute",
+					"traceroute6",
+					"nslookup"
+				]
+			}
+		}
+	},
+
+	"routes": {
+		"description": "Set static routing",
+		"read": {
+			"uci": [
+				"network"
+			]
+		},
+		"write": {
+			"uci": [
+				"network"
+			]
+		}
+	},
+
+	"hostnames": {
+		"description": "Host entry management",
+		"read": {
+			"uci": [
+				"dhcp"
+			]
+		},
+		"write": {
+			"uci": [
+				"dhcp"
+			]
+		}
+	},
+
+	"network": {
+		"description": "Network, switch and routing configuration",
+		"read": {
+			"ubus": {
+				"network": [
+					"get_proto_handlers"
+				],
+				"network.device": [
+					"status"
+				],
+				"network.interface": [
+					"dump"
+				],
+				"network.wireless": [
+					"status"
+				],
+				"vuci.network": [
+					"switch_list",
+					"switch_info",
+					"switch_status",
+					"device_list"
+				],
+				"vuci.network.bwmon": [
+					"devices",
+					"statistics"
+				]
+			},
+			"uci": [
+				"network",
+				"wireless"
+			]
+		},
+		"write": {
+			"ubus": {
+				"iwinfo": [
+					"scan"
+				]
+			},
+			"uci": [
+				"network",
+				"wireless"
+			]
+		}
+	},
+
+	"firewall": {
+		"description": "Firewall configuration",
+		"read": {
+			"uci": [
+				"firewall"
+			]
+		},
+		"write": {
+			"uci": [
+				"firewall"
+			]
+		}
+	}
+}

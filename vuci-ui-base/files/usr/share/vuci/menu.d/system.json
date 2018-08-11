@@ -1,0 +1,62 @@
+{
+    "system": {
+        "title": "System",
+        "index": 20
+    },
+    "system/system": {
+        "title": "System",
+        "acls": [ "system" ],
+        "view": "system/system",
+        "index": 10
+    },
+    "system/admin": {
+        "title": "Administration",
+        "acls": [ "admin" ],
+        "view": "system/admin",
+        "index": 20
+    },
+    "system/users": {
+        "title": "Guest Logins",
+        "acls": [ "users" ],
+        "view": "system/users",
+        "index": 30
+    },
+    "system/software": {
+        "title": "Software",
+        "acls": [ "software" ],
+        "files": [ "/bin/opkg" ],
+        "view": "system/software",
+        "index": 40
+    },
+    "system/backup": {
+        "title": "Backup",
+        "acls": [ "backup" ],
+        "view": "system/backup",
+        "index": 50
+    },
+    "system/upgrade": {
+        "title": "Upgrade",
+        "acls": [ "upgrade" ],
+        "view": "system/upgrade",
+        "index": 55
+    },
+    "system/startup": {
+        "title": "Startup",
+        "acls": [ "startup" ],
+        "view": "system/startup",
+        "index": 60
+    },
+    "system/cron": {
+        "title": "Scheduled Tasks",
+        "acls": [ "cron" ],
+        "view": "system/cron",
+        "index": 70
+    },
+    "system/leds": {
+        "title": "LED Configuration",
+        "acls": [ "leds" ],
+        "files": [ "/etc/init.d/led" ],
+        "view": "system/leds",
+        "index": 80
+    }
+}

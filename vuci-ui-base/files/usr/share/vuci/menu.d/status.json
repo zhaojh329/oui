@@ -1,0 +1,42 @@
+{
+    "status": {
+        "title": "Status",
+        "index": 10
+    },
+    "status/overview": {
+        "title": "Overview",
+        "acls": [ "status" ],
+        "view": "status/overview",
+        "index": 10
+    },
+    "status/routes": {
+        "title": "Routes",
+        "acls": [ "status" ],
+        "view": "status/routes",
+        "index": 20
+    },
+    "status/syslog": {
+        "title": "System Log",
+        "acls": [ "status" ],
+        "view": "status/syslog",
+        "index": 30
+    },
+    "status/dmesg": {
+        "title": "Kernel Log",
+        "acls": [ "status" ],
+        "view": "status/dmesg",
+        "index": 40
+    },
+    "status/processes": {
+        "title": "Processes",
+        "acls": [ "status" ],
+        "view": "status/processes",
+        "index": 50
+    },
+    "status/realtime": {
+        "title": "Realtime Graphs",
+        "acls": [ "status" ],
+        "view": "status/realtime",
+        "index": 50
+    }
+}
