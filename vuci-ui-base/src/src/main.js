@@ -4,7 +4,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import App from './App.vue'
 import router from './router'
-import 'material-design-icons/iconfont/material-icons.css'
+import './material-design-icons/material-icons.css'
 
 import './plugins/vuetify'
 import VueFilter from './plugins/vue-filter.js'
