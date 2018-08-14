@@ -1,3 +1,6 @@
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const address = require('address')
+
 module.exports = {
   indexPath: 'vuci.html',
   productionSourceMap: false,
@@ -6,6 +9,14 @@ module.exports = {
       '/ubus': {
         target: 'http://openwrt.lan'
       },
+    }
+  },
+  configureWebpack: config => {
+    if (process.env.ANALYZ) {
+      let analyz = new BundleAnalyzerPlugin({
+        analyzerHost: address.ip()
+      });
+      config.plugins.push(analyz)
     }
   }
 }

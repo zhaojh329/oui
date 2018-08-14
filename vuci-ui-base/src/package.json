@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "analyz": "ANALYZ=true npm_config_report=true npm run build"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -24,7 +25,8 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "vue-cli-plugin-vuetify": "^0.1.6",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "webpack-bundle-analyzer": "^2.13.1"
   },
   "eslintConfig": {
     "root": true,
