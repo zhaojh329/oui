@@ -1,15 +1,21 @@
 <template>
-  <v-textarea solo auto-grow readonly :value="log"></v-textarea>
+  <card-table title="System Log" :headers="headers" :items="log" hide-actions hide-headers></card-table>
 </template>
 
 <script>
   export default {
-    data: () => ({
-      log: ''
-    }),
+    data() {
+      return {
+        headers: [{value: 'msg'}],
+        log: []
+      }
+    },
     mounted() {
       this.$ubus.call('vuci.system', 'syslog').then(r => {
-        this.log = r.log;
+        let lines = r.log.replace(/\n+$/, '').split(/\n/);
+        this.log = lines.map(line => {
+          return {msg: line}
+        });
       });
     }
   };
