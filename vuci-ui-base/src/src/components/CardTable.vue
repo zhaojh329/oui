@@ -5,7 +5,8 @@
       <v-spacer></v-spacer>
       <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-card-title>
-    <v-data-table :headers="headers" :items="items" :search="search">
+    <v-divider></v-divider>
+    <v-data-table :headers="headers" :items="items" :search="search" :hide-actions="hideActions" :hide-headers="hideHeaders">
       <template slot="items" slot-scope="props">
         <td v-for="h in headers" :key="h.value">{{props.item[h.value]}}</td>
       </template>
@@ -19,7 +20,9 @@
     props: {
       title: String,
       headers: Array,
-      items: Array
+      items: Array,
+      hideActions: Boolean,
+      hideHeaders: Boolean
     },
     data: () => ({
       search: ''
