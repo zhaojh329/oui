@@ -8,10 +8,13 @@ function getInfo() {
     }, {
       object: 'system',
       method: 'board'
+    },{
+      object: 'vuci.system',
+      method: 'diskfree'
     }];
     ubus.callBatch(req).then((r) => {
       if (r)
-        resolve(Object.assign({}, r[0], r[1]))
+        resolve(Object.assign({}, r[0], r[1], r[2]))
     });
   });
 }

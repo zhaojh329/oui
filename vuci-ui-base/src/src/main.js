@@ -16,6 +16,7 @@ import VueBus from './plugins/vue-bus.js'
 
 import RebootDialog from './components/RebootDialog'
 import CardTable from './components/CardTable.vue'
+import CardList from './components/CardList.vue'
 
 Vue.config.productionTip = false
 
@@ -29,6 +30,7 @@ Vue.use(VueBus)
 
 Vue.use(RebootDialog)
 Vue.component('card-table', CardTable)
+Vue.component('card-list', CardList)
 
 router.beforeEach((to, from, next) => {
   if (to.path === '/login')
