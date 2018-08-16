@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-LGPL2-brightgreen.svg?style=plastic "License")
 
-![](/demo-a05d4c4.png)
+![](/screen-be6656a.gif)
 
 OpenWrt后台管理框架，使用[vuejs2](https://github.com/vuejs/vue)和[Vuetify](https://vuetifyjs.com)实现
 

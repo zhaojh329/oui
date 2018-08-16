@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-LGPL2-brightgreen.svg?style=plastic "License")
 
-![](/demo-a05d4c4.png)
+![](/screen-be6656a.gif)
 
 Web Interface for OpenWRT implemented in [vue.js](https://github.com/vuejs/vue) and [Vuetify](https://vuetifyjs.com)
 
