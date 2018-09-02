@@ -51,6 +51,8 @@ Then execute the following command to start the debug server
 
 	npm run serve
 
+# [Donate](https://gitee.com/zhaojh329/vuci#project-donate-overview)
+
 # Contributing
 If you would like to help making [vuci](https://github.com/zhaojh329/vuci) better,
 see the [CONTRIBUTING.md](https://github.com/zhaojh329/vuci/blob/master/CONTRIBUTING.md) file.

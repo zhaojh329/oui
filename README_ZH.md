@@ -49,6 +49,8 @@ OpenWrt后台管理框架，使用[vuejs2](https://github.com/vuejs/vue)和[Vuet
 
 	npm run serve
 
+# [捐赠](https://gitee.com/zhaojh329/vuci#project-donate-overview)
+
 # 贡献代码
 如果你想帮助[vuci](https://github.com/zhaojh329/vuci) 变得更好，请参考
 [CONTRIBUTING_ZH.md](https://github.com/zhaojh329/vuci/blob/master/CONTRIBUTING_ZH.md)。
