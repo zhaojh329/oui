@@ -28,19 +28,15 @@ Select package vuci in menuconfig and compile new image.
 
     VUCI  --->
         <*>  vuci-ui-base. VUCI Web Interface</*>
-        [*]   Use existing nodejs installation on the host system
-        [ ]   Use taobao registry for npm
-
-[Installing Nodejs to your host](https://nodejs.org/en/download/package-manager/)
 
 Compile
 
     make V=s
 
 # How to develop and debug
-First, enter your build directory of the vuci-ui-base
+First, clone the code to your desktop system.
 
-	cd build_dir/target-mipsel_24kc_musl/vuci-ui-base/
+	cd vuci/vuci-ui-base/src
 
 Then modify the configuration file according to your own environment.
 You may need to modify proxy.

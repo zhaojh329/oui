@@ -27,19 +27,15 @@ OpenWrt后台管理框架，使用[vuejs2](https://github.com/vuejs/vue)和[Vuet
 
     VUCI  --->
         <*>  vuci-ui-base. VUCI Web Interface</*>
-        [*]   Use existing nodejs installation on the host system
-        [*]   Use taobao registry for npm
-
-[安装 Nodejs到您的主机](https://nodejs.org/zh-cn/download/package-manager)
 
 编译
 
     make V=s
 
 # 如何开发和调试
-首先进入你的vuci-ui-base的编译目录
+首先克隆代码到你的桌面系统，然后执行如下操作
 
-	cd build_dir/target-mipsel_24kc_musl/vuci-ui-base/
+	cd vuci/vuci-ui-base/src
 
 然后根据自己的环境修改配置。您可能需要修改 proxy。
 

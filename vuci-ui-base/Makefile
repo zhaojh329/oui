@@ -31,30 +31,12 @@ define Package/vuci-ui-base/description
  It is built using vue.js2 and element.
 endef
 
-define Package/vuci-ui-base/config
-	config VUCI_USE_HOST_NODE
-		depends on PACKAGE_vuci-ui-base
-		bool "Use existing nodejs installation on the host system"
-		default n
-		help
-			This disables the build dependency on the node package from the
-			OpenWrt packages feed, allowing for faster development builds.
-	
-	config VUCI_USE_TAOBAO_REGISTRY
-		depends on PACKAGE_vuci-ui-base
-		bool "Use taobao registry for npm"
-endef
-
 define Build/Prepare
-	$(INSTALL_DIR) $(PKG_BUILD_DIR)
-	$(CP) ./src/. $(PKG_BUILD_DIR)
 endef
-
-MAKE_VARS += USE_TAOBAO_REGISTRY=$(CONFIG_VUCI_USE_TAOBAO_REGISTRY)
 
 define Package/vuci-ui-base/install
 	$(INSTALL_DIR) $(1)/www
-	$(CP) $(PKG_BUILD_DIR)/dist/* $(1)/www/
+	$(CP) ./src/dist/* $(1)/www/
 	$(CP) ./files/* $(1)/
 endef
 
