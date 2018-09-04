@@ -34,6 +34,9 @@ endef
 define Build/Prepare
 endef
 
+define Build/Compile
+endef
+
 define Package/vuci-ui-base/install
 	$(INSTALL_DIR) $(1)/www
 	$(CP) ./src/dist/* $(1)/www/
