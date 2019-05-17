@@ -31,6 +31,20 @@ define Package/vuci-ui-base/description
  It is built using vue.js2 and element.
 endef
 
+define Package/vuci-ui-base/config
+menu "Configuration"
+	depends on PACKAGE_vuci-ui-base
+
+	config VUCI_USE_HOST_NODE
+		bool "Use existing nodejs installation on the host system"
+		default n
+		help
+		  This disables the build dependency on the node package from
+		  the OpenWrt packages feed, allowing for faster development
+		  builds.
+endmenu
+endef
+
 define Build/Prepare
 endef
 
