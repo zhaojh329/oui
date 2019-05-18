@@ -1,5 +1,5 @@
 module.exports = {
-    indexPath: 'vuci.html',
+    indexPath: 'vwrt.html',
     productionSourceMap: false,
     devServer: {
         proxy: {

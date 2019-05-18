@@ -1,32 +1,43 @@
-# vuci
+# vwrt
 
-![](https://img.shields.io/badge/license-LGPL2-brightgreen.svg?style=plastic "License")
+[1]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=plastic
+[2]: /LICENSE
+[3]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=plastic
+[4]: https://github.com/zhaojh329/vwrt/pulls
+[5]: https://img.shields.io/badge/Issues-welcome-brightgreen.svg?style=plastic
+[6]: https://github.com/zhaojh329/vwrt/issues/new
+
+[![license][1]][2]
+[![PRs Welcome][3]][4]
+[![Issue Welcome][5]][6]
+
+[vue.js]: https://github.com/vuejs/vue
+[iview]: https://github.com/iview/iview
+[LuCI2]: https://git.openwrt.org/?p=project/luci2/ui.git
+[ubus]: https://wiki.openwrt.org/doc/techref/ubus
+[uhttpd-mod-ubus]: https://wiki.openwrt.org/doc/techref/ubus#access_to_ubus_over_http
 
 ![](/screen-be6656a.gif)
 
-OpenWrt后台管理框架，使用[vuejs2](https://github.com/vuejs/vue)和[Vuetify](https://vuetifyjs.com)实现
+OpenWrt后台管理界面，使用[vuejs2]和[Vuetify]实现，灵感来自于[LuCI2]。
 
-一个全新的Web接口.它不再使用Lua，而是使用MVVM框架。通过[ubus](https://wiki.openwrt.org/zh-cn/doc/techref/ubus)存取各种系统数据
-(通过[uhttpd-mod-ubus](https://wiki.openwrt.org/zh-cn/doc/techref/ubus#通过http访问ubus)提供基于HTTP的接口API)。
+vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
-`请保持关注以获取最新的项目动态`
-
-# [vuejs与其它前端框架对比](https://cn.vuejs.org/v2/guide/comparison.html)
 
 # 如何使用
 在"feeds.conf.default"里面添加新的feed:
     
-    src-git vuci https://gitee.com/zhaojh329/vuci.git
+    src-git vwrt https://gitee.com/zhaojh329/vwrt.git
 
-安装vuci软件包:
+安装vwrt软件包:
     
     ./scripts/feeds update
-    ./scripts/feeds install -a -p vuci
+    ./scripts/feeds install -a -p vwrt
 
-在menuconfig里面选择vuci软件包然后编译新固件.
+在menuconfig里面选择vwrt软件包然后编译新固件.
 
-    VUCI  --->
-        <*>  vuci-ui-base. VUCI Web Interface</*>
+    vwrt  --->
+        <*>  vwrt-ui-base..................... VWRT UI
 
 编译
 
@@ -35,7 +46,7 @@ OpenWrt后台管理框架，使用[vuejs2](https://github.com/vuejs/vue)和[Vuet
 # 如何开发和调试
 首先克隆代码到你的桌面系统，然后执行如下操作
 
-	cd vuci/vuci-ui-base/src
+	cd vwrt/vwrt-ui-core/src
 
 然后根据自己的环境修改配置。您可能需要修改 proxy。
 
@@ -45,11 +56,11 @@ OpenWrt后台管理框架，使用[vuejs2](https://github.com/vuejs/vue)和[Vuet
 
 	npm run serve
 
-# [捐赠](https://gitee.com/zhaojh329/vuci#project-donate-overview)
+# [捐赠](https://gitee.com/zhaojh329/vwrt#project-donate-overview)
 
 # 贡献代码
-如果你想帮助[vuci](https://github.com/zhaojh329/vuci) 变得更好，请参考
-[CONTRIBUTING_ZH.md](https://github.com/zhaojh329/vuci/blob/master/CONTRIBUTING_ZH.md)。
+如果你想帮助[vwrt](https://github.com/zhaojh329/vwrt) 变得更好，请参考
+[CONTRIBUTING_ZH.md](https://github.com/zhaojh329/vwrt/blob/master/CONTRIBUTING_ZH.md)。
 
 # 技术交流
 QQ群：153530783
