@@ -1,8 +1,9 @@
 "use strict";
 
-const axios = require('axios')
+import axios from 'axios'
+import {session} from './session'
 
-const ubus = {
+export const ubus = {
   id: 1,
   sid: '00000000000000000000000000000000'
 }
@@ -78,7 +79,7 @@ ubus.call = function(object, method, params) {
     jsonrpc: '2.0',
     id: this.id++,
     method: 'call',
-    params:  [this.sid, object, method, params]
+    params:  [session.sid, object, method, params]
   };
 
   return this._call(req);

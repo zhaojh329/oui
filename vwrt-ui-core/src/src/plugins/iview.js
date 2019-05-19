@@ -3,6 +3,7 @@ import { Layout, Sider, Header, Menu, Submenu, MenuItem, Dropdown, DropdownMenu,
 import { Button, Card, Form, FormItem, Input, Icon, Avatar } from 'iview'
 import lang from 'iview/dist/locale/en-US'
 import { locale } from 'iview'
+import {Message} from 'iview'
 
 locale(lang)
 
@@ -22,5 +23,7 @@ Vue.component('Form-item', FormItem)
 Vue.component('Input', Input)
 Vue.component('Icon', Icon)
 Vue.component('Avatar', Avatar)
+
+Vue.prototype.$Message = Message;
 
 import 'iview/dist/styles/iview.css'

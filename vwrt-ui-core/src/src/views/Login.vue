@@ -28,36 +28,21 @@ export default {
     handleLogin () {
       this.$refs.formValidate.validate(valid => {
         if (valid) {
-          let routes = [
-            {
-              path: '/status',
-              component: () => import('@/views/Main.vue'),
-              children: [
-                {
-                  path: 'syslog',
-                  component: () => import('@/views/SysLog.vue')
-                }
-              ]
-            }
-          ];
+          this.$session.login(this.formValidate.username, this.formValidate.password).then(sid => {
+            if (sid) {
+              sessionStorage.setItem('sid', sid);
 
-          let menus = [
-            {
-              name: 'status',
-              title: 'Status',
-              children: [
-                {
-                  name: 'SysLog',
-                  title: 'SysLog',
-                  path: '/status/syslog'
-                }
-              ]
-            }
-          ];
+              this.$ubus.call('vwrt.ui', 'menu').then(r => {
+                this.$menu.parse(r.menu).then(() => {
+                  this.$router.push('/');
+                });
+              });
 
-          this.$store.commit('setMenus', menus);
-          this.$router.addRoutes(routes);
-          this.$router.push('/');
+              return;
+            }
+
+            this.$Message.error('Login fail');
+          });
         }
       });
     }
