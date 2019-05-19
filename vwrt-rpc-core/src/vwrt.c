@@ -45,7 +45,7 @@
 #define RPC_VUCI_DEF_LOGSIZE       (16 * 1024)
 
 /* location of menu definitions */
-#define RPC_VUCI_MENU_FILES        "/usr/share/vuci/menu.d/*.json"
+#define RPC_VUCI_MENU_FILES        "/usr/share/vwrt/menu.d/*.json"
 
 static const struct rpc_daemon_ops *ops;
 
@@ -193,7 +193,7 @@ static void log_read(FILE *log, int logsize)
 	blobmsg_add_string_buffer(&buf);
 }
 
-static int rpc_vuci_system_log(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_system_log(struct ubus_context *ctx, struct ubus_object *obj,
                      struct ubus_request_data *req, const char *method,
                      struct blob_attr *msg)
 {
@@ -265,7 +265,7 @@ fail:
 	return rpc_errno_status();
 }
 
-static int rpc_vuci_system_dmesg(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_system_dmesg(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -283,7 +283,7 @@ static int rpc_vuci_system_dmesg(struct ubus_context *ctx, struct ubus_object *o
 	return 0;
 }
 
-static int rpc_vuci_system_diskfree(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_system_diskfree(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -314,7 +314,7 @@ static int rpc_vuci_system_diskfree(struct ubus_context *ctx, struct ubus_object
 	return 0;
 }
 
-static int rpc_vuci_process_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_process_list(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -379,7 +379,7 @@ static int rpc_vuci_process_list(struct ubus_context *ctx, struct ubus_object *o
 	return 0;
 }
 
-static int rpc_vuci_init_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_init_list(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
@@ -453,7 +453,7 @@ skip:
 	return 0;
 }
 
-static int rpc_vuci_init_action(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_init_action(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -511,7 +511,7 @@ static int rpc_vuci_init_action(struct ubus_context *ctx, struct ubus_object *ob
 	}
 }
 
-static int rpc_vuci_rclocal_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_rclocal_get(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -531,7 +531,7 @@ static int rpc_vuci_rclocal_get(struct ubus_context *ctx, struct ubus_object *ob
 	return 0;
 }
 
-static int rpc_vuci_rclocal_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_rclocal_set(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -554,7 +554,7 @@ static int rpc_vuci_rclocal_set(struct ubus_context *ctx, struct ubus_object *ob
 	return 0;
 }
 
-static int rpc_vuci_crontab_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_crontab_get(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -574,7 +574,7 @@ static int rpc_vuci_crontab_get(struct ubus_context *ctx, struct ubus_object *ob
 	return 0;
 }
 
-static int rpc_vuci_crontab_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_crontab_set(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -601,7 +601,7 @@ static int rpc_vuci_crontab_set(struct ubus_context *ctx, struct ubus_object *ob
 	return 0;
 }
 
-static int rpc_vuci_sshkeys_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_sshkeys_get(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -633,7 +633,7 @@ static int rpc_vuci_sshkeys_get(struct ubus_context *ctx, struct ubus_object *ob
 	return 0;
 }
 
-static int rpc_vuci_sshkeys_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_sshkeys_set(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -662,7 +662,7 @@ static int rpc_vuci_sshkeys_set(struct ubus_context *ctx, struct ubus_object *ob
 	return 0;
 }
 
-static int rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_password_set(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -732,7 +732,7 @@ static int rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *o
 	}
 }
 
-static int rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_led_list(struct ubus_context *ctx, struct ubus_object *obj,
                    struct ubus_request_data *req, const char *method,
                    struct blob_attr *msg)
 {
@@ -813,7 +813,7 @@ static int rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
                    struct ubus_request_data *req, const char *method,
                    struct blob_attr *msg)
 {
@@ -897,7 +897,7 @@ static int rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int rpc_vuci_upgrade_test(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_upgrade_test(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -905,14 +905,14 @@ static int rpc_vuci_upgrade_test(struct ubus_context *ctx, struct ubus_object *o
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int rpc_vuci_upgrade_start(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_upgrade_start(struct ubus_context *ctx, struct ubus_object *obj,
                         struct ubus_request_data *req, const char *method,
                         struct blob_attr *msg)
 {
 	return 0;
 }
 
-static int rpc_vuci_upgrade_clean(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_upgrade_clean(struct ubus_context *ctx, struct ubus_object *obj,
                         struct ubus_request_data *req, const char *method,
                         struct blob_attr *msg)
 {
@@ -922,7 +922,7 @@ static int rpc_vuci_upgrade_clean(struct ubus_context *ctx, struct ubus_object *
 	return 0;
 }
 
-static int rpc_vuci_backup_restore(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_backup_restore(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -932,7 +932,7 @@ static int rpc_vuci_backup_restore(struct ubus_context *ctx, struct ubus_object 
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int rpc_vuci_backup_clean(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_backup_clean(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -942,7 +942,7 @@ static int rpc_vuci_backup_clean(struct ubus_context *ctx, struct ubus_object *o
 	return 0;
 }
 
-static int rpc_vuci_backup_config_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_backup_config_get(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -962,7 +962,7 @@ static int rpc_vuci_backup_config_get(struct ubus_context *ctx, struct ubus_obje
 	return 0;
 }
 
-static int rpc_vuci_backup_config_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_backup_config_set(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -1025,7 +1025,7 @@ static int backup_finish_list(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int rpc_vuci_backup_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_backup_list(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -1043,7 +1043,7 @@ static int rpc_vuci_backup_list(struct ubus_context *ctx, struct ubus_object *ob
 	                 state, ctx, req);
 }
 
-static int rpc_vuci_reset_test(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_reset_test(struct ubus_context *ctx, struct ubus_object *obj,
                      struct ubus_request_data *req, const char *method,
                      struct blob_attr *msg)
 {
@@ -1073,7 +1073,7 @@ static int rpc_vuci_reset_test(struct ubus_context *ctx, struct ubus_object *obj
 	return 0;
 }
 
-static int rpc_vuci_reset_start(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_reset_start(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -1101,7 +1101,7 @@ static int rpc_vuci_reset_start(struct ubus_context *ctx, struct ubus_object *ob
 	}
 }
 
-static int rpc_vuci_reboot(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_reboot(struct ubus_context *ctx, struct ubus_object *obj,
                  struct ubus_request_data *req, const char *method,
                  struct blob_attr *msg)
 {
@@ -1164,7 +1164,7 @@ static FILE *dnsmasq_leasefile(void)
 	return leases;
 }
 
-static int rpc_vuci_network_leases(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_leases(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -1215,7 +1215,7 @@ out:
 	return 0;
 }
 
-static int rpc_vuci_network_leases6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_leases6(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1309,7 +1309,7 @@ out:
 	return 0;
 }
 
-static int rpc_vuci_network_ct_count(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_ct_count(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -1337,7 +1337,7 @@ static int rpc_vuci_network_ct_count(struct ubus_context *ctx, struct ubus_objec
 	return 0;
 }
 
-static int rpc_vuci_network_ct_table(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_ct_table(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -1404,7 +1404,7 @@ static int rpc_vuci_network_ct_table(struct ubus_context *ctx, struct ubus_objec
 	return 0;
 }
 
-static int rpc_vuci_network_arp_table(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_arp_table(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -1471,7 +1471,7 @@ static void put_hexaddr(const char *name, const char *s, const char *m)
 	blobmsg_add_string(&buf, name, as);
 }
 
-static int rpc_vuci_network_routes(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_routes(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -1547,7 +1547,7 @@ static void put_hex6addr(const char *name, const char *s, const char *m)
 	blobmsg_add_string(&buf, name, as);
 }
 
-static int rpc_vuci_network_routes6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_routes6(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1650,7 +1650,7 @@ static int swconfig_finish_list(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int rpc_vuci_network_sw_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_sw_list(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1768,7 +1768,7 @@ static int swconfig_finish_help(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int rpc_vuci_network_sw_info(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_sw_info(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1883,7 +1883,7 @@ static int swconfig_finish_stat(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int rpc_vuci_network_sw_status(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_sw_status(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -1953,35 +1953,35 @@ static int network_cmd(struct ubus_context *ctx, struct ubus_request_data *req,
 	return ops->exec(cmds[which], NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int rpc_vuci_network_ping(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_ping(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_PING);
 }
 
-static int rpc_vuci_network_ping6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_ping6(struct ubus_context *ctx, struct ubus_object *obj,
                         struct ubus_request_data *req, const char *method,
                         struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_PING6);
 }
 
-static int rpc_vuci_network_traceroute(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_traceroute(struct ubus_context *ctx, struct ubus_object *obj,
                              struct ubus_request_data *req, const char *method,
                              struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_TRACEROUTE);
 }
 
-static int rpc_vuci_network_traceroute6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_traceroute6(struct ubus_context *ctx, struct ubus_object *obj,
                               struct ubus_request_data *req, const char *method,
                               struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_TRACEROUTE6);
 }
 
-static int rpc_vuci_network_nslookup(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_nslookup(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -2007,21 +2007,21 @@ static int network_ifupdown(struct ubus_context *ctx, struct ubus_request_data *
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int rpc_vuci_network_ifup(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_ifup(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
 	return network_ifupdown(ctx, req, msg, true);
 }
 
-static int rpc_vuci_network_ifdown(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_ifdown(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
 	return network_ifupdown(ctx, req, msg, false);
 }
 
-static int rpc_vuci_network_dev_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_dev_list(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -2107,7 +2107,7 @@ static int rpc_vuci_network_dev_list(struct ubus_context *ctx, struct ubus_objec
 	return 0;
 }
 
-static int rpc_vuci_network_eap_support(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_network_eap_support(struct ubus_context *ctx, struct ubus_object *obj,
                               struct ubus_request_data *req, const char *method,
                               struct blob_attr *msg)
 {
@@ -2275,28 +2275,28 @@ static int opkg_exec_list(const char *action, struct blob_attr *msg,
 }
 
 
-static int rpc_vuci_opkg_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_list(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
 	return opkg_exec_list("list", msg, ctx, req);
 }
 
-static int rpc_vuci_opkg_list_installed(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_list_installed(struct ubus_context *ctx, struct ubus_object *obj,
                               struct ubus_request_data *req, const char *method,
                               struct blob_attr *msg)
 {
 	return opkg_exec_list("list-installed", msg, ctx, req);
 }
 
-static int rpc_vuci_opkg_find(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_find(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
 	return opkg_exec_list("find", msg, ctx, req);
 }
 
-static int rpc_vuci_opkg_update(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_update(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -2304,7 +2304,7 @@ static int rpc_vuci_opkg_update(struct ubus_context *ctx, struct ubus_object *ob
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int rpc_vuci_opkg_install(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_install(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -2323,7 +2323,7 @@ static int rpc_vuci_opkg_install(struct ubus_context *ctx, struct ubus_object *o
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int rpc_vuci_opkg_remove(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_remove(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -2413,7 +2413,7 @@ static int opkg_finish_info(struct blob_buf *blob, int status, void *priv)
 	return blob_len(blob->head) ? UBUS_STATUS_OK : UBUS_STATUS_NOT_FOUND;
 }
 
-static int rpc_vuci_opkg_info(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_info(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
@@ -2432,7 +2432,7 @@ static int rpc_vuci_opkg_info(struct ubus_context *ctx, struct ubus_object *obj,
 	                 ctx, req);
 }
 
-static int rpc_vuci_opkg_config_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_config_get(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -2452,7 +2452,7 @@ static int rpc_vuci_opkg_config_get(struct ubus_context *ctx, struct ubus_object
 	return 0;
 }
 
-static int rpc_vuci_opkg_config_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_opkg_config_set(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -2530,7 +2530,7 @@ static bool menu_files(struct blob_attr *files)
 	return empty;
 }
 
-static int rpc_vuci_ui_menu(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_ui_menu(struct ubus_context *ctx, struct ubus_object *obj,
                   struct ubus_request_data *req, const char *method,
                   struct blob_attr *msg)
 {
@@ -2622,7 +2622,7 @@ static void parse_acl_file(struct blob_buf *acls, const char *path)
 	blob_buf_free(&acl);
 }
 
-static int rpc_vuci_ui_acls(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_ui_acls(struct ubus_context *ctx, struct ubus_object *obj,
                   struct ubus_request_data *req, const char *method,
                   struct blob_attr *msg)
 {
@@ -2646,7 +2646,7 @@ static int rpc_vuci_ui_acls(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int rpc_vuci_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vwrt_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
                    struct ubus_request_data *req, const char *method,
                    struct blob_attr *msg)
 {
@@ -2669,145 +2669,145 @@ static int rpc_vuci_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static int rpc_vuci_api_init(const struct rpc_daemon_ops *o, struct ubus_context *ctx)
+static int rpc_vwrt_api_init(const struct rpc_daemon_ops *o, struct ubus_context *ctx)
 {
 	int rv = 0;
 
-	static const struct ubus_method vuci_system_methods[] = {
-		UBUS_METHOD_NOARG("syslog",       rpc_vuci_system_log),
-		UBUS_METHOD_NOARG("dmesg",        rpc_vuci_system_dmesg),
-		UBUS_METHOD_NOARG("diskfree",     rpc_vuci_system_diskfree),
-		UBUS_METHOD_NOARG("process_list", rpc_vuci_process_list),
+	static const struct ubus_method vwrt_system_methods[] = {
+		UBUS_METHOD_NOARG("syslog",       rpc_vwrt_system_log),
+		UBUS_METHOD_NOARG("dmesg",        rpc_vwrt_system_dmesg),
+		UBUS_METHOD_NOARG("diskfree",     rpc_vwrt_system_diskfree),
+		UBUS_METHOD_NOARG("process_list", rpc_vwrt_process_list),
 
-		UBUS_METHOD_NOARG("init_list",    rpc_vuci_init_list),
-		UBUS_METHOD("init_action",        rpc_vuci_init_action,
+		UBUS_METHOD_NOARG("init_list",    rpc_vwrt_init_list),
+		UBUS_METHOD("init_action",        rpc_vwrt_init_action,
 		                                  rpc_init_policy),
-		UBUS_METHOD_NOARG("rclocal_get",  rpc_vuci_rclocal_get),
-		UBUS_METHOD("rclocal_set",        rpc_vuci_rclocal_set,
+		UBUS_METHOD_NOARG("rclocal_get",  rpc_vwrt_rclocal_get),
+		UBUS_METHOD("rclocal_set",        rpc_vwrt_rclocal_set,
 		                                  rpc_data_policy),
-		UBUS_METHOD_NOARG("crontab_get",  rpc_vuci_crontab_get),
-		UBUS_METHOD("crontab_set",        rpc_vuci_crontab_set,
+		UBUS_METHOD_NOARG("crontab_get",  rpc_vwrt_crontab_get),
+		UBUS_METHOD("crontab_set",        rpc_vwrt_crontab_set,
 		                                  rpc_data_policy),
-		UBUS_METHOD_NOARG("sshkeys_get",  rpc_vuci_sshkeys_get),
-		UBUS_METHOD("sshkeys_set",        rpc_vuci_sshkeys_set,
+		UBUS_METHOD_NOARG("sshkeys_get",  rpc_vwrt_sshkeys_get),
+		UBUS_METHOD("sshkeys_set",        rpc_vwrt_sshkeys_set,
 		                                  rpc_sshkey_policy),
-		UBUS_METHOD("password_set",       rpc_vuci_password_set,
+		UBUS_METHOD("password_set",       rpc_vwrt_password_set,
 		                                  rpc_password_policy),
-		UBUS_METHOD_NOARG("led_list",     rpc_vuci_led_list),
-		UBUS_METHOD_NOARG("usb_list",     rpc_vuci_usb_list),
-		UBUS_METHOD_NOARG("upgrade_test", rpc_vuci_upgrade_test),
-		UBUS_METHOD("upgrade_start",      rpc_vuci_upgrade_start,
+		UBUS_METHOD_NOARG("led_list",     rpc_vwrt_led_list),
+		UBUS_METHOD_NOARG("usb_list",     rpc_vwrt_usb_list),
+		UBUS_METHOD_NOARG("upgrade_test", rpc_vwrt_upgrade_test),
+		UBUS_METHOD("upgrade_start",      rpc_vwrt_upgrade_start,
 		                                  rpc_upgrade_policy),
-		UBUS_METHOD_NOARG("upgrade_clean", rpc_vuci_upgrade_clean),
-		UBUS_METHOD_NOARG("backup_restore", rpc_vuci_backup_restore),
-		UBUS_METHOD_NOARG("backup_clean", rpc_vuci_backup_clean),
-		UBUS_METHOD_NOARG("backup_config_get", rpc_vuci_backup_config_get),
-		UBUS_METHOD("backup_config_set",  rpc_vuci_backup_config_set,
+		UBUS_METHOD_NOARG("upgrade_clean", rpc_vwrt_upgrade_clean),
+		UBUS_METHOD_NOARG("backup_restore", rpc_vwrt_backup_restore),
+		UBUS_METHOD_NOARG("backup_clean", rpc_vwrt_backup_clean),
+		UBUS_METHOD_NOARG("backup_config_get", rpc_vwrt_backup_config_get),
+		UBUS_METHOD("backup_config_set",  rpc_vwrt_backup_config_set,
 		                                  rpc_data_policy),
-		UBUS_METHOD_NOARG("backup_list",  rpc_vuci_backup_list),
-		UBUS_METHOD_NOARG("reset_test",   rpc_vuci_reset_test),
-		UBUS_METHOD_NOARG("reset_start",  rpc_vuci_reset_start),
-		UBUS_METHOD_NOARG("reboot",       rpc_vuci_reboot)
+		UBUS_METHOD_NOARG("backup_list",  rpc_vwrt_backup_list),
+		UBUS_METHOD_NOARG("reset_test",   rpc_vwrt_reset_test),
+		UBUS_METHOD_NOARG("reset_start",  rpc_vwrt_reset_start),
+		UBUS_METHOD_NOARG("reboot",       rpc_vwrt_reboot)
 	};
 
-	static struct ubus_object_type vuci_system_type =
-		UBUS_OBJECT_TYPE("luci-rpc-vuci-system", vuci_system_methods);
+	static struct ubus_object_type vwrt_system_type =
+		UBUS_OBJECT_TYPE("luci-rpc-vwrt-system", vwrt_system_methods);
 
 	static struct ubus_object system_obj = {
-		.name = "vuci.system",
-		.type = &vuci_system_type,
-		.methods = vuci_system_methods,
-		.n_methods = ARRAY_SIZE(vuci_system_methods),
+		.name = "vwrt.system",
+		.type = &vwrt_system_type,
+		.methods = vwrt_system_methods,
+		.n_methods = ARRAY_SIZE(vwrt_system_methods),
 	};
 
 
-	static const struct ubus_method vuci_network_methods[] = {
-		UBUS_METHOD_NOARG("conntrack_count", rpc_vuci_network_ct_count),
-		UBUS_METHOD_NOARG("conntrack_table", rpc_vuci_network_ct_table),
-		UBUS_METHOD_NOARG("arp_table",       rpc_vuci_network_arp_table),
-		UBUS_METHOD_NOARG("dhcp_leases",     rpc_vuci_network_leases),
-		UBUS_METHOD_NOARG("dhcp6_leases",    rpc_vuci_network_leases6),
-		UBUS_METHOD_NOARG("routes",          rpc_vuci_network_routes),
-		UBUS_METHOD_NOARG("routes6",         rpc_vuci_network_routes6),
-		UBUS_METHOD_NOARG("switch_list",     rpc_vuci_network_sw_list),
-		UBUS_METHOD("switch_info",           rpc_vuci_network_sw_info,
+	static const struct ubus_method vwrt_network_methods[] = {
+		UBUS_METHOD_NOARG("conntrack_count", rpc_vwrt_network_ct_count),
+		UBUS_METHOD_NOARG("conntrack_table", rpc_vwrt_network_ct_table),
+		UBUS_METHOD_NOARG("arp_table",       rpc_vwrt_network_arp_table),
+		UBUS_METHOD_NOARG("dhcp_leases",     rpc_vwrt_network_leases),
+		UBUS_METHOD_NOARG("dhcp6_leases",    rpc_vwrt_network_leases6),
+		UBUS_METHOD_NOARG("routes",          rpc_vwrt_network_routes),
+		UBUS_METHOD_NOARG("routes6",         rpc_vwrt_network_routes6),
+		UBUS_METHOD_NOARG("switch_list",     rpc_vwrt_network_sw_list),
+		UBUS_METHOD("switch_info",           rpc_vwrt_network_sw_info,
 		                                     rpc_switch_policy),
-		UBUS_METHOD("switch_status",         rpc_vuci_network_sw_status,
+		UBUS_METHOD("switch_status",         rpc_vwrt_network_sw_status,
 		                                     rpc_switch_policy),
-		UBUS_METHOD("ping",                  rpc_vuci_network_ping,
+		UBUS_METHOD("ping",                  rpc_vwrt_network_ping,
 		                                     rpc_data_policy),
-		UBUS_METHOD("ping6",                 rpc_vuci_network_ping6,
+		UBUS_METHOD("ping6",                 rpc_vwrt_network_ping6,
 		                                     rpc_data_policy),
-		UBUS_METHOD("traceroute",            rpc_vuci_network_traceroute,
+		UBUS_METHOD("traceroute",            rpc_vwrt_network_traceroute,
 		                                     rpc_data_policy),
-		UBUS_METHOD("traceroute6",           rpc_vuci_network_traceroute6,
+		UBUS_METHOD("traceroute6",           rpc_vwrt_network_traceroute6,
 		                                     rpc_data_policy),
-		UBUS_METHOD("nslookup",              rpc_vuci_network_nslookup,
+		UBUS_METHOD("nslookup",              rpc_vwrt_network_nslookup,
 		                                     rpc_data_policy),
-		UBUS_METHOD("ifup",                  rpc_vuci_network_ifup,
+		UBUS_METHOD("ifup",                  rpc_vwrt_network_ifup,
 		                                     rpc_data_policy),
-		UBUS_METHOD("ifdown",                rpc_vuci_network_ifdown,
+		UBUS_METHOD("ifdown",                rpc_vwrt_network_ifdown,
 		                                     rpc_data_policy),
-		UBUS_METHOD_NOARG("device_list",     rpc_vuci_network_dev_list),
-		UBUS_METHOD_NOARG("eap_support",     rpc_vuci_network_eap_support)
+		UBUS_METHOD_NOARG("device_list",     rpc_vwrt_network_dev_list),
+		UBUS_METHOD_NOARG("eap_support",     rpc_vwrt_network_eap_support)
 	};
 
-	static struct ubus_object_type vuci_network_type =
-		UBUS_OBJECT_TYPE("luci-rpc-vuci-network", vuci_network_methods);
+	static struct ubus_object_type vwrt_network_type =
+		UBUS_OBJECT_TYPE("luci-rpc-vwrt-network", vwrt_network_methods);
 
 	static struct ubus_object network_obj = {
-		.name = "vuci.network",
-		.type = &vuci_network_type,
-		.methods = vuci_network_methods,
-		.n_methods = ARRAY_SIZE(vuci_network_methods),
+		.name = "vwrt.network",
+		.type = &vwrt_network_type,
+		.methods = vwrt_network_methods,
+		.n_methods = ARRAY_SIZE(vwrt_network_methods),
 	};
 
 
-	static const struct ubus_method vuci_opkg_methods[] = {
-		UBUS_METHOD("list",                  rpc_vuci_opkg_list,
+	static const struct ubus_method vwrt_opkg_methods[] = {
+		UBUS_METHOD("list",                  rpc_vwrt_opkg_list,
 		                                     rpc_opkg_match_policy),
-		UBUS_METHOD("list_installed",        rpc_vuci_opkg_list_installed,
+		UBUS_METHOD("list_installed",        rpc_vwrt_opkg_list_installed,
 		                                     rpc_opkg_match_policy),
-		UBUS_METHOD("find",                  rpc_vuci_opkg_find,
+		UBUS_METHOD("find",                  rpc_vwrt_opkg_find,
 		                                     rpc_opkg_match_policy),
-		UBUS_METHOD("install",               rpc_vuci_opkg_install,
+		UBUS_METHOD("install",               rpc_vwrt_opkg_install,
 		                                     rpc_opkg_package_policy),
-		UBUS_METHOD("remove",                rpc_vuci_opkg_remove,
+		UBUS_METHOD("remove",                rpc_vwrt_opkg_remove,
 		                                     rpc_opkg_package_policy),
-		UBUS_METHOD("info",                  rpc_vuci_opkg_info,
+		UBUS_METHOD("info",                  rpc_vwrt_opkg_info,
 		                                     rpc_opkg_package_policy),
-		UBUS_METHOD_NOARG("update",          rpc_vuci_opkg_update),
-		UBUS_METHOD_NOARG("config_get",      rpc_vuci_opkg_config_get),
-		UBUS_METHOD("config_set",            rpc_vuci_opkg_config_set,
+		UBUS_METHOD_NOARG("update",          rpc_vwrt_opkg_update),
+		UBUS_METHOD_NOARG("config_get",      rpc_vwrt_opkg_config_get),
+		UBUS_METHOD("config_set",            rpc_vwrt_opkg_config_set,
 		                                     rpc_data_policy)
 	};
 
-	static struct ubus_object_type vuci_opkg_type =
-		UBUS_OBJECT_TYPE("luci-rpc-vuci-network", vuci_opkg_methods);
+	static struct ubus_object_type vwrt_opkg_type =
+		UBUS_OBJECT_TYPE("luci-rpc-vwrt-network", vwrt_opkg_methods);
 
 	static struct ubus_object opkg_obj = {
-		.name = "vuci.opkg",
-		.type = &vuci_opkg_type,
-		.methods = vuci_opkg_methods,
-		.n_methods = ARRAY_SIZE(vuci_opkg_methods),
+		.name = "vwrt.opkg",
+		.type = &vwrt_opkg_type,
+		.methods = vwrt_opkg_methods,
+		.n_methods = ARRAY_SIZE(vwrt_opkg_methods),
 	};
 
 
-	static const struct ubus_method vuci_ui_methods[] = {
-		UBUS_METHOD_NOARG("menu",            rpc_vuci_ui_menu),
-		UBUS_METHOD_NOARG("acls",            rpc_vuci_ui_acls),
-		UBUS_METHOD("crypt",                 rpc_vuci_ui_crypt,
+	static const struct ubus_method vwrt_ui_methods[] = {
+		UBUS_METHOD_NOARG("menu",            rpc_vwrt_ui_menu),
+		UBUS_METHOD_NOARG("acls",            rpc_vwrt_ui_acls),
+		UBUS_METHOD("crypt",                 rpc_vwrt_ui_crypt,
 		                                     rpc_data_policy)
 	};
 
-	static struct ubus_object_type vuci_ui_type =
-		UBUS_OBJECT_TYPE("luci-rpc-vuci-ui", vuci_ui_methods);
+	static struct ubus_object_type vwrt_ui_type =
+		UBUS_OBJECT_TYPE("luci-rpc-vwrt-ui", vwrt_ui_methods);
 
 	static struct ubus_object ui_obj = {
-		.name = "vuci.ui",
-		.type = &vuci_ui_type,
-		.methods = vuci_ui_methods,
-		.n_methods = ARRAY_SIZE(vuci_ui_methods),
+		.name = "vwrt.ui",
+		.type = &vwrt_ui_type,
+		.methods = vwrt_ui_methods,
+		.n_methods = ARRAY_SIZE(vwrt_ui_methods),
 	};
 
 	cursor = uci_alloc_context();
@@ -2826,5 +2826,5 @@ static int rpc_vuci_api_init(const struct rpc_daemon_ops *o, struct ubus_context
 }
 
 struct rpc_plugin rpc_plugin = {
-	.init = rpc_vuci_api_init
+	.init = rpc_vwrt_api_init
 };

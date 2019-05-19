@@ -3,7 +3,7 @@
 		"description": "Functions allowed for unauthenticated requests",
 		"read": {
 			"ubus": {
-				"vuci.ui": [
+				"vwrt.ui": [
 					"themes"
 				]
 			}
@@ -14,7 +14,7 @@
 		"description": "Core functions for LuCI",
 		"read": {
 			"ubus": {
-				"vuci.ui": [
+				"vwrt.ui": [
 					"*"
 				],
 				"session": [
@@ -48,7 +48,7 @@
 					"status",
 					"dump"
 				],
-				"vuci.network": [
+				"vwrt.network": [
 					"conntrack_count",
 					"dhcp_leases",
 					"dhcp6_leases",
@@ -57,7 +57,7 @@
 					"routes",
 					"routes6"
 				],
-				"vuci.system": [
+				"vwrt.system": [
 					"diskfree",
 					"syslog",
 					"dmesg",
@@ -88,7 +88,7 @@
 					"info",
 					"board"
 				],
-				"vuci.system": [
+				"vwrt.system": [
 					"init_list"
 				]
 			},
@@ -98,7 +98,7 @@
 		},
 		"write": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"init_action"
 				]
 			},
@@ -112,7 +112,7 @@
 		"description": "Authentication and SSH settings",
 		"read": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"sshkeys_get"
 				]
 			},
@@ -122,7 +122,7 @@
 		},
 		"write": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"sshkeys_set",
 					"password_set"
 				]
@@ -155,7 +155,7 @@
 					"info",
 					"board"
 				],
-				"vuci.opkg": [
+				"vwrt.opkg": [
 					"list",
 					"list_installed",
 					"find",
@@ -166,7 +166,7 @@
 		},
 		"write": {
 			"ubus": {
-				"vuci.opkg": [
+				"vwrt.opkg": [
 					"install",
 					"remove",
 					"update",
@@ -207,7 +207,7 @@
 				"backup"
 			],
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"backup_config_get",
 					"backup_list"
 				]
@@ -218,7 +218,7 @@
 				"upload"
 			],
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"backup_clean",
 					"backup_config_set",
 					"backup_restore",
@@ -232,7 +232,7 @@
 		"description": "System boot settings",
 		"read": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"init_list",
 					"rclocal_get"
 				]
@@ -240,7 +240,7 @@
 		},
 		"write": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"init_action",
 					"rclocal_set"
 				]
@@ -252,14 +252,14 @@
 		"description": "Crontab management",
 		"read": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"crontab_get"
 				]
 			}
 		},
 		"write": {
 			"ubus": {
-				"vuci.system": [
+				"vwrt.system": [
 					"crontab_set"
 				]
 			}
@@ -273,7 +273,7 @@
 				"network.device": [
 					"status"
 				],
-				"vuci.system": [
+				"vwrt.system": [
 					"led_list",
 					"usb_list"
 				]
@@ -293,7 +293,7 @@
 		"description": "Network diagnostic tools",
 		"read": {
 			"ubus": {
-				"vuci.network": [
+				"vwrt.network": [
 					"ping",
 					"ping6",
 					"traceroute",
@@ -348,13 +348,13 @@
 				"network.wireless": [
 					"status"
 				],
-				"vuci.network": [
+				"vwrt.network": [
 					"switch_list",
 					"switch_info",
 					"switch_status",
 					"device_list"
 				],
-				"vuci.network.bwmon": [
+				"vwrt.network.bwmon": [
 					"devices",
 					"statistics"
 				]
