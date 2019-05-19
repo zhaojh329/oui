@@ -32,7 +32,7 @@ Add new feed into "feeds.conf.default":
 
 Install vwrt packages:
     
-    ./scripts/feeds update
+    ./scripts/feeds update vwrt
     ./scripts/feeds install -a -p vwrt
 
 Select package vwrt in menuconfig and compile new image.

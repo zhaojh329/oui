@@ -31,7 +31,7 @@ vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(�
 
 安装vwrt软件包:
     
-    ./scripts/feeds update
+    ./scripts/feeds update vwrt
     ./scripts/feeds install -a -p vwrt
 
 在menuconfig里面选择vwrt软件包然后编译新固件.
