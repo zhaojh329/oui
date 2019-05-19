@@ -40,7 +40,6 @@ session.isAlive = function() {
 
 session.startHeartbeat = function() {
   this._hearbeatInterval = window.setInterval(() => {
-    console.log(new Date);
     this.isAlive().then(alive => {
       if (!alive) {
         this.stopHeartbeat();

@@ -31,13 +31,7 @@ export default {
           this.$session.login(this.formValidate.username, this.formValidate.password).then(sid => {
             if (sid) {
               sessionStorage.setItem('sid', sid);
-
-              this.$ubus.call('vwrt.ui', 'menu').then(r => {
-                this.$menu.parse(r.menu).then(() => {
-                  this.$router.push('/');
-                });
-              });
-
+              this.$router.push('/');
               return;
             }
 

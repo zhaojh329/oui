@@ -7,14 +7,17 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import ubus from './plugins/ubus'
 import session from './plugins/session'
-import menu from './plugins/menu'
+import CardList from './components/CardList.vue'
+import CardTable from './components/CardTable.vue'
 
 Vue.config.productionTip = false
 
 Vue.use(VueAxios, axios)
 Vue.use(ubus)
 Vue.use(session)
-Vue.use(menu)
+
+Vue.component('CardList', CardList)
+Vue.component('CardTable', CardTable)
 
 new Vue({
   router,

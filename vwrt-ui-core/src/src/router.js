@@ -7,16 +7,16 @@ const router = new Router({
   routes: [
     {
       path: '/login',
-      component: () => import('@/views/Login.vue')
+      component: () => import('@/views/login.vue')
     },
     {
       path: '/',
       redirect: '/home',
-      component: () => import('@/views/Main.vue'),
+      component: () => import('@/views/main.vue'),
       children: [
         {
           path: 'home',
-          component: () => import('@/views/Home.vue')
+          component: () => import('@/views/home.vue')
         }
       ]
     }

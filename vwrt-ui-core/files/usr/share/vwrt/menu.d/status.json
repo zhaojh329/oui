@@ -3,12 +3,6 @@
         "title": "Status",
         "index": 10
     },
-    "status/overview": {
-        "title": "Overview",
-        "acls": [ "status" ],
-        "view": "status/overview",
-        "index": 10
-    },
     "status/routes": {
         "title": "Routes",
         "acls": [ "status" ],
