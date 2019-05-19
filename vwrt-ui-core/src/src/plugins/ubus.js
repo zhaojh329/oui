@@ -1,11 +1,9 @@
 "use strict";
 
 import axios from 'axios'
-import {session} from './session'
 
 export const ubus = {
-  id: 1,
-  sid: '00000000000000000000000000000000'
+  id: 1
 }
 
 const ubusErrorInfo = {
@@ -72,6 +70,8 @@ ubus._call = function(req) {
 }
 
 ubus.call = function(object, method, params) {
+  const sid = sessionStorage.getItem('sid') || '00000000000000000000000000000000';
+
   if (typeof(params) === 'undefined')
     params = {};
 
@@ -79,7 +79,7 @@ ubus.call = function(object, method, params) {
     jsonrpc: '2.0',
     id: this.id++,
     method: 'call',
-    params:  [session.sid, object, method, params]
+    params:  [sid, object, method, params]
   };
 
   return this._call(req);

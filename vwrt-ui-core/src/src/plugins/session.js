@@ -3,23 +3,22 @@
 import {ubus} from './ubus'
 import router from '../router'
 
-export const session = {
-  sid: '00000000000000000000000000000000'
-}
+const session = { }
 
 session.login = function(username, password) {
-  this.sid = '00000000000000000000000000000000';
+  sessionStorage.removeItem('sid');
 
   return new Promise((resolve) => {
     if (!password)
     password = '';
 
     ubus.call('session', 'login', {username, password}).then(r => {
-      this.sid = r.ubus_rpc_session;
+      sessionStorage.setItem('sid', r.ubus_rpc_session);
+      sessionStorage.setItem('username', r.data.username);
       this.startHeartbeat();
-      resolve(this.sid);
+      resolve(true);
     }).catch(() => {
-      resolve();
+      resolve(false);
     });
   }); 
 }
@@ -42,6 +41,7 @@ session.startHeartbeat = function() {
   this._hearbeatInterval = window.setInterval(() => {
     this.isAlive().then(alive => {
       if (!alive) {
+        sessionStorage.removeItem('sid');
         this.stopHeartbeat();
         router.push('/login');
       }

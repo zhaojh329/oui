@@ -4,7 +4,7 @@
       <div class="logo">
         <router-link to="/">OpenWrt</router-link>
       </div>
-      <Menu theme="dark" width="auto" accordion>
+      <Menu theme="dark" width="auto" accordion ref="menu" :open-names="openedNames" @on-open-change="onOpenChange">
         <Submenu v-for="item in menus" :name="item.path" :key="item.path">
             <template slot="title">
               <Icon v-if="item.icon" :type="item.icon"></Icon>{{ item.title }}
@@ -15,12 +15,22 @@
     </Sider>
     <Layout>
       <Header class="layout-header-bar">
+        <Breadcrumb>
+          <BreadcrumbItem v-for="item in breadcrumbs" :key="item.title" :to="item.to">{{ item.title }}</BreadcrumbItem>
+        </Breadcrumb>
         <Dropdown trigger="click" @on-click="handleUsrClick" style="float: right">
           <Avatar style="background-color: #1890ff" icon="ios-person" />
           <Icon :size="18" type="md-arrow-dropdown"></Icon>
           <DropdownMenu slot="list">
             <DropdownItem class="user">{{ username }}</DropdownItem>
-            <DropdownItem>Logout</DropdownItem>
+            <DropdownItem name="logout">Logout</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <Dropdown trigger="click" style="float: right">
+          <a href="javascript:void(0)">Lang<Icon type="ios-arrow-down"></Icon></a>
+          <DropdownMenu slot="list">
+            <DropdownItem>简体中文</DropdownItem>
+            <DropdownItem>English</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </Header>
@@ -35,7 +45,9 @@
 export default {
   data () {
     return {
-      menus: []
+      menus: [],
+      openedNames: [],
+      breadcrumbs: [{title: 'Home'}]
     }
   },
   computed: {
@@ -44,8 +56,9 @@ export default {
     }
   },
   methods: {
-    handleUsrClick() {
-      this.$router.push('/login');
+    handleUsrClick(name) {
+      if (name === 'logout')
+        this.$router.push('/login');
     },
     parseMenu(raw) {
       let menus = {};
@@ -89,13 +102,38 @@ export default {
         e.children.forEach(c => {
           route.children.push({
             path: c.path,
-            component: () => import(`@/views/${c.view}.vue`)
+            component: () => import(`@/views/${c.view}.vue`),
+            meta: {
+              title: c.title,
+              parentTitle: e.title
+            }
           });
         });
         routes.push(route);
       });
 
       this.$router.addRoutes(routes);
+    },
+    onOpenChange(name) {
+      this.openedNames[0] = name;
+    }
+  },
+  watch: {
+    '$route'(newRoute) {
+      this.breadcrumbs = [{title: 'Home'}];
+
+      if (newRoute.path === '/home') {
+        this.openedNames = [];
+        this.$nextTick(() => {
+          this.$refs.menu.updateOpened()
+        });
+
+        return;
+      }
+
+      this.breadcrumbs[0].to = '/home';
+      this.breadcrumbs.push({title: newRoute.meta.parentTitle});
+      this.breadcrumbs.push({title: newRoute.meta.title});
     }
   },
   mounted() {
@@ -127,6 +165,7 @@ export default {
 .layout-header-bar {
   padding: 0;
   background: #fff;
+  padding-right: 30px;
   & > * {
     display: inline-block;
     margin: 0 10px 0 10px;

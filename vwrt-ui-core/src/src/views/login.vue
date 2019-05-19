@@ -28,9 +28,8 @@ export default {
     handleLogin () {
       this.$refs.formValidate.validate(valid => {
         if (valid) {
-          this.$session.login(this.formValidate.username, this.formValidate.password).then(sid => {
-            if (sid) {
-              sessionStorage.setItem('sid', sid);
+          this.$session.login(this.formValidate.username, this.formValidate.password).then(valid => {
+            if (valid) {
               this.$router.push('/');
               return;
             }
