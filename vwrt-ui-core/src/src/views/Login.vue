@@ -5,7 +5,7 @@
         <Input v-model="formValidate.username" size="large" prefix="md-person" placeholder="Please input username" />
       </Form-item>
       <Form-item prop="password">
-        <Input v-model="formValidate.password" type="password" size="large" prefix="md-lock" placeholder="Please input password" />
+        <Input v-model="formValidate.password" type="password" size="large" prefix="md-lock" placeholder="Please input password" @on-enter="handleLogin"/>
       </Form-item>
       <Form-item>
         <Button type="primary" size="large" long @click="handleLogin">Login</Button>
