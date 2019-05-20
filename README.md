@@ -40,10 +40,6 @@ Select package vwrt in menuconfig and compile new image.
     VWRT  --->
         <*>  vwrt-ui-base..................... VWRT UI
 
-Compile
-
-    make V=s
-
 # How to develop and debug
 First, clone the code to your desktop system.
 

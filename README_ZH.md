@@ -19,7 +19,7 @@
 
 ![](/screen-be6656a.gif)
 
-OpenWrt后台管理界面，使用[vuejs2]和[Vuetify]实现，灵感来自于[LuCI2]。
+OpenWrt后台管理界面，使用[vue.js]和[iview]实现，灵感来自于[LuCI2]。
 
 vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
@@ -38,10 +38,6 @@ vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(�
 
     vwrt  --->
         <*>  vwrt-ui-base..................... VWRT UI
-
-编译
-
-    make V=s
 
 # 如何开发和调试
 首先克隆代码到你的桌面系统，然后执行如下操作
