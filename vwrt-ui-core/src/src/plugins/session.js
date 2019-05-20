@@ -3,7 +3,7 @@
 import {ubus} from './ubus'
 import router from '../router'
 
-const session = { }
+export const session = { }
 
 session.login = function(username, password) {
   sessionStorage.removeItem('sid');

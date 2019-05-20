@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import {session} from './plugins/session'
 
 Vue.use(Router)
 
@@ -24,10 +25,16 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  if (!sessionStorage.getItem('sid') && to.path !== '/login')
-    next('/login');
-  else
+  if (to.path !== '/login') {
+    session.isAlive().then(alive => {
+      if (alive)
+        next();
+      else
+        next('/login');
+    });
+  } else {
     next();
+  }
 });
 
 export default router
