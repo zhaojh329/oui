@@ -45,15 +45,9 @@ menu "Configuration"
 endmenu
 endef
 
-define Build/Prepare
-endef
-
-define Build/Compile
-endef
-
 define Package/vwrt-ui-core/install
 	$(INSTALL_DIR) $(1)/www
-	$(CP) ./src/dist/* $(1)/www/
+	$(CP) $(PKG_BUILD_DIR)/dist/* $(1)/www/
 	$(CP) ./files/* $(1)/
 endef
 
