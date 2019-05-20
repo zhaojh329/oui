@@ -1,15 +1,15 @@
 <template>
   <Card class="login" title="Background management system">
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
-      <Form-item prop="username">
+      <FormItem prop="username">
         <Input v-model="formValidate.username" size="large" prefix="md-person" placeholder="Please input username" @on-enter="handleLogin"/>
-      </Form-item>
-      <Form-item prop="password">
+      </FormItem>
+      <FormItem prop="password">
         <Input v-model="formValidate.password" type="password" size="large" prefix="md-lock" placeholder="Please input password" @on-enter="handleLogin"/>
-      </Form-item>
-      <Form-item>
+      </FormItem>
+      <FormItem>
         <Button type="primary" size="large" long @click="handleLogin">Login</Button>
-      </Form-item>
+      </FormItem>
     </Form>
   </Card>
 </template>
