@@ -34,7 +34,7 @@ export default {
       this.tableHeight = document.body.clientHeight - 100;
     }
   },
-  mounted()  {
+  mounted() {
     this.updateTableHeight();
     window.addEventListener('resize', () => {
       this.updateTableHeight();

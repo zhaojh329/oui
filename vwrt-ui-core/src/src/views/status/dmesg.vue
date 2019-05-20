@@ -11,7 +11,7 @@ export default {
       dmesg: ''
     }
   },
-  mounted()  {
+  mounted() {
     this.$ubus.call('vwrt.system', 'dmesg').then(r => {
       this.dmesg = r.log;
     });

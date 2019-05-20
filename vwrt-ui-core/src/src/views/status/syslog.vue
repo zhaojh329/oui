@@ -11,7 +11,7 @@ export default {
       syslog: ''
     }
   },
-  mounted()  {
+  mounted() {
     this.$ubus.call('vwrt.system', 'syslog').then(r => {
       this.syslog = r.log;
     });

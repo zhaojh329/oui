@@ -41,7 +41,7 @@ export default {
       }
     }
   },
-  mounted()  {
+  mounted() {
     this.$ubus.call('vwrt.network', 'arp_table').then(r => {
       this.arp.data = r.entries;
     });
