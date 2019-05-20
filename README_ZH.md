@@ -39,8 +39,16 @@ vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(�
     vwrt  --->
         <*>  vwrt-ui-base..................... VWRT UI
 
+另外，你可以使用已经安装在主机中的nodejs(Nodejs仅仅用来编译代码)
+
+[通过包过滤器安装Node.js](https://nodejs.org/en/download/package-manager/)
+
+    <*> vwrt-ui-core
+        Configuration  --->
+            [*] Use existing nodejs installation on the host system
+
 # 如何开发和调试
-首先克隆代码到你的桌面系统，然后执行如下操作
+首先克隆代码到你的系统，然后执行如下操作
 
 	cd vwrt/vwrt-ui-core/src
 
@@ -56,7 +64,7 @@ vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(�
 
 # 贡献代码
 如果你想帮助[vwrt](https://github.com/zhaojh329/vwrt) 变得更好，请参考
-[CONTRIBUTING_ZH.md](https://github.com/zhaojh329/vwrt/blob/master/CONTRIBUTING_ZH.md)。
+[CONTRIBUTING_ZH.md](/CONTRIBUTING_ZH.md)。
 
 # 技术交流
 QQ群：153530783

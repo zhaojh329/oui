@@ -40,8 +40,16 @@ Select package vwrt in menuconfig and compile new image.
     VWRT  --->
         <*>  vwrt-ui-base..................... VWRT UI
 
+Alternative use existing nodejs installation on the host system(The nodejs is only used to compile code)
+
+[Installing Node.js via package manager](https://nodejs.org/en/download/package-manager/)
+
+    <*> vwrt-ui-core
+        Configuration  --->
+            [*] Use existing nodejs installation on the host system
+
 # How to develop and debug
-First, clone the code to your desktop system.
+First, clone the code to system.
 
 	cd vwrt/vwrt-ui-core/src
 
@@ -58,4 +66,4 @@ Then execute the following command to start the debug server
 
 # Contributing
 If you would like to help making [vwrt](https://github.com/zhaojh329/vwrt) better,
-see the [CONTRIBUTING.md](https://github.com/zhaojh329/vwrt/blob/master/CONTRIBUTING.md) file.
+see the [CONTRIBUTING.md](/CONTRIBUTING.md) file.
