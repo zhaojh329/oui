@@ -1,21 +1,25 @@
 "use strict";
 
 import {ubus} from './ubus'
-import router from '../router'
+
+const DEFAULT_SESSION_ID	= '00000000000000000000000000000000'
 
 export const session = { }
 
-session.login = function(username, password) {
-  sessionStorage.removeItem('sid');
+session.sid = function() {
+  return sessionStorage.getItem('sid') || DEFAULT_SESSION_ID;
+}
 
+session.login = function(username, password) {
   return new Promise((resolve) => {
-    if (!password)
-    password = '';
+    if (!password) {
+      password = '';
+    }
 
     ubus.call('session', 'login', {username, password}).then(r => {
+      this.startHeartbeat();
       sessionStorage.setItem('sid', r.ubus_rpc_session);
       sessionStorage.setItem('username', r.data.username);
-      this.startHeartbeat();
       resolve(true);
     }).catch(() => {
       resolve(false);
@@ -23,8 +27,26 @@ session.login = function(username, password) {
   }); 
 }
 
+session.logout = function() {
+  return new Promise((resolve) => {
+    ubus.call('session', 'destroy').then(() => {
+      resolve();
+    }).catch(() => {
+      resolve();
+    });
+
+    this.stopHeartbeat();
+    sessionStorage.removeItem('sid');
+  });
+}
+
 session.access = function(scope, object, fun) {
   return new Promise((resolve) => {
+    if (this.sid() === DEFAULT_SESSION_ID) {
+      resolve(false);
+      return;
+    }
+
     ubus.call('session', 'access', {scope, object, function: fun}).then(r => {
       resolve(r.access);
     }).catch(() => {
@@ -41,9 +63,7 @@ session.startHeartbeat = function() {
   this._hearbeatInterval = window.setInterval(() => {
     this.isAlive().then(alive => {
       if (!alive) {
-        sessionStorage.removeItem('sid');
-        this.stopHeartbeat();
-        router.push('/login');
+        this.logout();
       }
     });
   }, 15000);

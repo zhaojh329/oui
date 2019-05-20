@@ -39,6 +39,9 @@ export default {
         }
       });
     }
+  },
+  mounted() {
+    this.$session.logout();
   }
 }
 </script>
