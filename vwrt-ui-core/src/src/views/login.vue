@@ -2,7 +2,7 @@
   <Card class="login" title="Background management system">
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
       <Form-item prop="username">
-        <Input v-model="formValidate.username" size="large" prefix="md-person" placeholder="Please input username" />
+        <Input v-model="formValidate.username" size="large" prefix="md-person" placeholder="Please input username" @on-enter="handleLogin"/>
       </Form-item>
       <Form-item prop="password">
         <Input v-model="formValidate.password" type="password" size="large" prefix="md-lock" placeholder="Please input password" @on-enter="handleLogin"/>
