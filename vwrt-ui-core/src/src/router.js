@@ -25,6 +25,11 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  if (from.path === '/' && to.path !== '/home') {
+    next('/');
+    return;
+  }
+
   if (to.path !== '/login') {
     session.isAlive().then(alive => {
       if (alive)
