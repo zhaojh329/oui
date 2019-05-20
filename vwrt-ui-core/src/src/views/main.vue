@@ -16,7 +16,7 @@
     <Layout>
       <Header class="layout-header-bar">
         <Breadcrumb>
-          <BreadcrumbItem v-for="item in breadcrumbs" :key="item.title" :to="item.to">{{ item.title }}</BreadcrumbItem>
+          <BreadcrumbItem v-for="(item, i) in breadcrumbs" :key="i" :to="item.to">{{ item.title }}</BreadcrumbItem>
         </Breadcrumb>
         <Dropdown trigger="click" @on-click="handleUsrClick" style="float: right">
           <Avatar style="background-color: #1890ff" icon="ios-person" />
