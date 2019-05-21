@@ -21,6 +21,8 @@ export default {
         ['Kernel Version', r.kernel],
         ['Firmware Version', r.release.revision]
       ];
+
+      document.title = r.hostname + ' - vwrt';
     });
   }
 }
