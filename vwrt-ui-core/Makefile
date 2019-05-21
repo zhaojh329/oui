@@ -15,7 +15,7 @@ PKG_LICENSE:=MIT
 PKG_BUILD_PARALLEL:=1
 
 PKG_BUILD_DEPENDS:=!VWRT_USE_HOST_NODE:node/host
-PKG_CONFIG_DEPENDS:=CONFIG_VWRT_USE_HOST_NODE CONFIG_VWRT_USE_TAOBAO_REGISTRY
+PKG_CONFIG_DEPENDS:=CONFIG_VWRT_USE_HOST_NODE CONFIG_VWRT_BUILD_DEV
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -42,6 +42,12 @@ menu "Configuration"
 		  This disables the build dependency on the node package from
 		  the OpenWrt packages feed, allowing for faster development
 		  builds.
+	config VWRT_BUILD_DEV
+		bool "Build for development"
+		default n
+		help
+		  This turn on development mode. During development, Vue provides
+		  a lot of warnings to help you with common errors and pitfalls.
 endmenu
 endef
 
@@ -49,6 +55,10 @@ define Build/Prepare
 	$(INSTALL_DIR) $(PKG_BUILD_DIR)
 	$(CP) ./src/. $(PKG_BUILD_DIR)/
 endef
+
+ifneq ($(CONFIG_VWRT_BUILD_DEV),)
+  MAKE_VARS=NODE_ENV=development
+endif
 
 define Package/vwrt-ui-core/install
 	$(INSTALL_DIR) $(1)/www
