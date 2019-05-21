@@ -24,6 +24,11 @@ OpenWrt web user interface implemented in [vue.js] and [iview], inspired by [LuC
 vwrt uses ubus to communicate with OpenWrt subsystems. To access any kind of system
 data through [ubus](with the help of [uhttpd-mod-ubus] to provide HTTP based API).
 
+# Requirements
+
+The following package is required to build the vwrt:
+
+* Node.js >= 8.11
 
 # How to use
 Add new feed into "feeds.conf.default":

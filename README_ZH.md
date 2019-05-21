@@ -23,6 +23,11 @@ OpenWrt后台管理界面，使用[vue.js]和[iview]实现，灵感来自于[LuC
 
 vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
+# 依赖
+
+构建vwrt需要以下软件包
+
+* Node.js >= 8.11
 
 # 如何使用
 在"feeds.conf.default"里面添加新的feed:
