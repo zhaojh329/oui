@@ -6,7 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=vwrt-ui-base
+PKG_NAME:=vwrt-ui-core
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Jianhui Zhao <jianhuizhao329@gmail.com>
 
