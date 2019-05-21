@@ -1,5 +1,5 @@
 <template>
-  <Card class="login" title="Background management system">
+  <Card class="login" title="Authorization Required">
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
       <FormItem prop="username">
         <Input v-model="formValidate.username" size="large" prefix="md-person" placeholder="Please input username" @on-enter="handleLogin"/>
