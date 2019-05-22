@@ -13,7 +13,7 @@ export default {
       devinfo: []
     }
   },
-  mounted()  {
+  mounted() {
     this.$ubus.call('system', 'board').then(r => {
       this.devinfo = [
         ['Model', r.model],
