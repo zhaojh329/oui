@@ -1,10 +1,9 @@
 import Vue from 'vue'
-import { Layout, Sider, Header, Menu, Submenu, MenuItem, Dropdown, DropdownMenu, DropdownItem } from 'iview'
-import { Button, Card, Form, FormItem, Input, Icon, Avatar, Table } from 'iview'
-import { Breadcrumb, BreadcrumbItem, Tabs, TabPane, Select, Option } from 'iview'
+import {locale, Message, Layout, Sider, Header, Menu, Submenu, MenuItem, Dropdown, DropdownMenu, DropdownItem,
+  Button, Card, Form, FormItem, Input, Icon, Avatar, Table, Breadcrumb, BreadcrumbItem, Tabs,
+  TabPane, Select, Option} from 'iview'
+
 import lang from 'iview/dist/locale/en-US'
-import { locale } from 'iview'
-import {Message} from 'iview'
 
 locale(lang)
 

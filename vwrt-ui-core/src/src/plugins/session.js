@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 import {ubus} from './ubus'
 
@@ -11,7 +11,7 @@ session.sid = function() {
 }
 
 session.login = function(username, password) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (!password) {
       password = '';
     }
@@ -24,11 +24,11 @@ session.login = function(username, password) {
     }).catch(() => {
       resolve(false);
     });
-  }); 
+  });
 }
 
 session.logout = function() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     ubus.call('session', 'destroy').then(() => {
       resolve();
     }).catch(() => {
@@ -41,7 +41,7 @@ session.logout = function() {
 }
 
 session.access = function(scope, object, fun) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (this.sid() === DEFAULT_SESSION_ID) {
       resolve(false);
       return;
@@ -52,7 +52,7 @@ session.access = function(scope, object, fun) {
     }).catch(() => {
       resolve(false);
     });
-  }); 
+  });
 }
 
 session.isAlive = function() {
