@@ -26,8 +26,8 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (from.path === '/' && to.path !== '/login' && to.path !== '/home') {
-      next('/');
-      return;
+    next('/');
+    return;
   }
 
   if (to.path !== '/login') {
