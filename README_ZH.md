@@ -14,6 +14,7 @@
 [vue.js]: https://github.com/vuejs/vue
 [iview]: https://github.com/iview/iview
 [LuCI2]: https://git.openwrt.org/?p=project/luci2/ui.git
+[json-rpc]: https://www.jsonrpc.org/
 [ubus]: https://wiki.openwrt.org/doc/techref/ubus
 [uhttpd-mod-ubus]: https://wiki.openwrt.org/doc/techref/ubus#access_to_ubus_over_http
 
@@ -21,7 +22,7 @@
 
 OpenWrt后台管理界面，使用[vue.js]和[iview]实现，灵感来自于[LuCI2]。
 
-vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
+vwrt使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
 # 依赖
 
@@ -42,7 +43,7 @@ vwrt通过ubus和OpenWrt子系统通信。通过[ubus]存取各种系统数据(�
 在menuconfig里面选择vwrt软件包然后编译新固件.
 
     vwrt  --->
-        <*>  vwrt-ui-base..................... VWRT UI
+        <*>  vwrt-ui-core..................... VWRT UI
 
 另外，你可以使用已经安装在主机中的nodejs(Nodejs仅仅用来编译代码)
 
