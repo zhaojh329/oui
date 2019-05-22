@@ -6,10 +6,13 @@
 [4]: https://github.com/zhaojh329/vwrt/pulls
 [5]: https://img.shields.io/badge/Issues-welcome-brightgreen.svg?style=plastic
 [6]: https://github.com/zhaojh329/vwrt/issues/new
+[7]: https://travis-ci.org/zhaojh329/vwrt.svg?branch=master
+[8]: https://travis-ci.org/zhaojh329/vwrt
 
 [![license][1]][2]
 [![PRs Welcome][3]][4]
 [![Issue Welcome][5]][6]
+[![Build Status][7]][8]
 
 [vue.js]: https://github.com/vuejs/vue
 [iview]: https://github.com/iview/iview

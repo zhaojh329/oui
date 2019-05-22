@@ -1,0 +1,7 @@
+language: node_js
+node_js: stable
+
+script:
+  - cd vwrt-ui-core/src
+  - npm install
+  - npm run build
