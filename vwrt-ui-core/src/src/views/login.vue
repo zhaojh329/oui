@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       formValidate: {},
       ruleValidate: {
@@ -25,7 +25,7 @@ export default {
     }
   },
   methods: {
-    handleLogin () {
+    handleLogin() {
       this.$refs.formValidate.validate(valid => {
         if (valid) {
           this.$session.login(this.formValidate.username, this.formValidate.password).then(valid => {
