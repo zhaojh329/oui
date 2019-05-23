@@ -71,6 +71,12 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
 # [捐赠](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
+* 许玉善(北京友联智诚科技有限公司) - 100¥
+* JunoSky(深圳市云联芯科技有限公司) - 100¥
+* lemon - 10¥
+* axlrose - 1¥
+* yangquan3 - 1¥
+
 # 贡献代码
 如果你想帮助[oui](https://github.com/zhaojh329/oui) 变得更好，请参考
 [CONTRIBUTING_ZH.md](/CONTRIBUTING_ZH.md)。

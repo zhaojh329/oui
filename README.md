@@ -73,6 +73,12 @@ Then execute the following command to start the debug server
 
 # [Donate](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
+* 许玉善(北京友联智诚科技有限公司) - 100¥
+* JunoSky(深圳市云联芯科技有限公司) - 100¥
+* lemon - 10¥
+* axlrose - 1¥
+* yangquan3 - 1¥
+
 # Contributing
 If you would like to help making [oui](https://github.com/zhaojh329/oui) better,
 see the [CONTRIBUTING.md](/CONTRIBUTING.md) file.
