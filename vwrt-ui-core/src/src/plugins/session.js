@@ -19,10 +19,9 @@ session.login = function(username, password) {
     ubus.call('session', 'login', {username, password}).then(r => {
       this.startHeartbeat();
       sessionStorage.setItem('sid', r.ubus_rpc_session);
-      sessionStorage.setItem('username', r.data.username);
-      resolve(true);
+      resolve({sid: this.sid(), username: r.data.username});
     }).catch(() => {
-      resolve(false);
+      resolve();
     });
   });
 }

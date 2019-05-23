@@ -6,6 +6,7 @@ import './plugins/iview.js'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import ubus from './plugins/ubus'
+import menu from './plugins/menu'
 import session from './plugins/session'
 import CardList from './components/CardList.vue'
 import CardTable from './components/CardTable.vue'
@@ -14,6 +15,7 @@ Vue.config.productionTip = false
 
 Vue.use(VueAxios, axios)
 Vue.use(ubus)
+Vue.use(menu)
 Vue.use(session)
 
 Vue.component('CardList', CardList)

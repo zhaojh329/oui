@@ -28,8 +28,9 @@ export default {
     handleLogin() {
       this.$refs.formValidate.validate(valid => {
         if (valid) {
-          this.$session.login(this.formValidate.username, this.formValidate.password).then(valid => {
-            if (valid) {
+          this.$session.login(this.formValidate.username, this.formValidate.password).then(r => {
+            if (r) {
+              this.$store.commit('setUsername', r.username);
               this.$router.push('/');
               return;
             }
