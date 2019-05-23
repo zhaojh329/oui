@@ -58,7 +58,19 @@ session.isAlive = function() {
   return this.access('ubus', 'session', 'access');
 }
 
+session.get = function(cb) {
+  ubus.call('session', 'get').then(r => {
+    cb(r.values);
+  }).catch(() => {
+    cb();
+  });
+}
+
 session.startHeartbeat = function() {
+  if (typeof(this._hearbeatInterval) !== 'undefined') {
+    return;
+  }
+
   this._hearbeatInterval = window.setInterval(() => {
     this.isAlive().then(alive => {
       if (!alive) {

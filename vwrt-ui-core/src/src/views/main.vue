@@ -51,7 +51,14 @@ export default {
   },
   computed: {
     username() {
-      return this.$store.state.username;
+      const username = this.$store.state.username;
+      if (username === '') {
+        this.$session.get(r => {
+          this.$store.commit('setUsername', r.username);
+        });
+      }
+
+      return username;
     },
     menus() {
       return this.$store.state.menus;
@@ -85,10 +92,21 @@ export default {
     }
   },
   mounted() {
-    this.$menu.load((menus, routes) => {
-      this.$store.commit('setMenus', menus);
-      this.$router.addRoutes(routes);
-    });
+    const route = this.$route;
+
+    if (route.path.split('/').length === 3) {
+      this.breadcrumbs = [{title: 'Home'}];
+      this.breadcrumbs[0].to = '/home';
+      this.breadcrumbs.push({title: route.meta.parentTitle});
+      this.breadcrumbs.push({title: route.meta.title});
+    }
+
+    if (this.menus.length === 0) {
+      this.$menu.load((menus, routes) => {
+        this.$store.commit('setMenus', menus);
+        this.$router.addRoutes(routes);
+      });
+    }
   }
 }
 </script>

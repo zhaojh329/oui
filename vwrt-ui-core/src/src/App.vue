@@ -6,14 +6,7 @@
 
 <script>
 export default {
-  name: 'App',
-  mounted() {
-    this.$session.isAlive().then(alive => {
-      if (alive) {
-        this.$session.startHeartbeat();
-      }
-    });
-  }
+  name: 'App'
 }
 </script>
 

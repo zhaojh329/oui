@@ -20,22 +20,23 @@ const router = new Router({
           component: () => import('@/views/home.vue')
         }
       ]
+    },
+    {
+      path: '*',
+      component: () => import('@/views/404.vue')
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  if (from.path === '/' && to.path !== '/login' && to.path !== '/home') {
-    next('/');
-    return;
-  }
-
   if (to.path !== '/login') {
     session.isAlive().then(alive => {
-      if (alive)
+      if (alive) {
+        session.startHeartbeat();
         next();
-      else
+      } else {
         next('/login');
+      }
     });
   } else {
     next();
