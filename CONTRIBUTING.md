@@ -1,7 +1,7 @@
 Contributing
 ================================================================================
 
-If you want to contribute to [vwrt](https://github.com/zhaojh329/vwrt), please follow these simple rules:
+If you want to contribute to [oui](https://github.com/zhaojh329/oui), please follow these simple rules:
 
 1. Press the fork button:
 
@@ -10,13 +10,13 @@ If you want to contribute to [vwrt](https://github.com/zhaojh329/vwrt), please f
 2. Clone the repository from your account with:
 
     ```
-    git clone https://github.com/your_github_username/vwrt.git
+    git clone https://github.com/your_github_username/oui.git
     ```
 
 3. Create a new branch with:
 
     ```
-    git checkout -b "vwrt-1-fix"
+    git checkout -b "oui-1-fix"
     ```
     You can name it however you want.
 
