@@ -27,7 +27,7 @@ module.exports = {
     'space-before-blocks': 'error',
     'space-in-parens': ["error", 'never'],
     'no-multi-spaces': 'error',
-	'eqeqeq': 'error'
+    'eqeqeq': 'error'
   },
   parserOptions: {
     parser: 'babel-eslint'
