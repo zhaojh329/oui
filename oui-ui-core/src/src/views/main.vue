@@ -4,7 +4,7 @@
       <div class="logo">
         <router-link to="/">OpenWrt</router-link>
       </div>
-      <Menu theme="dark" width="auto" accordion ref="menu" :open-names="openedNames" @on-open-change="onOpenChange">
+      <Menu theme="dark" width="auto" accordion ref="menu" :open-names="openedNames" :active-name="activeName" @on-select="onMenuSelect" @on-open-change="onMenuOpenChange">
         <Submenu v-for="item in menus" :name="item.path" :key="item.path">
             <template slot="title">
               <Icon v-if="item.icon" :type="item.icon"></Icon>{{ item.title }}
@@ -46,6 +46,7 @@ export default {
   data() {
     return {
       openedNames: [],
+      activeName: '',
       breadcrumbs: [{title: 'Home'}]
     }
   },
@@ -69,8 +70,11 @@ export default {
       if (name === 'logout')
         this.$router.push('/login');
     },
-    onOpenChange(name) {
-      this.openedNames[0] = name;
+    onMenuSelect(name) {
+      this.activeName = name;
+    },
+    onMenuOpenChange(names) {
+      this.openedNames = names;
     }
   },
   watch: {
@@ -79,8 +83,10 @@ export default {
 
       if (newRoute.path === '/home') {
         this.openedNames = [];
+        this.activeName = '';
         this.$nextTick(() => {
-          this.$refs.menu.updateOpened()
+          this.$refs.menu.updateOpened();
+          this.$refs.menu.updateActiveName();
         });
 
         return;
