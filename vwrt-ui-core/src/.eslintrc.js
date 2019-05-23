@@ -26,7 +26,8 @@ module.exports = {
     'no-duplicate-imports': 'error',
     'space-before-blocks': 'error',
     'space-in-parens': ["error", 'never'],
-    'no-multi-spaces': 'error'
+    'no-multi-spaces': 'error',
+	'eqeqeq': 'error'
   },
   parserOptions: {
     parser: 'babel-eslint'

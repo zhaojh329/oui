@@ -81,7 +81,7 @@ session.startHeartbeat = function() {
 }
 
 session.stopHeartbeat = function() {
-  if (typeof(this._hearbeatInterval) != 'undefined') {
+  if (typeof(this._hearbeatInterval) !== 'undefined') {
     window.clearInterval(this._hearbeatInterval);
     delete this._hearbeatInterval;
   }
