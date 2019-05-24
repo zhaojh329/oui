@@ -14,7 +14,17 @@ PKG_LICENSE:=MIT
 
 PKG_BUILD_PARALLEL:=1
 
-PKG_BUILD_DEPENDS:=!VWRT_USE_HOST_NODE:node/host
+
+ifeq ($(CONFIG_VWRT_USE_HOST_NODE),)
+ifneq ($(CONFIG_VWRT_BUILT_IN_NODE),)
+PKG_BUILD_DEPENDS:=node/host
+else
+PKG_BUILD_DEPENDS:=vwrt-node/host
+endif
+endif
+
+
+
 PKG_CONFIG_DEPENDS:=CONFIG_VWRT_USE_HOST_NODE CONFIG_VWRT_BUILD_DEV
 
 include $(INCLUDE_DIR)/package.mk
@@ -48,6 +58,12 @@ menu "Configuration"
 		help
 		  This turn on development mode. During development, Vue provides
 		  a lot of warnings to help you with common errors and pitfalls.
+
+	config VWRT_BUILT_IN_NODE
+		bool "Use vwrt built in node"
+		default y
+		depends on !VWRT_USE_HOST_NODE
+
 endmenu
 endef
 
