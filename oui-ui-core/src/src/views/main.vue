@@ -97,6 +97,11 @@ export default {
       this.breadcrumbs.push({title: newRoute.meta.title});
     }
   },
+  created() {
+    this.$ubus.call('system', 'board').then(r => {
+      document.title = r.hostname + ' - oui';
+    });
+  },
   mounted() {
     const route = this.$route;
 
