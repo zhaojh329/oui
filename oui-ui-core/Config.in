@@ -1,0 +1,25 @@
+menu "Configure"
+	depends on PACKAGE_oui-ui-core
+	config OUI_USE_OW_NODE
+		bool "Use OpenWRT node packcage feed(version must more the 8.11.x)"
+		default n
+		depends on !OUI_USE_BUILT_IN_NODE
+		help
+		  This enabled the build dependency on the node package from
+		  the OpenWrt packages feed.
+
+	config OUI_BUILD_DEV
+		bool "Build for development"
+		default n
+		depends on PACKAGE_oui-ui-core
+		help
+		  This turn on development mode. During development, Vue provides
+		  a lot of warnings to help you with common errors and pitfalls.
+	
+	config OUI_USE_BUILT_IN_NODE
+		bool "Use oUI built-in node Package feed"
+		default y
+		help
+		  Select this option will be use oUI built in node version for compile VUE code
+	
+endmenu
