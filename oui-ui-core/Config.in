@@ -1,7 +1,7 @@
-menu "Configure"
+menu "Configuration"
 	depends on PACKAGE_oui-ui-core
 	config OUI_USE_OW_NODE
-		bool "Use OpenWRT node packcage feed(version must more the 8.11.x)"
+		bool "Use OpenWRT node packcage feed(version must more than 8.11.x)"
 		default n
 		depends on !OUI_USE_BUILT_IN_NODE
 		help

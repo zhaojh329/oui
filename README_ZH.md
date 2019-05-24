@@ -54,7 +54,7 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
     <*> oui-ui-core
         Configuration  --->
-            [*] Use existing nodejs installation on the host system
+            [*] Use oUI built-in node Package feed
 
 # 如何开发和调试
 首先克隆代码到你的系统，然后执行如下操作
