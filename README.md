@@ -55,7 +55,7 @@ Alternative use existing nodejs installation on the host system(The nodejs is on
 
     <*> oui-ui-core
         Configuration  --->
-            [*] Use existing nodejs installation on the host system
+            [*] Use oUI built-in node Package feed
 
 # How to develop and debug
 First, clone the code to system.

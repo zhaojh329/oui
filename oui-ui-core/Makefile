@@ -14,8 +14,9 @@ PKG_LICENSE:=MIT
 
 PKG_BUILD_PARALLEL:=1
 
-PKG_BUILD_DEPENDS:=!OUI_USE_HOST_NODE:node/host
-PKG_CONFIG_DEPENDS:=CONFIG_OUI_USE_HOST_NODE CONFIG_OUI_BUILD_DEV
+PKG_BUILD_DEPENDS:=OUI_USE_BUILT_IN_NODE:oui-ui-componet/host OUI_USE_OW_NODE:node/host
+
+PKG_CONFIG_DEPENDS:=CONFIG_OUI_USE_HOST_NODE CONFIG_OUI_BUILD_DEV CONFIG_OUI_USE_BUILT_IN_NODE
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -32,24 +33,9 @@ define Package/oui-ui-core/description
 endef
 
 define Package/oui-ui-core/config
-menu "Configuration"
-	depends on PACKAGE_oui-ui-core
-
-	config OUI_USE_HOST_NODE
-		bool "Use existing nodejs installation on the host system"
-		default n
-		help
-		  This disables the build dependency on the node package from
-		  the OpenWrt packages feed, allowing for faster development
-		  builds.
-	config OUI_BUILD_DEV
-		bool "Build for development"
-		default n
-		help
-		  This turn on development mode. During development, Vue provides
-		  a lot of warnings to help you with common errors and pitfalls.
-endmenu
+	source $(SOURCE)/Config.in
 endef
+
 
 define Build/Prepare
 	$(INSTALL_DIR) $(PKG_BUILD_DIR)
