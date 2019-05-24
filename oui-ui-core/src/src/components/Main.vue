@@ -48,7 +48,8 @@ export default {
       username: '',
       openedNames: [],
       activeName: '',
-      breadcrumbs: [{title: 'Home'}]
+      homeRoute: {},
+      breadcrumbs: []
     }
   },
   computed: {
@@ -66,26 +67,37 @@ export default {
     },
     onMenuOpenChange(names) {
       this.openedNames = names;
+    },
+    updateMenuStatus() {
+      this.$nextTick(() => {
+        this.$refs.menu.updateOpened();
+        this.$refs.menu.updateActiveName();
+      });
+    },
+    getBreadCrumbList(route) {
+      const homeRoute = this.$router.options.routes[1].children[0];
+      const homeItem = {title: homeRoute.meta.title};
+      const matched = route.matched;
+
+      if (matched.some(item => item.path === '/home')) {
+        this.openedNames = [];
+        this.activeName = '';
+        this.updateMenuStatus();
+        return [homeItem];
+      }
+
+      this.openedNames = [matched[0].path];
+      this.activeName = matched[0].path + matched[1].path;
+      this.updateMenuStatus();
+
+      homeItem.to = '/home';
+
+      return [homeItem, matched[0].meta, matched[1].meta];
     }
   },
   watch: {
     '$route'(newRoute) {
-      this.breadcrumbs = [{title: 'Home'}];
-
-      if (newRoute.path === '/home') {
-        this.openedNames = [];
-        this.activeName = '';
-        this.$nextTick(() => {
-          this.$refs.menu.updateOpened();
-          this.$refs.menu.updateActiveName();
-        });
-
-        return;
-      }
-
-      this.breadcrumbs[0].to = '/home';
-      this.breadcrumbs.push({title: newRoute.meta.parentTitle});
-      this.breadcrumbs.push({title: newRoute.meta.title});
+      this.breadcrumbs = this.getBreadCrumbList(newRoute);
     }
   },
   created() {
@@ -101,24 +113,8 @@ export default {
       this.$store.commit('setMenus', menus);
       this.$router.addRoutes(routes);
     });
-  },
-  mounted() {
-    const route = this.$route;
-    const paths = route.path.split('/');
-    if (paths.length === 3) {
-      this.openedNames = ['/' + paths[1]];
-      this.activeName = this.openedNames[0] + route.path;
 
-      this.$nextTick(() => {
-        this.$refs.menu.updateOpened();
-        this.$refs.menu.updateActiveName();
-      });
-
-      this.breadcrumbs = [{title: 'Home'}];
-      this.breadcrumbs[0].to = '/home';
-      this.breadcrumbs.push({title: route.meta.parentTitle});
-      this.breadcrumbs.push({title: route.meta.title});
-    }
+    this.breadcrumbs = this.getBreadCrumbList(this.$route);
   }
 }
 </script>

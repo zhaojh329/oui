@@ -39,6 +39,9 @@ function buildRoutes(menus) {
     const route = {
       path: e.path,
       component: () => import('@/components/Main.vue'),
+      meta: {
+        title: e.title
+      },
       children: []
     };
 
@@ -47,8 +50,7 @@ function buildRoutes(menus) {
         path: c.path,
         component: () => import(`@/views/${c.view}.vue`),
         meta: {
-          title: c.title,
-          parentTitle: e.title
+          title: c.title
         }
       });
     });
