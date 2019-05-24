@@ -45,22 +45,13 @@
 export default {
   data() {
     return {
+      username: '',
       openedNames: [],
       activeName: '',
       breadcrumbs: [{title: 'Home'}]
     }
   },
   computed: {
-    username() {
-      const username = this.$store.state.username;
-      if (username === '') {
-        this.$session.get(r => {
-          this.$store.commit('setUsername', r.username);
-        });
-      }
-
-      return username;
-    },
     menus() {
       return this.$store.state.menus;
     }
@@ -101,22 +92,32 @@ export default {
     this.$ubus.call('system', 'board').then(r => {
       document.title = r.hostname + ' - oui';
     });
+
+    this.$session.get(r => {
+      this.username = r.username;
+    });
+
+    this.$menu.load((menus, routes) => {
+      this.$store.commit('setMenus', menus);
+      this.$router.addRoutes(routes);
+    });
   },
   mounted() {
     const route = this.$route;
+    const paths = route.path.split('/');
+    if (paths.length === 3) {
+      this.openedNames = ['/' + paths[1]];
+      this.activeName = this.openedNames[0] + route.path;
 
-    if (route.path.split('/').length === 3) {
+      this.$nextTick(() => {
+        this.$refs.menu.updateOpened();
+        this.$refs.menu.updateActiveName();
+      });
+
       this.breadcrumbs = [{title: 'Home'}];
       this.breadcrumbs[0].to = '/home';
       this.breadcrumbs.push({title: route.meta.parentTitle});
       this.breadcrumbs.push({title: route.meta.title});
-    }
-
-    if (this.menus.length === 0) {
-      this.$menu.load((menus, routes) => {
-        this.$store.commit('setMenus', menus);
-        this.$router.addRoutes(routes);
-      });
     }
   }
 }
