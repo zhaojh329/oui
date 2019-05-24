@@ -38,7 +38,7 @@ function buildRoutes(menus) {
   menus.forEach(e => {
     const route = {
       path: e.path,
-      component: () => import('@/views/main.vue'),
+      component: () => import('@/components/Main.vue'),
       children: []
     };
 

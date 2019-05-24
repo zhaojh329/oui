@@ -13,7 +13,7 @@ const router = new Router({
     {
       path: '/',
       redirect: '/home',
-      component: () => import('@/views/main.vue'),
+      component: () => import('@/components/Main.vue'),
       children: [
         {
           path: 'home',
