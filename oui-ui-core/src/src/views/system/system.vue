@@ -11,6 +11,10 @@
           <UciInputValue name="log_size" title="System log buffer size"></UciInputValue>
           <UciInputValue name="log_ip" title="External system log server"></UciInputValue>
           <UciInputValue name="log_port" title="External system log server port"></UciInputValue>
+          <UciListValue name="log_proto" title="External system log server protocol" :list="logProtos"></UciListValue>
+          <UciInputValue name="log_file" title="Write system log to file"></UciInputValue>
+          <UciListValue name="conloglevel" title="Log output level" :list="conlogLevels"></UciListValue>
+          <UciListValue name="cronloglevel" title="Cron Log Level" :list="cronlogLevels"></UciListValue>
         </TabPane>
       </Tabs>
     </UciSection>
@@ -26,7 +30,26 @@ export default {
   data() {
     return {
       localTime: '',
-      zoneinfo: zoneinfo
+      zoneinfo: zoneinfo,
+      logProtos: [
+        ['udp', 'UDP'],
+        ['tcp', 'TCP']
+      ],
+      conlogLevels: [
+        ['8', 'Debug'],
+        ['7', 'Info'],
+        ['6', 'Notice'],
+        ['5', 'Warning'],
+        ['4', 'Error'],
+        ['3', 'Critical'],
+        ['2', 'Alert'],
+        ['1', 'Emergency']
+      ],
+      cronlogLevels: [
+        ['5', 'Debug'],
+        ['8', 'Normal'],
+        ['9', 'Warning']
+      ]
     }
   },
   timers: {
