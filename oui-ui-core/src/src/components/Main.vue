@@ -101,7 +101,7 @@ export default {
     }
   },
   created() {
-    this.$ubus.call('system', 'board').then(r => {
+    this.$system.getBoardInfo().then(r => {
       document.title = r.hostname + ' - oui';
     });
 

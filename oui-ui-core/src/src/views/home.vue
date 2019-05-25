@@ -14,7 +14,7 @@ export default {
     }
   },
   mounted() {
-    this.$ubus.call('system', 'board').then(r => {
+    this.$system.getBoardInfo().then(r => {
       this.devinfo = [
         ['Model', r.model],
         ['Architecture', r.system],

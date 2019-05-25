@@ -10,6 +10,7 @@ import helper from './plugins/helper'
 import ubus from './plugins/ubus'
 import menu from './plugins/menu'
 import uci from './plugins/uci'
+import system from './plugins/system'
 import session from './plugins/session'
 import CardList from './components/CardList.vue'
 import CardTable from './components/CardTable.vue'
@@ -25,6 +26,7 @@ Vue.use(VueTimers)
 Vue.use(ubus)
 Vue.use(menu)
 Vue.use(uci)
+Vue.use(system)
 Vue.use(session)
 Vue.use(helper)
 
