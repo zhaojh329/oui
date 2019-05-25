@@ -1,4 +1,5 @@
 const zoneinfo = [
+  ['UTC', 'UTC'],
   ['GMT0', 'Africa/Abidjan'],
   ['GMT0', 'Africa/Accra'],
   ['EAT-3', 'Africa/Addis Ababa'],
