@@ -18,6 +18,12 @@ export default {
   methods: {
     onChange(event) {
       this.$refs.UciValue._value = event.target.value;
+      this.$emit('on-change', {
+        config: this.$refs.UciValue.config,
+        sid: this.$refs.UciValue.sid,
+        name: this.name,
+        value: event.target.value
+      });
     }
   }
 }
