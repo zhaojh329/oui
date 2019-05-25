@@ -3,6 +3,7 @@
     <UciSection name="system" title="System Properties" typed>
       <Tabs value="general">
         <TabPane label="General Settings" name="general">
+          <UciInputValue title="Local Time" :value="localTime"></UciInputValue>
           <UciInputValue name="hostname" title="Hostname"></UciInputValue>
         </TabPane>
         <TabPane label="Logging" name="logging">
@@ -18,6 +19,22 @@
 <script>
 
 export default {
-  name: 'system'
+  name: 'system',
+  data() {
+    return {
+      localTime: ''
+    }
+  },
+  timers: {
+    getLocalTime: {time: 1000, autostart: true, repeat: true, immediate: true}
+  },
+  methods: {
+    getLocalTime() {
+      this.$system.getSystemInfo().then(r => {
+        const date = new Date(r.localtime * 1000);
+        this.localTime = date.toString()
+      });
+    }
+  }
 }
 </script>
