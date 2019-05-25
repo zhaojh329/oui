@@ -26,7 +26,7 @@ const router = new Router({
     },
     {
       path: '*',
-      component: () => import('@/views/404.vue')
+      component: () => import('@/components/404.vue')
     }
   ]
 })
