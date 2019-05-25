@@ -5,6 +5,7 @@
         <TabPane label="General Settings" name="general">
           <UciInputValue title="Local Time" :value="localTime" readonly></UciInputValue>
           <UciInputValue name="hostname" title="Hostname"></UciInputValue>
+          <UciListValue name="timezone" title="Timezone" :list="zoneinfo"></UciListValue>
         </TabPane>
         <TabPane label="Logging" name="logging">
           <UciInputValue name="log_size" title="System log buffer size"></UciInputValue>
@@ -18,11 +19,14 @@
 
 <script>
 
+import zoneinfo from '@/plugins/zoneinfo'
+
 export default {
   name: 'system',
   data() {
     return {
-      localTime: ''
+      localTime: '',
+      zoneinfo: zoneinfo
     }
   },
   timers: {
