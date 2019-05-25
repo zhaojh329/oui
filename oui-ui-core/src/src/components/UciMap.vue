@@ -19,23 +19,28 @@ export default {
     apply() {
       this.$uci.save().then(() => {
         this.$uci.apply().then(() => {
+          this.load();
           this.$Message.success('Apply successfully');
         });
       });
     },
     save() {
       this.$uci.save().then(() => {
+        this.load();
         this.$Message.success('Save successfully');
       });
     },
     reset() {
 
+    },
+    load() {
+      this.$uci.load(this.config).then(() => {
+        this.$bus.$emit(this.config + '-loaded');
+      });
     }
   },
   mounted() {
-    this.$uci.load(this.config).then(() => {
-      this.$bus.$emit(this.config + '-loaded');
-    });
+    this.load();
   }
 }
 </script>
