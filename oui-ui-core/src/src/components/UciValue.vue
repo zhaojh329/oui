@@ -11,7 +11,8 @@ export default {
   props: {
     name: String,
     title: String,
-    value: String
+    value: String,
+    defaultVal: String
   },
   computed: {
     parent() {
@@ -33,7 +34,7 @@ export default {
 
         if (!this.config || !this.sid)
           return '';
-        return this.$uci.get(this.config, this.sid, this.name);
+        return this.$uci.get(this.config, this.sid, this.name) || this.defaultVal;
       },
       set(newValue) {
         if (!this.name)

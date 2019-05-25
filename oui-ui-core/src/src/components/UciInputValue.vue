@@ -1,5 +1,5 @@
 <template>
-  <UciValue :title="title" :name="name" :value="value" v-slot="{_value}" ref="UciValue">
+  <UciValue :title="title" :name="name" :value="value" :default-val="defaultVal" v-slot="{_value}" ref="UciValue">
     <Input :value="_value" :readonly="readonly" @on-change="onChange" />
   </UciValue>
 </template>
@@ -12,6 +12,7 @@ export default {
     name: String,
     title: String,
     value: String,
+    defaultVal: String,
     readonly: Boolean
   },
   methods: {
