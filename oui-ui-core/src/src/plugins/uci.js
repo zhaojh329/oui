@@ -57,13 +57,17 @@ uci.save = function() {
   const c = this.state.changes;
 
   return new Promise(resolve => {
+    const batch = [];
+
     for (const config in c) {
       for (const sid in c[config]) {
-        ubus.call('uci', 'set', {config: config, section: sid, values: c[config][sid]}).then(() => {
-          delete c[config];
-          resolve();
-        });
+        batch.push(['uci', 'set', {config: config, section: sid, values: c[config][sid]}]);
       }
+
+      ubus.callBatch(batch).then(() => {
+        delete c[config];
+        resolve();
+      });
     }
   });
 }

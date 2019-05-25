@@ -21,56 +21,72 @@ const ubusErrorInfo = {
   10: 'Connection failed'
 }
 
-ubus._call = function(req) {
+ubus._call = function(reqs) {
   return new Promise((resolve, reject) => {
-    axios.post('/ubus', req, {
+    axios.post('/ubus', reqs, {
       responseType: 'text'
     }).then(response => {
-      const resp = response.data;
+      let resp = response.data;
 
-      if (typeof(resp) !== 'object' || resp.jsonrpc !== '2.0') {
-        reject('ubus call error: Invalid msg');
-        return;
+      if (!Array.isArray(reqs)) {
+        reqs = [reqs];
+        resp = [resp];
       }
 
-      if (resp.id !== req.id) {
-        reject('No related request for JSON response');
-        return;
-      }
+      let data = [];
 
-      if (typeof(resp.error) === 'object') {
-        reject(resp.error);
-        return;
-      }
-
-      let result = resp.result;
-
-      if (!Array.isArray(result) || result.length < 1) {
-        if (req.method === 'call') {
-          reject('Illegal response format');
+      for (let i = 0; i < resp.length; i++) {
+        if (typeof(resp[i]) !== 'object' || resp[i].jsonrpc !== '2.0') {
+          reject('ubus call error: Invalid msg');
           return;
         }
-        result = [];
-      }
 
-      if (req.method === 'call') {
-        const errCode = result[0];
-        if (errCode !== 0) {
-          const errInfo = ubusErrorInfo[errCode] || '';
-          reject(`ubus error: ${errInfo}`);
+        if (resp[i].id !== reqs[i].id) {
+          reject('No related request for JSON response');
           return;
         }
-        result = result[1];
+
+        if (typeof(resp[i].error) === 'object') {
+          reject(resp[i].error);
+          return;
+        }
+
+        let result = resp[i].result;
+
+        if (!Array.isArray(result) || result.length < 1) {
+          if (reqs[i].method === 'call') {
+            reject('Illegal response format');
+            return;
+          }
+          result = [];
+        }
+
+        if (reqs[i].method === 'call') {
+          const errCode = result[0];
+          if (errCode !== 0) {
+            const errInfo = ubusErrorInfo[errCode] || '';
+            reject(`ubus error: ${errInfo}`);
+            return;
+          }
+          result = result[1];
+        }
+
+        data.push(result);
       }
 
-      resolve(result);
+      if (data.length === 0)
+        data = undefined;
+      else if (data.length === 1)
+        data = data[0];
+
+      resolve(data);
     }).catch(error => {
       reject(error);
     });
   });
 }
 
-ubus.call = function(object, method, params) {
+ubus._buildRequest = function(object, method, params) {
   if (typeof(params) === 'undefined')
     params = {};
 
@@ -81,7 +97,23 @@ ubus.call = function(object, method, params) {
     params:  [session.sid(), object, method, params]
   };
 
+  return req;
+}
+
+ubus.call = function(object, method, params) {
+  const req = this._buildRequest(object, method, params);
   return this._call(req);
+}
+
+ubus.callBatch = function(batchs) {
+  const reqs = [];
+
+  batchs.forEach(item => {
+    const req = this._buildRequest(item[0], item[1], item[2]);
+    reqs.push(req);
+  });
+
+  return this._call(reqs);
 }
 
 ubus.list = function() {

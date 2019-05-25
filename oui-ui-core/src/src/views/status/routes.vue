@@ -42,16 +42,14 @@ export default {
     }
   },
   mounted() {
-    this.$ubus.call('oui.network', 'arp_table').then(r => {
-      this.arp.data = r.entries;
-    });
-
-    this.$ubus.call('oui.network', 'routes').then(r => {
-      this.routes.data = r.routes;
-    });
-
-    this.$ubus.call('oui.network', 'routes6').then(r => {
-      this.routes6.data = r.routes;
+    this.$ubus.callBatch([
+      ['oui.network', 'arp_table'],
+      ['oui.network', 'routes'],
+      ['oui.network', 'routes6']
+    ]).then(r => {
+      this.arp.data = r[0].entries;
+      this.routes.data = r[1].routes;
+      this.routes6.data = r[2].routes;
     });
   }
 }
