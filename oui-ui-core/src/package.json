@@ -14,6 +14,7 @@
     "vue": "^2.6.10",
     "vue-axios": "^2.1.4",
     "vue-router": "^3.0.3",
+    "vue-timers": "^2.0.2",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

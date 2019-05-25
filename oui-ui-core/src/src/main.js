@@ -5,6 +5,7 @@ import store from './store'
 import './plugins/iview.js'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueTimers from 'vue-timers'
 import helper from './plugins/helper'
 import ubus from './plugins/ubus'
 import menu from './plugins/menu'
@@ -19,6 +20,8 @@ import UciInputValue from './components/UciInputValue.vue'
 Vue.config.productionTip = false
 
 Vue.use(VueAxios, axios)
+Vue.use(VueTimers)
+
 Vue.use(ubus)
 Vue.use(menu)
 Vue.use(uci)
