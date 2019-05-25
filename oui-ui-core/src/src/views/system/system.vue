@@ -5,7 +5,7 @@
         <TabPane label="General Settings" name="general">
           <UciInputValue title="Local Time" :value="localTime" readonly></UciInputValue>
           <UciInputValue name="hostname" title="Hostname"></UciInputValue>
-          <UciListValue name="timezone" title="Timezone" :list="zoneinfo"></UciListValue>
+          <UciListValue name="zonename" title="Timezone" :list="zoneinfo" default-val="UTC" @on-change="onTimezoneChange"></UciListValue>
         </TabPane>
         <TabPane label="Logging" name="logging">
           <UciInputValue name="log_size" title="System log buffer size"></UciInputValue>
@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       localTime: '',
-      zoneinfo: zoneinfo,
       logProtos: [
         ['udp', 'UDP'],
         ['tcp', 'TCP']
@@ -52,6 +51,11 @@ export default {
       ]
     }
   },
+  computed: {
+    zoneinfo() {
+      return zoneinfo.map(item => [item[0]]);
+    }
+  },
   timers: {
     getLocalTime: {time: 1000, autostart: true, repeat: true, immediate: true}
   },
@@ -61,6 +65,15 @@ export default {
         const date = new Date(r.localtime * 1000);
         this.localTime = date.toString()
       });
+    },
+    onTimezoneChange(data) {
+      for (let i = 0; i < zoneinfo.length; i++) {
+        if (zoneinfo[i][0] === data.value) {
+          this.$uci.set(data.config, data.sid, 'timezone', zoneinfo[i][1]);
+          return;
+        }
+      }
+      this.$uci.set(data.config, data.sid, 'timezone', 'UTC');
     }
   }
 }
