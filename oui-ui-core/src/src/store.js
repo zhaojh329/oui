@@ -11,8 +11,5 @@ export default new Vuex.Store({
     setMenus(state, menus) {
       state.menus = menus;
     }
-  },
-  actions: {
-
   }
 })
