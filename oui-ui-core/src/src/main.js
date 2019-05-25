@@ -17,6 +17,7 @@ import CardTable from './components/CardTable.vue'
 import UciMap from './components/UciMap.vue'
 import UciSection from './components/UciSection.vue'
 import UciInputValue from './components/UciInputValue.vue'
+import UciListValue from './components/UciListValue.vue'
 
 Vue.config.productionTip = false
 
@@ -35,6 +36,7 @@ Vue.component('CardTable', CardTable)
 Vue.component('UciMap', UciMap)
 Vue.component('UciSection', UciSection)
 Vue.component('UciInputValue', UciInputValue)
+Vue.component('UciListValue', UciListValue)
 
 new Vue({
   router,
