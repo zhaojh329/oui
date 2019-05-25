@@ -3,7 +3,7 @@
     <UciSection name="system" title="System Properties" typed>
       <Tabs value="general">
         <TabPane label="General Settings" name="general">
-          <UciInputValue title="Local Time" :value="localTime"></UciInputValue>
+          <UciInputValue title="Local Time" :value="localTime" readonly></UciInputValue>
           <UciInputValue name="hostname" title="Hostname"></UciInputValue>
         </TabPane>
         <TabPane label="Logging" name="logging">

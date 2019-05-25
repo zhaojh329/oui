@@ -1,6 +1,6 @@
 <template>
   <FormItem :label="title">
-    <Input v-model="_value" />
+    <Input v-model="_value" :readonly="readonly" />
   </FormItem>
 </template>
 
@@ -11,7 +11,8 @@ export default {
   props: {
     name: String,
     title: String,
-    value: String
+    value: String,
+    readonly: Boolean
   },
   computed: {
     parent() {
