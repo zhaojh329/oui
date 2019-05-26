@@ -63,12 +63,17 @@ uci.save = function() {
       for (const sid in c[config]) {
         batch.push(['uci', 'set', {config: config, section: sid, values: c[config][sid]}]);
       }
-
-      ubus.callBatch(batch).then(() => {
-        delete c[config];
-        resolve();
-      });
+      delete c[config];
     }
+
+    if (batch.length === 0) {
+      resolve();
+      return;
+    }
+
+    ubus.callBatch(batch).then(() => {
+      resolve();
+    });
   });
 }
 
