@@ -1,20 +1,24 @@
 <template>
   <UciMap config="system">
     <UciSection name="system" title="System Properties" typed>
-      <Tabs value="general">
+      <Tabs v-model="systemTab">
         <TabPane label="General Settings" name="general">
-          <UciInputValue title="Local Time" :value="localTime" readonly></UciInputValue>
-          <UciInputValue name="hostname" title="Hostname"></UciInputValue>
-          <UciListValue name="zonename" title="Timezone" :list="zoneinfo" default-val="UTC" @on-change="onTimezoneChange"></UciListValue>
+          <div v-show="systemTab === 'general'">
+            <UciInputValue title="Local Time" :value="localTime" readonly></UciInputValue>
+            <UciInputValue name="hostname" title="Hostname"></UciInputValue>
+            <UciListValue name="zonename" title="Timezone" :list="zoneinfo" default-val="UTC" @on-change="onTimezoneChange"></UciListValue>
+          </div>
         </TabPane>
         <TabPane label="Logging" name="logging">
-          <UciInputValue name="log_size" title="System log buffer size"></UciInputValue>
-          <UciInputValue name="log_ip" title="External system log server"></UciInputValue>
-          <UciInputValue name="log_port" title="External system log server port"></UciInputValue>
-          <UciListValue name="log_proto" title="External system log server protocol" :list="logProtos"></UciListValue>
-          <UciInputValue name="log_file" title="Write system log to file"></UciInputValue>
-          <UciListValue name="conloglevel" title="Log output level" :list="conlogLevels"></UciListValue>
-          <UciListValue name="cronloglevel" title="Cron Log Level" :list="cronlogLevels"></UciListValue>
+          <div v-show="systemTab === 'logging'">
+            <UciInputValue name="log_size" title="System log buffer size"></UciInputValue>
+            <UciInputValue name="log_ip" title="External system log server"></UciInputValue>
+            <UciInputValue name="log_port" title="External system log server port"></UciInputValue>
+            <UciListValue name="log_proto" title="External system log server protocol" :list="logProtos"></UciListValue>
+            <UciInputValue name="log_file" title="Write system log to file"></UciInputValue>
+            <UciListValue name="conloglevel" title="Log output level" :list="conlogLevels"></UciListValue>
+            <UciListValue name="cronloglevel" title="Cron Log Level" :list="cronlogLevels"></UciListValue>
+          </div>
         </TabPane>
       </Tabs>
     </UciSection>
@@ -29,6 +33,7 @@ export default {
   name: 'system',
   data() {
     return {
+      systemTab: 'general',
       localTime: '',
       logProtos: [
         ['udp', 'UDP'],
