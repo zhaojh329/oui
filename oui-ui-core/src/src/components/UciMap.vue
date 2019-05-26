@@ -21,6 +21,11 @@ export default {
         this.$uci.apply().then(() => {
           this.load();
           this.$Message.success('Apply successfully');
+        }).catch(e => {
+          if (e.code === 5)
+            this.$Message.warning('There are no changes to apply');
+          else
+            throw e;
         });
       });
     },
