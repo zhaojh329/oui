@@ -1,5 +1,5 @@
 <template>
-  <Card style="margin-bottom: 15px">
+  <Card style="margin-bottom: 15px" :title="title">
     <Form :label-width="200">
       <slot></slot>
     </Form>
@@ -11,6 +11,7 @@ export default {
   name: 'UciSection',
   props: {
     name: String,
+    title: String,
     typed: Boolean
   },
   data() {
