@@ -12,7 +12,10 @@ export default {
     name: String,
     title: String,
     value: String,
-    defaultVal: String,
+    defaultVal: {
+      type: String,
+      default: '0'
+    },
     readonly: Boolean
   },
   methods: {
