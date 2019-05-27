@@ -22,6 +22,9 @@
         </TabPane>
       </Tabs>
     </UciSection>
+    <UciSection name="ntp" title="Time Synchronization">
+      <UciSwitchValue title="Enable NTP client" :value="ntpCliEnabled" @on-change="onNtpCliChange"></UciSwitchValue>
+    </UciSection>
   </UciMap>
 </template>
 
@@ -35,6 +38,7 @@ export default {
     return {
       systemTab: 'general',
       localTime: '',
+      ntpCliEnabled: '0',
       logProtos: [
         ['udp', 'UDP'],
         ['tcp', 'TCP']
@@ -79,7 +83,27 @@ export default {
         }
       }
       this.$uci.set(data.config, data.sid, 'timezone', 'UTC');
+    },
+    onNtpCliChange(data) {
+      if (data.value === '1') {
+        this.$system.initStart('sysntpd').then(() => {
+          this.$system.initEnable('sysntpd').then(() => {
+            this.$Message.success('NTP client enabled');
+          });
+        });
+      } else {
+        this.$system.initStop('sysntpd').then(() => {
+          this.$system.initDisable('sysntpd').then(() => {
+            this.$Message.success('NTP client disabled');
+          });
+        });
+      }
     }
+  },
+  mounted() {
+    this.$system.initEnabled('sysntpd').then(enabled => {
+      this.ntpCliEnabled = enabled ? '1' : '0';
+    });
   }
 }
 </script>
