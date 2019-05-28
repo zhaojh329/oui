@@ -29,7 +29,8 @@ export default {
       });
     },
     reset() {
-
+      this.$uci.reset();
+      this.$bus.$emit(this.config + '-reset');
     },
     load() {
       this.$uci.load(this.config).then(() => {
@@ -39,6 +40,9 @@ export default {
   },
   mounted() {
     this.load();
+  },
+  destroyed() {
+    this.$uci.reset();
   }
 }
 </script>

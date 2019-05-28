@@ -53,6 +53,10 @@ uci.set = function(config, sid, opt, val) {
   c[config][sid][opt] = val;
 }
 
+uci.reset = function() {
+  this.state.changes = {};
+}
+
 uci.save = function() {
   const c = this.state.changes;
 

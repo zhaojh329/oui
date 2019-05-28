@@ -14,6 +14,11 @@ export default {
     value: String,
     defaultVal: String
   },
+  data() {
+    return {
+      uciValue: null
+    }
+  },
   computed: {
     parent() {
       return this.$getParent('UciSection');
@@ -34,14 +39,27 @@ export default {
 
         if (!this.config || !this.sid)
           return '';
-        return this.$uci.get(this.config, this.sid, this.name) || this.defaultVal;
+
+        return this.uciValue || this.defaultVal;
       },
       set(newValue) {
         if (!this.name)
           return;
+
+        this.uciValue = newValue;
         this.$uci.set(this.config, this.sid, this.name, newValue);
       }
     }
+  },
+  watch: {
+    sid() {
+      this.uciValue = this.$uci.get(this.config, this.sid, this.name);
+    }
+  },
+  mounted() {
+    this.$bus.$on(this.config + '-reset', () => {
+      this.uciValue = this.$uci.get(this.config, this.sid, this.name);
+    });
   }
 }
 </script>
