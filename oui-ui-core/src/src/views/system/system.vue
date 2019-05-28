@@ -67,7 +67,7 @@ export default {
     }
   },
   timers: {
-    getLocalTime: {time: 1000, autostart: true, repeat: true, immediate: true}
+    getLocalTime: {time: 5000, autostart: true, repeat: true, immediate: true}
   },
   methods: {
     getLocalTime() {
