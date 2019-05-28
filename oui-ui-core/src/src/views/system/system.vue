@@ -25,6 +25,7 @@
     <UciSection name="ntp" title="Time Synchronization">
       <UciSwitchValue title="Enable NTP client" :value="ntpCliEnabled" @on-change="onNtpCliChange"></UciSwitchValue>
       <UciSwitchValue title="Provide NTP server" name="enable_server"></UciSwitchValue>
+      <UciDynamicList title="NTP server candidates" name="server"></UciDynamicList>
     </UciSection>
   </UciMap>
 </template>

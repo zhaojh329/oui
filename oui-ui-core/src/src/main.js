@@ -20,6 +20,7 @@ import UciValue from './components/UciValue.vue'
 import UciInputValue from './components/UciInputValue.vue'
 import UciListValue from './components/UciListValue.vue'
 import UciSwitchValue from './components/UciSwitchValue.vue'
+import UciDynamicList from './components/UciDynamicList.vue'
 
 Vue.config.productionTip = false
 
@@ -41,6 +42,7 @@ Vue.component('UciValue', UciValue)
 Vue.component('UciInputValue', UciInputValue)
 Vue.component('UciListValue', UciListValue)
 Vue.component('UciSwitchValue', UciSwitchValue)
+Vue.component('UciDynamicList', UciDynamicList)
 
 new Vue({
   router,
