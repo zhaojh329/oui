@@ -1,6 +1,6 @@
 <template>
   <FormItem :label="title">
-    <slot v-bind:_value="_value"></slot>
+    <slot :_value="_value"></slot>
   </FormItem>
 </template>
 
