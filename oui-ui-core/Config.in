@@ -3,7 +3,7 @@ menu "Configuration"
 	config OUI_USE_OW_NODE
 		bool "Use OpenWRT node packcage feed(version must more than 8.11.x)"
 		default n
-		depends on !OUI_USE_BUILT_IN_NODE
+		depends on !OUI_USE_OUI_NODE
 		help
 		  This enabled the build dependency on the node package from
 		  the OpenWrt packages feed.
@@ -16,10 +16,10 @@ menu "Configuration"
 		  This turn on development mode. During development, Vue provides
 		  a lot of warnings to help you with common errors and pitfalls.
 	
-	config OUI_USE_BUILT_IN_NODE
-		bool "Use oUI built-in node Package feed"
+	config OUI_USE_OUI_NODE
+		bool "Use oUI node Package feed"
 		default y
 		help
-		  Select this option will be use oUI built in node version for compile VUE code
+		  Select this option will be use oUI node version for compile VUE code
 	
 endmenu
