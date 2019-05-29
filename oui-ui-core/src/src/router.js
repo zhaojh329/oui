@@ -46,4 +46,10 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+router.onError(err => {
+  if (err.code !== 'MODULE_NOT_FOUND')
+    throw err
+  router.push('/404');
+});
+
 export default router
