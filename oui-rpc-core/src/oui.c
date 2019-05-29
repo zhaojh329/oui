@@ -668,7 +668,6 @@ static int rpc_oui_password_set(struct ubus_context *ctx, struct ubus_object *ob
 {
 	pid_t pid;
 	int fd, fds[2];
-	struct stat s;
 	struct blob_attr *tb[__RPC_P_MAX];
 
 	blobmsg_parse(rpc_password_policy, __RPC_P_MAX, tb,
@@ -676,12 +675,6 @@ static int rpc_oui_password_set(struct ubus_context *ctx, struct ubus_object *ob
 
 	if (!tb[RPC_P_USER] || !tb[RPC_P_PASSWORD])
 		return UBUS_STATUS_INVALID_ARGUMENT;
-
-	if (stat("/usr/bin/passwd", &s))
-		return UBUS_STATUS_NOT_FOUND;
-
-	if (!(s.st_mode & S_IXUSR))
-		return UBUS_STATUS_PERMISSION_DENIED;
 
 	if (pipe(fds))
 		return rpc_errno_status();
@@ -707,8 +700,7 @@ static int rpc_oui_password_set(struct ubus_context *ctx, struct ubus_object *ob
 
 		chdir("/");
 
-		if (execl("/usr/bin/passwd", "/usr/bin/passwd",
-		          blobmsg_data(tb[RPC_P_USER]), NULL))
+		if (execlp("passwd", "passwd", blobmsg_data(tb[RPC_P_USER]), NULL))
 			return rpc_errno_status();
 
 	default:
@@ -2828,3 +2820,4 @@ static int rpc_oui_api_init(const struct rpc_daemon_ops *o, struct ubus_context 
 struct rpc_plugin rpc_plugin = {
 	.init = rpc_oui_api_init
 };
+
