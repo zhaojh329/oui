@@ -86,6 +86,10 @@ system.initDisable = function(name) {
   return this.initRun(name, 'disable');
 }
 
+system.setPassword = function(user, password) {
+  return ubus.call('oui.system', 'password_set', {user, password})
+}
+
 export default {
   install(Vue) {
     Vue.prototype.$system = system;
