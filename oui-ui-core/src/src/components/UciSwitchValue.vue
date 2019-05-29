@@ -1,6 +1,6 @@
 <template>
   <UciValue :title="title" :name="name" :value="value" :default-val="defaultVal" v-slot="{_value}" ref="UciValue">
-    <i-switch :value="_value" true-value="1" false-value="0" @on-change="onChange"></i-switch>
+    <i-switch :value="_value" :true-value="trueValue" :false-value="falseValue" @on-change="onChange"></i-switch>
   </UciValue>
 </template>
 
@@ -16,7 +16,15 @@ export default {
       type: String,
       default: '0'
     },
-    readonly: Boolean
+    readonly: Boolean,
+    trueValue: {
+      type: String,
+      default: '1'
+    },
+    falseValue: {
+      type: String,
+      default: '0'
+    }
   },
   methods: {
     onChange(value) {
