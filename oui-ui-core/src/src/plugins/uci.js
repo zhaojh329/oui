@@ -50,7 +50,7 @@ uci.set = function(config, sid, opt, val) {
   if (!c[config][sid])
     c[config][sid] = {};
 
-  c[config][sid][opt] = val;
+  c[config][sid][opt] = val || '';
 }
 
 uci.reset = function() {
