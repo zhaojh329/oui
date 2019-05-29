@@ -90,6 +90,10 @@ system.setPassword = function(user, password) {
   return ubus.call('oui.system', 'password_set', {user, password})
 }
 
+system.reboot = function() {
+  return ubus.call('oui.system', 'reboot')
+}
+
 export default {
   install(Vue) {
     Vue.prototype.$system = system;
