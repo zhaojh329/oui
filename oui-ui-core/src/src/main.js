@@ -12,6 +12,7 @@ import menu from './plugins/menu'
 import uci from './plugins/uci'
 import system from './plugins/system'
 import session from './plugins/session'
+import network from './plugins/network'
 import CardList from './components/CardList.vue'
 import CardTable from './components/CardTable.vue'
 import UciMap from './components/UciMap.vue'
@@ -33,6 +34,7 @@ Vue.use(uci)
 Vue.use(system)
 Vue.use(session)
 Vue.use(helper)
+Vue.use(network)
 
 Vue.component('CardList', CardList)
 Vue.component('CardTable', CardTable)
