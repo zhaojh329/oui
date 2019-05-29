@@ -11,17 +11,24 @@
               <Input type="password" size="large" prefix="md-lock" v-model="confirmation" />
             </FormItem>
           </Form>
+          <Button type="primary" style="margin-right: 10px" @click="setPassword">Save</Button>
         </Card>
       </TabPane>
       <TabPane label="SSH Access" name="dropbear">
+        <UciMap config="dropbear">
+          <UciSection name="dropbear" title="SSH Server" typed>
+            <UciListValue name="Interface" title="Interface" :list="interfaces"></UciListValue>
+            <UciInputValue name="Port" title="Port"></UciInputValue>
+            <UciSwitchValue name="PasswordAuth" title="Password authentication" true-value="on" false-value="off" default-val="on"></UciSwitchValue>
+            <UciSwitchValue name="RootPasswordAuth" title="Allow root logins with password" true-value="on" false-value="off" default-val="on"></UciSwitchValue>
+            <UciSwitchValue name="GatewayPorts" title="Gateway ports" true-value="on" false-value="off" default-val="off"></UciSwitchValue>
+          </UciSection>
+        </UciMap>
       </TabPane>
       <TabPane label="SSH-Keys" name="sshkeys">
       </TabPane>
     </Tabs>
-    <div style="position:absolute; right: 100px; margin-top: 10px">
-      <Button type="primary" style="margin-right: 10px" @click="save">Save</Button>
-      <Button type="warning" @click="reset">Reset</Button>
-    </div>
+
   </div>
 </template>
 
@@ -33,22 +40,24 @@ export default {
     return {
       tab: 'password',
       password: '',
-      confirmation: ''
+      confirmation: '',
+      interfaces: []
     }
   },
   methods: {
-    save() {
-      if (this.tab === 'password') {
-        this.$session.get(r => {
-          this.$system.setPassword(r.username, this.password).then(() => {
-            this.$router.push('/login');
-          });
+    setPassword() {
+      this.$session.get(r => {
+        this.$system.setPassword(r.username, this.password).then(() => {
+          this.$router.push('/login');
         });
-      }
-    },
-    reset() {
-
+      });
     }
+  },
+  mounted() {
+    this.$network.load().then(() => {
+      const interfaces = this.$network.getInterfaces();
+      this.interfaces = interfaces.map(item => [item.interface]);
+    });
   }
 }
 </script>

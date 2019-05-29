@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot></slot>
-    <div style="position:absolute; right: 100px">
+    <div>
       <Button type="primary" style="margin-right: 10px" @click="apply">Save &  Apply</Button>
       <Button type="warning" @click="reset">Reset</Button>
     </div>
