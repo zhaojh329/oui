@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import {locale, Message, Layout, Sider, Header, Menu, Submenu, MenuItem, Dropdown, DropdownMenu, DropdownItem,
   Button, Card, Form, FormItem, Input, Icon, Avatar, Table, Breadcrumb, BreadcrumbItem, Tabs,
-  TabPane, Select, Option, Switch} from 'iview'
+  TabPane, Select, Option, Switch, Spin, Upload, Modal} from 'iview'
 
 import lang from 'iview/dist/locale/en-US'
 
@@ -31,7 +31,10 @@ Vue.component('TabPane', TabPane)
 Vue.component('Select', Select)
 Vue.component('Option', Option)
 Vue.component('i-switch', Switch)
+Vue.component('Upload', Upload)
 
 Vue.prototype.$Message = Message;
+Vue.prototype.$Spin = Spin;
+Vue.prototype.$Modal = Modal;
 
 import 'iview/dist/styles/iview.css'
