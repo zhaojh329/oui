@@ -24,7 +24,7 @@ define Package/oui-ui-core
   SECTION:=oui
   CATEGORY:=OUI
   TITLE:=oui ui core
-  DEPENDS:=+oui-rpc-core
+  DEPENDS:=+oui-rpc-core +oui-io-util
   URL:=https://github.com/zhaojh329/oui
 endef
 
