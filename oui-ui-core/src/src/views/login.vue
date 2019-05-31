@@ -1,43 +1,52 @@
 <template>
-  <Card class="login" title="Authorization Required">
-    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
-      <FormItem prop="username">
-        <Input v-model="formValidate.username" size="large" prefix="md-person" placeholder="Please input username" @on-enter="handleLogin"/>
-      </FormItem>
-      <FormItem prop="password">
-        <Input v-model="formValidate.password" type="password" size="large" prefix="md-lock" placeholder="Please input password" @on-enter="handleLogin"/>
-      </FormItem>
-      <FormItem>
-        <Button type="primary" size="large" long @click="handleLogin">Login</Button>
-      </FormItem>
-    </Form>
-  </Card>
+  <el-card header="Authorization Required" class="login">
+    <el-form ref="login" :model="form" :rules="rules" label-width="100px" label-position="left">
+      <el-form-item label="Username" prop="username">
+        <el-input v-model="form.username" prefix-icon="el-icon-user-solid" placeholder="Please input username"></el-input>
+      </el-form-item>
+      <el-form-item label="Password" prop="password">
+        <el-input v-model="form.password" type="password" prefix-icon="el-icon-lock" placeholder="Please input password"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleLogin" style="width: 70%">Login</el-button>
+        <el-button type="warning" @click="reset">Reset</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      formValidate: {},
-      ruleValidate: {
-        username: [{required: true, message: 'Username can not be empty'}]
+      form: {
+        username: '',
+        password: ''
+      },
+      rules: {
+        username: [
+          {required: true, message: 'Username can not be empty'}
+        ]
       }
     }
   },
   methods: {
     handleLogin() {
-      this.$refs.formValidate.validate(valid => {
+      this.$refs['login'].validate(valid => {
         if (valid) {
-          this.$session.login(this.formValidate.username, this.formValidate.password).then(valid => {
+          this.$session.login(this.form.username, this.form.password).then(valid => {
             if (valid) {
               this.$router.push('/');
               return;
             }
 
-            this.$Message.error('Login fail');
+            this.$message.error('Login fail');
           });
         }
       });
+    },
+    reset() {
+      this.$refs['login'].resetFields();
     }
   },
   mounted() {
@@ -46,13 +55,12 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .login {
-  width: 400px;
-  left: 50%;
-  margin-left: -200px;
-  height: 250px;
+  width: 500px;
   top: 50%;
-  margin-top: -125px;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
 </style>

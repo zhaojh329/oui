@@ -9,7 +9,6 @@
 <script>
 
 export default {
-  name: 'routes',
   data() {
     return {
       arp: {

@@ -1,11 +1,10 @@
 <template>
-  <Input v-model="syslog" type="textarea" :autosize="true" />
+  <el-input type="textarea" v-model="syslog" :autosize="true"></el-input>
 </template>
 
 <script>
 
 export default {
-  name: 'syslog',
   data() {
     return {
       syslog: ''

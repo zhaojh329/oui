@@ -1,7 +1,9 @@
 <template>
-  <Card :title="title" style="margin-bottom: 15px">
-    <Table :columns="columns" :data="data"></Table>
-  </Card>
+  <el-card :header="title" style="margin-bottom: 15px">
+    <el-table :columns="columns" :data="data">
+      <el-table-column v-for="item in columns" :key="item.key" :prop="item.key" :label="item.title"></el-table-column>
+    </el-table>
+  </el-card>
 </template>
 
 <script>

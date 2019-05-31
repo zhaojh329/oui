@@ -1,34 +1,34 @@
 <template>
-  <Table :columns="columns" :data="data" :height="tableHeight">
-    <template slot-scope="{ row }" slot="action">
-      <Button type="primary" style="margin-right: 5px" @click="kill(row.pid, 1)">Hang Up</Button>
-      <Button type="warning" style="margin-right: 5px" @click="kill(row.pid, 15)">Terminate</Button>
-      <Button type="error" style="margin-right: 5px" @click="kill(row.pid, 9)">Kill</Button>
+  <el-table :data="data" :height="tableHeight">
+    <el-table-column prop="pid" label="PID" width="100"></el-table-column>
+    <el-table-column prop="user" label="Owner" width="100"></el-table-column>
+    <el-table-column prop="command" label="Command"></el-table-column>
+    <el-table-column prop="cpu_percent" label="CPU usage(%)" width="120"></el-table-column>
+    <el-table-column prop="vsize_percent" label="Memory usage(%)" width="150"></el-table-column>
+    <el-table-column width="300">
+    <template slot-scope="{ row }">
+      <el-button type="primary" size="mini" @click="kill(row.pid, 1)">Hang Up</el-button>
+      <el-button type="warning" size="mini" @click="kill(row.pid, 15)">Terminate</el-button>
+      <el-button type="danger" size="mini" @click="kill(row.pid, 9)">Kill</el-button>
     </template>
-  </Table>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
 
 export default {
-  name: 'processes',
   data() {
     return {
       tableHeight: 0,
-      columns: [
-        {key: 'pid', title: 'PID', sortType: 'asc', width: 100},
-        {key: 'user', title: 'Owner', width: 100},
-        {key: 'command', title: 'Command'},
-        {key: 'cpu_percent', title: 'CPU usage(%)', width: 120},
-        {key: 'vsize_percent', title: 'Memory usage(%)', width: 150},
-        {slot: 'action', width: 300}
-      ],
       data: []
     }
   },
   methods: {
     kill(pid, signum) {
-      this.$ubus.call('system', 'signal', {pid, signum});
+      this.$ubus.call('system', 'signal', {pid, signum}).then(() => {
+        this.$message.success(`Send signal ${signum} to ${pid} successfully.`);
+      });
     },
     updateTableHeight() {
       this.tableHeight = document.body.clientHeight - 100;

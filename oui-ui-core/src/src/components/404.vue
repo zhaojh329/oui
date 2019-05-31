@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>404 Not Fount</h1>
+    <h1>{{ content }}</h1>
   </div>
 </template>
 
@@ -8,6 +8,11 @@
 
 export default {
   name: 'error_404',
+  data() {
+    return {
+      content: ''
+    }
+  },
   computed: {
     menus() {
       return this.$store.state.menus;
@@ -21,6 +26,8 @@ export default {
           vm.$router.addRoutes(routes);
           vm.$router.push(to.path);
         });
+      } else {
+        vm.content = '404 Not Fount';
       }
     });
   }

@@ -1,7 +1,10 @@
 <template>
-  <Card :title="title">
-    <Table :show-header="false" :columns="columns" :data="data"></Table>
-  </Card>
+  <el-card :header="title">
+    <el-table :show-header="false" :data="data">
+      <el-table-column prop="name"></el-table-column>
+      <el-table-column prop="value"></el-table-column>
+    </el-table>
+  </el-card>
 </template>
 
 <script>
@@ -13,10 +16,6 @@ export default {
   },
   data() {
     return {
-      columns: [
-        {key: 'name'},
-        {key: 'value'}
-      ],
       data: []
     }
   },

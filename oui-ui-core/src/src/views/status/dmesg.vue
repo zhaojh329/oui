@@ -1,11 +1,9 @@
 <template>
-  <Input v-model="dmesg" type="textarea" :autosize="true" />
+  <el-input type="textarea" v-model="dmesg" :autosize="true"></el-input>
 </template>
 
 <script>
-
 export default {
-  name: 'dmesg',
   data() {
     return {
       dmesg: ''

@@ -1,27 +1,28 @@
 <template>
-  <Table :columns="columns" :data="initscripts">
-    <template slot-scope="{ row }" slot="EnableDisable">
-      <Button :type="row.enabled ? 'info' : 'warning'" @click="EnableDisable(row)">{{ row.enabled ? 'Enabled' : 'Disabled' }}</Button>
-    </template>
-    <template slot-scope="{ row }" slot="action">
-      <Button type="primary" style="margin-right: 5px" @click="action(row, 'start')">Start</Button>
-      <Button type="primary" style="margin-right: 5px" @click="action(row, 'restart')">Restart</Button>
-      <Button type="error" style="margin-right: 5px" @click="action(row, 'stop')">Stop</Button>
-    </template>
-  </Table>
+  <el-table :data="initscripts" :default-sort="{prop: 'start', order: 'ascending'}">
+    <el-table-column prop="start" label="Start priority"></el-table-column>
+    <el-table-column prop="name" label="Initscript"></el-table-column>
+    <el-table-column prop="name" label="Enable/Disable">
+      <template slot-scope="{ row }">
+        <el-button :type="row.enabled ? 'success' : 'warning'" size="mini" @click="EnableDisable(row)">{{ row.enabled ? 'Enabled' : 'Disabled' }}</el-button>
+      </template>
+    </el-table-column>
+    <el-table-column>
+      <template slot-scope="{ row }">
+        <el-button type="primary" size="mini" @click="action(row, 'start')">Start</el-button>
+        <el-button type="primary" size="mini" @click="action(row, 'restart')">Restart</el-button>
+        <el-button type="danger" size="mini" @click="action(row, 'stop')">Stop</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
+import { setTimeout } from 'timers';
 export default {
   name: 'startup',
   data() {
     return {
-      columns: [
-        {key: 'start', title: 'Start priority', sortType: 'asc'},
-        {key: 'name', title: 'Initscript'},
-        {slot: 'EnableDisable', title: 'Enable/Disable'},
-        {slot: 'action'}
-      ],
       initscripts: []
     }
   },
@@ -33,9 +34,13 @@ export default {
     },
     EnableDisable(init) {
       if (init.enabled)
-        this.$system.initDisable(init.name).then(this.load);
+        this.$system.initDisable(init.name);
       else
-        this.$system.initEnable(init.name).then(this.load);
+        this.$system.initEnable(init.name);
+
+      setTimeout(() => {
+        this.load();
+      }, 1000);
     },
     action(init, op) {
       if (op === 'start')
