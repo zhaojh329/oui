@@ -11,7 +11,7 @@ const uci = {
 
 uci.load = function(config) {
   return new Promise(resolve => {
-    if (this.state[config]) {
+    if (this.state.values[config]) {
       resolve();
       return;
     }
