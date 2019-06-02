@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="data" :height="tableHeight">
+  <el-table :data="data">
     <el-table-column prop="pid" label="PID" width="100"></el-table-column>
     <el-table-column prop="user" label="Owner" width="100"></el-table-column>
     <el-table-column prop="command" label="Command"></el-table-column>
@@ -20,7 +20,6 @@
 export default {
   data() {
     return {
-      tableHeight: 0,
       data: []
     }
   },
@@ -29,17 +28,9 @@ export default {
       this.$ubus.call('system', 'signal', {pid, signum}).then(() => {
         this.$message.success(`Send signal ${signum} to ${pid} successfully.`);
       });
-    },
-    updateTableHeight() {
-      this.tableHeight = document.body.clientHeight - 100;
     }
   },
   mounted() {
-    this.updateTableHeight();
-    window.addEventListener('resize', () => {
-      this.updateTableHeight();
-    });
-
     this.$ubus.call('oui.system', 'process_list').then(r => {
       this.data = r.processes;
     });
