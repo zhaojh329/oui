@@ -1,7 +1,7 @@
 <template>
   <el-card header="Authorization Required" class="login">
-    <el-form ref="login" :model="form" :rules="rules" label-width="100px" label-position="left">
-      <el-form-item label="Username" prop="username">
+    <el-form ref="login" :model="form" label-width="100px" label-position="left">
+      <el-form-item label="Username" prop="username" required>
         <el-input v-model="form.username" prefix-icon="el-icon-user-solid" placeholder="Please input username"></el-input>
       </el-form-item>
       <el-form-item label="Password" prop="password">
@@ -22,11 +22,6 @@ export default {
       form: {
         username: '',
         password: ''
-      },
-      rules: {
-        username: [
-          {required: true, message: 'Username can not be empty'}
-        ]
       }
     }
   },
