@@ -14,15 +14,17 @@ import uci from './plugins/uci'
 import system from './plugins/system'
 import session from './plugins/session'
 import network from './plugins/network'
+
 import CardList from './components/CardList.vue'
 import CardTable from './components/CardTable.vue'
-import UciMap from './components/UciMap.vue'
+
+import UciForm from './components/UciForm.vue'
+import UciTabs from './components/UciTabs.vue'
+import UciBadge from './components/UciBadge.vue'
 import UciSection from './components/UciSection.vue'
-import UciValue from './components/UciValue.vue'
-import UciInputValue from './components/UciInputValue.vue'
-import UciListValue from './components/UciListValue.vue'
-import UciSwitchValue from './components/UciSwitchValue.vue'
-import UciDynamicList from './components/UciDynamicList.vue'
+import UciInput from './components/UciInput.vue'
+import UciList from './components/UciList.vue'
+import UciSwitch from './components/UciSwitch.vue'
 
 Vue.config.productionTip = false
 
@@ -39,13 +41,14 @@ Vue.use(network)
 
 Vue.component('CardList', CardList)
 Vue.component('CardTable', CardTable)
-Vue.component('UciMap', UciMap)
+
+Vue.component('UciForm', UciForm)
+Vue.component('UciTabs', UciTabs)
+Vue.component('UciBadge', UciBadge)
 Vue.component('UciSection', UciSection)
-Vue.component('UciValue', UciValue)
-Vue.component('UciInputValue', UciInputValue)
-Vue.component('UciListValue', UciListValue)
-Vue.component('UciSwitchValue', UciSwitchValue)
-Vue.component('UciDynamicList', UciDynamicList)
+Vue.component('UciInput', UciInput)
+Vue.component('UciList', UciList)
+Vue.component('UciSwitch', UciSwitch)
 
 new Vue({
   router,

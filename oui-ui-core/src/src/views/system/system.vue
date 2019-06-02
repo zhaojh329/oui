@@ -1,44 +1,35 @@
 <template>
-  <UciMap config="system">
-    <UciSection name="system" title="System Properties" typed>
-      <Tabs v-model="systemTab">
-        <TabPane label="General Settings" name="general">
-          <div v-show="systemTab === 'general'">
-            <UciInputValue title="Local Time" :value="localTime" readonly></UciInputValue>
-            <UciInputValue name="hostname" title="Hostname"></UciInputValue>
-            <UciListValue name="zonename" title="Timezone" :list="zoneinfo" default-val="UTC" @on-change="onTimezoneChange"></UciListValue>
-          </div>
-        </TabPane>
-        <TabPane label="Logging" name="logging">
-          <div v-show="systemTab === 'logging'">
-            <UciInputValue name="log_size" title="System log buffer size"></UciInputValue>
-            <UciInputValue name="log_ip" title="External system log server"></UciInputValue>
-            <UciInputValue name="log_port" title="External system log server port"></UciInputValue>
-            <UciListValue name="log_proto" title="External system log server protocol" :list="logProtos"></UciListValue>
-            <UciInputValue name="log_file" title="Write system log to file"></UciInputValue>
-            <UciListValue name="conloglevel" title="Log output level" :list="conlogLevels"></UciListValue>
-            <UciListValue name="cronloglevel" title="Cron Log Level" :list="cronlogLevels"></UciListValue>
-          </div>
-        </TabPane>
-      </Tabs>
-    </UciSection>
-    <UciSection name="ntp" title="Time Synchronization">
-      <UciSwitchValue title="Enable NTP client" :value="ntpCliEnabled" @on-change="onNtpCliChange"></UciSwitchValue>
-      <UciSwitchValue title="Provide NTP server" name="enable_server"></UciSwitchValue>
-      <UciDynamicList title="NTP server candidates" name="server"></UciDynamicList>
-    </UciSection>
-  </UciMap>
+  <uci-form config="system">
+    <uci-section title="System Properties" name="system" typed>
+      <uci-tabs :tabpanes="[['general', 'General Settings'], ['logging', 'Logging']]">
+        <template v-slot:general>
+          <uci-input tab="general" label="Local Time" :value="localTime" readonly></uci-input>
+          <uci-input tab="general" label="Hostname" name="hostname" required></uci-input>
+          <uci-list tab="general" label="Timezone" name="zonename" initial="UTC" :options="zoneinfo"></uci-list>
+        </template>
+        <template v-slot:logging>
+          <uci-input tab="logging" label="System log buffer size" name="log_size" placeholder="16"></uci-input>
+          <uci-input tab="logging" label="External system log server" name="log_ip" placeholder="0.0.0.0"></uci-input>
+          <uci-input tab="logging" label="External system log server port" name="log_port" placeholder="514"></uci-input>
+          <uci-list tab="logging" label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-list>
+          <uci-input tab="logging" label="Write system log to file" name="log_file"></uci-input>
+          <uci-list tab="logging" label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-list>
+          <uci-list tab="logging" label="Cron Log Level" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-list>
+        </template>
+      </uci-tabs>
+    </uci-section>
+    <uci-section title="Time Synchronization" name="ntp">
+      <uci-switch label="Enable NTP client" :value="ntpCliEnabled"></uci-switch>
+    </uci-section>
+  </uci-form>
 </template>
 
 <script>
-
 import zoneinfo from '@/plugins/zoneinfo'
 
 export default {
-  name: 'system',
   data() {
     return {
-      systemTab: 'general',
       localTime: '',
       ntpCliEnabled: '0',
       logProtos: [
@@ -67,44 +58,13 @@ export default {
       return zoneinfo.map(item => [item[0]]);
     }
   },
-  timers: {
-    getLocalTime: {time: 5000, autostart: true, repeat: true, immediate: true}
-  },
-  methods: {
-    getLocalTime() {
-      this.$system.getSystemInfo().then(r => {
-        const date = new Date(r.localtime * 1000);
-        this.localTime = date.toString()
-      });
-    },
-    onTimezoneChange(data) {
-      for (let i = 0; i < zoneinfo.length; i++) {
-        if (zoneinfo[i][0] === data.value) {
-          this.$uci.set(data.config, data.sid, 'timezone', zoneinfo[i][1]);
-          return;
-        }
-      }
-      this.$uci.set(data.config, data.sid, 'timezone', 'UTC');
-    },
-    onNtpCliChange(data) {
-      if (data.value === '1') {
-        this.$system.initStart('sysntpd').then(() => {
-          this.$system.initEnable('sysntpd').then(() => {
-            this.$Message.success('NTP client enabled');
-          });
-        });
-      } else {
-        this.$system.initStop('sysntpd').then(() => {
-          this.$system.initDisable('sysntpd').then(() => {
-            this.$Message.success('NTP client disabled');
-          });
-        });
-      }
-    }
-  },
   mounted() {
     this.$system.initEnabled('sysntpd').then(enabled => {
       this.ntpCliEnabled = enabled ? '1' : '0';
+    });
+
+    this.$system.getSystemInfo().then(r => {
+      this.localTime = new Date(r.localtime * 1000).toString();
     });
   }
 }

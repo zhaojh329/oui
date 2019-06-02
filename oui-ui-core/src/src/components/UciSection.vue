@@ -1,9 +1,7 @@
 <template>
-  <Card style="margin-bottom: 15px" :title="title">
-    <Form :label-width="200">
-      <slot></slot>
-    </Form>
-  </Card>
+  <el-card :header="title">
+    <slot></slot>
+  </el-card>
 </template>
 
 <script>
@@ -20,15 +18,18 @@ export default {
     }
   },
   computed: {
-    parent() {
-      return this.$getParent('UciMap');
-    },
     config() {
-      return this.parent.config;
+      return this.$getParent('UciForm').config;
+    },
+    loaded() {
+      return this.$getParent('UciForm').loaded;
     }
   },
-  mounted() {
-    this.$bus.$on(this.config + '-loaded', () => {
+  watch: {
+    loaded(n) {
+      if (n > 1)
+        return;
+
       if (this.typed) {
         const values = this.$uci.get(this.config);
         Object.keys(values).forEach(sid => {
@@ -39,7 +40,7 @@ export default {
       } else {
         this.sid = this.name;
       }
-    });
+    }
   }
 }
 </script>
