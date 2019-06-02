@@ -10,10 +10,15 @@
 </template>
 
 <script>
+import UciBadge from './UciBadge.vue'
+
 export default {
   name: 'UciTabs',
   props: {
     tabpanes: Array
+  },
+  components: {
+    'UciBadge': UciBadge
   },
   filters: {
     tabErrorNum: function(validated, tab) {

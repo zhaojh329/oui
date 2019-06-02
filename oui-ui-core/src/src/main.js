@@ -20,7 +20,6 @@ import CardTable from './components/CardTable.vue'
 
 import UciForm from './components/UciForm.vue'
 import UciTabs from './components/UciTabs.vue'
-import UciBadge from './components/UciBadge.vue'
 import UciSection from './components/UciSection.vue'
 import UciInput from './components/UciInput.vue'
 import UciList from './components/UciList.vue'
@@ -44,7 +43,6 @@ Vue.component('CardTable', CardTable)
 
 Vue.component('UciForm', UciForm)
 Vue.component('UciTabs', UciTabs)
-Vue.component('UciBadge', UciBadge)
 Vue.component('UciSection', UciSection)
 Vue.component('UciInput', UciInput)
 Vue.component('UciList', UciList)
