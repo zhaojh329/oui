@@ -14,7 +14,6 @@ export default {
   name: 'UciValue',
   props: {
     type: String,
-    tab: String,
     label: String,
     name: String,
     required: Boolean,
@@ -44,7 +43,12 @@ export default {
   created() {
     if (typeof(this.name) === 'undefined')
       return;
-    this.$getParent('UciForm').addFormItem(this.name, this.tab);
+
+    let tab = undefined;
+    const tabPane = this.$getParent('ElTabPane', 3);
+    if (tabPane !== null)
+      tab = tabPane.name;
+    this.$getParent('UciForm').addFormItem(this.name, tab);
   },
   watch: {
     ivalue(v) {

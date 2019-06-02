@@ -3,18 +3,18 @@
     <uci-section title="System Properties" name="system" typed>
       <uci-tabs :tabpanes="[['general', 'General Settings'], ['logging', 'Logging']]">
         <template v-slot:general>
-          <uci-input tab="general" label="Local Time" :value="localTime" readonly></uci-input>
-          <uci-input tab="general" label="Hostname" name="hostname" required></uci-input>
-          <uci-list tab="general" label="Timezone" name="zonename" initial="UTC" :options="zoneinfo"></uci-list>
+          <uci-input label="Local Time" :value="localTime" readonly></uci-input>
+          <uci-input label="Hostname" name="hostname" required></uci-input>
+          <uci-list label="Timezone" name="zonename" initial="UTC" :options="zoneinfo"></uci-list>
         </template>
         <template v-slot:logging>
-          <uci-input tab="logging" label="System log buffer size" name="log_size" placeholder="16"></uci-input>
-          <uci-input tab="logging" label="External system log server" name="log_ip" placeholder="0.0.0.0"></uci-input>
-          <uci-input tab="logging" label="External system log server port" name="log_port" placeholder="514"></uci-input>
-          <uci-list tab="logging" label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-list>
-          <uci-input tab="logging" label="Write system log to file" name="log_file"></uci-input>
-          <uci-list tab="logging" label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-list>
-          <uci-list tab="logging" label="Cron Log Level" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-list>
+          <uci-input label="System log buffer size" name="log_size" placeholder="16"></uci-input>
+          <uci-input label="External system log server" name="log_ip" placeholder="0.0.0.0"></uci-input>
+          <uci-input label="External system log server port" name="log_port" placeholder="514"></uci-input>
+          <uci-list label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-list>
+          <uci-input label="Write system log to file" name="log_file"></uci-input>
+          <uci-list label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-list>
+          <uci-list label="Cron Log Level" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-list>
         </template>
       </uci-tabs>
     </uci-section>
