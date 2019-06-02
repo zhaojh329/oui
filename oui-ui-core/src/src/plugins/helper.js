@@ -4,15 +4,22 @@ export default {
   install(Vue) {
     Vue.prototype.$bus = new Vue();
 
-    Vue.prototype.$getParent = function(name) {
+    Vue.prototype.$getParent = function(name, depth) {
       let parent = this.$parent;
 
       if (typeof(name) === 'undefined')
         return parent;
 
-      while (typeof(parent) !== 'undefined') {
+      if (typeof(depth) === 'undefined')
+        depth = 20;
+
+      while (typeof(parent) !== 'undefined' && depth-- > 0) {
         if (parent.$options.name === name)
           return parent;
+
+        if (depth === 0)
+          return null;
+
         parent = parent.$parent;
       }
 
