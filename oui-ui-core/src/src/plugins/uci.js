@@ -9,9 +9,9 @@ const uci = {
   }
 }
 
-uci.load = function(config) {
+uci.load = function(config, force) {
   return new Promise(resolve => {
-    if (this.state.values[config]) {
+    if (!force && this.state.values[config]) {
       resolve();
       return;
     }
