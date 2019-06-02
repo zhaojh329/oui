@@ -7,10 +7,12 @@ export default {
     Vue.prototype.$getParent = function(name) {
       let parent = this.$parent;
 
-      if (!name)
+      if (typeof(name) === 'undefined')
         return parent;
 
-      while (parent.$options.name !== name) {
+      while (typeof(parent) !== 'undefined') {
+        if (parent.$options.name === name)
+          return parent;
         parent = parent.$parent;
       }
 
