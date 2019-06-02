@@ -3,12 +3,12 @@
     <el-table-column prop="start" label="Start priority"></el-table-column>
     <el-table-column prop="name" label="Initscript"></el-table-column>
     <el-table-column prop="name" label="Enable/Disable">
-      <template slot-scope="{ row }">
+      <template v-slot="{ row }">
         <el-button :type="row.enabled ? 'success' : 'warning'" size="mini" @click="EnableDisable(row)">{{ row.enabled ? 'Enabled' : 'Disabled' }}</el-button>
       </template>
     </el-table-column>
     <el-table-column>
-      <template slot-scope="{ row }">
+      <template v-slot="{ row }">
         <el-button type="primary" size="mini" @click="action(row, 'start')">Start</el-button>
         <el-button type="primary" size="mini" @click="action(row, 'restart')">Restart</el-button>
         <el-button type="danger" size="mini" @click="action(row, 'stop')">Stop</el-button>
