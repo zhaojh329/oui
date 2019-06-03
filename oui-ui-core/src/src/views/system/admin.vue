@@ -1,35 +1,34 @@
 <template>
-  <div>
-    <Tabs v-model="tab">
-      <TabPane label="Router Password" name="password">
-        <Card title="Router Password">
-          <Form :label-width="200">
-            <FormItem label="Password">
-              <Input type="password" size="large" prefix="md-lock" v-model="password" />
-            </FormItem>
-            <FormItem label="Confirmation">
-              <Input type="password" size="large" prefix="md-lock" v-model="confirmation" />
-            </FormItem>
-          </Form>
-          <Button type="primary" style="margin-right: 10px" @click="setPassword">Save</Button>
-        </Card>
-      </TabPane>
-      <TabPane label="SSH Access" name="dropbear">
-        <UciMap config="dropbear">
-          <UciSection name="dropbear" title="SSH Server" typed>
-            <UciListValue name="Interface" title="Interface" :list="interfaces"></UciListValue>
-            <UciInputValue name="Port" title="Port"></UciInputValue>
-            <UciSwitchValue name="PasswordAuth" title="Password authentication" true-value="on" false-value="off" default-val="on"></UciSwitchValue>
-            <UciSwitchValue name="RootPasswordAuth" title="Allow root logins with password" true-value="on" false-value="off" default-val="on"></UciSwitchValue>
-            <UciSwitchValue name="GatewayPorts" title="Gateway ports" true-value="on" false-value="off" default-val="off"></UciSwitchValue>
-          </UciSection>
-        </UciMap>
-      </TabPane>
-      <TabPane label="SSH-Keys" name="sshkeys">
-      </TabPane>
-    </Tabs>
-
-  </div>
+  <el-tabs value="password">
+    <el-tab-pane label="Router Password" name="password">
+      <el-card title="Router Password" style="width: 500px">
+        <el-form label-width="200px" :model="passwordForm" :rules="passwordRules" ref="passwordForm">
+          <el-form-item label="Password" prop="password">
+            <el-input type="password" v-model="passwordForm.password"></el-input>
+          </el-form-item>
+          <el-form-item label="Confirmation" prop="confirm">
+            <el-input type="password" v-model="passwordForm.confirm"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="mini"  @click="setPassword" style="float: right;margin-right: 50px;">Save</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </el-tab-pane>
+    <el-tab-pane label="SSH Access" name="dropbear">
+      <uci-form config="dropbear">
+        <uci-section title="SSH Server" name="dropbear" typed>
+          <uci-list label="Interface" name="Interface" :options="interfaces"></uci-list>
+          <uci-input label="Port" name="Port" placeholder="22"></uci-input>
+          <uci-switch label="Password authentication" name="PasswordAuth" initial="on" active-value="on" inactive-value="off"></uci-switch>
+          <uci-switch label="Allow root logins with password" name="RootPasswordAuth" initial="on" active-value="on" inactive-value="off"></uci-switch>
+          <uci-switch label="Gateway ports" name="GatewayPorts" active-value="on" inactive-value="off"></uci-switch>
+        </uci-section>
+      </uci-form>
+    </el-tab-pane>
+    <el-tab-pane label="SSH-Keys" name="sshkeys">
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
@@ -37,17 +36,42 @@
 export default {
   name: 'admin',
   data() {
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please enter your password'));
+      } else {
+        if (this.passwordForm.confirm !== '')
+          this.$refs['passwordForm'].validateField('confirm');
+        callback();
+      }
+    };
+
+    const validatorConfirm = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please enter your password again'));
+      } else if (value !== this.passwordForm.password) {
+        callback(new Error('Inconsistent input password twice!'));
+      } else {
+        callback();
+      }
+    };
+
     return {
-      tab: 'password',
-      password: '',
-      confirmation: '',
+      passwordForm: {
+        password: '',
+        confirm: ''
+      },
+      passwordRules: {
+        password: [{validator: validatePass}],
+        confirm: [{validator: validatorConfirm}]
+      },
       interfaces: []
     }
   },
   methods: {
     setPassword() {
       this.$session.get(r => {
-        this.$system.setPassword(r.username, this.password).then(() => {
+        this.$system.setPassword(r.username, this.passwordForm.password).then(() => {
           this.$router.push('/login');
         });
       });
