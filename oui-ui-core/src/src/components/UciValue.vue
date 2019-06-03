@@ -100,7 +100,7 @@ export default {
           this.onLoad(resolve);
         }).then(v => {
           this.ivalue = v;
-          this.iinitial = this.ivalue;
+          this.updateInitial();
         });
         return;
       }
@@ -111,10 +111,13 @@ export default {
       if (this.uci)
         this.ivalue = this.$uci.get(this.config, this.sid, this.name) || this.initial;
 
-      if (this.iinitial === null) {
-        this.iinitial = this.ivalue;
-        this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
-      }
+      this.updateInitial();
+    }
+  },
+  methods: {
+    updateInitial() {
+      this.iinitial = this.ivalue;
+      this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
     }
   }
 }
