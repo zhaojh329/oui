@@ -34,6 +34,10 @@ export default {
 </script>
 
 <style lang="scss">
+.el-main {
+  background-color: white;
+}
+
 .main-enter, .main-leave-to {
   opacity: 0;
   transform: translateY(30px);
