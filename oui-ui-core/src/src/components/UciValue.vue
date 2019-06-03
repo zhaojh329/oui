@@ -1,7 +1,7 @@
 <template>
   <el-form-item :label="label" :prop="formItemProp" :rules="rules" v-if="show">
     <el-input v-if="type === 'input'" :readonly="readonly" v-model="ivalue" :placeholder="placeholder"></el-input>
-    <el-switch v-else-if="type === 'switch'" v-model="ivalue" active-value="1" inactive-value="0"></el-switch>
+    <el-switch v-else-if="type === 'switch'" v-model="ivalue" :active-value="activeValue" :inactive-value="inactiveValue"></el-switch>
     <el-select v-else-if="type === 'list'" v-model="ivalue">
       <el-option v-for="item in options" :key="item[0]" :label="item[1] || item[0]" :value="item[0]"></el-option>
     </el-select>
@@ -45,7 +45,15 @@ export default {
     onLoad: Function,
     /* If this function is provided, it will be called when the user clicks the apply button */
     onSave: Function,
-    depends: [String, Object]
+    depends: [String, Object],
+    activeValue: {
+      type: String,
+      default: '1'
+    },
+    inactiveValue: {
+      type: String,
+      default: '0'
+    }
   },
   data() {
     return {

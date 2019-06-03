@@ -1,5 +1,5 @@
 <template>
-  <uci-value :label="label" :name="name" :value="value" :initial="initial" :depends="depends" :on-load="onLoad" :on-save="onSave" type="switch"></uci-value>
+  <uci-value :label="label" :name="name" :value="value" :initial="initial" :depends="depends" :on-load="onLoad" :on-save="onSave" type="switch" :active-value="activeValue" :inactive-value="inactiveValue"></uci-value>
 </template>
 
 <script>
@@ -14,7 +14,15 @@ export default {
     initial: String,
     onLoad: Function,
     onSave: Function,
-    depends: [String, Object]
+    depends: [String, Object],
+    activeValue: {
+      type: String,
+      default: '1'
+    },
+    inactiveValue: {
+      type: String,
+      default: '0'
+    }
   },
   components: {
     'UciValue': UciValue
