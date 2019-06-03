@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="label" :prop="formItemProp" :rules="rules">
+  <el-form-item :label="label" :prop="formItemProp" :rules="rules" v-if="show">
     <el-input v-if="type === 'input'" :readonly="readonly" v-model="ivalue" :placeholder="placeholder"></el-input>
     <el-switch v-else-if="type === 'switch'" v-model="ivalue" active-value="1" inactive-value="0"></el-switch>
     <el-select v-else-if="type === 'list'" v-model="ivalue">
@@ -44,10 +44,12 @@ export default {
     /* If this function is provided, the form loads the value by the function instead of from uci */
     onLoad: Function,
     /* If this function is provided, it will be called when the user clicks the apply button */
-    onSave: Function
+    onSave: Function,
+    depends: [String, Object]
   },
   data() {
     return {
+      show: true,
       ivalue: null,
       iinitial: null,
       inputDlistVisible: false,
@@ -125,6 +127,36 @@ export default {
         this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
       }
     },
+    toggleDepends() {
+      const uciValues = this.$getParent('UciSection').uciValues;
+
+      Object.keys(uciValues).forEach(key => {
+        const uciValue = uciValues[key];
+        let depends = uciValue.depends;
+
+        if (uciValue === this)
+          return;
+
+        if (typeof(depends) === 'undefined')
+          return;
+
+        if (typeof(depends) === 'string')
+          depends = {[depends]: '1'};
+
+        if (Object.keys(depends).indexOf(this.name) > -1) {
+          let show = true;
+
+          for (let name in depends) {
+            if (depends[name] !== uciValues[name].ivalue) {
+              show = false;
+              break;
+            }
+          }
+
+          uciValue.show = show;
+        }
+      });
+    },
     updateFormValue() {
       if (typeof(this.name) === 'undefined')
         return;
@@ -133,6 +165,8 @@ export default {
 
       if (this.ivalue !== this.iinitial && this.uci)
         this.$uci.set(this.config, this.sid, this.name, this.ivalue);
+
+      this.toggleDepends();
     },
     handleDelDlist(tag) {
       this.ivalue.splice(this.ivalue.indexOf(tag), 1);
@@ -150,6 +184,10 @@ export default {
       this.inputDlistVisible = false;
       this.inputDlistValue = '';
     }
+  },
+  created() {
+    const s = this.$getParent('UciSection');
+    s.uciValues[this.name] = this;
   }
 }
 </script>

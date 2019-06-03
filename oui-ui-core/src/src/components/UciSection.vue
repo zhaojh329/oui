@@ -14,7 +14,8 @@ export default {
   },
   data() {
     return {
-      sid: ''
+      sid: '',
+      uciValues: {}
     }
   },
   computed: {
