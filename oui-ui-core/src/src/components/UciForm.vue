@@ -26,7 +26,7 @@ export default {
     }
   },
   methods: {
-    saveCustom(uciApplied) {
+    saveCustom(uciApplied, loading) {
       const promises = [];
 
       Object.keys(this.saveFuns).forEach(key => {
@@ -43,28 +43,35 @@ export default {
       });
 
       if (promises.length === 0) {
+        loading.close();
+
         if (!uciApplied) {
           this.$message.warning('There are no changes to apply');
           return;
         }
 
         this.load(true);
-        this.$message.success('Save & Apply successfully');
+        this.$message.success('Configuration has been applied');
         return;
       }
 
       Promise.all(promises).then(() => {
+        loading.close();
         this.load(true);
-        this.$message.success('Save & Apply successfully');
+        this.$message.success('Configuration has been applied');
       });
     },
     apply() {
+      const loading = this.$loading({
+        text: 'Waiting for configuration to be applied...'
+      });
+
       this.$uci.save().then(() => {
         this.$uci.apply().then(() => {
-          this.saveCustom(true);
+          this.saveCustom(true, loading);
         }).catch(e => {
           if (e.code === 5)
-            this.saveCustom(false);
+            this.saveCustom(false, loading);
           else
             throw e;
         });
