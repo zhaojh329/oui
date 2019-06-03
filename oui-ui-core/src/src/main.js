@@ -24,6 +24,7 @@ import UciSection from './components/UciSection.vue'
 import UciInput from './components/UciInput.vue'
 import UciList from './components/UciList.vue'
 import UciSwitch from './components/UciSwitch.vue'
+import UciDlist from './components/UciDlist.vue'
 
 Vue.config.productionTip = false
 
@@ -47,6 +48,7 @@ Vue.component('UciSection', UciSection)
 Vue.component('UciInput', UciInput)
 Vue.component('UciList', UciList)
 Vue.component('UciSwitch', UciSwitch)
+Vue.component('UciDlist', UciDlist)
 
 new Vue({
   router,

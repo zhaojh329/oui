@@ -20,6 +20,7 @@
     </uci-section>
     <uci-section title="Time Synchronization" name="ntp">
       <uci-switch label="Enable NTP client" name="enable" :uci="false" :on-load="ntpCliEnabled" :on-save="ntpCliSave"></uci-switch>
+      <uci-dlist label="NTP server candidates" name="server"></uci-dlist>
     </uci-section>
   </uci-form>
 </template>

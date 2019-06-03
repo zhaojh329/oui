@@ -5,6 +5,11 @@
     <el-select v-else-if="type === 'list'" v-model="ivalue">
       <el-option v-for="item in options" :key="item[0]" :label="item[1] || item[0]" :value="item[0]"></el-option>
     </el-select>
+    <div v-else-if="type === 'dlist'" class="dlist">
+      <el-tag closable v-for="tag in ivalue" :key="tag" :disable-transitions="false" @close="handleDelDlist(tag)">{{ tag }}</el-tag>
+      <el-input v-if="inputDlistVisible" size="small" ref="inputDlist" v-model="inputDlistValue" @keyup.enter.native="handleInputDlistConfirm" @blur="handleInputDlistConfirm"></el-input>
+      <el-button v-else size="small" @click="showInputDlist">+ Add</el-button>
+    </div>
   </el-form-item>
 </template>
 
@@ -17,7 +22,7 @@ export default {
     type: {
       type: String,
       validator: function(value) {
-        return ['input', 'switch', 'list'].indexOf(value) !== -1;
+        return ['input', 'switch', 'list', 'dlist'].indexOf(value) !== -1;
       }
     },
     /* uci option name or a normal form item name */
@@ -43,8 +48,10 @@ export default {
   },
   data() {
     return {
-      ivalue: '',
-      iinitial: null
+      ivalue: null,
+      iinitial: null,
+      inputDlistVisible: false,
+      inputDlistValue: ''
     }
   },
   computed: {
@@ -85,14 +92,8 @@ export default {
         onSave: this.onSave
       });
     },
-    ivalue(v) {
-      if (typeof(this.name) === 'undefined')
-        return;
-
-      this.$getParent('UciForm').form[this.formItemProp] = v;
-
-      if (v !== this.iinitial && this.uci)
-        this.$uci.set(this.config, this.sid, this.name, v);
+    ivalue() {
+      this.updateFormValue();
     },
     loaded() {
       if (typeof(this.onLoad) !== 'undefined') {
@@ -116,9 +117,54 @@ export default {
   },
   methods: {
     updateInitial() {
-      this.iinitial = this.ivalue;
-      this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
+      if (Array.isArray(this.ivalue)) {
+        this.iinitial = Object.assign([], this.ivalue);
+        this.$getParent('UciForm').initials[this.formItemProp] = Object.assign([], this.ivalue);
+      } else {
+        this.iinitial = this.ivalue;
+        this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
+      }
+    },
+    updateFormValue() {
+      if (typeof(this.name) === 'undefined')
+        return;
+
+      this.$getParent('UciForm').form[this.formItemProp] = this.ivalue;
+
+      if (this.ivalue !== this.iinitial && this.uci)
+        this.$uci.set(this.config, this.sid, this.name, this.ivalue);
+    },
+    handleDelDlist(tag) {
+      this.ivalue.splice(this.ivalue.indexOf(tag), 1);
+    },
+    showInputDlist() {
+      this.inputDlistVisible = true;
+      this.$nextTick(() => {
+        this.$refs['inputDlist'].focus();
+      });
+    },
+    handleInputDlistConfirm() {
+      let inputValue = this.inputDlistValue;
+      if (inputValue)
+        this.ivalue.push(inputValue);
+      this.inputDlistVisible = false;
+      this.inputDlistValue = '';
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.dlist {
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    margin-bottom: 5px;
+  }
+
+  .el-button {
+    width: 100px;
+  }
+}
+</style>
