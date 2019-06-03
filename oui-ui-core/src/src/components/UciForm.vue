@@ -96,9 +96,11 @@ export default {
     },
     addFormItem(item) {
       this.$set(this.form, item.name, '');
-      this.$set(this.initials, item.name, '');
       this.$set(this.validated, item.name, {valid: true, tab: item.tab});
-      this.$set(this.saveFuns, item.name, item.onSave);
+
+      /* No need to track */
+      this.initials[item.name] = '';
+      this.saveFuns[item.name] = item.onSave;
     },
     onValidate(name, valid) {
       this.validated[name].valid = valid;
