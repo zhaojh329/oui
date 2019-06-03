@@ -3,7 +3,7 @@
     <uci-section title="System Properties" name="system" typed>
       <uci-tabs :tabpanes="[['general', 'General Settings'], ['logging', 'Logging']]">
         <template v-slot:general>
-          <uci-input label="Local Time" :value="localTime" readonly></uci-input>
+          <uci-input label="Local Time" :on-load="localTime" readonly></uci-input>
           <uci-input label="Hostname" name="hostname" required></uci-input>
           <uci-list label="Timezone" name="zonename" initial="UTC" :options="zoneinfo"></uci-list>
         </template>
@@ -30,7 +30,6 @@ import zoneinfo from '@/plugins/zoneinfo'
 export default {
   data() {
     return {
-      localTime: '',
       logProtos: [
         ['udp', 'UDP'],
         ['tcp', 'TCP']
@@ -77,12 +76,13 @@ export default {
       this.$system.initEnabled('sysntpd').then(enabled => {
         resolve(enabled ? '1' : '0');
       });
+    },
+    localTime(resolve) {
+      this.$system.getSystemInfo().then(r => {
+        const localTime = new Date(r.localtime * 1000).toString();
+        resolve(localTime);
+      });
     }
-  },
-  mounted() {
-    this.$system.getSystemInfo().then(r => {
-      this.localTime = new Date(r.localtime * 1000).toString();
-    });
   }
 }
 </script>
