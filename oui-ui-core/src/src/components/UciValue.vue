@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="label" :prop="formItemProp" :required="required">
+  <el-form-item :label="label" :prop="formItemProp" :rules="rules">
     <el-input v-if="type === 'input'" :readonly="readonly" v-model="ivalue" :placeholder="placeholder"></el-input>
     <el-switch v-else-if="type === 'switch'" v-model="ivalue" active-value="1" inactive-value="0"></el-switch>
     <el-select v-else-if="type === 'list'" v-model="ivalue">
@@ -41,6 +41,14 @@ export default {
     },
     formItemProp() {
       return `${this.sid}-${this.name}`;
+    },
+    rules() {
+      const rule = [];
+
+      if (this.required)
+        rule.push({required: true, message: `${this.name} is required`});
+
+      return rule;
     }
   },
   watch: {
@@ -52,6 +60,7 @@ export default {
       const tabPane = this.$getParent('ElTabPane', 3);
       if (tabPane !== null)
         tab = tabPane.name;
+
       this.$getParent('UciForm').addFormItem(this.formItemProp, tab);
     },
     ivalue(v) {
