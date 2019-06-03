@@ -25,8 +25,6 @@ export default {
     /* form item label */
     label: String,
     required: Boolean,
-    /* If this property is provided, the form loads the value from the property instead of from uci */
-    value: String,
     /* If load from uci fails, the value of the property is used as the form value. */
     initial: String,
     placeholder: String,
@@ -38,6 +36,9 @@ export default {
       type: Boolean,
       default: true
     },
+    /* If this function is provided, the form loads the value by the function instead of from uci */
+    onLoad: Function,
+    /* If this function is provided, it will be called when the user clicks the apply button */
     onSave: Function
   },
   data() {
@@ -93,17 +94,16 @@ export default {
       if (v !== this.iinitial && this.uci)
         this.$uci.set(this.config, this.sid, this.name, v);
     },
-    value(v) {
-      this.ivalue = v;
-
-      if (this.iinitial === null) {
-        this.iinitial = this.ivalue;
-        this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
-      }
-    },
     loaded() {
-      if (typeof(this.value) !== 'undefined')
+      if (typeof(this.onLoad) !== 'undefined') {
+        new Promise(resolve => {
+          this.onLoad(resolve);
+        }).then(v => {
+          this.ivalue = v;
+          this.iinitial = this.ivalue;
+        });
         return;
+      }
 
       if (typeof(this.name) === 'undefined')
         return;

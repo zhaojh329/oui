@@ -1,5 +1,5 @@
 <template>
-  <uci-value :label="label" :name="name" :value="value" :initial="initial" :on-save="onSave" type="list" :options="options"></uci-value>
+  <uci-value :label="label" :name="name" :value="value" :initial="initial" :on-load="onLoad" :on-save="onSave" type="list" :options="options"></uci-value>
 </template>
 
 <script>
@@ -13,6 +13,7 @@ export default {
     value: String,
     initial: String,
     options: Array,
+    onLoad: Function,
     onSave: Function
   },
   components: {

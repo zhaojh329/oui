@@ -19,7 +19,7 @@
       </uci-tabs>
     </uci-section>
     <uci-section title="Time Synchronization" name="ntp">
-      <uci-switch label="Enable NTP client" name="enable" :uci="false" :value="ntpCliEnabled" :on-save="ntpCliSave"></uci-switch>
+      <uci-switch label="Enable NTP client" name="enable" :uci="false" :on-load="ntpCliEnabled" :on-save="ntpCliSave"></uci-switch>
     </uci-section>
   </uci-form>
 </template>
@@ -31,7 +31,6 @@ export default {
   data() {
     return {
       localTime: '',
-      ntpCliEnabled: '0',
       logProtos: [
         ['udp', 'UDP'],
         ['tcp', 'TCP']
@@ -73,13 +72,14 @@ export default {
           });
         });
       }
+    },
+    ntpCliEnabled(resolve) {
+      this.$system.initEnabled('sysntpd').then(enabled => {
+        resolve(enabled ? '1' : '0');
+      });
     }
   },
   mounted() {
-    this.$system.initEnabled('sysntpd').then(enabled => {
-      this.ntpCliEnabled = enabled ? '1' : '0';
-    });
-
     this.$system.getSystemInfo().then(r => {
       this.localTime = new Date(r.localtime * 1000).toString();
     });
