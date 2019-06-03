@@ -13,14 +13,25 @@
 export default {
   name: 'UciValue',
   props: {
-    type: String,
-    label: String,
+    /* component type */
+    type: {
+      type: String,
+      validator: function(value) {
+        return ['input', 'switch', 'list'].indexOf(value) !== -1;
+      }
+    },
+    /* uci option name or a normal form item name */
     name: String,
+    /* form item label */
+    label: String,
     required: Boolean,
+    /* If this property is provided, the form loads the value from the property instead of from uci */
     value: String,
+    /* If load from uci fails, the value of the property is used as the form value. */
     initial: String,
     placeholder: String,
     readonly: Boolean,
+    /* Used for list */
     options: Array
   },
   data() {
