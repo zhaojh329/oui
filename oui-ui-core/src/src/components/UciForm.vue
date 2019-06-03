@@ -20,18 +20,51 @@ export default {
     return {
       loaded: 0,
       form: {},
-      validated: {}
+      initials: {},
+      validated: {},
+      saveFuns: {}
     }
   },
   methods: {
+    saveCustom(uciApplied) {
+      const promises = [];
+
+      Object.keys(this.saveFuns).forEach(key => {
+        const save = this.saveFuns[key];
+        if (typeof(save) !== 'undefined') {
+          const v = this.form[key];
+          if (v !== this.initials[key]) {
+            const p = new Promise(resolve => {
+              save(resolve, v);
+            });
+            promises.push(p);
+          }
+        }
+      });
+
+      if (promises.length === 0) {
+        if (!uciApplied) {
+          this.$message.warning('There are no changes to apply');
+          return;
+        }
+
+        this.load(true);
+        this.$message.success('Save & Apply successfully');
+        return;
+      }
+
+      Promise.all(promises).then(() => {
+        this.load(true);
+        this.$message.success('Save & Apply successfully');
+      });
+    },
     apply() {
       this.$uci.save().then(() => {
         this.$uci.apply().then(() => {
-          this.load(true);
-          this.$message.success('Save & Apply successfully');
+          this.saveCustom(true);
         }).catch(e => {
           if (e.code === 5)
-            this.$message.warning('There are no changes to apply');
+            this.saveCustom(false);
           else
             throw e;
         });
@@ -54,9 +87,11 @@ export default {
         });
       }
     },
-    addFormItem(name, tab) {
-      this.$set(this.form, name, '');
-      this.$set(this.validated, name, {valid: true, tab: tab});
+    addFormItem(item) {
+      this.$set(this.form, item.name, '');
+      this.$set(this.initials, item.name, '');
+      this.$set(this.validated, item.name, {valid: true, tab: item.tab});
+      this.$set(this.saveFuns, item.name, item.onSave);
     },
     onValidate(name, valid) {
       this.validated[name].valid = valid;

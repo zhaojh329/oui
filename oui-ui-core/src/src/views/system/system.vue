@@ -19,7 +19,7 @@
       </uci-tabs>
     </uci-section>
     <uci-section title="Time Synchronization" name="ntp">
-      <uci-switch label="Enable NTP client" :value="ntpCliEnabled"></uci-switch>
+      <uci-switch label="Enable NTP client" name="enable" :uci="false" :value="ntpCliEnabled" :on-save="ntpCliSave"></uci-switch>
     </uci-section>
   </uci-form>
 </template>
@@ -56,6 +56,23 @@ export default {
   computed: {
     zoneinfo() {
       return zoneinfo.map(item => [item[0]]);
+    }
+  },
+  methods: {
+    ntpCliSave(resolve, v) {
+      if (v === '1') {
+        this.$system.initStart('sysntpd').then(() => {
+          this.$system.initEnable('sysntpd').then(() => {
+            resolve();
+          });
+        });
+      } else {
+        this.$system.initStop('sysntpd').then(() => {
+          this.$system.initDisable('sysntpd').then(() => {
+            resolve();
+          });
+        });
+      }
     }
   },
   mounted() {

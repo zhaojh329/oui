@@ -32,12 +32,18 @@ export default {
     placeholder: String,
     readonly: Boolean,
     /* Used for list */
-    options: Array
+    options: Array,
+    /* Whether the name property is a uci property */
+    uci: {
+      type: Boolean,
+      default: true
+    },
+    onSave: Function
   },
   data() {
     return {
       ivalue: '',
-      iinitial: ''
+      iinitial: null
     }
   },
   computed: {
@@ -72,7 +78,11 @@ export default {
       if (tabPane !== null)
         tab = tabPane.name;
 
-      this.$getParent('UciForm').addFormItem(this.formItemProp, tab);
+      this.$getParent('UciForm').addFormItem({
+        name: this.formItemProp,
+        tab: tab,
+        onSave: this.onSave
+      });
     },
     ivalue(v) {
       if (typeof(this.name) === 'undefined')
@@ -80,25 +90,31 @@ export default {
 
       this.$getParent('UciForm').form[this.formItemProp] = v;
 
-      if (v !== this.iinitial)
+      if (v !== this.iinitial && this.uci)
         this.$uci.set(this.config, this.sid, this.name, v);
     },
     value(v) {
       this.ivalue = v;
-    },
-    loaded(n) {
-      if (typeof(this.value) !== 'undefined') {
-        this.ivalue = this.value;
-        return;
+
+      if (this.iinitial === null) {
+        this.iinitial = this.ivalue;
+        this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
       }
+    },
+    loaded() {
+      if (typeof(this.value) !== 'undefined')
+        return;
 
       if (typeof(this.name) === 'undefined')
         return;
 
-      this.ivalue = this.$uci.get(this.config, this.sid, this.name) || this.initial;
+      if (this.uci)
+        this.ivalue = this.$uci.get(this.config, this.sid, this.name) || this.initial;
 
-      if (n === 1)
+      if (this.iinitial === null) {
         this.iinitial = this.ivalue;
+        this.$getParent('UciForm').initials[this.formItemProp] = this.ivalue;
+      }
     }
   }
 }
