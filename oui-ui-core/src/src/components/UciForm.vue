@@ -25,6 +25,18 @@ export default {
       saveFuns: {}
     }
   },
+  computed: {
+    errNum() {
+      let num = 0;
+
+      Object.keys(this.validated).forEach(key => {
+        if (!this.validated[key].valid)
+          num++;
+      });
+
+      return num;
+    }
+  },
   methods: {
     saveCustom(uciApplied, loading) {
       const promises = [];
@@ -62,6 +74,9 @@ export default {
       });
     },
     apply() {
+      if (this.errNum > 0)
+        return;
+
       const loading = this.$loading({
         text: 'Waiting for configuration to be applied...'
       });
