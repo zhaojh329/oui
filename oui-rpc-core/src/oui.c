@@ -2121,6 +2121,7 @@ struct opkg_state {
 	bool open[2];
 	void *array[2];
 	char prev_name[64];
+	bool upgradable;
 };
 
 static int opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
@@ -2129,7 +2130,7 @@ static int opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv
 
 	char *ptr, *last;
 	char *nl = strchr(buf, '\n');
-	char *name = NULL, *vers = NULL, *desc = NULL;
+	char *name = NULL, *vers = NULL, *desc = NULL, *new_version  = NULL;
 	int size = 0;
 
 	if (!nl)
@@ -2160,11 +2161,19 @@ static int opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv
 				last = ptr + 3;
 				*ptr = 0;
 				ptr += 2;
-			} else if (!size) {
-				size = strtoul(last, NULL, 10);
-				desc = *ptr ? (ptr + 3) : NULL;
-				*ptr = 0;
-				break;
+			} else {
+				if (s->upgradable) {
+					if (!new_version) {
+						new_version = last;
+						*ptr = 0;
+						break;
+					}
+				} else if (!size) {
+					size = strtoul(last, NULL, 10);
+					desc = *ptr ? (ptr + 3) : NULL;
+					*ptr = 0;
+					break;
+				}
 			}
 		}
 	}
@@ -2176,7 +2185,9 @@ static int opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv
 		 * previous entry)
 		 */
 		if (!strcmp(s->prev_name, name)) {
-			if (s->missing > 1 && size > 0) {
+			if (s->upgradable) {
+				blobmsg_add_string(blob, NULL, new_version);
+			} else if (s->missing > 1 && size > 0) {
 				blobmsg_add_u32(blob, NULL, size);
 
 				if (s->missing > 0 && desc && *desc)
@@ -2195,7 +2206,9 @@ static int opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv
 			blobmsg_add_string(blob, NULL, name);
 			blobmsg_add_string(blob, NULL, vers);
 
-			if (size > 0) {
+			if (s->upgradable) {
+				blobmsg_add_string(blob, NULL, new_version);
+			} else if (size > 0) {
 				s->missing--;
 				blobmsg_add_u32(blob, NULL, size);
 
@@ -2247,6 +2260,9 @@ static int opkg_exec_list(const char *action, struct blob_attr *msg,
 
 	memset(state, 0, sizeof(*state));
 
+	if (!strcmp(action, "list-upgradable"))
+		state->upgradable = true;
+
 	if (tb[RPC_OM_PATTERN])
 		cmd[4] = blobmsg_data(tb[RPC_OM_PATTERN]);
 
@@ -2279,6 +2295,13 @@ static int rpc_oui_opkg_list_installed(struct ubus_context *ctx, struct ubus_obj
                               struct blob_attr *msg)
 {
 	return opkg_exec_list("list-installed", msg, ctx, req);
+}
+
+static int rpc_oui_opkg_list_upgradable(struct ubus_context *ctx, struct ubus_object *obj,
+                              struct ubus_request_data *req, const char *method,
+                              struct blob_attr *msg)
+{
+	return opkg_exec_list("list-upgradable", msg, ctx, req);
 }
 
 static int rpc_oui_opkg_find(struct ubus_context *ctx, struct ubus_object *obj,
@@ -2334,6 +2357,23 @@ static int rpc_oui_opkg_remove(struct ubus_context *ctx, struct ubus_object *obj
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
+static int rpc_oui_opkg_upgrade(struct ubus_context *ctx, struct ubus_object *obj,
+                      struct ubus_request_data *req, const char *method,
+                      struct blob_attr *msg)
+{
+	struct blob_attr *tb[__RPC_OP_MAX];
+	const char *cmd[4] = { "opkg", "upgrade", NULL, NULL };
+
+	blobmsg_parse(rpc_opkg_package_policy, __RPC_OP_MAX, tb,
+	              blob_data(msg), blob_len(msg));
+
+	if (!tb[RPC_OP_PACKAGE])
+		return UBUS_STATUS_INVALID_ARGUMENT;
+
+	cmd[2] = blobmsg_data(tb[RPC_OP_PACKAGE]);
+
+	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
+}
 
 static int opkg_parse_info(struct blob_buf *blob, char *buf, int len, void *priv)
 {
@@ -2760,11 +2800,15 @@ static int rpc_oui_api_init(const struct rpc_daemon_ops *o, struct ubus_context 
 		                                     rpc_opkg_match_policy),
 		UBUS_METHOD("list_installed",        rpc_oui_opkg_list_installed,
 		                                     rpc_opkg_match_policy),
+		UBUS_METHOD("list_upgradable",       rpc_oui_opkg_list_upgradable,
+		                                     rpc_opkg_match_policy),
 		UBUS_METHOD("find",                  rpc_oui_opkg_find,
 		                                     rpc_opkg_match_policy),
 		UBUS_METHOD("install",               rpc_oui_opkg_install,
 		                                     rpc_opkg_package_policy),
 		UBUS_METHOD("remove",                rpc_oui_opkg_remove,
+		                                     rpc_opkg_package_policy),
+		UBUS_METHOD("upgrade",               rpc_oui_opkg_upgrade,
 		                                     rpc_opkg_package_policy),
 		UBUS_METHOD("info",                  rpc_oui_opkg_info,
 		                                     rpc_opkg_package_policy),
