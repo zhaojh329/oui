@@ -158,6 +158,7 @@
 				"oui.opkg": [
 					"list",
 					"list_installed",
+					"list_upgradable",
 					"find",
 					"config_get",
 					"info"
@@ -169,6 +170,7 @@
 				"oui.opkg": [
 					"install",
 					"remove",
+					"upgrade",
 					"update",
 					"config_set"
 				]
