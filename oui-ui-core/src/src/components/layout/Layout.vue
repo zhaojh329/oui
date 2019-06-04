@@ -8,6 +8,10 @@
           <router-view></router-view>
         </transition>
       </el-main>
+      <el-backtop target=".el-main" class="backtop">
+        <div class="text">UP</div>
+        <i class="el-icon-caret-top"></i>
+      </el-backtop>
       <el-footer class="footer" height="40px">
         <a href="https://github.com/zhaojh329/oui" target="_blank">Powered by oui</a>
       </el-footer>
@@ -54,5 +58,20 @@ export default {
   color: #999999;
   text-align: right;
   padding-right: 100px;
+}
+
+.backtop {
+  display: flex;
+  flex-direction: column;
+
+  .text {
+    height: 100%;
+    width: 100%;
+    background-color: #f2f5f6;
+    box-shadow: 0 0 6px rgba(0,0,0, .12);
+    text-align: center;
+    line-height: 40px;
+    color: #1989fa;
+  }
 }
 </style>

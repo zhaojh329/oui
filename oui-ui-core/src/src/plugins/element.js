@@ -68,7 +68,8 @@ import {
   Loading,
   MessageBox,
   Message,
-  Notification
+  Notification,
+  Backtop
 } from 'element-ui'
 
 locale.use(lang)
@@ -136,6 +137,7 @@ Vue.use(Header);
 Vue.use(Aside);
 Vue.use(Main);
 Vue.use(Footer);
+Vue.use(Backtop);
 
 Vue.use(Loading.directive);
 
