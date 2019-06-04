@@ -28,7 +28,9 @@ export default {
 
     Vue.prototype.$reconnect = function(title) {
       const loading = this.$loading({
-        text: title
+        text: title,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
 
       const vm = this;
