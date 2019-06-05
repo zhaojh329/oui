@@ -78,12 +78,37 @@ system.initRestart = function(name) {
   return this.initRun(name, 'restart');
 }
 
+system.initWaitEnabled = function(name, expect, resolve) {
+  function check() {
+    this.initEnabled(name).then(enabled => {
+      if (!!enabled === expect) {
+        resolve();
+        return;
+      }
+
+      setTimeout(() => {
+        check.call(this);
+      }, 500);
+    });
+  }
+
+  check.call(this);
+}
+
 system.initEnable = function(name) {
-  return this.initRun(name, 'enable');
+  return new Promise(resolve => {
+    this.initRun(name, 'enable').then(() => {
+      this.initWaitEnabled(name, true, resolve);
+    });
+  });
 }
 
 system.initDisable = function(name) {
-  return this.initRun(name, 'disable');
+  return new Promise(resolve => {
+    this.initRun(name, 'disable').then(() => {
+      this.initWaitEnabled(name, false, resolve);
+    });
+  });
 }
 
 system.setPassword = function(user, password) {
