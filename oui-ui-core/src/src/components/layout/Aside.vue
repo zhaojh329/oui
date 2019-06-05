@@ -4,7 +4,7 @@
       <div class="logo-name">
         <router-link to="/">OpenWrt</router-link>
       </div>
-      <el-menu :default-active="$route.path" background-color="#03152A" text-color="rgba(255,255,255,.8)" active-text-color="#ffffff" router unique-opened>
+      <el-menu ref="navmenu" :default-active="$route.path" background-color="#03152A" text-color="rgba(255,255,255,.8)" active-text-color="#ffffff" router unique-opened>
         <el-submenu v-for="item in menus" :key="item.path" :index="item.path">
           <template slot="title">
             <span slot="title">{{ item.title }}</span>
@@ -19,6 +19,11 @@
 <script>
 export default {
   name: 'Aside',
+  data() {
+    return {
+      opened: ''
+    }
+  },
   computed: {
     menus() {
       return this.$store.state.menus;
@@ -29,6 +34,22 @@ export default {
       this.$store.commit('setMenus', menus);
       this.$router.addRoutes(routes);
     });
+
+    const paths = this.$route.path.split('/');
+    if (paths.length === 3)
+      this.opened = '/' + paths[1];
+  },
+  watch: {
+    '$route.path'(path) {
+      if (path === '/home' && this.opened !== '') {
+        this.$refs['navmenu'].close(this.opened);
+        return;
+      }
+
+      const paths = this.$route.path.split('/');
+      if (paths.length === 3)
+        this.opened = '/' + paths[1];
+    }
   }
 }
 </script>
