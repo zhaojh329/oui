@@ -25,7 +25,7 @@
       <div slot="header">
         <el-pagination background layout="prev, pager, next" :page-size="limit" :total="total" :current-page.sync="currentPage"></el-pagination>
       </div>
-      <el-table :data="packages" v-loading="loading" element-loading-text="Loading..."  element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+      <el-table :data="packages" v-loading="pkgLoading" element-loading-text="Loading..."  element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
         <el-table-column prop="name" label="Package" width="200"></el-table-column>
         <el-table-column prop="version" label="Version" width="200" show-overflow-tooltip></el-table-column>
         <el-table-column prop="size" label="Size(KB)" width="100"></el-table-column>
@@ -63,7 +63,7 @@ export default {
       currentPage: 1,
       displayInstalled: false,
       installedList: {},
-      loading: true
+      pkgLoading: true
     }
   },
   filters: {
@@ -97,6 +97,13 @@ export default {
     }
   },
   methods: {
+    loading(text) {
+      return this.$loading({
+        text: text,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+    },
     doFetchPackageList(cmd, offset, limit, pattern) {
       return new Promise((resolve, reject) => {
         this.$ubus.call('oui.opkg', cmd, {offset, limit, pattern}).then(r1 => {
@@ -149,7 +156,7 @@ export default {
       if (this.displayInstalled)
         cmd = 'list_installed'
 
-      this.loading = true;
+      this.pkgLoading = true;
       this.packages = [];
 
       this.doFetchPackageList(cmd, offset, this.limit, pattern).then(r => {
@@ -164,7 +171,7 @@ export default {
             newVersion: this.installedList[item[0]] ? this.installedList[item[0]].newVersion : undefined
           }
         });
-        this.loading = false;
+        this.pkgLoading = false;
       });
     },
     doInstallRemovePackage(name, cmd) {
@@ -190,7 +197,7 @@ export default {
         confirmButtonText: 'Close'
       }).then(() => {
         if (!res.code) {
-          this.loading = true;
+          this.pkgLoading = true;
           this.updateInstalledList().then(() => {
             this.fetchPackageList((this.currentPage - 1) * this.limit);
           });
@@ -214,12 +221,7 @@ export default {
       this.$confirm(msg, title, {
         type: 'info'
       }).then(() => {
-        const loading = this.$loading({
-          text: 'Waiting for package manager...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
+        const loading = this.loading('Waiting for package manager...');
         this.doInstallRemovePackage(name, cmd).then(r => {
           loading.close();
           this.showStatus(r, title);
@@ -230,11 +232,7 @@ export default {
       return this.$ubus.call('oui.opkg', 'update');
     },
     updatePackage() {
-      const loading = this.$loading({
-        text: 'Waiting for package manager...',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      });
+      const loading = this.loading('Waiting for package manager...');
       this.doUpdatePackage().then(r => {
         loading.close();
         this.showStatus(r, 'Updating package lists');

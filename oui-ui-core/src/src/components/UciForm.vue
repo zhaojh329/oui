@@ -38,6 +38,13 @@ export default {
     }
   },
   methods: {
+    loading(text) {
+      return this.$loading({
+        text: text,
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+    },
     saveCustom(uciApplied, loading) {
       const promises = [];
 
@@ -77,9 +84,7 @@ export default {
       if (this.errNum > 0)
         return;
 
-      const loading = this.$loading({
-        text: 'Waiting for configuration to be applied...'
-      });
+      const loading = this.loading('Waiting for configuration to be applied...');
 
       this.$uci.save().then(() => {
         this.$uci.apply().then(() => {
@@ -104,12 +109,7 @@ export default {
     },
     load(force) {
       if (typeof(this.config) !== 'undefined') {
-        const loading = this.$loading({
-          text: 'Loading...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
-
+        const loading = this.loading('Loading...');
         this.$uci.load(this.config, force).then(() => {
           this.loaded++;
           loading.close();
