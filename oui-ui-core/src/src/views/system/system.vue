@@ -3,7 +3,7 @@
     <uci-section title="System Properties" name="system" typed>
       <uci-tabs :tabpanes="[['general', 'General Settings'], ['logging', 'Logging']]">
         <template v-slot:general>
-          <uci-input label="Local Time" :on-load="localTime" readonly></uci-input>
+          <uci-input label="Local Time" :load="localTime" readonly></uci-input>
           <uci-input label="Hostname" name="hostname" required></uci-input>
           <uci-list label="Timezone" name="zonename" initial="UTC" :options="zoneinfo"></uci-list>
         </template>
@@ -19,7 +19,7 @@
       </uci-tabs>
     </uci-section>
     <uci-section title="Time Synchronization" name="ntp">
-      <uci-switch label="Enable NTP client" name="enable" :uci="false" :on-load="ntpCliEnabled" :on-save="ntpCliSave"></uci-switch>
+      <uci-switch label="Enable NTP client" name="enable" :uci="false" :load="ntpCliEnabled" :on-save="ntpCliSave"></uci-switch>
       <uci-switch label="Provide NTP server" name="enable_server" depends="enable"></uci-switch>
       <uci-dlist label="NTP server candidates" name="server" depends="enable"></uci-dlist>
     </uci-section>

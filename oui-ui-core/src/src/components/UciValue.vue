@@ -42,7 +42,7 @@ export default {
       default: true
     },
     /* If this function is provided, the form loads the value by the function instead of from uci */
-    onLoad: Function,
+    load: Function,
     /* If this function is provided, it will be called when the user clicks the apply button */
     onSave: Function,
     depends: [String, Object],
@@ -106,9 +106,9 @@ export default {
       this.updateFormValue();
     },
     loaded() {
-      if (typeof(this.onLoad) !== 'undefined') {
+      if (typeof(this.load) !== 'undefined') {
         new Promise(resolve => {
-          this.onLoad(resolve);
+          this.load(resolve);
         }).then(v => {
           this.ivalue = v;
           this.updateInitial();

@@ -1,5 +1,5 @@
 <template>
-  <uci-value :label="label" :name="name" :value="value" :initial="initial" :depends="depends" :on-load="onLoad" :on-save="onSave" :required="required" type="input" :placeholder="placeholder" :readonly="readonly"></uci-value>
+  <uci-value :label="label" :name="name" :value="value" :initial="initial" :depends="depends" :load="load" :on-save="onSave" :required="required" type="input" :placeholder="placeholder" :readonly="readonly"></uci-value>
 </template>
 
 <script>
@@ -15,7 +15,7 @@ export default {
     required: Boolean,
     placeholder: String,
     readonly: Boolean,
-    onLoad: Function,
+    load: Function,
     onSave: Function,
     depends: [String, Object]
   },
