@@ -104,8 +104,15 @@ export default {
     },
     load(force) {
       if (typeof(this.config) !== 'undefined') {
+        const loading = this.$loading({
+          text: 'Loading...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+
         this.$uci.load(this.config, force).then(() => {
           this.loaded++;
+          loading.close();
         });
       }
     },
