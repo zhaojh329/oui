@@ -98,7 +98,7 @@ export default {
   },
   methods: {
     doFetchPackageList(cmd, offset, limit, pattern) {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         this.$ubus.call('oui.opkg', cmd, {offset, limit, pattern}).then(r1 => {
           const total = r1.total;
           const packages = r1.packages;
@@ -128,10 +128,14 @@ export default {
               });
 
               resolve(r1);
+            }).catch(() => {
+              reject();
             });
           } else {
             resolve(r1);
           }
+        }).catch(() => {
+          reject();
         });
       });
     },
@@ -187,7 +191,7 @@ export default {
       }).then(() => {
         if (!res.code) {
           this.loading = true;
-          this.updateInstalledList(() => {
+          this.updateInstalledList().then(() => {
             this.fetchPackageList((this.currentPage - 1) * this.limit);
           });
         }
@@ -236,20 +240,22 @@ export default {
         this.showStatus(r, 'Updating package lists');
       });
     },
-    updateInstalledList(cb) {
-      this.doFetchPackageList('list_installed').then(r => {
-        this.installedList = {};
-        r.packages.forEach(item => {
-          this.installedList[item[0]] = {};
-        });
-
-        this.doFetchPackageList('list_upgradable').then(r => {
+    updateInstalledList() {
+      return new Promise(resolve => {
+        this.doFetchPackageList('list_installed').then(r => {
+          this.installedList = {};
           r.packages.forEach(item => {
-            this.installedList[item[0]].newVersion = item[2];
+            this.installedList[item[0]] = {};
           });
 
-          if (typeof(cb) !== 'undefined')
-            cb();
+          this.doFetchPackageList('list_upgradable').then(r => {
+            r.packages.forEach(item => {
+              this.installedList[item[0]].newVersion = item[2];
+            });
+            resolve();
+          }).catch(() => {
+            resolve();
+          });
         });
       });
     }
@@ -268,7 +274,7 @@ export default {
       this.diskInfo.total = info.root.total;
     });
 
-    this.updateInstalledList(() => {
+    this.updateInstalledList().then(() => {
       this.fetchPackageList(0);
     });
   }
