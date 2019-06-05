@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-card style="width: 60%; margin-bottom: 10px">
-      <el-form label-width="200px">
+    <el-card style=" margin-bottom: 10px">
+      <el-form label-width="200px" style="max-width: 600px">
         <el-form-item label="Used space">
           <el-progress :text-inside="true" :stroke-width="20" :percentage="diskUsedPercentage"></el-progress>
           <span>{{ diskUsedDetailed }}</span>
