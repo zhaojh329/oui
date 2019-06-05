@@ -28,15 +28,9 @@
         "view": "system/software",
         "index": 40
     },
-    "system/backup": {
-        "title": "Backup",
-        "acls": [ "backup" ],
-        "view": "system/backup",
-        "index": 50
-    },
     "system/upgrade": {
-        "title": "Upgrade",
-        "acls": [ "upgrade" ],
+        "title": "Backup / Upgrade",
+        "acls": [ "backup", "upgrade" ],
         "view": "system/upgrade",
         "index": 55
     },
