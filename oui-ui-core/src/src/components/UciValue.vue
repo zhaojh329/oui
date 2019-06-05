@@ -171,8 +171,10 @@ export default {
 
       this.$getParent('UciForm').form[this.formItemProp] = this.ivalue;
 
-      if (this.ivalue !== this.iinitial && this.uci)
+      if (this.ivalue !== this.iinitial && this.uci) {
         this.$uci.set(this.config, this.sid, this.name, this.ivalue);
+        this.$emit('change', {config: this.config, sid: this.sid, value: this.ivalue});
+      }
 
       this.toggleDepends();
     },

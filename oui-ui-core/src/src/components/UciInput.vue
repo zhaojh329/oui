@@ -1,5 +1,5 @@
 <template>
-  <uci-value :label="label" :name="name" :value="value" :initial="initial" :depends="depends" :load="load" :on-save="onSave" :required="required" type="input" :placeholder="placeholder" :readonly="readonly"></uci-value>
+  <uci-value :label="label" :name="name" :value="value" :initial="initial" :depends="depends" :load="load" :on-save="onSave" :required="required" type="input" :placeholder="placeholder" :readonly="readonly" @change="onChange"></uci-value>
 </template>
 
 <script>
@@ -21,6 +21,11 @@ export default {
   },
   components: {
     'UciValue': UciValue
+  },
+  methods: {
+    onChange(data) {
+      this.$emit('change', data);
+    }
   }
 }
 </script>
