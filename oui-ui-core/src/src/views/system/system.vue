@@ -5,7 +5,7 @@
         <template v-slot:general>
           <uci-input label="Local Time" :load="localTime" readonly></uci-input>
           <uci-input label="Hostname" name="hostname" required></uci-input>
-          <uci-list label="Timezone" name="zonename" initial="UTC" :options="zoneinfo"></uci-list>
+          <uci-list label="Timezone" name="zonename" initial="UTC" :options="zoneinfo" @change="onZonenameChange"></uci-list>
         </template>
         <template v-slot:logging>
           <uci-input label="System log buffer size" name="log_size" placeholder="16"></uci-input>
@@ -84,6 +84,18 @@ export default {
         const localTime = new Date(r.localtime * 1000).toString();
         resolve(localTime);
       });
+    },
+    onZonenameChange(data) {
+      let timezone = 'UTC';
+
+      for (let i = 0; i < zoneinfo.length; i++) {
+        if (zoneinfo[i][0] === data.value) {
+          timezone = zoneinfo[i][1];
+          break;
+        }
+      }
+
+      this.$uci.set(data.config, data.sid, 'timezone', timezone);
     }
   }
 }
