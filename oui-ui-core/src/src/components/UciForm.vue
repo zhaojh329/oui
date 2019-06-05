@@ -115,7 +115,7 @@ export default {
 
       /* No need to track */
       this.initials[item.name] = '';
-      this.saveFuns[item.name] = item.onSave;
+      this.saveFuns[item.name] = item.save;
     },
     onValidate(name, valid) {
       this.validated[name].valid = valid;

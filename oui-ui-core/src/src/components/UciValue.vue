@@ -44,7 +44,7 @@ export default {
     /* If this function is provided, the form loads the value by the function instead of from uci */
     load: Function,
     /* If this function is provided, it will be called when the user clicks the apply button */
-    onSave: Function,
+    save: Function,
     depends: [String, Object],
     activeValue: {
       type: String,
@@ -99,7 +99,7 @@ export default {
       this.$getParent('UciForm').addFormItem({
         name: this.formItemProp,
         tab: tab,
-        onSave: this.onSave
+        save: this.save
       });
     },
     ivalue() {
