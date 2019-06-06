@@ -26,8 +26,6 @@
         </uci-section>
       </uci-form>
     </el-tab-pane>
-    <el-tab-pane label="SSH-Keys" name="sshkeys">
-    </el-tab-pane>
   </el-tabs>
 </template>
 
