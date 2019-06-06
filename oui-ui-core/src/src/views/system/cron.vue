@@ -66,8 +66,6 @@ export default {
       }
     }
   },
-  computed: {
-  },
   methods: {
     getCrontab() {
       return new Promise(resolve => {
