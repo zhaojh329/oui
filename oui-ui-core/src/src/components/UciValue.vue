@@ -2,7 +2,7 @@
   <el-form-item :label="label" :prop="formItemProp" :rules="rules" v-if="show">
     <el-input v-if="type === 'input'" :readonly="readonly" v-model="ivalue" :placeholder="placeholder"></el-input>
     <el-switch v-else-if="type === 'switch'" v-model="ivalue" :active-value="activeValue" :inactive-value="inactiveValue"></el-switch>
-    <el-select v-else-if="type === 'list'" v-model="ivalue">
+    <el-select v-else-if="type === 'list'" v-model="ivalue" :clearable="!required">
       <el-option v-for="item in options" :key="item[0]" :label="item[1] || item[0]" :value="item[0]"></el-option>
     </el-select>
     <div v-else-if="type === 'dlist'" class="dlist">
@@ -14,7 +14,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'UciValue',
   props: {
