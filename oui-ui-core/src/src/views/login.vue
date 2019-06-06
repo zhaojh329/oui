@@ -2,10 +2,10 @@
   <el-card header="Authorization Required" class="login">
     <el-form ref="login" :model="form" label-width="100px" label-position="left">
       <el-form-item label="Username" prop="username" required>
-        <el-input v-model="form.username" prefix-icon="el-icon-user-solid" placeholder="Please input username"></el-input>
+        <el-input v-model="form.username" prefix-icon="el-icon-user-solid" placeholder="Please input username" @keyup.enter.native="handleLogin"></el-input>
       </el-form-item>
       <el-form-item label="Password" prop="password">
-        <el-input v-model="form.password" type="password" prefix-icon="el-icon-lock" placeholder="Please input password"></el-input>
+        <el-input v-model="form.password" type="password" prefix-icon="el-icon-lock" placeholder="Please input password" @keyup.enter.native="handleLogin"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleLogin" style="width: 70%">Login</el-button>
