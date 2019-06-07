@@ -44,6 +44,10 @@ uci.set = function(config, sid, opt, val) {
   if (!v[config] || !v[config][sid])
     return;
 
+  /* Ignore the same value */
+  if (this.get(config, sid, opt) === val)
+    return;
+
   if (!c[config])
     c[config] = {};
 
