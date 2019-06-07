@@ -46,7 +46,10 @@ uci.set = function(config, sid, opt, val) {
     return;
 
   /* Ignore the same value */
-  if (this.get(config, sid, opt) === val)
+  const old = this.get(config, sid, opt);
+  if (typeof(old) === 'undefined' && (val === '' || val === []))
+    return;
+  if (old === val)
     return;
 
   if (!c[config])

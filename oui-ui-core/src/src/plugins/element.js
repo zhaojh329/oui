@@ -69,7 +69,8 @@ import {
   MessageBox,
   Message,
   Notification,
-  Backtop
+  Backtop,
+  Divider
 } from 'element-ui'
 
 locale.use(lang)
@@ -138,6 +139,7 @@ Vue.use(Aside);
 Vue.use(Main);
 Vue.use(Footer);
 Vue.use(Backtop);
+Vue.use(Divider);
 
 Vue.use(Loading.directive);
 

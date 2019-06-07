@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import Aside from './Aside.vue'
-import Header from './Header.vue'
+import Aside from './aside.vue'
+import Header from './header.vue'
 
 export default {
   name: 'Layout',

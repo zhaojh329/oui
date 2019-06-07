@@ -1,27 +1,25 @@
 <template>
   <uci-form config="system">
     <uci-section title="System Properties" name="system" typed>
-      <uci-tabs :tabpanes="[['general', 'General Settings'], ['logging', 'Logging']]">
-        <template v-slot:general>
-          <uci-input label="Local Time" :load="localTime" readonly></uci-input>
-          <uci-input label="Hostname" name="hostname" required></uci-input>
-          <uci-list label="Timezone" name="zonename" initial="UTC" :options="zoneinfo" @change="onZonenameChange"></uci-list>
-        </template>
-        <template v-slot:logging>
-          <uci-input label="System log buffer size" name="log_size" placeholder="16"></uci-input>
-          <uci-input label="External system log server" name="log_ip" placeholder="0.0.0.0"></uci-input>
-          <uci-input label="External system log server port" name="log_port" placeholder="514"></uci-input>
-          <uci-list label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-list>
-          <uci-input label="Write system log to file" name="log_file"></uci-input>
-          <uci-list label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-list>
-          <uci-list label="Cron Log Level" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-list>
-        </template>
-      </uci-tabs>
+      <uci-tab title="General Settings" name="general">
+        <uci-option type="dummy" label="Local Time" :load="localTime" name="__time"></uci-option>
+        <uci-option type="input" label="Hostname" name="hostname" required></uci-option>
+        <uci-option type="list" label="Timezone" name="zonename" initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
+      </uci-tab>
+      <uci-tab title="Logging" name="logging">
+        <uci-option type="input" label="System log buffer size" name="log_size" placeholder="16"></uci-option>
+        <uci-option type="input" label="External system log server" name="log_ip" placeholder="0.0.0.0"></uci-option>
+        <uci-option type="input" label="External system log server port" name="log_port" placeholder="514"></uci-option>
+        <uci-option type="list" label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-option>
+        <uci-option type="input" label="Write system log to file" name="log_file"></uci-option>
+        <uci-option type="list" label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-option>
+        <uci-option type="list" label="Cron Log Level" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-option>
+      </uci-tab>
     </uci-section>
     <uci-section title="Time Synchronization" name="ntp">
-      <uci-switch label="Enable NTP client" name="enable" :uci="false" :load="ntpCliEnabled" :save="ntpCliSave"></uci-switch>
-      <uci-switch label="Provide NTP server" name="enable_server" depends="enable"></uci-switch>
-      <uci-dlist label="NTP server candidates" name="server" depends="enable"></uci-dlist>
+      <uci-option type="switch" label="Enable NTP client" name="enable" :uci="false" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option>
+      <uci-option type="switch" label="Provide NTP server" name="enable_server" depend="enable"></uci-option>
+      <uci-option type="dlist" label="NTP server candidates" name="server" depend="enable"></uci-option>
     </uci-section>
   </uci-form>
 </template>
@@ -59,7 +57,30 @@ export default {
     }
   },
   methods: {
-    ntpCliSave(resolve, v) {
+    localTime(resolve) {
+      this.$system.getSystemInfo().then(r => {
+        const localTime = new Date(r.localtime * 1000).toString();
+        resolve(localTime);
+      });
+    },
+    saveTimezone(config, sid, name, value) {
+      let timezone = 'UTC';
+
+      for (let i = 0; i < zoneinfo.length; i++) {
+        if (zoneinfo[i][0] === value) {
+          timezone = zoneinfo[i][1];
+          break;
+        }
+      }
+
+      this.$uci.set(config, sid, 'timezone', timezone);
+    },
+    ntpCliEnabled(resolve) {
+      this.$system.initEnabled('sysntpd').then(enabled => {
+        resolve(enabled ? '1' : '0');
+      });
+    },
+    ntpCliEnableApply(resolve, v) {
       if (v === '1') {
         this.$system.initStart('sysntpd').then(() => {
           this.$system.initEnable('sysntpd').then(() => {
@@ -73,29 +94,6 @@ export default {
           });
         });
       }
-    },
-    ntpCliEnabled(resolve) {
-      this.$system.initEnabled('sysntpd').then(enabled => {
-        resolve(enabled ? '1' : '0');
-      });
-    },
-    localTime(resolve) {
-      this.$system.getSystemInfo().then(r => {
-        const localTime = new Date(r.localtime * 1000).toString();
-        resolve(localTime);
-      });
-    },
-    onZonenameChange(data) {
-      let timezone = 'UTC';
-
-      for (let i = 0; i < zoneinfo.length; i++) {
-        if (zoneinfo[i][0] === data.value) {
-          timezone = zoneinfo[i][1];
-          break;
-        }
-      }
-
-      this.$uci.set(data.config, data.sid, 'timezone', timezone);
     }
   }
 }

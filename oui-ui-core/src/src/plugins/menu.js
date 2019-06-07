@@ -38,7 +38,7 @@ function buildRoutes(menus) {
   menus.forEach(e => {
     const route = {
       path: e.path,
-      component: () => import('@/components/layout/Layout.vue'),
+      component: () => import('@/components/layout'),
       meta: {
         title: e.title
       },

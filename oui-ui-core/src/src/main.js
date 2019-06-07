@@ -15,16 +15,10 @@ import system from './plugins/system'
 import session from './plugins/session'
 import network from './plugins/network'
 
-import CardList from './components/CardList.vue'
-import CardTable from './components/CardTable.vue'
+import CardList from './components/card-list.vue'
+import CardTable from './components/card-table.vue'
 
-import UciForm from './components/UciForm.vue'
-import UciTabs from './components/UciTabs.vue'
-import UciSection from './components/UciSection.vue'
-import UciInput from './components/UciInput.vue'
-import UciList from './components/UciList.vue'
-import UciSwitch from './components/UciSwitch.vue'
-import UciDlist from './components/UciDlist.vue'
+import './components/uci-form'
 
 Vue.config.productionTip = false
 
@@ -41,14 +35,6 @@ Vue.use(network)
 
 Vue.component('CardList', CardList)
 Vue.component('CardTable', CardTable)
-
-Vue.component('UciForm', UciForm)
-Vue.component('UciTabs', UciTabs)
-Vue.component('UciSection', UciSection)
-Vue.component('UciInput', UciInput)
-Vue.component('UciList', UciList)
-Vue.component('UciSwitch', UciSwitch)
-Vue.component('UciDlist', UciDlist)
 
 new Vue({
   router,
