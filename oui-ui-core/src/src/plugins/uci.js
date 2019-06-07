@@ -4,6 +4,7 @@ import {ubus} from './ubus'
 
 const uci = {
   state: {
+    changed: 0,
     values: {},
     changes: {}
   }
@@ -55,6 +56,11 @@ uci.set = function(config, sid, opt, val) {
     c[config][sid] = {};
 
   c[config][sid][opt] = val || '';
+  this.state.changed++;
+}
+
+uci.changed = function() {
+  return this.state.changed;
 }
 
 uci.reset = function() {
@@ -63,6 +69,8 @@ uci.reset = function() {
 
 uci.save = function() {
   const c = this.state.changes;
+
+  this.state.changed = 0;
 
   return new Promise(resolve => {
     const batch = [];
