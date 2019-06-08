@@ -104,6 +104,15 @@ export default {
       });
 
       return depends;
+    },
+    transformedOptions() {
+      return this.options.map(o => {
+        if (typeof(o) === 'string')
+          return [o, o];
+        if (o.length === 1)
+          return [o[0], o[0]];
+        return o;
+      });
     }
   },
   created() {

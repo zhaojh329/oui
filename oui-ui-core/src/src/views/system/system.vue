@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     zoneinfo() {
-      return zoneinfo.map(item => [item[0]]);
+      return zoneinfo.map(item => item[0]);
     }
   },
   methods: {
