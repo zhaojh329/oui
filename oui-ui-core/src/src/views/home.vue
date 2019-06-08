@@ -12,7 +12,7 @@ export default {
       devinfo: []
     }
   },
-  mounted() {
+  created() {
     this.$system.getBoardInfo().then(r => {
       this.devinfo = [
         ['Model', r.model],

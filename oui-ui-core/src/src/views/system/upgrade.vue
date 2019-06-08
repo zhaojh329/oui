@@ -130,7 +130,7 @@ export default {
       });
     }
   },
-  mounted() {
+  created() {
     this.sid = this.$session.sid();
   }
 }

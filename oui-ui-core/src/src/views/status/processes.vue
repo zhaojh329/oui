@@ -30,7 +30,7 @@ export default {
       });
     }
   },
-  mounted() {
+  created() {
     this.$ubus.call('oui.system', 'process_list').then(r => {
       this.data = r.processes;
     });

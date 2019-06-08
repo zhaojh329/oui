@@ -10,7 +10,7 @@ export default {
       syslog: ''
     }
   },
-  mounted() {
+  created() {
     this.$ubus.call('oui.system', 'syslog').then(r => {
       this.syslog = r.log;
     });

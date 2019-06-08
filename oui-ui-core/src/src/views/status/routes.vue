@@ -40,7 +40,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.$ubus.callBatch([
       ['oui.network', 'arp_table'],
       ['oui.network', 'routes'],

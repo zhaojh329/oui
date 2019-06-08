@@ -51,7 +51,7 @@ export default {
         this.$system.initStop(init.name).then(this.load);
     }
   },
-  mounted() {
+  created() {
     this.load();
   }
 }

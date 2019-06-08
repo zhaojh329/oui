@@ -44,7 +44,7 @@ export default {
       this.$refs['login'].resetFields();
     }
   },
-  mounted() {
+  created() {
     this.$session.logout();
   }
 }

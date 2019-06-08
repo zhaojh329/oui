@@ -9,7 +9,7 @@ export default {
       dmesg: ''
     }
   },
-  mounted() {
+  created() {
     this.$ubus.call('oui.system', 'dmesg').then(r => {
       this.dmesg = r.log;
     });

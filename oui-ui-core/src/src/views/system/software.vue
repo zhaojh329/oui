@@ -266,7 +266,7 @@ export default {
       this.fetchPackageList((this.currentPage - 1) * this.limit);
     }
   },
-  mounted() {
+  created() {
     this.$system.getDiskInfo().then(info => {
       this.diskInfo.used = info.root.used;
       this.diskInfo.total = info.root.total;

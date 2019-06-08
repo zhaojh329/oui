@@ -75,7 +75,7 @@ export default {
       });
     }
   },
-  mounted() {
+  created() {
     this.$network.load().then(() => {
       const interfaces = this.$network.getInterfaces();
       this.interfaces = interfaces.map(item => [item.interface]);
