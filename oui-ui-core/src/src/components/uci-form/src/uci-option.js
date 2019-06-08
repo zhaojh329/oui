@@ -55,9 +55,7 @@ export default {
   data() {
     return {
       /* First loaded value */
-      initialVal: null,
-      /* Used for dependency management */
-      show: true
+      initialVal: null
     }
   },
   computed: {

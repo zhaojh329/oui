@@ -67,7 +67,7 @@ export default {
 
         const depends = o.depends;
         if (Object.keys(depends).indexOf(changedOptionName) > -1) {
-          let show = true;
+          let visible = true;
 
           for (let name in depends) {
             const dependOpt = this.findOptionByName(name);
@@ -76,11 +76,11 @@ export default {
 
             const expr = `"${dependOpt.formValue(sid)}" ${depends[name]}`
             if (!eval(expr)) {
-              show = false;
+              visible = false;
               break;
             }
           }
-          o.show = show;
+          this.uciForm.$refs[o.prop(sid)][0].visible = visible;
         }
       });
     },

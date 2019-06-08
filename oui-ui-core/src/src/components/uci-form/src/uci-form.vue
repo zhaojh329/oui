@@ -10,11 +10,11 @@
                 <span slot="label">
                   {{ tab.title }}<el-badge v-if="tab.errorNum > 0" :value="tab.errorNum"></el-badge>
                 </span>
-                <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
+                <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="u['.name']" :form="form" :ref="o.prop(u['.name'])"></uci-form-item>
                 <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
               </el-tab-pane>
             </el-tabs>
-            <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
+            <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form" :ref="o.prop(u['.name'])"></uci-form-item>
             <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
           </div>
         </el-card>
