@@ -50,7 +50,9 @@ export default {
       type: String,
       default: ''
     },
-    placeholder: String
+    placeholder: String,
+    /* Used for multiple list */
+    multiple: Boolean
   },
   data() {
     return {
@@ -131,6 +133,8 @@ export default {
 
       if (this.type === 'dlist')
         this.$set(this.form, prop, []);
+      else if (this.type === 'list')
+        this.$set(this.form, prop, this.multiple ? [] : '');
       else if (this.type === 'switch')
         this.$set(this.form, prop, '0');
       else
@@ -159,13 +163,19 @@ export default {
       }
 
       let val = this.$uci.get(this.config, sid, this.name);
-      if (typeof(val) === 'undefined' && typeof(this.initial) !== 'undefined') {
-        val = this.initial;
+      if (typeof(val) !== 'undefined') {
+        if (this.type === 'list' && this.multiple)
+          val = val.replace(/\s+/g, ' ').split(' ');
       }
+
+      if (typeof(val) === 'undefined' && typeof(this.initial) !== 'undefined')
+        val = this.initial;
 
       if (typeof(val) === 'undefined') {
         if (this.type === 'dlist')
           val = [];
+        else if (this.type === 'list')
+          val = this.multiple ? [] : '';
         else if (this.type === 'switch')
           val = '0';
         else
@@ -179,7 +189,7 @@ export default {
       if (this.type === 'dummy')
         return;
 
-      const value = this.formValue(sid);
+      let value = this.formValue(sid);
       if (value === this.initialVal)
         return;
 
@@ -191,6 +201,9 @@ export default {
 
       if (!this.uci)
         return;
+
+      if (this.type === 'list' && this.multiple)
+        value = value.join(' ');
 
       this.$uci.set(this.config, sid, this.name, value);
     },
