@@ -12,7 +12,7 @@ export default {
   computed: {
     visible() {
       const s = this.sestion;
-      return s.addremove && s.type && !s.name;
+      return s.addable && s.type && !s.name;
     }
   },
   methods: {

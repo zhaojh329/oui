@@ -15,8 +15,8 @@ export default {
     type: String,
     name: String,
     title: String,
-    /* The type prop must be provided for add */
-    addremove: Boolean,
+    /* The type prop must be provided for add or delete */
+    addable: Boolean,
     /* If false, the add operation will add a named section */
     anonymous: {
       type: Boolean,

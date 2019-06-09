@@ -17,7 +17,7 @@
     </el-tab-pane>
     <el-tab-pane label="SSH Access" name="dropbear">
       <uci-form config="dropbear">
-        <uci-section title="SSH Server" type="dropbear" addremove>
+        <uci-section title="SSH Server" type="dropbear" addable>
           <uci-option type="list" label="Interface" name="Interface" :options="interfaces"></uci-option>
           <uci-option type="input" label="Port" name="Port" placeholder="22"></uci-option>
           <uci-option type="switch" label="Password authentication" name="PasswordAuth" initial="on" active-value="on" inactive-value="off"></uci-option>
