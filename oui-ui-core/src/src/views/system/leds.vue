@@ -1,6 +1,6 @@
 <template>
    <uci-form config="system" v-if="sysfs.length > 0">
-    <uci-section title="LED Definitions" name="led" typed addremove>
+    <uci-section title="LED Definitions" type="led" addremove>
       <uci-option type="input" label="Name" name="name"></uci-option>
       <uci-option type="list" label="Led Name" name="sysfs" :options="sysfs"></uci-option>
       <uci-option type="list" label="Default state" name="default" :options="ledStates" initial="0" required></uci-option>

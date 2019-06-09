@@ -1,6 +1,6 @@
 <template>
   <uci-form config="system">
-    <uci-section title="System Properties" name="system" typed>
+    <uci-section title="System Properties" type="system">
       <uci-tab title="General Settings" name="general">
         <uci-option type="dummy" label="Local Time" :load="localTime" name="__time"></uci-option>
         <uci-option type="input" label="Hostname" name="hostname" required></uci-option>

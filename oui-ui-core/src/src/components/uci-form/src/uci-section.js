@@ -7,9 +7,14 @@ export default {
   },
   inject: ['uciForm'],
   props: {
-    name: String, /* If typed is true, it represents the uci section type, otherwise it represents the uci section name */
+    /*
+    ** The 'type' and 'name' must be provided at least one.
+    ** If the name prop is provided, only the section whose name is equal to the name prop is rendered,
+    ** otherwise render all sections whose type is equal to the type prop.
+    */
+    type: String,
+    name: String,
     title: String,
-    typed: Boolean,
     addremove: Boolean
   },
   data() {
@@ -25,9 +30,11 @@ export default {
       return this.uciForm.loaded;
     },
     uciSections() {
-      if (this.typed)
+      if (this.name)
+        return this.sections.filter(s => s['.name'] === this.name);
+      if (this.type)
         return this.sections;
-      return this.sections.filter(s => s['.name'] === this.name);
+      return [];
     },
     config() {
       return this.uciForm.config;
@@ -44,7 +51,7 @@ export default {
   methods: {
     load() {
       this.formBuilt = false;
-      this.sections = this.$uci.sections(this.config, this.typed ? this.name : undefined);
+      this.sections = this.$uci.sections(this.config, this.type);
       this.$nextTick(() => {
         this.uciForm.buildForm();
       });
