@@ -4,9 +4,11 @@ import {ubus} from './ubus'
 
 const uci = {
   state: {
+    newidx: 0,
     changed: 0,
     values: {},
-    changes: {}
+    changes: {},
+    creates: {}
   }
 }
 
@@ -25,58 +27,99 @@ uci.load = function(conf, force) {
 }
 
 uci.sections = function(conf, type) {
-  const v = this.state.values[conf];
+  const v = this.state.values[conf] || {};
+  const n = this.state.creates[conf] || {};
+  const sections = [];
 
-  if (!v)
-    return [];
+  sections.push(...Object.keys(v).map(sid => v[sid]).filter(s => !type || s['.type'] === type));
+  sections.push(...Object.keys(n).map(sid => n[sid]).filter(s => !type || s['.type'] === type));
 
-  return Object.keys(v).map(sid => v[sid]).filter(s => !type || s['.type'] === type);
+  return sections;
 }
 
 uci.get = function(conf, sid, opt) {
   const v = this.state.values[conf];
+  const n = this.state.creates[conf];
+  let s = undefined;
 
   if (typeof(sid) === 'undefined')
     return undefined;
 
-  if (!v || !sid)
-    return v;
+  if (n && n[sid])
+    s = n[sid];
+  else if (v && v[sid])
+    s = v[sid];
 
-  const s = v[sid];
-
-  if (!s || !opt)
+  if (typeof(opt) === 'undefined')
     return s;
 
-  return s[opt];
+  return s && s[opt];
 }
 
 uci.set = function(conf, sid, opt, val) {
   const v = this.state.values;
   const c = this.state.changes;
+  const n = this.state.creates;
 
   if (typeof(sid) === 'undefined' ||
     typeof(opt) === 'undefined' ||
     opt.charAt(0) === '.')
     return;
 
-  if (!v[conf] || !v[conf][sid])
+  if (n[conf] && n[conf][sid]) {
+    n[conf][sid][opt] = val;
+    this.state.changed++;
     return;
+  }
 
-  /* Ignore the same value */
-  const old = this.get(conf, sid, opt);
-  if (typeof(old) === 'undefined' && (val === '' || val === []))
-    return;
-  if (old === val)
-    return;
+  if (v[conf] && v[sid]) {
+    /* Ignore the same value */
+    const old = v[conf][sid][opt];
+    if (typeof(old) === 'undefined' && (val === '' || val === []))
+      return;
+    if (old === val)
+      return;
 
-  if (!c[conf])
-    c[conf] = {};
+    if (!c[conf])
+      c[conf] = {};
 
-  if (!c[conf][sid])
-    c[conf][sid] = {};
+    if (!c[conf][sid])
+      c[conf][sid] = {};
 
-  c[conf][sid][opt] = val || '';
+    c[conf][sid][opt] = val;
+    this.state.changed++;
+  }
+}
+
+uci.createSID = function(conf) {
+  const v = this.state.values;
+  const n = this.state.creates;
+  let sid;
+
+  do {
+    sid = 'new' + parseInt((Math.random() * 0xFFFFFF).toFixed(0)).toString(16);
+  } while ((n[conf] && n[conf][sid]) || (v[conf] && v[conf][sid]));
+
+  return sid;
+},
+
+uci.add = function(conf, type, name) {
+  const n = this.state.creates;
+  const sid = name || this.createSID(conf);
+
+  if (!n[conf])
+    n[conf] = {};
+
+  n[conf][sid] = {
+    '.type': type,
+    '.name': sid,
+    '.create': name,
+    '.anonymous': !name,
+    '.index': 1000 + this.state.newidx++
+  };
+
   this.state.changed++;
+  return sid;
 }
 
 uci.changed = function() {
@@ -85,12 +128,14 @@ uci.changed = function() {
 
 uci.reset = function() {
   this.state.changes = {};
+  this.state.creates = {};
+  this.state.changed = 0;
+  this.state.newidx = 0;
 }
 
 uci.save = function() {
   const c = this.state.changes;
-
-  this.state.changed = 0;
+  const n = this.state.creates;
 
   return new Promise(resolve => {
     const batch = [];
@@ -99,8 +144,24 @@ uci.save = function() {
       for (const sid in c[conf]) {
         batch.push(['uci', 'set', {config: conf, section: sid, values: c[conf][sid]}]);
       }
-      delete c[conf];
     }
+
+    for (const conf in n) {
+      for (const sid in n[conf]) {
+        const params = {config: conf, values: {}};
+        for (const k in n[conf][sid]) {
+          if (k === '.type')
+            params.type = n[conf][sid][k];
+          else if (k === '.create')
+            params.name = n[conf][sid][k];
+          else if (k.charAt(0) !== '.')
+            params.values[k] = n[conf][sid][k];
+        }
+        batch.push(['uci', 'add', params]);
+      }
+    }
+
+    this.reset();
 
     if (batch.length === 0) {
       resolve();

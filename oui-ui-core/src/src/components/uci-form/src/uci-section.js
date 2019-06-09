@@ -9,7 +9,8 @@ export default {
   props: {
     name: String, /* If typed is true, it represents the uci section type, otherwise it represents the uci section name */
     title: String,
-    typed: Boolean
+    typed: Boolean,
+    addremove: Boolean
   },
   data() {
     return {
@@ -34,16 +35,20 @@ export default {
   },
   watch: {
     loaded() {
-      this.sections = this.$uci.sections(this.config, this.typed ? this.name : undefined);
-      this.$nextTick(() => {
-        this.uciForm.buildForm();
-      });
+      this.load();
     }
   },
   created() {
     this.uciForm.sections.push(this);
   },
   methods: {
+    load() {
+      this.formBuilt = false;
+      this.sections = this.$uci.sections(this.config, this.typed ? this.name : undefined);
+      this.$nextTick(() => {
+        this.uciForm.buildForm();
+      });
+    },
     findOptionByName(name) {
       for (let i = 0; i < this.options.length; i++)
         if (this.options[i].name === name)
@@ -91,6 +96,10 @@ export default {
           this.toggleOptions(tab.options, name, sid);
         });
       });
+    },
+    add() {
+      this.$uci.add(this.config, this.name);
+      this.load();
     }
   },
   render(h) {

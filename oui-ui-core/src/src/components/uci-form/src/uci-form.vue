@@ -17,6 +17,7 @@
             <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form" :ref="o.prop(u['.name'])"></uci-form-item>
             <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
           </div>
+          <el-button v-if="s.addremove" type="primary" size="mini" @click="s.add">Add</el-button>
         </el-card>
       </template>
     </el-form>
@@ -164,10 +165,8 @@ export default {
       });
     },
     reset() {
-      this.sections.forEach(s => {
-        s.formBuilt = false;
-      });
-      this.buildForm();
+      this.$uci.reset();
+      this.loaded++;
     }
   },
   created() {
@@ -176,6 +175,9 @@ export default {
       this.loaded++;
       loading.close();
     });
+  },
+  destroyed() {
+    this.$uci.reset();
   }
 }
 </script>
