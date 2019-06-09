@@ -184,6 +184,8 @@ export default {
 
       this.$set(this.form, prop, val);
       this.initialVal = val;
+
+      this.uciSection.toggle(this.name);
     },
     saveUCI(sid) {
       if (this.type === 'dummy')
