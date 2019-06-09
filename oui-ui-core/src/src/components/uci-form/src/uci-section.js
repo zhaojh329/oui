@@ -16,7 +16,12 @@ export default {
     name: String,
     title: String,
     /* The type prop must be provided for add */
-    addremove: Boolean
+    addremove: Boolean,
+    /* If false, the add operation will add a named section */
+    anonymous: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -105,8 +110,8 @@ export default {
         });
       });
     },
-    add() {
-      this.$uci.add(this.config, this.type);
+    add(name) {
+      this.$uci.add(this.config, this.type, name);
       this.load();
     }
   },

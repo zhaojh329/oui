@@ -17,7 +17,7 @@
             <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form" :ref="o.prop(u['.name'])"></uci-form-item>
             <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
           </div>
-          <uci-section-add :sestion="s"></uci-section-add>
+          <uci-section-add :sestion="s" :form="form"></uci-section-add>
         </el-card>
       </template>
     </el-form>
@@ -89,7 +89,8 @@ export default {
       });
     },
     onValidate(name, valid) {
-      this.validates[name].valid = valid;
+      if (this.validates[name])
+        this.validates[name].valid = valid;
     },
     saveOptions(options, uciSection) {
       const sid = uciSection['.name'];
