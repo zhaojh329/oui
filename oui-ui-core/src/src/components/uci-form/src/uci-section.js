@@ -113,6 +113,10 @@ export default {
     add(name) {
       this.$uci.add(this.config, this.type, name);
       this.load();
+    },
+    del(sid) {
+      this.$uci.del(this.config, sid);
+      this.load();
     }
   },
   render(h) {

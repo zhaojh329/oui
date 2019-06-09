@@ -8,7 +8,8 @@ const uci = {
     changed: 0,
     values: {},
     changes: {},
-    creates: {}
+    creates: {},
+    deletes: {}
   }
 }
 
@@ -29,9 +30,15 @@ uci.load = function(conf, force) {
 uci.sections = function(conf, type) {
   const v = this.state.values[conf] || {};
   const n = this.state.creates[conf] || {};
+  const d = this.state.deletes[conf] || {};
   const sections = [];
 
-  sections.push(...Object.keys(v).map(sid => v[sid]).filter(s => !type || s['.type'] === type));
+  sections.push(...Object.keys(v).map(sid => v[sid]).filter(s => {
+    const sid = s['.name'];
+    if (d && d[sid])
+      return false;
+    return !type || s['.type'] === type;
+  }));
   sections.push(...Object.keys(n).map(sid => n[sid]).filter(s => !type || s['.type'] === type));
 
   return sections;
@@ -122,6 +129,25 @@ uci.add = function(conf, type, name) {
   return sid;
 }
 
+uci.del = function(conf, sid) {
+  const n = this.state.creates;
+  const c = this.state.changes;
+  const d = this.state.deletes;
+
+  if (n[conf] && n[conf][sid]) {
+    delete n[conf][sid];
+  } else {
+    if (c[conf])
+      delete c[conf][sid];
+
+    if (!d[conf])
+      d[conf] = {};
+
+    d[conf][sid] = true;
+  }
+  this.state.changed++;
+}
+
 uci.changed = function() {
   return this.state.changed;
 }
@@ -129,6 +155,7 @@ uci.changed = function() {
 uci.reset = function() {
   this.state.changes = {};
   this.state.creates = {};
+  this.state.deletes = {};
   this.state.changed = 0;
   this.state.newidx = 0;
 }
@@ -136,6 +163,7 @@ uci.reset = function() {
 uci.save = function() {
   const c = this.state.changes;
   const n = this.state.creates;
+  const d = this.state.deletes;
 
   return new Promise(resolve => {
     const batch = [];
@@ -159,6 +187,11 @@ uci.save = function() {
         }
         batch.push(['uci', 'add', params]);
       }
+    }
+
+    for (const conf in d) {
+      for (const sid in d[conf])
+        batch.push(['uci', 'delete', {config: conf, section: sid}]);
     }
 
     this.reset();

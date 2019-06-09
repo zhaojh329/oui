@@ -5,6 +5,7 @@
       <template v-for="(s, i) in sections">
         <el-card :key="i" :header="s.title">
           <div v-for="(u, i) in s.uciSections" :key="u['.name']">
+            <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
             <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
               <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
                 <span slot="label">
@@ -30,6 +31,7 @@
 
 <script>
 import UciSectionAdd from './uci-section-add'
+import UciSectionDel from './uci-section-del'
 
 export default {
   name: 'UciForm',
@@ -45,7 +47,8 @@ export default {
     }
   },
   components: {
-    UciSectionAdd
+    UciSectionAdd,
+    UciSectionDel
   },
   data() {
     return {
