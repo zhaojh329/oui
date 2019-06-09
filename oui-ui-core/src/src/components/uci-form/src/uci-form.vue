@@ -17,7 +17,7 @@
             <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form" :ref="o.prop(u['.name'])"></uci-form-item>
             <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
           </div>
-          <el-button v-if="s.addremove && s.type" type="primary" size="mini" @click="s.add">Add</el-button>
+          <uci-section-add :sestion="s"></uci-section-add>
         </el-card>
       </template>
     </el-form>
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import UciSectionAdd from './uci-section-add'
+
 export default {
   name: 'UciForm',
   provide() {
@@ -41,6 +43,9 @@ export default {
       type: String,
       required: true
     }
+  },
+  components: {
+    UciSectionAdd
   },
   data() {
     return {
