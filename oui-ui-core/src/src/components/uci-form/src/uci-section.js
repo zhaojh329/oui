@@ -15,6 +15,7 @@ export default {
     type: String,
     name: String,
     title: String,
+    /* The type prop must be provided for add */
     addremove: Boolean
   },
   data() {
