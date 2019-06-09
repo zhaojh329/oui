@@ -10,27 +10,39 @@ const uci = {
   }
 }
 
-uci.load = function(config, force) {
+uci.load = function(conf, force) {
   return new Promise(resolve => {
-    if (!force && this.state.values[config]) {
+    if (!force && this.state.values[conf]) {
       resolve();
       return;
     }
 
-    ubus.call('uci', 'get', {config}).then(r => {
-      this.state.values[config] = r.values;
+    ubus.call('uci', 'get', {config: conf}).then(r => {
+      this.state.values[conf] = r.values;
       resolve();
     });
   });
 }
 
-uci.get = function(config, sid, opt) {
-  const values = this.state.values[config];
+uci.sections = function(conf, type) {
+  const v = this.state.values[conf];
 
-  if (!values || !sid)
-    return values;
+  if (!v)
+    return [];
 
-  const s = values[sid];
+  return Object.keys(v).map(sid => v[sid]).filter(s => !type || s['.type'] === type);
+}
+
+uci.get = function(conf, sid, opt) {
+  const v = this.state.values[conf];
+
+  if (typeof(sid) === 'undefined')
+    return undefined;
+
+  if (!v || !sid)
+    return v;
+
+  const s = v[sid];
 
   if (!s || !opt)
     return s;
@@ -38,27 +50,32 @@ uci.get = function(config, sid, opt) {
   return s[opt];
 }
 
-uci.set = function(config, sid, opt, val) {
+uci.set = function(conf, sid, opt, val) {
   const v = this.state.values;
   const c = this.state.changes;
 
-  if (!v[config] || !v[config][sid])
+  if (typeof(sid) === 'undefined' ||
+    typeof(opt) === 'undefined' ||
+    opt.charAt(0) === '.')
+    return;
+
+  if (!v[conf] || !v[conf][sid])
     return;
 
   /* Ignore the same value */
-  const old = this.get(config, sid, opt);
+  const old = this.get(conf, sid, opt);
   if (typeof(old) === 'undefined' && (val === '' || val === []))
     return;
   if (old === val)
     return;
 
-  if (!c[config])
-    c[config] = {};
+  if (!c[conf])
+    c[conf] = {};
 
-  if (!c[config][sid])
-    c[config][sid] = {};
+  if (!c[conf][sid])
+    c[conf][sid] = {};
 
-  c[config][sid][opt] = val || '';
+  c[conf][sid][opt] = val || '';
   this.state.changed++;
 }
 
@@ -78,11 +95,11 @@ uci.save = function() {
   return new Promise(resolve => {
     const batch = [];
 
-    for (const config in c) {
-      for (const sid in c[config]) {
-        batch.push(['uci', 'set', {config: config, section: sid, values: c[config][sid]}]);
+    for (const conf in c) {
+      for (const sid in c[conf]) {
+        batch.push(['uci', 'set', {config: conf, section: sid, values: c[conf][sid]}]);
       }
-      delete c[config];
+      delete c[conf];
     }
 
     if (batch.length === 0) {

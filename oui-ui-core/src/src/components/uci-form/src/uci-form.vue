@@ -47,7 +47,7 @@ export default {
       form: {},
       rules: {},
       validates: {},
-      sections: []
+      sections: [] /* UciSection instances */
     }
   },
   methods: {

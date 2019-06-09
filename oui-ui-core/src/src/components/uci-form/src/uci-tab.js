@@ -7,7 +7,7 @@ export default {
   },
   data() {
     return {
-      options: []
+      options: [] /* UciOption instances */
     }
   },
   computed: {

@@ -7,16 +7,16 @@ export default {
   },
   inject: ['uciForm'],
   props: {
-    name: String,
+    name: String, /* If typed is true, it represents the uci section type, otherwise it represents the uci section name */
     title: String,
     typed: Boolean
   },
   data() {
     return {
       formBuilt: false,
-      tabs: [],
-      options: [],
-      values: {}
+      tabs: [], /* UciTab instances */
+      options: [], /* UciOption instances */
+      sections: [] /* uci sections */
     }
   },
   computed: {
@@ -24,20 +24,17 @@ export default {
       return this.uciForm.loaded;
     },
     uciSections() {
-      const values = this.values;
-      const matchKey = this.typed ? '.type' : '.name';
-      const sections = [];
-
-      Object.keys(values).forEach(k => {
-        if (values[k][matchKey] === this.name)
-          sections.push(values[k]);
-      });
-      return sections;
+      if (this.typed)
+        return this.sections;
+      return this.sections.filter(s => s['.name'] === this.name);
+    },
+    config() {
+      return this.uciForm.config;
     }
   },
   watch: {
     loaded() {
-      this.values = this.$uci.get(this.uciForm.config);
+      this.sections = this.$uci.sections(this.config, this.typed ? this.name : undefined);
       this.$nextTick(() => {
         this.uciForm.buildForm();
       });
