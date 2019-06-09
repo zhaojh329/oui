@@ -106,7 +106,7 @@ export default {
       });
     },
     add() {
-      this.$uci.add(this.config, this.name);
+      this.$uci.add(this.config, this.type);
       this.load();
     }
   },
