@@ -176,6 +176,7 @@ export default {
 
         Promise.all(promises).then(() => {
           loading.close();
+          this.$emit('apply');
           this.load(true).then(() => {
             this.$message.success('Configuration has been applied');
             this.$store.dispatch('updateData');
