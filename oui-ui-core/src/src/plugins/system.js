@@ -2,7 +2,7 @@
 
 import {ubus} from './ubus'
 
-const system = {}
+export const system = {}
 
 system.getSystemInfo = function() {
   return new Promise(resolve => {

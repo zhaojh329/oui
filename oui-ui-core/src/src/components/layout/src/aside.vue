@@ -2,7 +2,7 @@
   <div>
     <el-aside class="asside-nav">
       <div class="logo-name">
-        <router-link to="/">OpenWrt</router-link>
+        <router-link to="/">{{ hostname }}</router-link>
       </div>
       <el-menu ref="navmenu" :default-active="$route.path" background-color="#03152A" text-color="rgba(255,255,255,.8)" active-text-color="#ffffff" router unique-opened>
         <el-submenu v-for="item in menus" :key="item.path" :index="item.path">
@@ -27,6 +27,9 @@ export default {
   computed: {
     menus() {
       return this.$store.state.menus;
+    },
+    hostname() {
+      return this.$store.state.hostname;
     }
   },
   created() {

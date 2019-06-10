@@ -178,6 +178,7 @@ export default {
           loading.close();
           this.load(true).then(() => {
             this.$message.success('Configuration has been applied');
+            this.$store.dispatch('updateData');
           });
         });
       });

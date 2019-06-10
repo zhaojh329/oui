@@ -29,10 +29,18 @@ export default {
     Aside,
     Header
   },
+  computed: {
+    hostname() {
+      return this.$store.state.hostname;
+    }
+  },
+  watch: {
+    hostname() {
+      document.title = this.hostname + ' - oui';
+    }
+  },
   created() {
-    this.$system.getBoardInfo().then(r => {
-      document.title = r.hostname + ' - oui';
-    });
+    this.$store.commit('updateData');
   }
 }
 </script>
