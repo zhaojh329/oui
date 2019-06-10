@@ -72,6 +72,12 @@ export default {
     },
     buildFormOptions(options, uciSection) {
       const sid = uciSection['.name'];
+
+      for (const prop in this.form) {
+        if (prop.match(sid))
+          return;
+      }
+
       options.forEach(o => {
         o.buildForm(sid);
       });
