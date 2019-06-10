@@ -116,6 +116,7 @@ export default {
     },
     del(sid) {
       this.$uci.del(this.config, sid);
+      this.uciForm.delForm(sid);
       this.load();
     }
   },

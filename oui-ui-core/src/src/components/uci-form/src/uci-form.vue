@@ -97,6 +97,12 @@ export default {
         });
       });
     },
+    delForm(sid) {
+      for (const prop in this.form) {
+        if (prop.match(sid))
+          this.$delete(this.form, prop);
+      }
+    },
     onValidate(name, valid) {
       if (this.validates[name])
         this.validates[name].valid = valid;
