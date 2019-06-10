@@ -31,7 +31,12 @@ export default {
       default: '0'
     },
     /* Used for list */
-    options: Array,
+    options: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     /* If this function is provided, the form loads the value by the function instead of from uci */
     load: Function,
     /*
