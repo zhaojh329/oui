@@ -73,16 +73,11 @@ export default {
     buildFormOptions(options, uciSection) {
       const sid = uciSection['.name'];
 
-      for (const prop in this.form) {
-        if (prop.match(sid))
-          return;
-      }
-
       options.forEach(o => {
         o.buildForm(sid);
       });
     },
-    buildForm() {
+    buildForm(sid) {
       this.sections.forEach(s => {
         if (s.formBuilt)
           return;
@@ -90,6 +85,8 @@ export default {
 
         const uciSections = s.uciSections;
         uciSections.forEach(uciSection => {
+          if (sid && uciSection['.name'] !== sid)
+            return;
           this.buildFormOptions(s.options, uciSection);
           s.tabs.forEach(tab => {
             this.buildFormOptions(tab.options, uciSection);

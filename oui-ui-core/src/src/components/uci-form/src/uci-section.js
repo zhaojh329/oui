@@ -55,11 +55,11 @@ export default {
     this.uciForm.sections.push(this);
   },
   methods: {
-    load() {
+    load(sid) {
       this.formBuilt = false;
       this.sections = this.$uci.sections(this.config, this.type);
       this.$nextTick(() => {
-        this.uciForm.buildForm();
+        this.uciForm.buildForm(sid);
       });
     },
     findOptionByName(name) {
@@ -111,8 +111,8 @@ export default {
       });
     },
     add(name) {
-      this.$uci.add(this.config, this.type, name);
-      this.load();
+      const sid = this.$uci.add(this.config, this.type, name);
+      this.load(sid);
     },
     del(sid) {
       this.$uci.del(this.config, sid);
