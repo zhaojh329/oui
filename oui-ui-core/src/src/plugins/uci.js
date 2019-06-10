@@ -79,7 +79,7 @@ uci.set = function(conf, sid, opt, val) {
     return;
   }
 
-  if (v[conf] && v[sid]) {
+  if (v[conf] && v[conf][sid]) {
     /* Ignore the same value */
     const old = v[conf][sid][opt];
     if (typeof(old) === 'undefined' && (val === '' || val === []))
