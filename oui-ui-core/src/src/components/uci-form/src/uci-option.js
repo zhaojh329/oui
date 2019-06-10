@@ -61,7 +61,10 @@ export default {
   },
   data() {
     return {
-      /* original value */
+      /*
+      ** original value
+      ** Stored value loaded from the uci configuration file or user-supplied initial value.
+      */
       original: null
     }
   },
