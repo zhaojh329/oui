@@ -21,7 +21,7 @@ export default {
       return s.addable && s.type && !s.name;
     },
     prop() {
-      return 'uci_sestion_' + this.type;
+      return 'uci_sestion_' + this.sestion.type;
     }
   },
   data() {
