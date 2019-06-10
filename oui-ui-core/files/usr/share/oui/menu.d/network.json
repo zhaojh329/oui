@@ -22,6 +22,13 @@
         "view": "network/switch",
         "index": 30
     },
+    "network/dhcp": {
+        "title": "DHCP/DNS",
+        "acls": [ "network" ],
+        "files": [ "/etc/config/dhcp" ],
+        "view": "network/dhcp",
+        "index": 40
+    },
     "network/hosts": {
         "title": "Hostnames",
         "acls": [ "hostnames" ],
