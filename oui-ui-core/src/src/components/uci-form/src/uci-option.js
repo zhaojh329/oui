@@ -61,8 +61,8 @@ export default {
   },
   data() {
     return {
-      /* First loaded value */
-      initialVal: null
+      /* original value */
+      original: null
     }
   },
   computed: {
@@ -162,7 +162,7 @@ export default {
           this.load(resolve);
         }).then(v => {
           this.$set(this.form, prop, v);
-          this.initialVal = v;
+          this.original = v;
         });
         return;
       }
@@ -188,7 +188,7 @@ export default {
       }
 
       this.$set(this.form, prop, val);
-      this.initialVal = val;
+      this.original = val;
 
       this.uciSection.toggle(this.name);
     },
@@ -197,7 +197,7 @@ export default {
         return;
 
       let value = this.formValue(sid);
-      if (value === this.initialVal)
+      if (value === this.original)
         return;
 
       if (typeof(this.save) !== 'undefined') {
@@ -219,7 +219,7 @@ export default {
         return null;
 
       const value = this.formValue(sid);
-      if (value === this.initialVal)
+      if (value === this.original)
         return null;
 
       if (typeof(this.apply) !== 'undefined') {
