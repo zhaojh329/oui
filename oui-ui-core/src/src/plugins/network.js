@@ -7,6 +7,66 @@ const network = {
   devices: []
 }
 
+class Interface {
+  constructor(iface) {
+    this.status = iface;
+    this.name = iface.interface;
+  }
+
+  isUp() {
+    return this.status['up'];
+  }
+
+  getUptime() {
+    const uptime = this.status['uptime'];
+    return isNaN(uptime) ? 0 : uptime;
+  }
+
+  getDevice() {
+    const l3dev = this.status['l3_device'];
+    if (l3dev)
+      return network.getDevice(l3dev);
+
+    return undefined;
+  }
+
+  getAddrs(key, mask) {
+    const rv = [];
+    const addrs = this.status[key];
+
+    if (addrs) {
+      addrs.forEach(addr => {
+        let address = addr.address;
+        if (mask)
+          address += `/${addr.mask}`;
+        rv.push(address);
+      });
+    }
+
+    return rv;
+  }
+
+  getIPv4Addrs(mask) {
+    return this.getAddrs('ipv4-address', mask);
+  }
+
+  getIPv6Addrs(mask) {
+    const rv = [];
+
+    rv.push(...this.getAddrs('ipv6-address', mask))
+    rv.push(...this.getAddrs('ipv6-prefix-assignment', mask))
+
+    return rv;
+  }
+
+  getStatistics() {
+    const dev = this.getDevice();
+    if (dev)
+      return dev.statistics;
+    return {};
+  }
+}
+
 network.load = function() {
   const promises = [];
 
@@ -21,7 +81,7 @@ network.load = function() {
         this.devices.push({name: name, ...devices[name]});
       });
 
-      this.interfaces = r[1].interface;
+      this.interfaces = r[1].interface.map(iface => new Interface(iface));
 
       resolve();
     });
@@ -32,7 +92,7 @@ network.getInterface = function(name) {
   const interfaces = this.interfaces;
 
   for (let i = 0; i < interfaces.length; i++) {
-    if (interfaces[i].interface === name)
+    if (interfaces[i].name === name)
       return interfaces[i];
   }
 
