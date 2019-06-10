@@ -32,7 +32,6 @@
 <script>
 
 export default {
-  name: 'admin',
   data() {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
