@@ -1,7 +1,7 @@
 const validator = {}
 
-function performCallback(types, rule, value, cb, msg) {
-  if (value === '' || types[rule.type].verify(value))
+function performCallback(types, rule, value, cb, msg, arg) {
+  if (value === '' || types[rule.type].verify(value, arg))
     cb();
   else
     cb(new Error(msg));
@@ -32,12 +32,52 @@ const types = {
       performCallback(types, rule, value, cb, 'Must be a integer');
     }
   },
+  uinteger: {
+    verify: (value) => {
+      return types['integer'].verify(value) && value >= 0;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a positive integer');
+    }
+  },
   float: {
     verify: (value) => {
       return types['number'].verify(value) && parseFloat(value).toString() === value;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a float');
+      performCallback(types, rule, value, cb, 'Must be a number');
+    }
+  },
+  ufloat: {
+    verify: (value) => {
+      return types['float'].verify(value) && value >= 0;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a positive number');
+    }
+  },
+  min: {
+    verify: (value, arg) => {
+      return types['float'].verify(value) && value >= arg;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, `Must be a number greater or equal to ${rule.arg}`, rule.arg);
+    }
+  },
+  max: {
+    verify: (value, arg) => {
+      return types['float'].verify(value) && value <= arg;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, `Must be a number lower or equal to ${rule.arg}`, rule.arg);
+    }
+  },
+  range: {
+    verify: (value, arg) => {
+      return types['min'].verify(value, arg[0]) && types['max'].verify(value, arg[1]);
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, `Must be a number between ${rule.arg[0]} and ${rule.arg[1]}`, rule.arg);
     }
   },
   hostname: {
@@ -53,7 +93,7 @@ const types = {
   }
 }
 
-validator.compileString = function(rule) {
+validator.compileString = function(rule, arg) {
   if (Object.keys(types).indexOf(rule) < 0)
     return [];
 
@@ -65,6 +105,7 @@ validator.compileString = function(rule) {
     r.message = type.message;
   } else {
     r.type = rule;
+    r.arg = arg;
     r.validator = type.validator;
   }
 
@@ -79,12 +120,21 @@ validator.compileObject = function(rule) {
     rs.push(...r);
   }
 
-  if (rule.min) {
-    return [{min: rule.min}];
-  }
+  console.log(rule);
 
-  if (rule.max) {
-    return [{min: rule.max}];
+  if (typeof(rule.min) !== 'undefined' && typeof(rule.max) !== 'undefined') {
+    const r = this.compileString('range', [rule.min, rule.max]);
+    rs.push(...r);
+  } else {
+    if (typeof(rule.min) !== 'undefined') {
+      const r = this.compileString('min', rule.min);
+      rs.push(...r);
+    }
+
+    if (typeof(rule.max) !== 'undefined') {
+      const r = this.compileString('max', rule.max);
+      rs.push(...r);
+    }
   }
 
   return rs;
