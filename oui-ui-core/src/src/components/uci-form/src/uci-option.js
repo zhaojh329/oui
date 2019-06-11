@@ -16,11 +16,13 @@ export default {
     required: Boolean,
     /* If load from uci fails, the value of the property is used as the form value. */
     initial: [String, Array],
-    /* Whether the name property is a uci option */
+    /* Whether to access the uci value */
     uci: {
       type: Boolean,
       default: true
     },
+    /* If this prop is provided, the uci value will be accessed with this prop instead of the name prop. */
+    uciOption: String,
     /* Used for switch */
     activeValue: {
       type: String,
@@ -118,6 +120,9 @@ export default {
           return [o[0], o[0]];
         return o;
       });
+    },
+    uciOptName() {
+      return this.uciOption || this.name;
     }
   },
   created() {
@@ -177,7 +182,7 @@ export default {
           this.buildFormValue(sid, v);
         });
       } else if (this.uci) {
-        value = this.$uci.get(this.config, sid, this.name);
+        value = this.$uci.get(this.config, sid, this.uciOptName);
       }
 
       this.buildFormValue(sid, value);
@@ -206,7 +211,7 @@ export default {
       if (this.type === 'list' && this.multiple)
         value = value.join(' ');
 
-      this.$uci.set(this.config, sid, this.name, value);
+      this.$uci.set(this.config, sid, this.uciOptName, value);
     },
     applyUCI(sid) {
       if (this.type === 'dummy')
