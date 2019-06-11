@@ -8,8 +8,8 @@
       </uci-tab>
       <uci-tab title="Logging" name="logging">
         <uci-option type="input" label="System log buffer size" name="log_size" placeholder="16" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
-        <uci-option type="input" label="External system log server" name="log_ip" placeholder="0.0.0.0"></uci-option>
-        <uci-option type="input" label="External system log server port" name="log_port" placeholder="514"></uci-option>
+        <uci-option type="input" label="External system log server" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option>
+        <uci-option type="input" label="External system log server port" name="log_port" placeholder="514" rules="port"></uci-option>
         <uci-option type="list" label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-option>
         <uci-option type="input" label="Write system log to file" name="log_file"></uci-option>
         <uci-option type="list" label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-option>

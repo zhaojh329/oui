@@ -30,31 +30,31 @@
         <uci-option type="switch" label="No negative cache" name="nonegcache"></uci-option>
         <uci-option type="switch" label="Strict order" name="strictorder"></uci-option>
         <uci-option type="dlist" label="Bogus NX Domain Override" name="bogusnxdomain"></uci-option>
-        <uci-option type="input" label="DNS server port" name="port" placeholder="53"></uci-option>
-        <uci-option type="input" label="DNS query port" name="queryport" placeholder="any"></uci-option>
-        <uci-option type="input" label="Max. DHCP leases" name="dhcpleasemax" placeholder="unlimited"></uci-option>
-        <uci-option type="input" label="Max. EDNS0 packet size" name="ednspacket_max" placeholder="1280"></uci-option>
-        <uci-option type="input" label="Max. concurrent queries" name="dnsforwardmax" placeholder="150"></uci-option>
+        <uci-option type="input" label="DNS server port" name="port" placeholder="53" rules="port"></uci-option>
+        <uci-option type="input" label="DNS query port" name="queryport" placeholder="any" rules="port"></uci-option>
+        <uci-option type="input" label="Max. DHCP leases" name="dhcpleasemax" placeholder="unlimited" rules="uinteger"></uci-option>
+        <uci-option type="input" label="Max. EDNS0 packet size" name="ednspacket_max" placeholder="1280" rules="uinteger"></uci-option>
+        <uci-option type="input" label="Max. concurrent queries" name="dnsforwardmax" placeholder="150" rules="uinteger"></uci-option>
       </uci-tab>
     </uci-section>
     <uci-section title="DHCP Server" type="dhcp">
       <uci-tab title="General Settings" name="general">
         <uci-option type="dummy" label="Interface" name="interface"></uci-option>
         <uci-option type="switch" label="Ignore interface" name="ignore"></uci-option>
-        <uci-option type="input" label="Start" name="start" placeholder="100"></uci-option>
-        <uci-option type="input" label="Limit" name="limit" placeholder="150"></uci-option>
+        <uci-option type="input" label="Start" name="start" placeholder="100" rules="uinteger"></uci-option>
+        <uci-option type="input" label="Limit" name="limit" placeholder="150" rules="uinteger"></uci-option>
         <uci-option type="input" label="Leasetime" name="leasetime" placeholder="12h"></uci-option>
       </uci-tab>
       <uci-tab title="Advanced Settings" name="advanced">
         <uci-option type="switch" label="Dynamic DHCP" name="dynamicdhcp" initial="1"></uci-option>
         <uci-option type="switch" label="Force" name="force"></uci-option>
-        <uci-option type="input" label="IPv4-Netmask" name="netmask"></uci-option>
+        <uci-option type="input" label="IPv4-Netmask" name="netmask" rules="ip4addr"></uci-option>
       </uci-tab>
     </uci-section>
-    <uci-section title="Static Leases" type="host" addable>
-      <uci-option type="input" label="Hostname" name="name"></uci-option>
-      <uci-option type="input" label="MAC-Address" name="mac" required></uci-option>
-      <uci-option type="input" label="IPv4-Address" name="ip" required></uci-option>
+    <uci-section title="Static Leases" type="host" addable table>
+      <uci-option type="input" label="Hostname" name="name" rules="hostname"></uci-option>
+      <uci-option type="input" label="MAC-Address" name="mac" required rules="macaddr"></uci-option>
+      <uci-option type="input" label="IPv4-Address" name="ip" required rules="ip4addr"></uci-option>
     </uci-section>
   </uci-form>
 </template>

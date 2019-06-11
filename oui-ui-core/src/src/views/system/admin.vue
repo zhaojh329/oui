@@ -19,7 +19,7 @@
       <uci-form config="dropbear">
         <uci-section title="SSH Server" type="dropbear" addable>
           <uci-option type="list" label="Interface" name="Interface" :options="interfaces"></uci-option>
-          <uci-option type="input" label="Port" name="Port" placeholder="22"></uci-option>
+          <uci-option type="input" label="Port" name="Port" placeholder="22" rules="port"></uci-option>
           <uci-option type="switch" label="Password authentication" name="PasswordAuth" initial="on" active-value="on" inactive-value="off"></uci-option>
           <uci-option type="switch" label="Allow root logins with password" name="RootPasswordAuth" initial="on" active-value="on" inactive-value="off"></uci-option>
           <uci-option type="switch" label="Gateway ports" name="GatewayPorts" active-value="on" inactive-value="off"></uci-option>

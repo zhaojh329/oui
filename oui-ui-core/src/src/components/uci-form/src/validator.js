@@ -1,5 +1,110 @@
 const validator = {}
 
+function parseIPv4(str) {
+  if ((typeof(str) !== 'string' && !(str instanceof String)) ||
+    !str.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/))
+    return undefined;
+
+  const num = [ ];
+  const parts = str.split(/\./);
+
+  for (let i = 0; i < parts.length; i++) {
+    const n = parseInt(parts[i]);
+    if (isNaN(n) || n > 255)
+      return undefined;
+
+    num.push(n);
+  }
+
+  return num;
+}
+
+function parseIPv6(str) {
+  if ((typeof(str) !== 'string' && !(str instanceof String)) ||
+    !str.match(/^[a-fA-F0-9:]+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})?$/))
+    return undefined;
+
+  const parts = str.split(/::/);
+  if (parts.length === 0 || parts.length > 2)
+    return undefined;
+
+  const lnum = [ ];
+  if (parts[0].length > 0) {
+    const left = parts[0].split(/:/);
+    for (let i = 0; i < left.length; i++) {
+      const n = parseInt(left[i], 16);
+      if (isNaN(n))
+        return undefined;
+
+      lnum.push((n / 256) >> 0);
+      lnum.push(n % 256);
+    }
+  }
+
+  const rnum = [ ];
+  if (parts.length > 1 && parts[1].length > 0) {
+    const right = parts[1].split(/:/);
+
+    for (let i = 0; i < right.length; i++) {
+      if (right[i].indexOf('.') > 0) {
+        const addr = parseIPv4(right[i]);
+        if (!addr)
+          return undefined;
+
+        rnum.push.apply(rnum, addr);
+        continue;
+      }
+
+      const n = parseInt(right[i], 16);
+      if (isNaN(n))
+        return undefined;
+
+      rnum.push((n / 256) >> 0);
+      rnum.push(n % 256);
+    }
+  }
+
+  if (rnum.length > 0 && (lnum.length + rnum.length) > 15)
+    return undefined;
+
+  const num = [ ];
+
+  num.push.apply(num, lnum);
+
+  for (let i = 0; i < (16 - lnum.length - rnum.length); i++)
+    num.push(0);
+
+  num.push.apply(num, rnum);
+
+  if (num.length > 16)
+    return undefined;
+
+  return num;
+}
+
+function isNetmask(addr) {
+  if (!Array.isArray(addr))
+    return false;
+
+  let c;
+
+  for (c = 0; (c < addr.length) && (addr[c] === 255); c++);
+
+  if (c === addr.length)
+    return true;
+
+  if ((addr[c] === 254) || (addr[c] === 252) || (addr[c] === 248) ||
+    (addr[c] === 240) || (addr[c] === 224) || (addr[c] === 192) ||
+    (addr[c] === 128) || (addr[c] === 0)) {
+    for (c++; (c < addr.length) && (addr[c] === 0); c++);
+
+    if (c === addr.length)
+      return true;
+  }
+
+  return false;
+}
+
 function performCallback(types, rule, value, cb, msg, arg) {
   if (value === '' || types[rule.type].verify(value, arg))
     cb();
@@ -89,6 +194,70 @@ const types = {
     },
     validator: (rule, value, cb) => {
       performCallback(types, rule, value, cb, 'Must be a valid hostname');
+    }
+  },
+  ip4addr: {
+    verify: (value) => {
+      return parseIPv4(value);
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid IPv4 address');
+    }
+  },
+  ip6addr: {
+    verify: (value) => {
+      return parseIPv6(value);
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid IPv6 address');
+    }
+  },
+  ipaddr: {
+    verify: (value) => {
+      return types['ip4addr'].verify(value) || types['ip6addr'].verify(value);
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid IPv6 address');
+    }
+  },
+  netmask4: {
+    verify: (value) => {
+      return isNetmask(parseIPv4(value));
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid IPv4 netmask');
+    }
+  },
+  netmask6: {
+    verify: (value) => {
+      return isNetmask(parseIPv6(value));
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid IPv6 netmask');
+    }
+  },
+  host: {
+    verify: (value) => {
+      return types['hostname'].verify(value) || types['ipaddr'].verify(value);
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid hostname or IP address');
+    }
+  },
+  port: {
+    verify: (value) => {
+      return types['uinteger'].verify(value) && value <= 65535;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid port number');
+    }
+  },
+  macaddr: {
+    verify: (value) => {
+      return value.match(/^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$/) !== null;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid MAC address');
     }
   }
 }
