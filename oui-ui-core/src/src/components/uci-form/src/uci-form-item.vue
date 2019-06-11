@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="option.label" :prop="prop" v-if="visible">
+  <el-form-item ref="form-item" :label="label" :prop="prop" v-if="visible" :label-width="table ? 'auto' : ''">
     <el-input v-if="type === 'input'" v-model="form[prop]" :placeholder="option.placeholder"></el-input>
     <el-input v-else-if="type === 'dummy'" :value="form[prop]" readonly></el-input>
     <el-switch v-else-if="type === 'switch'" v-model="form[prop]" :active-value="option.activeValue" :inactive-value="option.inactiveValue"></el-switch>
@@ -18,12 +18,18 @@ export default {
   props: {
     sid: String,
     option: Object,
-    form: Object
+    form: Object,
+    table: Boolean
   },
   components: {
     UciDlist
   },
   computed: {
+    label() {
+      if (this.table)
+        return undefined;
+      return this.option.label;
+    },
     prop() {
       return this.option.prop(this.sid);
     },

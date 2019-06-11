@@ -4,7 +4,19 @@
     <el-form class="form" label-width="200px" ref="form" :model="form" :rules="rules" @validate="onValidate">
       <template v-for="(s, i) in sections">
         <el-card :key="i" :header="s.title">
-          <div v-for="(u, i) in s.uciSections" :key="u['.name']">
+          <el-table v-if="s.table" :data="s.uciSections">
+            <el-table-column v-for="o in s.allOptions" :key="o.name" :label="o.label">
+              <template v-slot="{ row }">
+                <uci-form-item :option="o" :sid="row['.name']" :form="form" table></uci-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column v-if="s.addable && s.type && !s.name">
+              <template v-slot="{ row }">
+                <el-button type="danger" style="margin-bottom: 22px" @click="s.del(row['.name'])">Delete</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div v-else v-for="(u, i) in s.uciSections" :key="u['.name']">
             <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
             <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
               <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">

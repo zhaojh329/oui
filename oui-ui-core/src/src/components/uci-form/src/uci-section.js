@@ -21,7 +21,9 @@ export default {
     anonymous: {
       type: Boolean,
       default: true
-    }
+    },
+    /* Render in a table */
+    table: Boolean
   },
   data() {
     return {
@@ -44,6 +46,13 @@ export default {
     },
     config() {
       return this.uciForm.config;
+    },
+    allOptions() {
+      const options = [...this.options];
+      this.tabs.forEach(tab => {
+        options.push(...tab.options);
+      });
+      return options;
     }
   },
   watch: {
