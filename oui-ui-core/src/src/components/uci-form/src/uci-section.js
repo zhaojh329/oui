@@ -121,6 +121,7 @@ export default {
 
           this.$nextTick(() => {
             this.uciForm.$refs[o.prop(sid)][0].visible = visible;
+            this.uciForm.onValidate(o.prop(sid), true);
           });
         }
       });
