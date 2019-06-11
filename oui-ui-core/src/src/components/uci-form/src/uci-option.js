@@ -15,7 +15,7 @@ export default {
     },
     required: Boolean,
     /* If load from uci fails, the value of the property is used as the form value. */
-    initial: String,
+    initial: [String, Array],
     /* Whether the name property is a uci option */
     uci: {
       type: Boolean,
