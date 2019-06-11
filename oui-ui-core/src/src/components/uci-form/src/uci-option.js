@@ -168,18 +168,19 @@ export default {
       if (rule.length > 0)
         this.$set(this.rules, prop, rule);
 
-      if (this.load) {
-        this.buildFormValue(sid);
+      let value = undefined;
 
+      if (this.load) {
         new Promise(resolve => {
           this.load(resolve);
         }).then(v => {
           this.buildFormValue(sid, v);
         });
-      } else {
-        const value = this.$uci.get(this.config, sid, this.name);
-        this.buildFormValue(sid, value);
+      } else if (this.uci) {
+        value = this.$uci.get(this.config, sid, this.name);
       }
+
+      this.buildFormValue(sid, value);
 
       this.$watch(`form.${prop}`, () => {
         this.uciSection.toggle(this.name);
