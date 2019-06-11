@@ -1,7 +1,7 @@
 const validator = {}
 
 function performCallback(types, rule, value, cb, msg) {
-  if (types[rule.type].verify(value))
+  if (value === '' || types[rule.type].verify(value))
     cb();
   else
     cb(new Error(msg));
