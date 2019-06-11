@@ -120,8 +120,6 @@ validator.compileObject = function(rule) {
     rs.push(...r);
   }
 
-  console.log(rule);
-
   if (typeof(rule.min) !== 'undefined' && typeof(rule.max) !== 'undefined') {
     const r = this.compileString('range', [rule.min, rule.max]);
     rs.push(...r);
