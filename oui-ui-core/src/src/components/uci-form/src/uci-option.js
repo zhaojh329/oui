@@ -1,3 +1,5 @@
+import validator from './validator'
+
 export default {
   name: 'UciOption',
   inject: ['uciForm', 'uciSection'],
@@ -59,7 +61,9 @@ export default {
     },
     placeholder: String,
     /* Used for multiple list */
-    multiple: Boolean
+    multiple: Boolean,
+    /* validator rules */
+    rules: [String, Object, Array]
   },
   data() {
     return {
@@ -79,12 +83,6 @@ export default {
     },
     form() {
       return this.uciForm.form;
-    },
-    rules() {
-      return this.uciForm.rules;
-    },
-    validates() {
-      return this.uciForm.validates;
     },
     depends() {
       const compares = ['==', '>', '<', '>=', '<=', '!='];
@@ -123,6 +121,20 @@ export default {
     },
     uciOptName() {
       return this.uciOption || this.name;
+    },
+    parsedRules() {
+      let rules = this.rules;
+
+      if (typeof(rules) === 'string')
+        rules = [rules];
+
+      if (typeof(rules) === 'object' && !Array.isArray(rules))
+        rules = [rules];
+
+      if (typeof(rules) === 'undefined')
+        rules = [];
+
+      return rules;
     }
   },
   created() {
@@ -137,6 +149,21 @@ export default {
     },
     formValue(sid) {
       return this.form[this.prop(sid)];
+    },
+    buildFormRule(sid) {
+      const rules = [];
+
+      if (this.required)
+        rules.push({required: true, message: 'This field is required'});
+
+      this.parsedRules.forEach(rule => {
+        rule = validator.compile(rule);
+        rules.push(...rule);
+      });
+
+      const prop = this.prop(sid);
+      this.$set(this.uciForm.rules, prop, rules);
+      this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tab});
     },
     buildFormValue(sid, value) {
       if (typeof(value) === 'undefined' && typeof(this.initial) !== 'undefined')
@@ -163,16 +190,6 @@ export default {
       this.uciSection.toggle(this.name);
     },
     buildForm(sid) {
-      const prop = this.prop(sid);
-
-      this.$set(this.validates, prop, {valid: true, tab: this.tab});
-
-      const rule = [];
-      if (this.required)
-        rule.push({required: true, message: this.name + ' is required'});
-      if (rule.length > 0)
-        this.$set(this.rules, prop, rule);
-
       let value = undefined;
 
       if (this.load) {
@@ -186,7 +203,9 @@ export default {
       }
 
       this.buildFormValue(sid, value);
+      this.buildFormRule(sid);
 
+      const prop = this.prop(sid);
       this.$watch(`form.${prop}`, () => {
         this.uciSection.toggle(this.name);
       });

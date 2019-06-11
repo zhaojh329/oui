@@ -3,7 +3,7 @@
     <uci-section title="System Properties" type="system">
       <uci-tab title="General Settings" name="general">
         <uci-option type="dummy" label="Local Time" :load="localTime" name="__time"></uci-option>
-        <uci-option type="input" label="Hostname" name="hostname" required></uci-option>
+        <uci-option type="input" label="Hostname" name="hostname" required rules="hostname"></uci-option>
         <uci-option type="list" label="Timezone" name="zonename" initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
       </uci-tab>
       <uci-tab title="Logging" name="logging">
