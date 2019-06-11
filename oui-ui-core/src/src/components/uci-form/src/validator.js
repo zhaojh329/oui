@@ -1,46 +1,59 @@
 const validator = {}
 
-validator.types = {
-  number: {
-    validator: 'number',
-    message: 'Must be a number'
-  },
-  integer: {
-    validator: 'integer',
-    message: 'Must be an integer'
-  },
-  float: {
-    validator: 'float',
-    message: 'Must be a float'
-  },
+function performCallback(types, rule, value, cb, msg) {
+  if (types[rule.type].verify(value))
+    cb();
+  else
+    cb(new Error(msg));
+}
+
+const types = {
   url: {
     validator: 'url',
     message: 'Must be a valid ur'
-  },
-  hex: {
-    validator: 'hex',
-    message: 'Must be a valid hex'
   },
   email: {
     validator: 'email',
     message: 'Must be a valid email'
   },
+  number: {
+    verify: (value) => {
+      return !isNaN(value);
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a number');
+    }
+  },
+  integer: {
+    verify: (value) => {
+      return types['number'].verify(value) && parseInt(value).toString() === value;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a integer');
+    }
+  },
+  float: {
+    verify: (value) => {
+      return types['number'].verify(value) && parseFloat(value).toString() === value;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a float');
+    }
+  },
   hostname: {
-    validator: (rule, value, callback) => {
-      if ((value.length <= 253) &&
+    verify: (value) => {
+      return (value.length <= 253) &&
         ((value.match(/^[a-zA-Z0-9]+$/) !== null ||
         (value.match(/^[a-zA-Z0-9_][a-zA-Z0-9_\-.]*[a-zA-Z0-9]$/) &&
-        value.match(/[^0-9.]/)))))
-        callback();
-      else
-        callback(new Error('Must be a valid hostname'));
+        value.match(/[^0-9.]/))));
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, 'Must be a valid hostname');
     }
   }
 }
 
 validator.compileString = function(rule) {
-  const types = this.types;
-
   if (Object.keys(types).indexOf(rule) < 0)
     return [];
 
@@ -51,6 +64,7 @@ validator.compileString = function(rule) {
     r.type = type.validator;
     r.message = type.message;
   } else {
+    r.type = rule;
     r.validator = type.validator;
   }
 
