@@ -25,10 +25,10 @@ export default {
   },
   data() {
     return {
-      formBuilt: false,
       tabs: [], /* UciTab instances */
       options: [], /* UciOption instances */
-      sections: [] /* uci sections */
+      sections: [], /* uci sections */
+      nsid: '' /* Added sid, waiting to be rendered */
     }
   },
   computed: {
@@ -49,18 +49,41 @@ export default {
   watch: {
     loaded() {
       this.load();
+    },
+    sections() {
+      this.buildForm();
     }
   },
   created() {
     this.uciForm.sections.push(this);
   },
   methods: {
-    load(sid) {
-      this.formBuilt = false;
+    load() {
       this.sections = this.$uci.sections(this.config, this.type);
-      this.$nextTick(() => {
-        this.uciForm.buildForm(sid);
+    },
+    buildFormOptions(options, sid) {
+      options.forEach(o => {
+        o.buildForm(sid);
       });
+    },
+    buildForm() {
+      const uciSections = this.uciSections;
+      uciSections.forEach(uciSection => {
+        const sid = uciSection['.name'];
+        if (this.nsid !== '' && sid !== this.nsid)
+          return;
+        this.buildFormOptions(this.options, sid);
+        this.tabs.forEach(tab => {
+          this.buildFormOptions(tab.options, sid);
+        });
+      });
+      this.nsid = '';
+    },
+    delForm(sid) {
+      for (const prop in this.uciForm.form) {
+        if (prop.match(sid))
+          this.$delete(this.uciForm.form, prop);
+      }
     },
     findOptionByName(name) {
       for (let i = 0; i < this.options.length; i++)
@@ -95,7 +118,10 @@ export default {
               break;
             }
           }
-          this.uciForm.$refs[o.prop(sid)][0].visible = visible;
+
+          this.$nextTick(() => {
+            this.uciForm.$refs[o.prop(sid)][0].visible = visible;
+          });
         }
       });
     },
@@ -111,12 +137,12 @@ export default {
       });
     },
     add(name) {
-      const sid = this.$uci.add(this.config, this.type, name);
-      this.load(sid);
+      this.nsid = this.$uci.add(this.config, this.type, name);
+      this.load();
     },
     del(sid) {
       this.$uci.del(this.config, sid);
-      this.uciForm.delForm(sid);
+      this.delForm(sid);
       this.load();
     }
   },

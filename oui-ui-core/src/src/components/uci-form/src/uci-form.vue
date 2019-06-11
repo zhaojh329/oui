@@ -70,36 +70,6 @@ export default {
     load(force) {
       return this.$uci.load(this.config, force);
     },
-    buildFormOptions(options, uciSection) {
-      const sid = uciSection['.name'];
-
-      options.forEach(o => {
-        o.buildForm(sid);
-      });
-    },
-    buildForm(sid) {
-      this.sections.forEach(s => {
-        if (s.formBuilt)
-          return;
-        s.formBuilt = true;
-
-        const uciSections = s.uciSections;
-        uciSections.forEach(uciSection => {
-          if (sid && uciSection['.name'] !== sid)
-            return;
-          this.buildFormOptions(s.options, uciSection);
-          s.tabs.forEach(tab => {
-            this.buildFormOptions(tab.options, uciSection);
-          });
-        });
-      });
-    },
-    delForm(sid) {
-      for (const prop in this.form) {
-        if (prop.match(sid))
-          this.$delete(this.form, prop);
-      }
-    },
     onValidate(name, valid) {
       if (this.validates[name])
         this.validates[name].valid = valid;

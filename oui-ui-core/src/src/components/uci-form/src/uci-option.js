@@ -61,10 +61,7 @@ export default {
   },
   data() {
     return {
-      /*
-      ** original value
-      ** Stored value loaded from the uci configuration file or user-supplied initial value.
-      */
+      /* original value */
       original: null
     }
   },
@@ -136,23 +133,34 @@ export default {
     formValue(sid) {
       return this.form[this.prop(sid)];
     },
+    buildFormValue(sid, value) {
+      if (typeof(value) === 'undefined' && typeof(this.initial) !== 'undefined')
+        value = this.initial;
+
+      if (typeof(value) !== 'undefined') {
+        if (this.type === 'list' && this.multiple)
+          value = value.replace(/\s+/g, ' ').split(' ');
+      }
+
+      if (typeof(value) === 'undefined') {
+        if (this.type === 'dlist')
+          value = [];
+        else if (this.type === 'list')
+          value = this.multiple ? [] : '';
+        else if (this.type === 'switch')
+          value = '0';
+        else
+          value = '';
+      }
+
+      this.original = value;
+      this.$set(this.form, this.prop(sid), value);
+      this.uciSection.toggle(this.name);
+    },
     buildForm(sid) {
       const prop = this.prop(sid);
 
-      if (this.type === 'dlist')
-        this.$set(this.form, prop, []);
-      else if (this.type === 'list')
-        this.$set(this.form, prop, this.multiple ? [] : '');
-      else if (this.type === 'switch')
-        this.$set(this.form, prop, '0');
-      else
-        this.$set(this.form, prop, '');
-
       this.$set(this.validates, prop, {valid: true, tab: this.tab});
-
-      this.$watch(`form.${prop}`, () => {
-        this.uciSection.toggle(this.name);
-      });
 
       const rule = [];
       if (this.required)
@@ -160,40 +168,22 @@ export default {
       if (rule.length > 0)
         this.$set(this.rules, prop, rule);
 
-      if (typeof(this.load) !== 'undefined') {
+      if (this.load) {
+        this.buildFormValue(sid);
+
         new Promise(resolve => {
           this.load(resolve);
         }).then(v => {
-          this.$set(this.form, prop, v);
-          this.original = v;
+          this.buildFormValue(sid, v);
         });
-        return;
+      } else {
+        const value = this.$uci.get(this.config, sid, this.name);
+        this.buildFormValue(sid, value);
       }
 
-      let val = this.$uci.get(this.config, sid, this.name);
-      if (typeof(val) !== 'undefined') {
-        if (this.type === 'list' && this.multiple)
-          val = val.replace(/\s+/g, ' ').split(' ');
-      }
-
-      if (typeof(val) === 'undefined' && typeof(this.initial) !== 'undefined')
-        val = this.initial;
-
-      if (typeof(val) === 'undefined') {
-        if (this.type === 'dlist')
-          val = [];
-        else if (this.type === 'list')
-          val = this.multiple ? [] : '';
-        else if (this.type === 'switch')
-          val = '0';
-        else
-          val = '';
-      }
-
-      this.$set(this.form, prop, val);
-      this.original = val;
-
-      this.uciSection.toggle(this.name);
+      this.$watch(`form.${prop}`, () => {
+        this.uciSection.toggle(this.name);
+      });
     },
     saveUCI(sid) {
       if (this.type === 'dummy')
