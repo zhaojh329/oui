@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CardList title="Device information" :list="devinfo"></CardList>
+    <CardList :title="$t('Device information')" :list="devinfo"></CardList>
   </div>
 </template>
 
@@ -15,10 +15,10 @@ export default {
   created() {
     this.$system.getBoardInfo().then(r => {
       this.devinfo = [
-        ['Model', r.model],
-        ['Architecture', r.system],
-        ['Kernel Version', r.kernel],
-        ['Firmware Version', r.release.revision]
+        [this.$t('Model'), r.model],
+        [this.$t('Architecture'), r.system],
+        [this.$t('Kernel Version'), r.kernel],
+        [this.$t('Firmware Version'), r.release.revision]
       ];
     });
   }

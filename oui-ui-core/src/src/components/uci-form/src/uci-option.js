@@ -154,7 +154,7 @@ export default {
       const rules = [];
 
       if (this.required)
-        rules.push({required: true, message: 'This field is required'});
+        rules.push({required: true, message: this.$t('This field is required')});
 
       this.parsedRules.forEach(rule => {
         rule = validator.compile(rule);

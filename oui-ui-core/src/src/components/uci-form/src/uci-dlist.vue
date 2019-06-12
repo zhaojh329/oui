@@ -2,7 +2,7 @@
   <div class="dlist">
     <el-tag closable v-for="tag in value" :key="tag" :disable-transitions="false" @close="handleDelDlist(tag)">{{ tag }}</el-tag>
     <el-input v-if="inputVisible" size="small" ref="input" v-model="inputValue" @keyup.enter.native="handleinputConfirm" @blur="handleinputConfirm"></el-input>
-    <el-button v-else size="small" @click="showInput">+ Add</el-button>
+    <el-button v-else size="small" @click="showInput">+ {{ $t('Add') }}</el-button>
   </div>
 </template>
 

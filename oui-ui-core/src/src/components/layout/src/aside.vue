@@ -7,9 +7,9 @@
       <el-menu ref="navmenu" :default-active="$route.path" background-color="#03152A" text-color="rgba(255,255,255,.8)" active-text-color="#ffffff" router unique-opened>
         <el-submenu v-for="item in menus" :key="item.path" :index="item.path">
           <template slot="title">
-            <span slot="title">{{ item.title }}</span>
+            <span slot="title">{{ $t(item.title) }}</span>
           </template>
-          <el-menu-item v-for="subItem in item.children" :key="item.path + subItem.path" :index="subItem.path">{{ subItem.title }}</el-menu-item>
+          <el-menu-item v-for="subItem in item.children" :key="item.path + subItem.path" :index="subItem.path">{{ $t(subItem.title) }}</el-menu-item>
         </el-submenu>
       </el-menu>
     </el-aside>

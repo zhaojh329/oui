@@ -1,44 +1,44 @@
 <template>
   <div>
-    <el-button type="primary" size="mini" style="margin-bottom: 10px" @click="showAdd">Add</el-button>
+    <el-button type="primary" size="mini" style="margin-bottom: 10px" @click="showAdd">{{ $t('Add') }}</el-button>
     <el-table :data="data">
-      <el-table-column prop="min" label="Minute" width="140"></el-table-column>
-      <el-table-column prop="hour" label="Hour" width="140"></el-table-column>
-      <el-table-column prop="day" label="Day" width="140"></el-table-column>
-      <el-table-column prop="month" label="Month" width="140"></el-table-column>
-      <el-table-column prop="week" label="Week" width="140"></el-table-column>
-      <el-table-column prop="command" label="Command"></el-table-column>
+      <el-table-column prop="min" :label="$t('Minute')" width="140"></el-table-column>
+      <el-table-column prop="hour" :label="$t('Hour')" width="140"></el-table-column>
+      <el-table-column prop="day" :label="$t('Day')" width="140"></el-table-column>
+      <el-table-column prop="month" :label="$t('Month')" width="140"></el-table-column>
+      <el-table-column prop="week" :label="$t('Week')" width="140"></el-table-column>
+      <el-table-column prop="command" :label="$t('Command')"></el-table-column>
       <el-table-column label="#" width="200">
         <template v-slot="{$index}">
-          <el-button type="primary" size="mini" @click="showEdit($index)">Edit</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete($index)">Delete</el-button>
+          <el-button type="primary" size="mini" @click="showEdit($index)">{{ $t('Edit') }}</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete($index)">{{ $t('Delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :visible.sync="dialogVisible" :title="add ? 'Add' : 'Edit'">
+    <el-dialog :visible.sync="dialogVisible" :title="add ? $t('Add') : $t('Edit')">
       <el-form label-width="100px" label-position="left" :model="edit" ref="edit">
-        <el-form-item label="Minute" prop="min" required>
+        <el-form-item :label="$t('Minute')" prop="min" required>
           <el-input v-model="edit.min"></el-input>
         </el-form-item>
-        <el-form-item label="Hour" prop="hour" required>
+        <el-form-item :label="$t('Hour')" prop="hour" required>
           <el-input v-model="edit.hour"></el-input>
         </el-form-item>
-        <el-form-item label="Day" prop="day" required>
+        <el-form-item :label="$t('Day')" prop="day" required>
           <el-input v-model="edit.day"></el-input>
         </el-form-item>
-        <el-form-item label="Month" prop="month" required>
+        <el-form-item :label="$t('Month')" prop="month" required>
           <el-input v-model="edit.month"></el-input>
         </el-form-item>
-        <el-form-item label="Week" prop="week" required>
+        <el-form-item :label="$t('Week')" prop="week" required>
           <el-input v-model="edit.week"></el-input>
         </el-form-item>
-        <el-form-item label="Command" prop="command" required>
+        <el-form-item :label="$t('Command')" prop="command" required>
           <el-input v-model="edit.command"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleEdit">OK</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('Cancel') }}</el-button>
+        <el-button type="primary" @click="handleEdit">{{ $t('OK') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -49,10 +49,6 @@ export default {
   data() {
     return {
       data: [],
-      datax: [
-        {index: 0, min: '*', hour: '*', day: '*', month: '*', week: '*', command: 'reboot', editcmd: false},
-        {index: 1, min: '*', hour: '*', day: '*', month: '*', week: '1', command: 'reboot fgh ghh hjj', editcmd: false}
-      ],
       dialogVisible: false,
       add: false,
       edit: {
@@ -113,11 +109,11 @@ export default {
     },
     handleDelete(index) {
       const cron = this.data[index];
-      const content = `Are you sure you want to delete "${cron.min} ${cron.hour} ${cron.day} ${cron.month} ${cron.week} ${cron.command}"?`;
-      this.$confirm(content, 'Delete').then(() => {
+      const content = this.$t('cron-del-confirm', {cron: `${cron.min} ${cron.hour} ${cron.day} ${cron.month} ${cron.week} ${cron.command}`});
+      this.$confirm(content, this.$t('Delete')).then(() => {
         this.data.splice(index, 1);
         this.apply().then(() => {
-          this.$message.success('Delete ok');
+          this.$message.success(this.$t('success'));
         });
       });
     },
@@ -133,7 +129,7 @@ export default {
 
         this.dialogVisible = false;
         this.apply().then(() => {
-          this.$message.success(this.add ? ' Add OK ' : 'Edit ok');
+          this.$message.success(this.$t('success'));
         });
       });
     },

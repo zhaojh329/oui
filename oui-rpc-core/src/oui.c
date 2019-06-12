@@ -2700,6 +2700,37 @@ static int rpc_oui_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
+static int
+rpc_oui_ui_lang(struct ubus_context *ctx, struct ubus_object *obj,
+                  struct ubus_request_data *req, const char *method,
+                  struct blob_attr *msg)
+{
+	char lang[32] = "auto";
+	struct uci_package *p;
+	struct uci_ptr ptr = {
+		.package = "oui",
+		.section = "main",
+		.option  = "lang"
+	};
+
+	if (uci_load(cursor, ptr.package, &p) || !p)
+		goto out;
+
+	uci_lookup_ptr(cursor, &ptr, NULL, true);
+
+	if (ptr.o && ptr.o->type == UCI_TYPE_STRING)
+		strncpy(lang, ptr.o->v.string, sizeof(lang));
+
+	uci_unload(cursor, p);
+
+out:
+	blob_buf_init(&buf, 0);
+	blobmsg_add_string(&buf, "lang", lang);
+
+	ubus_send_reply(ctx, req, buf.head);
+
+	return 0;
+}
 
 static int rpc_oui_api_init(const struct rpc_daemon_ops *o, struct ubus_context *ctx)
 {
@@ -2832,8 +2863,8 @@ static int rpc_oui_api_init(const struct rpc_daemon_ops *o, struct ubus_context 
 	static const struct ubus_method oui_ui_methods[] = {
 		UBUS_METHOD_NOARG("menu",            rpc_oui_ui_menu),
 		UBUS_METHOD_NOARG("acls",            rpc_oui_ui_acls),
-		UBUS_METHOD("crypt",                 rpc_oui_ui_crypt,
-		                                     rpc_data_policy)
+		UBUS_METHOD("crypt",                 rpc_oui_ui_crypt, rpc_data_policy),
+		UBUS_METHOD_NOARG("lang",            rpc_oui_ui_lang),
 	};
 
 	static struct ubus_object_type oui_ui_type =

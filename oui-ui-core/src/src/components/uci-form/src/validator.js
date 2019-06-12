@@ -1,3 +1,5 @@
+import i18n from '@/i18n'
+
 const validator = {}
 
 function parseIPv4(str) {
@@ -115,18 +117,18 @@ function performCallback(types, rule, value, cb, msg, arg) {
 const types = {
   url: {
     validator: 'url',
-    message: 'Must be a valid ur'
+    message: i18n.t('Must be a valid url')
   },
   email: {
     validator: 'email',
-    message: 'Must be a valid email'
+    message: i18n.t('Must be a valid email')
   },
   number: {
     verify: (value) => {
       return !isNaN(value);
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a number');
+      performCallback(types, rule, value, cb, i18n.t('Must be a number'));
     }
   },
   integer: {
@@ -134,7 +136,7 @@ const types = {
       return types['number'].verify(value) && parseInt(value).toString() === value;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a integer');
+      performCallback(types, rule, value, cb, i18n.t('Must be a integer'));
     }
   },
   uinteger: {
@@ -142,23 +144,7 @@ const types = {
       return types['integer'].verify(value) && value >= 0;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a positive integer');
-    }
-  },
-  float: {
-    verify: (value) => {
-      return types['number'].verify(value) && parseFloat(value).toString() === value;
-    },
-    validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a number');
-    }
-  },
-  ufloat: {
-    verify: (value) => {
-      return types['float'].verify(value) && value >= 0;
-    },
-    validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a positive number');
+      performCallback(types, rule, value, cb, i18n.t('Must be a positive integer'));
     }
   },
   min: {
@@ -166,7 +152,7 @@ const types = {
       return types['float'].verify(value) && value >= arg;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, `Must be a number greater or equal to ${rule.arg}`, rule.arg);
+      performCallback(types, rule, value, cb, i18n.t('Must be a number greater or equal to', {num: rule.arg}), rule.arg);
     }
   },
   max: {
@@ -174,7 +160,7 @@ const types = {
       return types['float'].verify(value) && value <= arg;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, `Must be a number lower or equal to ${rule.arg}`, rule.arg);
+      performCallback(types, rule, value, cb, i18n.t('Must be a number lower or equal to', {num: rule.arg}), rule.arg);
     }
   },
   range: {
@@ -182,7 +168,7 @@ const types = {
       return types['min'].verify(value, arg[0]) && types['max'].verify(value, arg[1]);
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, `Must be a number between ${rule.arg[0]} and ${rule.arg[1]}`, rule.arg);
+      performCallback(types, rule, value, cb, i18n.t('Must be a number between', {min: rule.arg[0], max: rule.arg[1]}), rule.arg);
     }
   },
   hostname: {
@@ -193,7 +179,7 @@ const types = {
         value.match(/[^0-9.]/))));
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid hostname');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid hostname'));
     }
   },
   ip4addr: {
@@ -201,7 +187,7 @@ const types = {
       return parseIPv4(value);
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid IPv4 address');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid IPv4 address'));
     }
   },
   ip6addr: {
@@ -209,7 +195,7 @@ const types = {
       return parseIPv6(value);
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid IPv6 address');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid IPv6 address'));
     }
   },
   ipaddr: {
@@ -217,7 +203,7 @@ const types = {
       return types['ip4addr'].verify(value) || types['ip6addr'].verify(value);
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid IPv6 address');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid IP address'));
     }
   },
   netmask4: {
@@ -225,7 +211,7 @@ const types = {
       return isNetmask(parseIPv4(value));
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid IPv4 netmask');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid IPv4 netmask'));
     }
   },
   netmask6: {
@@ -233,7 +219,7 @@ const types = {
       return isNetmask(parseIPv6(value));
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid IPv6 netmask');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid IPv6 netmask'));
     }
   },
   host: {
@@ -241,7 +227,7 @@ const types = {
       return types['hostname'].verify(value) || types['ipaddr'].verify(value);
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid hostname or IP address');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid hostname or IP address'));
     }
   },
   port: {
@@ -249,7 +235,7 @@ const types = {
       return types['uinteger'].verify(value) && value <= 65535;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid port number');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid port number'));
     }
   },
   macaddr: {
@@ -257,7 +243,7 @@ const types = {
       return value.match(/^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$/) !== null;
     },
     validator: (rule, value, cb) => {
-      performCallback(types, rule, value, cb, 'Must be a valid MAC address');
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid MAC address'));
     }
   }
 }

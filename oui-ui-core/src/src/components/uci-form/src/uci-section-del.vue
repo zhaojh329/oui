@@ -1,5 +1,5 @@
 <template>
-  <el-button v-if="visible" type="danger" size="mini" style="float: right" @click="del">Delete</el-button>
+  <el-button v-if="visible" type="danger" size="mini" style="float: right" @click="del">{{ $t('Delete') }}</el-button>
 </template>
 
 <script>

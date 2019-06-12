@@ -1,15 +1,15 @@
 <template>
-  <el-card header="Authorization Required" class="login">
-    <el-form ref="login" :model="form" label-width="100px" label-position="left">
-      <el-form-item label="Username" prop="username" required>
-        <el-input v-model="form.username" prefix-icon="el-icon-user-solid" placeholder="Please input username" @keyup.enter.native="handleLogin"></el-input>
+  <el-card :header="$t('Authorization Required')" class="login">
+    <el-form ref="login" :model="form" label-width="100px" label-position="left" :rules="rules">
+      <el-form-item :label="$t('Username')" prop="username">
+        <el-input v-model="form.username" prefix-icon="el-icon-user-solid" :placeholder="$t('Please input username')" @keyup.enter.native="handleLogin"></el-input>
       </el-form-item>
-      <el-form-item label="Password" prop="password">
-        <el-input v-model="form.password" type="password" prefix-icon="el-icon-lock" placeholder="Please input password" @keyup.enter.native="handleLogin"></el-input>
+      <el-form-item :label="$t('Password')" prop="password">
+        <el-input v-model="form.password" type="password" prefix-icon="el-icon-lock" :placeholder="$t('Please input password')" @keyup.enter.native="handleLogin"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleLogin" style="width: 70%">Login</el-button>
-        <el-button type="warning" @click="reset">Reset</el-button>
+        <el-button type="primary" @click="handleLogin" style="width: 70%">{{ $t('Login') }}</el-button>
+        <el-button type="warning" @click="reset">{{ $t('Reset') }}</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -22,6 +22,11 @@ export default {
       form: {
         username: '',
         password: ''
+      },
+      rules: {
+        username: [
+          {required: true, message: this.$t('This field is required')}
+        ]
       }
     }
   },
@@ -46,6 +51,7 @@ export default {
   },
   created() {
     this.$session.logout();
+    this.$getLang();
   }
 }
 </script>

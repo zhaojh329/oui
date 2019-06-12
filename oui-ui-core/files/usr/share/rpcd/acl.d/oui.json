@@ -4,7 +4,7 @@
 		"read": {
 			"ubus": {
 				"oui.ui": [
-					"themes"
+					"lang"
 				]
 			}
 		}

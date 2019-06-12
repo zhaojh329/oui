@@ -35,8 +35,8 @@
       </template>
     </el-form>
     <el-button-group class="apply-btn">
-      <el-button type="primary" @click="apply">Save & Apply</el-button>
-      <el-button type="warning" @click="reset">Reset</el-button>
+      <el-button type="primary" @click="apply">{{ $t('Save & Apply') }}</el-button>
+      <el-button type="warning" @click="reset">{{ $t('Reset') }}</el-button>
     </el-button-group>
   </div>
 </template>

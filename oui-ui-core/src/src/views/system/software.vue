@@ -2,22 +2,22 @@
   <div>
     <el-card style=" margin-bottom: 10px">
       <el-form label-width="200px" style="max-width: 600px">
-        <el-form-item label="Used space">
+        <el-form-item :label="$t('Used space')">
           <el-progress :text-inside="true" :stroke-width="20" :percentage="diskUsedPercentage"></el-progress>
           <span>{{ diskUsedDetailed }}</span>
         </el-form-item>
-        <el-form-item label="Update package lists">
-          <el-button type="primary" size="small" @click="updatePackage">Start update...</el-button>
+        <el-form-item :label="$t('Update package lists')">
+          <el-button type="primary" size="small" @click="updatePackage">{{ $t('Start update...') }}</el-button>
         </el-form-item>
-        <el-form-item label="Install package directly">
+        <el-form-item :label="$t('Install package directly')">
           <el-row>
-            <el-col :span="20"><el-input v-model="packageName" placeholder="Enter URL or name..."></el-input></el-col>
+            <el-col :span="20"><el-input v-model="packageName" :placeholder="$t('Enter URL or name...')"></el-input></el-col>
             <el-col :span="4"><el-button type="primary" @click="installRemovePackage(packageName, false)">>></el-button></el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="Filter packages">
-          <el-input v-model="filter" placeholder="Filter packages..." @keyup.enter.native="fetchPackageList(0)"></el-input>
-          <el-checkbox v-model="displayInstalled">Display only installed packages</el-checkbox>
+        <el-form-item :label="$t('Filter packages')">
+          <el-input v-model="filter" :placeholder="$t('Filter packages...')" @keyup.enter.native="fetchPackageList(0)"></el-input>
+          <el-checkbox v-model="displayInstalled">{{ $t('Display only installed packages') }}</el-checkbox>
         </el-form-item>
       </el-form>
     </el-card>
@@ -25,18 +25,18 @@
       <div slot="header">
         <el-pagination background layout="prev, pager, next" :page-size="limit" :total="total" :current-page.sync="currentPage"></el-pagination>
       </div>
-      <el-table :data="packages" v-loading="pkgLoading" element-loading-text="Loading..."  element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="name" label="Package" width="200"></el-table-column>
-        <el-table-column prop="version" label="Version" width="200" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="size" label="Size(KB)" width="100"></el-table-column>
-        <el-table-column prop="description" label="Description" show-overflow-tooltip>
+      <el-table :data="packages" v-loading="pkgLoading" :element-loading-text="$t('Loading...')"  element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+        <el-table-column prop="name" :label="$t('Software-Package')" width="200"></el-table-column>
+        <el-table-column prop="version" :label="$t('Version')" width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="size" :label="$t('Size') + '(KB)'" width="100"></el-table-column>
+        <el-table-column prop="description" :label="$t('Description')" show-overflow-tooltip>
         </el-table-column>
         <el-table-column label="#" width="200">
           <template v-slot="{ row }">
             <div style="display: flex;">
-              <el-button :type="row.installed ? 'success' : 'danger'" size="mini" @click="installRemovePackage(row.name, row.installed)">{{ row.installed ? 'Installed' : 'Not installed' }}</el-button>
-              <el-tooltip v-if="row.newVersion" placement="top" :content="'Can be upgrade to ' + row.newVersion">
-                <el-button type="primary" size="mini" @click="installRemovePackage(row.name, row.installed, row.newVersion)">Upgradable</el-button>
+              <el-button :type="row.installed ? 'success' : 'danger'" size="mini" @click="installRemovePackage(row.name, row.installed)">{{ row.installed ? $t('Installed') : $t('Not installed') }}</el-button>
+              <el-tooltip v-if="row.newVersion" placement="top" :content="$t('Can be upgrade to', {ver: row.newVersion})">
+                <el-button type="primary" size="mini" @click="installRemovePackage(row.name, row.installed, row.newVersion)">{{ $t('Upgradable') }}</el-button>
               </el-tooltip>
             </div>
           </template>
@@ -66,24 +66,6 @@ export default {
       pkgLoading: true
     }
   },
-  filters: {
-    statusButtonType(pkg) {
-      if (pkg.newVersion)
-        return 'primary';
-      else if (pkg.installed)
-        return 'success';
-      else
-        return 'danger';
-    },
-    statusButtonText(pkg) {
-      if (pkg.newVersion)
-        return 'Upgradable';
-      else if (pkg.installed)
-        return 'Installed';
-      else
-        return 'Not installed';
-    }
-  },
   computed: {
     diskUsedPercentage() {
       if (this.diskInfo.used === 0)
@@ -93,7 +75,7 @@ export default {
     diskUsedDetailed() {
       const used = parseInt(this.diskInfo.used / 1024) + ' KB';
       const total = parseInt(this.diskInfo.total / 1024) + ' KB';
-      return `${used} / ${total} used`
+      return `${used} / ${total} ` + this.$t('used');
     }
   },
   methods: {
@@ -187,14 +169,14 @@ export default {
         msg += `<pre style="background-color: #f5f5f5; color: #F56C6C">${res.stderr}</pre>`;
 
       if (res.code)
-        msg += `Package manager failed with status ${res.code}.`;
+        msg += this.$t('Package manager failed with status', {code: res.code});
       else
-        msg += 'Package manager finished successfully.';
+        msg += this.$t('Package manager finished successfully.');
 
       this.$confirm(msg, title, {
         dangerouslyUseHTMLString: true,
         showCancelButton: false,
-        confirmButtonText: 'Close'
+        confirmButtonText: this.$t('Close')
       }).then(() => {
         if (!res.code) {
           this.pkgLoading = true;
@@ -208,20 +190,25 @@ export default {
       if (name === '')
         return;
 
-      let title = installed ? `Removing package "${name}" ...` : `Installing package "${name}" ...`;
-      let msg = installed ? `Really remove package "${name}" ?` : `Really install package "${name}" ?`;
+      let title = installed ? 'Removing package' : 'Installing package';
+      let msg = installed ? 'Really remove package' : 'Really install package';
       let cmd = installed ? 'remove' : 'install';
 
       if (newVersion) {
-        title = `Upgrade package "${name}" ...`;
-        msg = `Really upgrade package "${name}" to "${newVersion}"?`;
+        title = 'Upgrading package';
+        msg = 'Really upgrade package';
         cmd = 'upgrade';
+        msg = this.$t(msg, {name: name, ver: newVersion})
+      } else {
+        msg = this.$t(msg, {name: name})
       }
+
+      title = this.$t(title, {name: name})
 
       this.$confirm(msg, title, {
         type: 'info'
       }).then(() => {
-        const loading = this.loading('Waiting for package manager...');
+        const loading = this.loading(this.$t('Waiting for package manager...'));
         this.doInstallRemovePackage(name, cmd).then(r => {
           loading.close();
           this.showStatus(r, title);
@@ -232,7 +219,7 @@ export default {
       return this.$ubus.call('oui.opkg', 'update');
     },
     updatePackage() {
-      const loading = this.loading('Waiting for package manager...');
+      const loading = this.loading(this.$t('Waiting for package manager...'));
       this.doUpdatePackage().then(r => {
         loading.close();
         this.showStatus(r, 'Updating package lists');

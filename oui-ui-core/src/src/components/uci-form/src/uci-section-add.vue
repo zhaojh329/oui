@@ -3,7 +3,7 @@
     <el-form-item v-if="nameVisible" size="mini" label-width="auto" style="width: 200px" :prop="prop" :rules="rules">
       <el-input placeholder="Please input a name" v-model="form[prop]" ref="name" @keyup.enter.native="handleNameConfirm" @blur="handleNameConfirm"></el-input>
     </el-form-item>
-    <el-button v-else type="primary" size="mini" @click="add">+ Add</el-button>
+    <el-button v-else type="primary" size="mini" @click="add">+ {{ $t('Add') }}</el-button>
   </div>
 </template>
 

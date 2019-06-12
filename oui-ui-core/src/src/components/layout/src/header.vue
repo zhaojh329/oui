@@ -2,19 +2,29 @@
   <div>
     <el-header class="header" height="40px">
       <el-breadcrumb separator="/" class="crumbs">
-        <el-breadcrumb-item v-for="(item, i) in breadcrumbs" :key="i" :to="item.to">{{ item.title }}</el-breadcrumb-item>
+        <el-breadcrumb-item v-for="(item, i) in breadcrumbs" :key="i" :to="item.to">{{ $t(item.title) }}</el-breadcrumb-item>
       </el-breadcrumb>
       <div class="header-right">
-        <el-tooltip effect="dark" :content="isfullScreen ? 'Exit Full Screen' : 'Full Screen'" placement="bottom">
+        <el-tooltip effect="dark" :content="isfullScreen ? $t('Exit Full Screen') : $t('Full Screen')" placement="bottom">
           <i class="iconfont iconfull" @click="fullScreen"></i>
         </el-tooltip>
+        <el-dropdown @command="onLangCommand">
+          <span class="user">
+            {{ $t('Language') }}<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="en" :icon="(lang === 'en') ? 'el-icon-arrow-right' : ''">English</el-dropdown-item>
+            <el-dropdown-item command="zh-CN" :icon="(lang === 'zh-CN') ? 'el-icon-arrow-right' : ''">中文</el-dropdown-item>
+            <el-dropdown-item command="auto" :icon="(lang === 'auto') ? 'el-icon-arrow-right' : ''">{{ $t('Automatic') }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
         <el-dropdown @command="onUserCommand">
           <span class="user">
             {{ username }}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="logout">Logout</el-dropdown-item>
-            <el-dropdown-item command="reboot">Reboot</el-dropdown-item>
+            <el-dropdown-item command="logout">{{ $t('Logout') }}</el-dropdown-item>
+            <el-dropdown-item command="reboot">{{ $t('Reboot') }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -30,6 +40,11 @@ export default {
       username: '',
       isfullScreen: false,
       breadcrumbs: []
+    }
+  },
+  computed: {
+    lang() {
+      return this.$store.state.lang;
     }
   },
   methods: {
@@ -72,6 +87,13 @@ export default {
 
       return [homeItem, matched[0].meta, matched[1].meta];
     },
+    onLangCommand(cmd) {
+      this.$ubus.call('uci', 'set', {config: 'oui', section: 'main', values: {lang: cmd}}).then(() => {
+        this.$ubus.call('uci', 'commit', {config: 'oui'}).then(() => {
+          this.$getLang();
+        });
+      });
+    },
     onUserCommand(cmd) {
       if (cmd === 'logout') {
         this.$router.push('/login');
@@ -93,6 +115,8 @@ export default {
     this.$session.get(r => {
       this.username = r.username;
     });
+
+    this.$getLang();
   }
 }
 </script>

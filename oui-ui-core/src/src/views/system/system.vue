@@ -1,25 +1,25 @@
 <template>
   <uci-form config="system">
-    <uci-section title="System Properties" type="system">
-      <uci-tab title="General Settings" name="general">
-        <uci-option type="dummy" label="Local Time" :load="localTime" name="__time"></uci-option>
-        <uci-option type="input" label="Hostname" name="hostname" required rules="hostname"></uci-option>
-        <uci-option type="list" label="Timezone" name="zonename" initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
+    <uci-section :title="$t('System Properties')" type="system">
+      <uci-tab :title="$t('General Settings')" name="general">
+        <uci-option type="dummy" :label="$t('Local Time')" :load="localTime" name="__time"></uci-option>
+        <uci-option type="input" :label="$t('Hostname')" name="hostname" required rules="hostname"></uci-option>
+        <uci-option type="list" :label="$t('Timezone')" name="zonename" initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
       </uci-tab>
-      <uci-tab title="Logging" name="logging">
-        <uci-option type="input" label="System log buffer size" name="log_size" placeholder="16" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
-        <uci-option type="input" label="External system log server" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option>
-        <uci-option type="input" label="External system log server port" name="log_port" placeholder="514" rules="port"></uci-option>
-        <uci-option type="list" label="External system log server protocol" name="log_proto" initial="udp" :options="logProtos"></uci-option>
-        <uci-option type="input" label="Write system log to file" name="log_file"></uci-option>
-        <uci-option type="list" label="Log output level" name="conloglevel" initial="7" :options="conlogLevels"></uci-option>
-        <uci-option type="list" label="Cron Log Level" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-option>
+      <uci-tab :title="$t('Logging')" name="logging">
+        <uci-option type="input" :label="$t('System log buffer size')" name="log_size" placeholder="16" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
+        <uci-option type="input" :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option>
+        <uci-option type="input" :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option>
+        <uci-option type="list" :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos"></uci-option>
+        <uci-option type="input" :label="$t('Write system log to file')" name="log_file"></uci-option>
+        <uci-option type="list" :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels"></uci-option>
+        <uci-option type="list" :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-option>
       </uci-tab>
     </uci-section>
-    <uci-section title="Time Synchronization" name="ntp">
-      <uci-option type="switch" label="Enable NTP client" name="enable" :uci="false" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option>
-      <uci-option type="switch" label="Provide NTP server" name="enable_server" depend="enable"></uci-option>
-      <uci-option type="dlist" label="NTP server candidates" name="server" depend="enable"></uci-option>
+    <uci-section :title="$t('Time Synchronization')" name="ntp">
+      <uci-option type="switch" :label="$t('Enable NTP client')" name="enable" :uci="false" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option>
+      <uci-option type="switch" :label="$t('Provide NTP server')" name="enable_server" depend="enable"></uci-option>
+      <uci-option type="dlist" :label="$t('NTP server candidates')" name="server" depend="enable"></uci-option>
     </uci-section>
   </uci-form>
 </template>

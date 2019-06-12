@@ -7,11 +7,15 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     menus: [],
-    hostname: ''
+    hostname: '',
+    lang: ''
   },
   mutations: {
     setMenus(state, menus) {
       state.menus = menus;
+    },
+    setLang(state, lang) {
+      state.lang = lang;
     },
     updateData(state) {
       system.getBoardInfo().then(r => {
