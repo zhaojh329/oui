@@ -235,5 +235,14 @@
   "Must be a valid MAC address": "必须是一个有效的MAC地址",
   "Must be a valid email": "必须是一个有效的Email",
   "Must be a valid url": "必须是一个有效的URL",
-  "This field is required": "字段不能为空"
+  "This field is required": "字段不能为空",
+  "Load": "负载",
+  "Traffic": "流量",
+  "Connections": "连接",
+  "Realtime Load": "实时负载",
+  "Minute Load": "分钟负载",
+  "Realtime Traffic": "实时流量",
+  "Inbound": "入站",
+  "Outbound": "出站",
+  "Other": "其余"
 }

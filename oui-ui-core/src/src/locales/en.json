@@ -236,5 +236,14 @@
   "Must be a valid MAC address": "Must be a valid MAC address",
   "Must be a valid email": "Must be a valid email",
   "Must be a valid url": "Must be a valid url",
-  "This field is required": "This field is required"
+  "This field is required": "This field is required",
+  "Load": "Load",
+  "Traffic": "Traffic",
+  "Connections": "Connections",
+  "Realtime Load": "Realtime Load",
+  "Minute Load": "Minute Load",
+  "Realtime Traffic": "Realtime Traffic",
+  "Inbound": "Inbound",
+  "Outbound": "Outbound",
+  "Other": "Other"
 }
