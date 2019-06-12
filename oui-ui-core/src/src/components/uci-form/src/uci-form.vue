@@ -12,7 +12,7 @@
             </el-table-column>
             <el-table-column v-if="s.addable && s.type && !s.name">
               <template v-slot="{ row }">
-                <el-button type="danger" style="margin-bottom: 22px" @click="s.del(row['.name'])">Delete</el-button>
+                <el-button type="danger" style="margin-bottom: 22px" @click="s.del(row['.name'])">{{ $t('Delete') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
