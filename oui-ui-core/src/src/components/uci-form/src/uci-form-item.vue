@@ -6,7 +6,7 @@
     <el-select v-else-if="type === 'list'" v-model="form[prop]" :clearable="!option.required" :multiple="option.multiple" style="width: 100%">
       <el-option v-for="oo in option.transformedOptions" :key="oo[0]" :label="oo[1] || oo[0]" :value="oo[0]"></el-option>
     </el-select>
-    <uci-dlist v-else-if="type === 'dlist'" v-model="form[prop]"></uci-dlist>
+    <uci-dlist v-else-if="type === 'dlist'" v-model="form[prop]" :prop="prop"></uci-dlist>
   </el-form-item>
 </template>
 

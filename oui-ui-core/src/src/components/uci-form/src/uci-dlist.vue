@@ -9,18 +9,28 @@
 <script>
 export default {
   name: 'UciDlist',
+  inject: ['uciForm'],
   props: {
     value: {
       type: Array,
       default: () => {
         return [];
       }
+    },
+    prop: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
       inputVisible: false,
       inputValue: ''
+    }
+  },
+  computed: {
+    form() {
+      return this.uciForm.form;
     }
   },
   methods: {
@@ -40,9 +50,21 @@ export default {
         const tags = [...this.value];
         tags.push(this.inputValue);
         this.$emit('input', tags);
-        this.inputValue = '';
+
+        this.$nextTick(() => {
+          this.uciForm.$refs['form'].validateField(this.prop, (err) => {
+            if (err) {
+              this.form[this.prop].splice(this.form[this.prop].indexOf(this.inputValue), 1);
+            } else {
+              this.inputValue = '';
+              this.inputVisible = false;
+            }
+          })
+        });
+
+      } else {
+        this.inputVisible = false;
       }
-      this.inputVisible = false;
     }
   }
 }
