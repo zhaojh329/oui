@@ -150,17 +150,17 @@ export default {
         }
 
         if (promises.length === 0) {
-          this.$message.warning('There are no changes to apply');
+          this.$message.warning(this.$t('There are no changes to apply'));
           return;
         }
 
-        const loading = this.loading('Waiting for configuration to be applied...');
+        const loading = this.loading(this.$t('Waiting for configuration to be applied...'));
 
         Promise.all(promises).then(() => {
           loading.close();
           this.$emit('apply');
           this.load(true).then(() => {
-            this.$message.success('Configuration has been applied');
+            this.$message.success(this.$t('Configuration has been applied'));
             this.$store.dispatch('updateData');
           });
         });
@@ -172,7 +172,7 @@ export default {
     }
   },
   created() {
-    const loading = this.loading('Loading...');
+    const loading = this.loading(this.$t('Loading...'));
     this.load().then(() => {
       this.loaded++;
       loading.close();
