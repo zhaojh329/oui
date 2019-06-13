@@ -10,11 +10,11 @@ export default {
       options: [] /* UciOption instances */
     }
   },
-  computed: {
-    errorNum() {
+  methods: {
+    getErrorNum(sid) {
       const validates = this.uciForm.validates;
       const keys = Object.keys(validates).filter(key => {
-        return validates[key].tab === this.name && !validates[key].valid;
+        return sid === validates[key].sid && validates[key].tab === this.name && !validates[key].valid;
       });
 
       return keys.length;

@@ -163,7 +163,7 @@ export default {
 
       const prop = this.prop(sid);
       this.$set(this.uciForm.rules, prop, rules);
-      this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tab});
+      this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tab, sid: sid});
     },
     buildFormValue(sid, value) {
       if (typeof(value) === 'undefined' && typeof(this.initial) !== 'undefined')
