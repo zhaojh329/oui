@@ -50,11 +50,7 @@ export default {
     save: Function,
     /* If this function is provided, it will be called when oui applys the uci configuration. */
     apply: Function,
-    /*
-    ** depend="x"
-    ** depend="y == 'test'"
-    ** depend="x, y == 'test'"
-    */
+    /* depend="a == 12 || a == 'x' && y == 4 && q != 5 && !z" */
     depend: {
       type: String,
       default: ''
@@ -84,31 +80,101 @@ export default {
     form() {
       return this.uciForm.form;
     },
-    depends() {
-      const compares = ['==', '>', '<', '>=', '<=', '!='];
-      const depends = {};
+    parsedDepend() {
+      const compares = ['==', '===', '!=', '!==', '<', '>', '>=', '<='];
+      const expr = this.depend.trim().replace(/\s+/g, ' ');
+      const states = {
+        name: 0,
+        operand: 1,
+        logic: 2,
+        logicOrCmp: 3
+      }
 
-      this.depend.split(',').forEach(d => {
-        if (d === '')
-          return;
+      if (expr === '')
+        return undefined;
 
-        d = d.trim().replace(/\s+/g, ' ').split(' ');
-        let [name, compare, value] = d;
+      const parts = expr.split(' ');
 
-        if (d.length === 1) {
-          value = '1',
-          compare = '==';
-        } else if (d.length !== 3) {
-          return;
+      let s = states.name;
+      const names = {};
+
+      for (let i = 0; i < parts.length; i++) {
+        let part = parts[i];
+
+        if (s === states.name) {
+          if (part[0] === '!') {
+            part = part.substr(1);
+            s = states.logic;
+          } else {
+            s = states.logicOrCmp;
+          }
+
+          if (!/^[A-Za-z_]/.test(part))
+            return undefined;
+          names[part] = true;
+
+          if (i === parts.length - 1)
+            return {expr, names: Object.keys(names)};
+
+          continue;
         }
 
-        if (compares.indexOf(compare) === -1)
-          return;
+        if (s === states.logicOrCmp) {
+          if (i === parts.length - 1)
+            return undefined;
 
-        depends[name] = `${compare} ${value}`;
-      });
+          if (compares.indexOf(part) > -1) {
+            s = states.operand;
+            continue;
+          }
 
-      return depends;
+          if (part === '||' || part === '&&') {
+            s = states.name;
+            i++;
+            continue;
+          }
+
+          return undefined;
+        }
+
+        if (s === states.operand) {
+          s = states.logic;
+
+          const starts = part[0];
+          const end = part[part.length - 1];
+
+          if (starts === '\'' && end === '\'') {
+            part = part.substr(1, part.length - 2);
+            if (typeof(part) !== 'string')
+              return undefined;
+            continue;
+          }
+
+          if (starts !== '\'' && end !== '\'') {
+            if (isNaN(part))
+              return undefined;
+            continue;
+          }
+
+          return undefined;
+        }
+
+        if (s === states.logic) {
+          if (i === parts.length - 1)
+            return undefined;
+
+          if (part === '||' || part === '&&') {
+            s = states.name;
+            continue;
+          }
+
+          return undefined;
+        }
+
+        return undefined;
+      }
+
+      return {expr, names: Object.keys(names)};
     },
     transformedOptions() {
       return this.options.map(o => {

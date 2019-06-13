@@ -44,7 +44,7 @@
           <uci-tab :title="$t('Advanced Settings')" name="advanced">
             <uci-option type="switch" :label="$t('Use gateway')" name="defaultroute" initial="1" depend="proto == 'pppoe'"></uci-option>
             <uci-option type="switch" :label="$t('Use DNS')" name="peerdns" initial="1" depend="proto == 'pppoe'"></uci-option>
-            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_pppoe" uci-option="dns" depend="proto == 'pppoe', peerdns == '0'"></uci-option>
+            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_pppoe" uci-option="dns" depend="proto == 'pppoe' && !peerdns"></uci-option>
             <uci-option type="input" :label="$t('Inactivity timeout')" name="demand" placeholder="0" depend="proto == 'pppoe'"></uci-option>
           </uci-tab>
           <uci-tab title="IPv6" name="ipv6"></uci-tab>

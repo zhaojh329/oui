@@ -94,7 +94,7 @@ export default {
           this.$delete(this.uciForm.form, prop);
       }
     },
-    findOptionByName(name) {
+    findOption(name) {
       for (let i = 0; i < this.options.length; i++)
         if (this.options[i].name === name)
           return this.options[i];

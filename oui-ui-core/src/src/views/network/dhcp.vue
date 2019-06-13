@@ -16,7 +16,7 @@
         <uci-option type="switch" :label="$t('Use /etc/ethers')" name="readethers"></uci-option>
         <uci-option type="input" :label="$t('Leasefile')" name="leasefile"></uci-option>
         <uci-option type="switch" :label="$t('Ignore resolve file')" name="noresolv"></uci-option>
-        <uci-option type="input" :label="$t('Resolve file')" name="resolvfile" depend="noresolv == '0'"></uci-option>
+        <uci-option type="input" :label="$t('Resolve file')" name="resolvfile" depend="!noresolv"></uci-option>
         <uci-option type="switch" :label="$t('Ignore /etc/hosts')" name="nohosts"></uci-option>
         <uci-option type="dlist" :label="$t('Additional Hosts files')" name="addnhosts"></uci-option>
       </uci-tab>

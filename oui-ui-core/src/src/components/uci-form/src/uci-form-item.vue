@@ -37,20 +37,30 @@ export default {
       return this.option.type;
     },
     visible() {
-      const depends = this.option.depends;
+      const depend = this.option.parsedDepend;
+      if (!depend)
+        return true;
 
-      for (let name in depends) {
-        const dependOpt = this.option.uciSection.findOptionByName(name);
-        if (!dependOpt)
-          continue;
+      let expr = depend.expr;
 
-        const expr = `"${dependOpt.formValue(this.sid)}" ${depends[name]}`
-        if (!eval(expr)) {
+      depend.names.forEach(name => {
+        const o = this.option.uciSection.findOption(name);
+        if (!o)
           return false;
+        let v = o.formValue(this.sid);
+        if (o.type === 'switch') {
+          if (v === o.activeValue)
+            v = 'true';
+          else
+            v = 'false';
+        } else {
+          v = `'${v}'`;
         }
-      }
 
-      return true;
+        expr = expr.replace(new RegExp(name, 'gm'), v);
+      });
+
+      return eval(expr);
     }
   }
 }
