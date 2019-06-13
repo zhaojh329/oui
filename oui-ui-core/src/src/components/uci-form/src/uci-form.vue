@@ -21,7 +21,7 @@
             <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
               <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
                 <span slot="label">
-                  {{ tab.title }}<el-badge v-if="tab.getErrorNum(u['.name']) > 0" :value="tab.errorNum"></el-badge>
+                  {{ tab.title }}<el-badge v-if="tab.getErrorNum(u['.name']) > 0" :value="tab.getErrorNum(u['.name'])"></el-badge>
                 </span>
                 <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
                 <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
