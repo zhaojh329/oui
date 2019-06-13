@@ -10,7 +10,7 @@
         <uci-option type="dlist" :label="$t('DNS forwardings')" name="server"></uci-option>
         <uci-option type="switch" :label="$t('Rebind protection')" name="rebind_protection" initial="1"></uci-option>
         <uci-option type="switch" :label="$t('Allow localhost')" name="rebind_localhost" depend="rebind_protection"></uci-option>
-        <uci-option type="switch" :label="$t('Domain whitelist')" name="rebind_domain" depend="rebind_protection"></uci-option>
+        <uci-option type="dlist" :label="$t('Domain whitelist')" name="rebind_domain" depend="rebind_protection" rules="host"></uci-option>
       </uci-tab>
       <uci-tab :title="$t('Resolv and Hosts Files')" name="files">
         <uci-option type="switch" :label="$t('Use /etc/ethers')" name="readethers"></uci-option>
