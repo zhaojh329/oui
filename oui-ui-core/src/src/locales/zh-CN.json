@@ -185,6 +185,7 @@
   "IP address": "IP地址",
   "Static IPv4 Routes": "静态IPv4路由",
   "Static IPv6 Routes": "静态IPv6路由",
+  "Server Settings": "服务器设置",
   "Domain required": "忽略空域名解析",
   "Authoritative": "授权的唯一DHCP服务器",
   "Local server": "本地服务器",
@@ -213,6 +214,7 @@
   "DNS server port": "DNS服务器端口",
   "DNS query port": "DNS查询端口",
   "Max. DHCP leases": "最大DHCP分配数量",
+  "Max. EDNS0 packet size": "最大EDNS0数据包大小",
   "Max. concurrent queries": "最大并发查询数",
   "Ignore interface": "关闭DHCP",
   "dhcp-Start": "开始",
@@ -249,6 +251,8 @@
   "Outbound": "出站",
   "Other": "其余",
   "minimum is 2 minutes (2m).": "不能小于2分钟",
-  "Invalid format. Correct format: \"12h\" or \"30m\"": "格式错误。正确的格式：\"12h\" 或者 \"30m\""
+  "Invalid format. Correct format: \"12h\" or \"30m\"": "格式错误。正确的格式：\"12h\" 或者 \"30m\"",
+  "DHCP Server": "DHCP服务器",
+  "Static Leases": "静态地址分配"
 }
 

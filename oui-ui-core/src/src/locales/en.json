@@ -214,6 +214,7 @@
   "DNS server port": "DNS server port",
   "DNS query port": "DNS query port",
   "Max. DHCP leases": "Max. DHCP leases",
+  "Max. EDNS0 packet size": "Max. EDNS0 packet size",
   "Max. concurrent queries": "Max. concurrent queries",
   "Ignore interface": "Ignore interface",
   "dhcp-Start": "Start",
@@ -250,6 +251,8 @@
   "Outbound": "Outbound",
   "Other": "Other",
   "minimum is 2 minutes (2m).": "minimum is 2 minutes (2m).",
-  "Invalid format. Correct format: \"12h\" or \"30m\"": "Invalid format. Correct format: \"12h\" or \"30m\""
+  "Invalid format. Correct format: \"12h\" or \"30m\"": "Invalid format. Correct format: \"12h\" or \"30m\"",
+  "DHCP Server": "DHCP Server",
+  "Static Leases": "Static Leases"
 }
 
