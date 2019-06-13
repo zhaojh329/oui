@@ -50,6 +50,7 @@
 				],
 				"oui.network": [
 					"conntrack_count",
+					"conntrack_table",
 					"dhcp_leases",
 					"dhcp6_leases",
 					"arp_table",
