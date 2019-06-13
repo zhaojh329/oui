@@ -45,9 +45,19 @@ export default {
         this.$refs['input'].focus();
       });
     },
+    clear() {
+      this.inputVisible = false;
+      this.inputValue = '';
+    },
     handleinputConfirm() {
       if (this.inputValue) {
         const tags = [...this.value];
+
+        if (tags.indexOf(this.inputValue) > -1) {
+          this.clear();
+          return;
+        }
+
         tags.push(this.inputValue);
         this.$emit('input', tags);
 
@@ -56,12 +66,10 @@ export default {
             if (err) {
               this.form[this.prop].splice(this.form[this.prop].indexOf(this.inputValue), 1);
             } else {
-              this.inputValue = '';
-              this.inputVisible = false;
+              this.clear();
             }
           })
         });
-
       } else {
         this.inputVisible = false;
       }
