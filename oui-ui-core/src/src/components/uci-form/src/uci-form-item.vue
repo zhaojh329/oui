@@ -52,11 +52,6 @@ export default {
 
       return true;
     }
-  },
-  data() {
-    return {
-      //visible: true
-    }
   }
 }
 </script>
