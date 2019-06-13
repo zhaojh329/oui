@@ -35,11 +35,27 @@ export default {
     },
     type() {
       return this.option.type;
+    },
+    visible() {
+      const depends = this.option.depends;
+
+      for (let name in depends) {
+        const dependOpt = this.option.uciSection.findOptionByName(name);
+        if (!dependOpt)
+          continue;
+
+        const expr = `"${dependOpt.formValue(this.sid)}" ${depends[name]}`
+        if (!eval(expr)) {
+          return false;
+        }
+      }
+
+      return true;
     }
   },
   data() {
     return {
-      visible: true
+      //visible: true
     }
   }
 }

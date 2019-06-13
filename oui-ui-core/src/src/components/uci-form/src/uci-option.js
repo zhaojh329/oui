@@ -187,7 +187,6 @@ export default {
 
       this.original = value;
       this.$set(this.form, this.prop(sid), value);
-      this.uciSection.toggle(this.name);
     },
     buildForm(sid) {
       let value = undefined;
@@ -204,11 +203,6 @@ export default {
 
       this.buildFormValue(sid, value);
       this.buildFormRule(sid);
-
-      const prop = this.prop(sid);
-      this.$watch(`form.${prop}`, () => {
-        this.uciSection.toggle(this.name);
-      });
     },
     saveUCI(sid) {
       if (this.type === 'dummy')

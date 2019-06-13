@@ -107,45 +107,6 @@ export default {
       }
       return null;
     },
-    toggleOptions(options, changedOptionName, sid) {
-      options.forEach(o => {
-        if (o.name === changedOptionName)
-          return;
-
-        const depends = o.depends;
-        if (Object.keys(depends).indexOf(changedOptionName) > -1) {
-          let visible = true;
-
-          for (let name in depends) {
-            const dependOpt = this.findOptionByName(name);
-            if (!dependOpt)
-              continue;
-
-            const expr = `"${dependOpt.formValue(sid)}" ${depends[name]}`
-            if (!eval(expr)) {
-              visible = false;
-              break;
-            }
-          }
-
-          this.$nextTick(() => {
-            this.uciForm.$refs[o.prop(sid)][0].visible = visible;
-            this.uciForm.onValidate(o.prop(sid), true);
-          });
-        }
-      });
-    },
-    toggle(name) {
-      const sections = this.uciSections;
-
-      sections.forEach(s => {
-        const sid = s['.name'];
-        this.toggleOptions(this.options, name, sid);
-        this.tabs.forEach(tab => {
-          this.toggleOptions(tab.options, name, sid);
-        });
-      });
-    },
     add(name) {
       this.nsid = this.$uci.add(this.config, this.type, name);
       this.load();
