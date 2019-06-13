@@ -149,7 +149,7 @@ const types = {
   },
   min: {
     verify: (value, arg) => {
-      return types['float'].verify(value) && value >= arg;
+      return types['number'].verify(value) && value >= arg;
     },
     validator: (rule, value, cb) => {
       performCallback(types, rule, value, cb, i18n.t('Must be a number greater or equal to', {num: rule.arg}), rule.arg);
@@ -157,7 +157,7 @@ const types = {
   },
   max: {
     verify: (value, arg) => {
-      return types['float'].verify(value) && value <= arg;
+      return types['number'].verify(value) && value <= arg;
     },
     validator: (rule, value, cb) => {
       performCallback(types, rule, value, cb, i18n.t('Must be a number lower or equal to', {num: rule.arg}), rule.arg);
