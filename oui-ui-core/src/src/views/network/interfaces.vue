@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-table :data="interfaces">
-      <el-table-column prop="interface" :label="$t('Network')" width="140">
+      <el-table-column :label="$t('Network')" width="140">
         <template v-slot="{ row }">
           <oui-network-badge :iface="row.name" :device="row.getDevice() && row.getDevice().name"></oui-network-badge>
         </template>
       </el-table-column>
-      <el-table-column prop="interface" :label="$t('Status')">
+      <el-table-column :label="$t('Status')">
         <template v-slot="{ row }">
           <strong>{{ $t('Uptime') }}</strong>: {{ row.isUp() ? row.getUptime() : $t('Interface is down') }}<br/>
           <strong>MAC</strong>: {{ row.getDevice() ? row.getDevice().macaddr : '' }}<br/>
@@ -87,7 +87,7 @@ export default {
   methods: {
     load() {
       this.$network.load().then(() => {
-        this.interfaces = this.$network.getInterfaces();
+        this.interfaces = this.$network.getInterfaces().filter(i => i.name !== 'loopback');
       });
     },
     edit(iface) {
