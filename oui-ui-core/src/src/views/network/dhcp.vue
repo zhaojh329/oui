@@ -43,7 +43,7 @@
         <uci-option type="switch" :label="$t('Ignore interface')" name="ignore"></uci-option>
         <uci-option type="input" :label="$t('dhcp-Start')" name="start" placeholder="100" rules="uinteger"></uci-option>
         <uci-option type="input" :label="$t('dhcp-Limit')" name="limit" placeholder="150" rules="uinteger"></uci-option>
-        <uci-option type="input" :label="$t('Leasetime')" name="leasetime" placeholder="12h"></uci-option>
+        <uci-option type="input" :label="$t('Leasetime')" name="leasetime" placeholder="12h" :rules="validateLeasetime"></uci-option>
       </uci-tab>
       <uci-tab :title="$t('Advanced Settings')" name="advanced">
         <uci-option type="switch" :label="$t('Dynamic DHCP')" name="dynamicdhcp" initial="1"></uci-option>
@@ -62,6 +62,15 @@
 <script>
 export default {
   methods: {
+    validateLeasetime(v) {
+      if (v === '1m')
+        return this.$t('minimum is 2 minutes (2m).');
+
+      if (/^\d+h$|m$/.test(v))
+        return;
+
+      return this.$t('Invalid format. Correct format: "12h" or "30m"');
+    },
     onApply() {
       this.$system.initRestart('dnsmasq');
     }

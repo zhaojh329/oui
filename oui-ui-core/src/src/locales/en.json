@@ -248,5 +248,8 @@
   "Realtime Traffic": "Realtime Traffic",
   "Inbound": "Inbound",
   "Outbound": "Outbound",
-  "Other": "Other"
+  "Other": "Other",
+  "minimum is 2 minutes (2m).": "minimum is 2 minutes (2m).",
+  "Invalid format. Correct format: \"12h\" or \"30m\"": "Invalid format. Correct format: \"12h\" or \"30m\""
 }
+

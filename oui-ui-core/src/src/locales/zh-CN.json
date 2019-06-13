@@ -247,5 +247,8 @@
   "Realtime Traffic": "实时流量",
   "Inbound": "入站",
   "Outbound": "出站",
-  "Other": "其余"
+  "Other": "其余",
+  "minimum is 2 minutes (2m).": "不能小于2分钟",
+  "Invalid format. Correct format: \"12h\" or \"30m\"": "格式错误。正确的格式：\"12h\" 或者 \"30m\""
 }
+

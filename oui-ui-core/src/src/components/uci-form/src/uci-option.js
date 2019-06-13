@@ -63,7 +63,7 @@ export default {
     /* Used for multiple list */
     multiple: Boolean,
     /* validator rules */
-    rules: [String, Object, Array]
+    rules: [String, Object, Function, Array]
   },
   data() {
     return {
@@ -125,7 +125,7 @@ export default {
     parsedRules() {
       let rules = this.rules;
 
-      if (typeof(rules) === 'string')
+      if (typeof(rules) === 'string' || typeof(rules) === 'function')
         rules = [rules];
 
       if (typeof(rules) === 'object' && !Array.isArray(rules))

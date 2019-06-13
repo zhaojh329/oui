@@ -292,6 +292,20 @@ validator.compileString = function(rule, arg) {
   return [r];
 }
 
+validator.compileFunction = function(verify) {
+  const r = {
+    validator: (rule, value, callback) => {
+      const err = verify(value);
+      if (typeof(err) === 'string')
+        callback(new Error(err));
+      else
+        callback();
+    }
+  }
+
+  return [r];
+}
+
 validator.compileObject = function(rule) {
   const rs = [];
 
@@ -322,6 +336,9 @@ validator.compile = function(rule) {
   const type = typeof(rule);
   if (type === 'string')
     return this.compileString(rule);
+
+  if (type === 'function')
+    return this.compileFunction(rule);
 
   if (type === 'object')
     return this.compileObject(rule);
