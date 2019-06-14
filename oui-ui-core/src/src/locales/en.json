@@ -47,7 +47,6 @@
   "Hostnames": "Hostnames",
   "Diagnostics": "Diagnostics",
   "Hostname": "Hostname",
-  "Device information": "Device information",
   "Model": "Model",
   "Architecture": "Architecture",
   "Kernel Version": "Kernel Version",
@@ -258,5 +257,9 @@
   "Static Leases": "Static Leases",
   "Use broadcast": "Use broadcast",
   "Client ID": "Client ID",
-  "Vendor Class": "Vendor Class"
+  "Vendor Class": "Vendor Class",
+  "Load Average": "Load Average",
+  "IP Address": "IP Address",
+  "Gateway": "Gateway",
+  "Memory": "Memory"
 }

@@ -47,7 +47,6 @@
   "Hostnames": "主机名",
   "Diagnostics": "网络诊断",
   "Hostname": "主机名",
-  "Device information": "设备信息",
   "Model": "主机型号",
   "Architecture": "架构",
   "Kernel Version": "内核版本",
@@ -258,5 +257,9 @@
   "Static Leases": "静态地址分配",
   "Use broadcast": "使用广播标签",
   "Client ID": "客户ID",
-  "Vendor Class": "供应商类"
+  "Vendor Class": "供应商类",
+  "Load Average": "平均负载",
+  "IP Address": "IP地址",
+  "Gateway": "网关",
+  "Memory": "内存"
 }

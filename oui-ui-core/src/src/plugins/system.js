@@ -35,7 +35,7 @@ system.getInfo = function() {
       ['system', 'board'],
       ['oui.system', 'diskfree']
     ]).then(r => {
-      resolve(r);
+      resolve(Object.assign({}, r[0], r[1], {disk: r[2]}));
     });
   });
 }
