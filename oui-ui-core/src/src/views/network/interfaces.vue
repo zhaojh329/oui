@@ -31,21 +31,26 @@
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option type="switch" :label="$t('Start on boot')" name="auto" initial="1"></uci-option>
             <uci-option type="list" :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required></uci-option>
-            <uci-option type="input" :label="$t('IPv4 address')" name="ipaddr" depend="proto == 'static'" required></uci-option>
-            <uci-option type="input" :label="$t('IPv4 netmask')" name="netmask" depend="proto == 'static'" required></uci-option>
-            <uci-option type="input" :label="$t('IPv4 broadcast')" name="broadcast" depend="proto == 'static'"></uci-option>
-            <uci-option type="input" :label="$t('IPv4 gateway')" name="gateway" depend="proto == 'static'"></uci-option>
-            <uci-option type="dlist" :label="$t('DNS servers')" name="dns_static" uci-option="dns" depend="proto == 'static'"></uci-option>
+            <uci-option type="input" :label="$t('Hostname')" name="hostname" depend="proto == 'dhcp'" :placeholder="hostname" rules="hostname"></uci-option>
+            <uci-option type="input" :label="$t('IPv4 address')" name="ipaddr" depend="proto == 'static'" required rules="ip4addr"></uci-option>
+            <uci-option type="input" :label="$t('IPv4 netmask')" name="netmask" depend="proto == 'static'" required rules="netmask4"></uci-option>
+            <uci-option type="input" :label="$t('IPv4 broadcast')" name="broadcast" depend="proto == 'static'" rules="ip4addr"></uci-option>
+            <uci-option type="input" :label="$t('IPv4 gateway')" name="gateway" depend="proto == 'static'" rules="ip4addr"></uci-option>
+            <uci-option type="dlist" :label="$t('DNS servers')" name="dns_static" uci-option="dns" depend="proto == 'static'" rules="ipaddr"></uci-option>
             <uci-option type="input" :label="$t('PAP/CHAP username')" name="username" depend="proto == 'pppoe'" required></uci-option>
             <uci-option type="input" :label="$t('PAP/CHAP password')" name="password" depend="proto == 'pppoe'"></uci-option>
             <uci-option type="input" :label="$t('Access Concentrator')" name="ac" placeholder="auto" depend="proto == 'pppoe'"></uci-option>
             <uci-option type="input" :label="$t('Service Name')" name="service" placeholder="auto" depend="proto == 'pppoe'"></uci-option>
           </uci-tab>
           <uci-tab :title="$t('Advanced Settings')" name="advanced">
-            <uci-option type="switch" :label="$t('Use gateway')" name="defaultroute" initial="1" depend="proto == 'pppoe'"></uci-option>
-            <uci-option type="switch" :label="$t('Use DNS')" name="peerdns" initial="1" depend="proto == 'pppoe'"></uci-option>
-            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_pppoe" uci-option="dns" depend="proto == 'pppoe' && !peerdns"></uci-option>
-            <uci-option type="input" :label="$t('Inactivity timeout')" name="demand" placeholder="0" depend="proto == 'pppoe'"></uci-option>
+            <uci-option type="switch" :label="$t('Use broadcast')" name="broadcast" depend="proto == 'dhcp'"></uci-option>
+            <uci-option type="switch" :label="$t('Use gateway')" name="defaultroute" initial="1" depend="proto == 'dhcp' || proto == 'pppoe'"></uci-option>
+            <uci-option type="switch" :label="$t('Use DNS')" name="peerdns" initial="1" depend="proto == 'dhcp' || proto == 'pppoe'"></uci-option>
+            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_dhcp" uci-option="dns" depend="proto == 'dhcp' && !peerdns" rules="ipaddr"></uci-option>
+            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_pppoe" uci-option="dns" depend="proto == 'pppoe' && !peerdns" rules="ipaddr"></uci-option>
+            <uci-option type="input" :label="$t('Inactivity timeout')" name="demand" placeholder="0" depend="proto == 'pppoe'" rules="uinteger"></uci-option>
+            <uci-option type="input" :label="$t('Client ID')" name="clientid" depend="proto == 'dhcp'"></uci-option>
+            <uci-option type="input" :label="$t('Vendor Class')" name="vendorid" depend="proto == 'dhcp'"></uci-option>
           </uci-tab>
           <uci-tab title="IPv6" name="ipv6"></uci-tab>
           <uci-tab :title="$t('Physical Settings')" name="physical"></uci-tab>
@@ -79,6 +84,9 @@ export default {
   computed: {
     dialogTitle() {
       return `${this.$t('Configure')} "${this.editorIface}"`
+    },
+    hostname() {
+      return this.$store.state.hostname;
     }
   },
   timers: {

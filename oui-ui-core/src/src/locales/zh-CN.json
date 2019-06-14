@@ -255,6 +255,8 @@
   "minimum is 2 minutes (2m).": "不能小于2分钟",
   "Invalid format. Correct format: \"12h\" or \"30m\"": "格式错误。正确的格式：\"12h\" 或者 \"30m\"",
   "DHCP Server": "DHCP服务器",
-  "Static Leases": "静态地址分配"
+  "Static Leases": "静态地址分配",
+  "Use broadcast": "使用广播标签",
+  "Client ID": "客户ID",
+  "Vendor Class": "供应商类"
 }
-
