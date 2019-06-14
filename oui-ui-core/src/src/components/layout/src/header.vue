@@ -9,8 +9,8 @@
           <i class="iconfont iconfull" @click="fullScreen"></i>
         </el-tooltip>
         <el-dropdown @command="onLangCommand">
-          <span class="user">
-            {{ $t('Language') }}<i class="el-icon-arrow-down el-icon--right"></i>
+          <span class="arrow-down">
+            {{ $t('Language') }}<i class="el-icon-arrow-down"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="en" :icon="(lang === 'en') ? 'el-icon-arrow-right' : ''">English</el-dropdown-item>
@@ -19,8 +19,8 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-dropdown @command="onUserCommand">
-          <span class="user">
-            {{ username }}<i class="el-icon-arrow-down el-icon--right"></i>
+          <span class="arrow-down">
+            {{ username }}<i class="el-icon-arrow-down"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="logout">{{ $t('Logout') }}</el-dropdown-item>
@@ -140,7 +140,7 @@ export default {
       margin-top: 4px;
     }
 
-    .user {
+    .arrow-down {
       cursor: pointer;
       font-size: 24px;
     }
