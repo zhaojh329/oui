@@ -63,6 +63,9 @@
 export default {
   methods: {
     validateLeasetime(v) {
+      if (v === '')
+        return;
+
       if (v === '1m')
         return this.$t('minimum is 2 minutes (2m).');
 
