@@ -46,8 +46,7 @@
             <uci-option type="switch" :label="$t('Use broadcast')" name="broadcast" depend="proto == 'dhcp'"></uci-option>
             <uci-option type="switch" :label="$t('Use gateway')" name="defaultroute" initial="1" depend="proto == 'dhcp' || proto == 'pppoe'"></uci-option>
             <uci-option type="switch" :label="$t('Use DNS')" name="peerdns" initial="1" depend="proto == 'dhcp' || proto == 'pppoe'"></uci-option>
-            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_dhcp" uci-option="dns" depend="proto == 'dhcp' && !peerdns" rules="ipaddr"></uci-option>
-            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_pppoe" uci-option="dns" depend="proto == 'pppoe' && !peerdns" rules="ipaddr"></uci-option>
+            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_custom" uci-option="dns" depend="(proto == 'dhcp' || proto == 'pppoe') && !peerdns" rules="ipaddr"></uci-option>
             <uci-option type="input" :label="$t('Inactivity timeout')" name="demand" placeholder="0" depend="proto == 'pppoe'" rules="uinteger"></uci-option>
             <uci-option type="input" :label="$t('Client ID')" name="clientid" depend="proto == 'dhcp'"></uci-option>
             <uci-option type="input" :label="$t('Vendor Class')" name="vendorid" depend="proto == 'dhcp'"></uci-option>

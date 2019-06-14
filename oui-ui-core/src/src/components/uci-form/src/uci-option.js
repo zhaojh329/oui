@@ -50,7 +50,7 @@ export default {
     save: Function,
     /* If this function is provided, it will be called when oui applys the uci configuration. */
     apply: Function,
-    /* depend="a == 12 || a == 'x' && y == 4 && q != 5 && !z" */
+    /* depend="(a == 12 || a == 'x') && y == 4 && q != 5 && !z" */
     depend: {
       type: String,
       default: ''
@@ -97,6 +97,7 @@ export default {
 
       const parts = expr.split(' ');
 
+      let waitRightBracket = 0;
       let s = states.name;
       const names = {};
 
@@ -104,6 +105,16 @@ export default {
         let part = parts[i];
 
         if (s === states.name) {
+          if (part[0] === '(') {
+            waitRightBracket++;
+            part = part.substr(1);
+          }
+
+          if (part[part.length - 1] === ')') {
+            waitRightBracket--;
+            part = part.substr(0, part.length - 1);
+          }
+
           if (part[0] === '!') {
             part = part.substr(1);
             s = states.logic;
@@ -142,6 +153,11 @@ export default {
         if (s === states.operand) {
           s = states.logic;
 
+          if (part[part.length - 1] === ')') {
+            waitRightBracket--;
+            part = part.substr(0, part.length - 1);
+          }
+
           const starts = part[0];
           const end = part[part.length - 1];
 
@@ -175,6 +191,9 @@ export default {
 
         return undefined;
       }
+
+      if (waitRightBracket !== 0)
+        return undefined;
 
       return {expr, names: Object.keys(names)};
     },
