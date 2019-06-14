@@ -59,7 +59,9 @@ export default {
     /* Used for multiple list */
     multiple: Boolean,
     /* validator rules */
-    rules: [String, Object, Function, Array]
+    rules: [String, Object, Function, Array],
+    /* Used for list */
+    allowCreate: Boolean
   },
   data() {
     return {

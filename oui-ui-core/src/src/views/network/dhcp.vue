@@ -53,14 +53,22 @@
     </uci-section>
     <uci-section :title="$t('Static Leases')" type="host" addable table>
       <uci-option type="input" :label="$t('Hostname')" name="name" rules="hostname"></uci-option>
-      <uci-option type="input" :label="$t('MAC-Address')" name="mac" required rules="macaddr"></uci-option>
-      <uci-option type="input" :label="$t('IPv4-Address')" name="ip" required rules="ip4addr"></uci-option>
+      <uci-option type="list" :label="$t('MAC-Address')" name="mac" required rules="macaddr" :options="arp.macaddrs" allow-create></uci-option>
+      <uci-option type="list" :label="$t('IPv4-Address')" name="ip" required rules="ip4addr" :options="arp.ipaddrs" allow-create></uci-option>
     </uci-section>
   </uci-form>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      arp: {
+        macaddrs: [],
+        ipaddrs: []
+      }
+    }
+  },
   methods: {
     validateLeasetime(v) {
       if (v === '')
@@ -74,9 +82,23 @@ export default {
 
       return this.$t('Invalid format. Correct format: "12h" or "30m"');
     },
+    getARPTable() {
+      return this.$ubus.call('oui.network', 'arp_table');
+    },
     onApply() {
       this.$system.initRestart('dnsmasq');
     }
+  },
+  created() {
+    this.getARPTable().then(r => {
+      r.entries.forEach(arp => {
+        if (arp.macaddr === '00:00:00:00:00:00')
+          return;
+
+        this.arp.macaddrs.push(arp.macaddr);
+        this.arp.ipaddrs.push(arp.ipaddr);
+      });
+    });
   }
 }
 </script>
