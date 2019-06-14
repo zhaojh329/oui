@@ -23,7 +23,8 @@ export default {
       default: true
     },
     /* Render in a table */
-    table: Boolean
+    table: Boolean,
+    filter: Function
   },
   data() {
     return {
@@ -38,11 +39,16 @@ export default {
       return this.uciForm.loaded;
     },
     uciSections() {
+      let sections = [];
+
       if (this.name)
-        return this.sections.filter(s => s['.name'] === this.name);
-      if (this.type)
-        return this.sections;
-      return [];
+        sections = this.sections.filter(s => s['.name'] === this.name);
+      else if (this.type)
+        sections = this.sections;
+
+      if (this.filter)
+        sections = sections.filter(s => this.filter(s));
+      return sections;
     },
     config() {
       return this.uciForm.config;
