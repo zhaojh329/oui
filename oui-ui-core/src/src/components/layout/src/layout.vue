@@ -9,7 +9,7 @@
         </transition>
       </el-main>
       <el-backtop target=".el-main" class="backtop">
-        <div class="text">UP</div>
+        <div class="text">{{ $t('backtop-UP') }}</div>
         <i class="el-icon-caret-top"></i>
       </el-backtop>
       <el-footer class="footer" height="40px">
