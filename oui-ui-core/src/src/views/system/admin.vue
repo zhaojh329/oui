@@ -15,7 +15,7 @@
         </el-form>
       </el-card>
     </el-tab-pane>
-    <el-tab-pane :label="$t('SSH Access')" name="dropbear">
+    <el-tab-pane :label="$t('SSH Access')" name="dropbear" v-if="hasDropbear">
       <uci-form config="dropbear">
         <uci-section :title="$t('SSH Server')" type="dropbear" addable>
           <uci-option type="list" :label="$t('Interface')" name="Interface" :options="interfaces"></uci-option>
@@ -62,7 +62,8 @@ export default {
         password: [{validator: validatePass}],
         confirm: [{validator: validatorConfirm}]
       },
-      interfaces: []
+      interfaces: [],
+      hasDropbear: false
     }
   },
   methods: {
@@ -78,6 +79,12 @@ export default {
     this.$network.load().then(() => {
       const interfaces = this.$network.getInterfaces();
       this.interfaces = interfaces.map(item => item.name);
+    });
+
+    this.$uci.load('dropbear').then(() => {
+      this.hasDropbear = true;
+    }).catch(() => {
+      this.hasDropbear = false;
     });
   }
 }
