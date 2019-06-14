@@ -182,7 +182,7 @@
   "Inactivity timeout": "活动超时",
   "Really delete this interface? The deletion cannot be undone!You might lose access to this device if you are connected via this interface.": "确定要删除此接口？删除操作无法撤销！删除此接口，可能导致无法再访问路由器！",
   "Delete interface": "删除接口",
-  "IPv4 address": "IPv4 address",
+  "IPv4 address": "IPv4地址",
   "IP address": "IP地址",
   "Static IPv4 Routes": "静态IPv4路由",
   "Static IPv6 Routes": "静态IPv6路由",
