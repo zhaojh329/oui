@@ -4,10 +4,10 @@
       <el-card :title="$t('Router Password')" style="width: 500px">
         <el-form label-width="200px" :model="passwordForm" :rules="passwordRules" ref="passwordForm">
           <el-form-item :label="$t('Password')" prop="password">
-            <el-input type="password" v-model="passwordForm.password"></el-input>
+            <el-input show-password v-model="passwordForm.password"></el-input>
           </el-form-item>
           <el-form-item :label="$t('Confirmation')" prop="confirm">
-            <el-input type="password" v-model="passwordForm.confirm"></el-input>
+            <el-input show-password v-model="passwordForm.confirm"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="mini"  @click="setPassword" style="float: right;margin-right: 50px;">{{ $t('Save') }}</el-button>

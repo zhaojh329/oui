@@ -43,7 +43,7 @@
             <uci-option type="input" label="APN" name="apn" depend="proto == '3g'"></uci-option>
             <uci-option type="input" label="PIN" name="pincode" depend="proto == '3g'"></uci-option>
             <uci-option type="input" :label="$t('PAP/CHAP username')" name="username" depend="proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
-            <uci-option type="input" :label="$t('PAP/CHAP password')" name="password" depend="proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
+            <uci-option type="input" :label="$t('PAP/CHAP password')" name="password" password depend="proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
             <uci-option type="input" :label="$t('Access Concentrator')" name="ac" placeholder="auto" depend="proto == 'pppoe'"></uci-option>
             <uci-option type="input" :label="$t('Service Name')" name="service_pppoe" uci-option="service" placeholder="auto" depend="proto == 'pppoe'"></uci-option>
             <uci-option type="input" :label="$t('Dial number')" name="dialnumber" depend="proto == '3g'" placeholder="*99***1#"></uci-option>
