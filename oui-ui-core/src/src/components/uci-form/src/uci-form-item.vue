@@ -1,6 +1,6 @@
 <template>
   <el-form-item ref="form-item" :label="label" :prop="prop" v-if="visible" :label-width="table ? 'auto' : ''">
-    <el-input v-if="type === 'input'" v-model="form[prop]" :placeholder="option.placeholder"></el-input>
+    <el-input v-if="type === 'input'" v-model="form[prop]" :placeholder="option.placeholder" :show-password="option.password" ></el-input>
     <el-input v-else-if="type === 'dummy'" :value="form[prop]" readonly></el-input>
     <el-switch v-else-if="type === 'switch'" v-model="form[prop]" :active-value="option.activeValue" :inactive-value="option.inactiveValue"></el-switch>
     <el-select v-else-if="type === 'list'" v-model="form[prop]" :clearable="!option.required" :multiple="option.multiple" filterable :allow-create="option.allowCreate" style="width: 100%">

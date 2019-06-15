@@ -61,7 +61,8 @@ export default {
     /* validator rules */
     rules: [String, Object, Function, Array],
     /* Used for list */
-    allowCreate: Boolean
+    allowCreate: Boolean,
+    password: Boolean
   },
   data() {
     return {
