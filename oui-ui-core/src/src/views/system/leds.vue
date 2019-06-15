@@ -1,14 +1,14 @@
 <template>
    <uci-form config="system" v-if="sysfs.length > 0">
-    <uci-section title="LED Definitions" type="led" addable>
-      <uci-option type="input" label="Name" name="name" required></uci-option>
-      <uci-option type="list" label="Led Name" name="sysfs" :options="sysfs"></uci-option>
-      <uci-option type="list" label="Default state" name="default" :options="ledStates" initial="0" required></uci-option>
-      <uci-option type="list" label="Trigger" name="trigger" :options="triggers"></uci-option>
-      <uci-option type="input" label="On-State Delay" name="delayon" required depend="trigger == 'timer'"></uci-option>
-      <uci-option type="input" label="Off-State Delay" name="delayoff" required depend="trigger == 'timer'"></uci-option>
-      <uci-option type="list" label="Device" name="dev" :options="devices" depend="trigger == 'netdev'"></uci-option>
-      <uci-option type="list" label="Trigger Mode" name="mode" :options="modes" multiple depend="trigger == 'netdev'"></uci-option>
+    <uci-section type="led" addable>
+      <uci-option type="input" :label="$t('Name')" name="name" required></uci-option>
+      <uci-option type="list" :label="$t('Led Name')" name="sysfs" :options="sysfs" required :initial="sysfs[0]"></uci-option>
+      <uci-option type="switch" :label="$t('Default state')" name="default"></uci-option>
+      <uci-option type="list" :label="$t('Trigger')" name="trigger" :options="triggers" initial="none" required></uci-option>
+      <uci-option type="input" :label="$t('On-State Delay')" name="delayon" required depend="trigger == 'timer'"></uci-option>
+      <uci-option type="input" :label="$t('Off-State Delay')" name="delayoff" required depend="trigger == 'timer'"></uci-option>
+      <uci-option type="list" :label="$t('Device')" name="dev" :options="devices" depend="trigger == 'netdev'" allow-create></uci-option>
+      <uci-option type="list" :label="$t('Trigger Mode')" name="mode" :options="modes" multiple depend="trigger == 'netdev'"></uci-option>
     </uci-section>
   </uci-form>
 </template>
@@ -18,16 +18,12 @@ export default {
   data() {
     return {
       sysfs: [],
-      ledStates: [
-        ['0', 'off'],
-        ['1', 'on']
-      ],
       triggers: [],
       devices: [],
       modes: [
-        ['link', 'Link On'],
-        ['tx', 'Transmit'],
-        ['rx', 'Receive']
+        ['link', this.$t('Link On')],
+        ['tx', this.$t('Transmit')],
+        ['rx', this.$t('Receive')]
       ]
     }
   },
@@ -36,9 +32,6 @@ export default {
   methods: {
     listLEDs() {
       return this.$ubus.call('oui.system', 'led_list');
-    },
-    listUSBDevices() {
-      return this.$ubus.call('oui.system', 'usb_list');
     }
   },
   created() {
@@ -56,7 +49,7 @@ export default {
     });
 
     this.$network.load().then(() => {
-      this.devices = this.$network.getDevices().map(dev => dev.name);
+      this.devices = this.$network.getDevices().map(dev => dev.name).filter(name => name !== 'lo');
     });
   }
 }

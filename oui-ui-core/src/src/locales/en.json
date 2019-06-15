@@ -261,5 +261,15 @@
   "Load Average": "Load Average",
   "IP Address": "IP Address",
   "Gateway": "Gateway",
-  "Memory": "Memory"
+  "Memory": "Memory",
+  "Name": "Name",
+  "Led Name": "Led Name",
+  "Default state": "Default state",
+  "Trigger": "Trigger",
+  "Trigger Mode": "Trigger Mode",
+  "On-State Delay": "On-State Delay",
+  "Off-State Delay": "Off-State Delay",
+  "Link On": "Link On",
+  "Transmit": "Transmit",
+  "Receive": "Receive"
 }

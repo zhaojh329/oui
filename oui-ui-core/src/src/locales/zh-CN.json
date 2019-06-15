@@ -261,5 +261,15 @@
   "Load Average": "平均负载",
   "IP Address": "IP地址",
   "Gateway": "网关",
-  "Memory": "内存"
+  "Memory": "内存",
+  "Name": "名称",
+  "Led Name": "Led名称",
+  "Default state": "默认状态",
+  "Trigger": "触发器",
+  "Trigger Mode": "触发模式",
+  "On-State Delay": "通电时间",
+  "Off-State Delay": "关闭时间",
+  "Link On": "活动链接",
+  "Transmit": "传送",
+  "Receive": "接收"
 }
