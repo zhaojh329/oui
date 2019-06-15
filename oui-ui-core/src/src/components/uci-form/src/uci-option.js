@@ -244,7 +244,7 @@ export default {
         rules.push({required: true, message: this.$t('This field is required')});
 
       this.parsedRules.forEach(rule => {
-        rule = validator.compile(rule);
+        rule = validator.compile(rule, this);
         rules.push(...rule);
       });
 
@@ -280,7 +280,7 @@ export default {
 
       if (this.load) {
         new Promise(resolve => {
-          this.load(resolve);
+          this.load(resolve, sid, this.name);
         }).then(v => {
           this.buildFormValue(sid, v);
         });

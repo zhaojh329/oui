@@ -292,10 +292,10 @@ validator.compileString = function(rule, arg) {
   return [r];
 }
 
-validator.compileFunction = function(verify) {
+validator.compileFunction = function(verify, vm) {
   const r = {
     validator: (rule, value, callback) => {
-      const err = verify(value);
+      const err = verify(value, vm);
       if (typeof(err) === 'string')
         callback(new Error(err));
       else
@@ -332,13 +332,14 @@ validator.compileObject = function(rule) {
   return rs;
 }
 
-validator.compile = function(rule) {
+/* vm: uci-option instance */
+validator.compile = function(rule, vm) {
   const type = typeof(rule);
   if (type === 'string')
     return this.compileString(rule);
 
   if (type === 'function')
-    return this.compileFunction(rule);
+    return this.compileFunction(rule, vm);
 
   if (type === 'object')
     return this.compileObject(rule);

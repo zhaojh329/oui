@@ -52,6 +52,7 @@
   "Kernel Version": "Kernel Version",
   "Firmware Version": "Firmware Version",
   "IPv4-Address": "IPv4-Address",
+  "IPv4-Gateway": "IPv4-Gateway",
   "IPv6-Gateway": "IPv6-Gateway",
   "MAC-Address": "MAC-Address",
   "Device": "Device",
@@ -271,5 +272,14 @@
   "Off-State Delay": "Off-State Delay",
   "Link On": "Link On",
   "Transmit": "Transmit",
-  "Receive": "Receive"
+  "Receive": "Receive",
+  "Switch": "Switch",
+  "Enable VLAN functionality": "Enable VLAN functionality",
+  "Enable learning and aging": "Enable learning and aging",
+  "VLANs on-": "VLANs on {name}",
+  "Switch port state - off": "off",
+  "Switch port state - untagged": "untagged",
+  "Switch port state - tagged": "tagged",
+  "VLAN ID must be unique": "VLAN ID must be unique",
+  "VID-ERR-MSG": "VLAN ID must be a integer between 1 and {max}"
 }

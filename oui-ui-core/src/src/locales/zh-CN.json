@@ -52,6 +52,7 @@
   "Kernel Version": "内核版本",
   "Firmware Version": "固件版本",
   "IPv4-Address": "IPv4-地址",
+  "IPv4-Gateway": "IPv4网关",
   "IPv6-Gateway": "IPv6网关",
   "MAC-Address": "MAC-地址",
   "Device": "设备",
@@ -271,5 +272,14 @@
   "Off-State Delay": "关闭时间",
   "Link On": "活动链接",
   "Transmit": "传送",
-  "Receive": "接收"
+  "Receive": "接收",
+  "Switch": "交换机",
+  "Enable VLAN functionality": "启用VLAN",
+  "Enable learning and aging": "启用智能交换学习",
+  "VLANs on-": "{name}上的 VLAN",
+  "Switch port state - off": "关闭",
+  "Switch port state - untagged": "未标记",
+  "Switch port state - tagged": "已标记",
+  "VLAN ID must be unique": "VLAN ID必须唯一",
+  "VID-ERR-MSG": "VLAN ID必须是 1 到 {max} 之间的整数"
 }

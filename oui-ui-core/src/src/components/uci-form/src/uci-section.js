@@ -24,7 +24,12 @@ export default {
     },
     /* Render in a table */
     table: Boolean,
-    filter: Function
+    filter: Function,
+    option: {
+      type: Object,
+      default: () => {}
+    },
+    add: Function
   },
   data() {
     return {
@@ -47,7 +52,7 @@ export default {
         sections = this.sections;
 
       if (this.filter)
-        sections = sections.filter(s => this.filter(s));
+        sections = sections.filter(s => this.filter(this, s));
       return sections;
     },
     config() {
@@ -112,10 +117,6 @@ export default {
             return options[j];
       }
       return null;
-    },
-    add(name) {
-      this.nsid = this.$uci.add(this.config, this.type, name);
-      this.load();
     },
     del(sid) {
       this.$uci.del(this.config, sid);

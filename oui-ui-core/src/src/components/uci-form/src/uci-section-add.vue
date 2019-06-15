@@ -3,7 +3,7 @@
     <el-form-item v-if="nameVisible" size="mini" label-width="auto" style="width: 200px" :prop="prop" :rules="rules">
       <el-input placeholder="Please input a name" v-model="form[prop]" ref="name" @keyup.enter.native="handleNameConfirm" @blur="handleNameConfirm"></el-input>
     </el-form-item>
-    <el-button v-else type="primary" size="mini" @click="add">+ {{ $t('Add') }}</el-button>
+    <el-button v-else type="primary" size="mini" @click="handleAdd">+ {{ $t('Add') }}</el-button>
   </div>
 </template>
 
@@ -37,9 +37,22 @@ export default {
     this.$set(this.uciForm.form, this.prop, '');
   },
   methods: {
-    add() {
+    add(name) {
+      let sid;
+
+      if (this.sestion.add)
+        sid = this.sestion.add(this.sestion, name);
+      else
+        sid = this.$uci.add(this.sestion.config, this.sestion.type, name);
+
+      if (sid) {
+        this.sestion.nsid = sid;
+        this.sestion.load();
+      }
+    },
+    handleAdd() {
       if (this.sestion.anonymous) {
-        this.sestion.add();
+        this.add();
         return;
       }
 
@@ -59,7 +72,7 @@ export default {
       this.uciForm.form[this.prop] = '';
 
       if (this.valid)
-        this.sestion.add(name);
+        this.add(name);
     },
     validateName(rule, value, callback) {
       let error = undefined;
