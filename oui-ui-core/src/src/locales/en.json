@@ -309,5 +309,7 @@
   "MAC-List": "MAC-List",
   "Allow listed only": "Allow listed only",
   "Allow all except listed": "Allow all except listed",
-  "Transmit Power": "Transmit Power"
+  "Transmit Power": "Transmit Power",
+  "Band": "Band",
+  "Channel": "Channel"
 }

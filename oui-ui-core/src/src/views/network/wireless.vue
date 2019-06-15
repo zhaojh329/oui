@@ -5,6 +5,9 @@
         <uci-section :name="radio.name">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option type="switch" :label="$t('Disabled')" name="disabled"></uci-option>
+            <uci-option type="list" :label="$t('Mode')" name="hwmode" :options="radio.hwmodes" required></uci-option>
+            <uci-option type="list" :label="$t('Band')" name="htmode" :options="radio.htmodes" required></uci-option>
+            <uci-option type="list" :label="$t('Channel')" name="channel" :options="radio.freqlist" required></uci-option>
             <uci-option type="list" :label="$t('Transmit Power')" name="txpower" :options="radio.txpowerlist"></uci-option>
           </uci-tab>
           <uci-tab :title="$t('Advanced Settings')" name="advanced">
@@ -64,34 +67,57 @@ export default {
     }
   },
   created() {
+    const loading = this.$loading({
+      text: this.$t('loading...'),
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    });
+
     this.$uci.load('wireless').then(() => {
       const sections = this.$uci.sections('wireless', 'wifi-device');
+      let radios_num = sections.length;
+
       sections.forEach(s => {
         const device = s['.name'];
         const batch = [];
 
+        batch.push(['iwinfo', 'info', {device}]);
         batch.push(['iwinfo', 'freqlist', {device}]);
         batch.push(['iwinfo', 'txpowerlist', {device}]);
         batch.push(['iwinfo', 'countrylist', {device}]);
 
         this.$ubus.callBatch(batch).then(rs => {
+          const freqlist = [['auto', this.$t('Automatic')]];
           const txpowerlist = [];
           const countrylist = [];
 
-          rs[1].results.forEach(tx => {
+          rs[1].results.forEach(f => {
+            if (f.restricted)
+              return;
+            freqlist.push([f.channel + '', `${f.channel} (${f.mhz} MHz)`]);
+          });
+
+          rs[2].results.forEach(tx => {
             txpowerlist.push([tx.dbm + '', `${tx.dbm} dBm (${tx.mw} mW)`]);
           });
 
-          rs[2].results.forEach(c => {
+          rs[3].results.forEach(c => {
             countrylist.push([c.code, `${c.code} - ${c.country}`]);
           });
 
           this.radios.push({
             name: device,
-            freqlist: rs[0].results,
+            hwmodes: rs[0].hwmodes.map(mode => '11' + mode),
+            htmodes: rs[0].htmodes,
+            freqlist: freqlist,
             txpowerlist: txpowerlist,
             countrylist: countrylist
           });
+
+          radios_num--;
+
+          if (radios_num === 0)
+            loading.close();
         });
       });
     });

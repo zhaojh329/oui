@@ -309,5 +309,7 @@
   "MAC-List": "MAC列表",
   "Allow listed only": "仅允许列表内",
   "Allow all except listed": "仅允许列表外",
-  "Transmit Power": "无线电功率"
+  "Transmit Power": "无线电功率",
+  "Band": "频宽",
+  "Channel": "信道"
 }
