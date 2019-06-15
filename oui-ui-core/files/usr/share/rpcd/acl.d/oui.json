@@ -355,7 +355,8 @@
 					"switch_list",
 					"switch_info",
 					"switch_status",
-					"device_list"
+					"device_list",
+					"modem_list"
 				],
 				"oui.network.bwmon": [
 					"devices",

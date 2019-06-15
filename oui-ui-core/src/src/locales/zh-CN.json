@@ -281,5 +281,15 @@
   "Switch port state - untagged": "未标记",
   "Switch port state - tagged": "已标记",
   "VLAN ID must be unique": "VLAN ID必须唯一",
-  "VID-ERR-MSG": "VLAN ID必须是 1 到 {max} 之间的整数"
+  "VID-ERR-MSG": "VLAN ID必须是 1 到 {max} 之间的整数",
+  "Unmanaged": "不配置协议",
+  "DHCP Client": "DHCP客户端",
+  "Static address": "静态地址",
+  "Server": "服务器",
+  "Modem device": "调制解调器设备",
+  "Service Type": "服务类型",
+  "UMTS only": "仅UMTS（WCDMA）",
+  "GPRS only": "仅GPRS",
+  "Dial number": "拨号号码",
+  "Modem init timeout": "调制解调器初始化超时"
 }

@@ -1902,6 +1902,38 @@ static int rpc_oui_network_sw_status(struct ubus_context *ctx, struct ubus_objec
 	                 state, ctx, req);
 }
 
+static int rpc_oui_network_modem_list(struct ubus_context *ctx, struct ubus_object *obj,
+                          struct ubus_request_data *req, const char *method,
+                          struct blob_attr *msg)
+{
+	DIR *d;
+	void *list;
+	struct dirent *e;
+	char name[512];
+
+	if (!(d = opendir("/dev")))
+		return rpc_errno_status();
+
+	blob_buf_init(&buf, 0);
+
+	list = blobmsg_open_array(&buf, "devices");
+
+	while ((e = readdir(d))) {
+		if (strncmp(e->d_name, "ttyUSB", 6))
+			continue;
+
+		snprintf(name, sizeof(name) - 1,  "/dev/%s", e->d_name);
+
+		blobmsg_add_string(&buf, NULL, name);
+	}
+
+	closedir(d);
+	blobmsg_close_array(&buf, list);
+	ubus_send_reply(ctx, req, buf.head);
+
+	return 0;
+}
+
 enum {
 	NETWORK_CMD_PING,
 	NETWORK_CMD_PING6,
@@ -2797,6 +2829,7 @@ static int rpc_oui_api_init(const struct rpc_daemon_ops *o, struct ubus_context 
 		                                     rpc_switch_policy),
 		UBUS_METHOD("switch_status",         rpc_oui_network_sw_status,
 		                                     rpc_switch_policy),
+		UBUS_METHOD_NOARG("modem_list",     rpc_oui_network_modem_list),
 		UBUS_METHOD("ping",                  rpc_oui_network_ping,
 		                                     rpc_data_policy),
 		UBUS_METHOD("ping6",                 rpc_oui_network_ping6,

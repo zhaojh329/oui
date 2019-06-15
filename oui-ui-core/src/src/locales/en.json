@@ -281,5 +281,15 @@
   "Switch port state - untagged": "untagged",
   "Switch port state - tagged": "tagged",
   "VLAN ID must be unique": "VLAN ID must be unique",
-  "VID-ERR-MSG": "VLAN ID must be a integer between 1 and {max}"
+  "VID-ERR-MSG": "VLAN ID must be a integer between 1 and {max}",
+  "Unmanaged": "Unmanaged",
+  "DHCP Client": "DHCP Client",
+  "Static address": "Static address",
+  "Server": "Server",
+  "Modem device": "Modem device",
+  "Service Type": "Service Type",
+  "UMTS only": "UMTS only",
+  "GPRS only": "GPRS only",
+  "Dial number": "Dial number",
+  "Modem init timeout": "Modem init timeout"
 }
