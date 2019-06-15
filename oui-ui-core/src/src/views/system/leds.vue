@@ -27,8 +27,6 @@ export default {
       ]
     }
   },
-  computed: {
-  },
   methods: {
     listLEDs() {
       return this.$ubus.call('oui.system', 'led_list');
