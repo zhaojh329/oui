@@ -3,7 +3,7 @@
     <el-input v-if="type === 'input'" v-model="form[prop]" :placeholder="option.placeholder" :show-password="option.password" ></el-input>
     <el-input v-else-if="type === 'dummy'" :value="form[prop]" readonly></el-input>
     <el-switch v-else-if="type === 'switch'" v-model="form[prop]" :active-value="option.activeValue" :inactive-value="option.inactiveValue"></el-switch>
-    <el-select v-else-if="type === 'list'" v-model="form[prop]" :clearable="!option.required" :multiple="option.multiple" filterable :allow-create="option.allowCreate" style="width: 100%">
+    <el-select v-else-if="type === 'list'" v-model="form[prop]" :clearable="!option.required" :multiple="option.multiple" filterable :allow-create="option.allowCreate">
       <el-option v-for="oo in option.transformedOptions" :key="oo[0]" :label="oo[1] || oo[0]" :value="oo[0]"></el-option>
     </el-select>
     <uci-dlist v-else-if="type === 'dlist'" v-model="form[prop]" :prop="prop"></uci-dlist>

@@ -16,7 +16,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div v-else v-for="(u, i) in s.uciSections" :key="u['.name']">
+          <div v-else v-for="(u, i) in s.uciSections" :key="u['.name']" class="none-table">
             <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
             <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
               <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
@@ -201,8 +201,10 @@ export default {
     margin-right: 50px;
   }
 
-  .el-form-item {
-    width: 60%;
+  .none-table {
+    .el-form-item {
+      width: 60%;
+    }
   }
 
   .dlist {
