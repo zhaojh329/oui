@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import OuiNetworkBadge from '@/components/oui-network-badge.vue'
+import OuiNetworkBadge from './oui-network-badge.vue'
 
 export default {
   data() {

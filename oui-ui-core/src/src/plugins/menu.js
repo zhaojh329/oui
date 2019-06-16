@@ -59,7 +59,7 @@ function buildRoutes(menus) {
       route.redirect = menu.path;
       route.children.push({
         path: menu.path,
-        component: () => import(`@/views/${menu.view}.vue`),
+        component: () => import(`@/views/${menu.view}`),
         meta: {
           title: menu.title
         }
@@ -68,7 +68,7 @@ function buildRoutes(menus) {
       menu.children.forEach(sm => {
         route.children.push({
           path: sm.path,
-          component: () => import(`@/views/${sm.view}.vue`),
+          component: () => import(`@/views/${sm.view}`),
           meta: {
             title: sm.title
           }
