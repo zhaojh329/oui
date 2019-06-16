@@ -17,7 +17,7 @@ export default {
     },
     required: Boolean,
     /* If load from uci fails, the value of the property is used as the form value. */
-    initial: [String, Array],
+    initial: [Number, String, Array],
     /* Whether to access the uci value */
     uci: {
       type: Boolean,
@@ -200,8 +200,9 @@ export default {
     },
     transformedOptions() {
       return this.options.map(o => {
-        if (typeof(o) === 'string')
-          return [o, o];
+        if (!Array.isArray(o))
+          o = [o];
+        o[0] = o[0] + '';
         if (o.length === 1)
           return [o[0], o[0]];
         return o;
@@ -255,7 +256,7 @@ export default {
     },
     buildFormValue(sid, value) {
       if (typeof(value) === 'undefined' && typeof(this.initial) !== 'undefined')
-        value = this.initial;
+        value = this.initial + '';
 
       if (typeof(value) !== 'undefined') {
         if (this.type === 'list' && this.multiple)

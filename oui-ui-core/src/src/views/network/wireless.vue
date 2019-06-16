@@ -96,11 +96,11 @@ export default {
           freqlist.forEach(f => {
             if (f.restricted)
               return;
-            channels.push([f.channel + '', `${f.channel} (${f.mhz} MHz)`]);
+            channels.push([f.channel, `${f.channel} (${f.mhz} MHz)`]);
           });
 
           rs[2].results.forEach(tx => {
-            txpowerlist.push([tx.dbm + '', `${tx.dbm} dBm (${tx.mw} mW)`]);
+            txpowerlist.push([tx.dbm, `${tx.dbm} dBm (${tx.mw} mW)`]);
           });
 
           rs[3].results.forEach(c => {
