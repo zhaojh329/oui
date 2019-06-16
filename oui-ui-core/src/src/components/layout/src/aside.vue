@@ -5,12 +5,15 @@
         <router-link to="/">{{ hostname }}</router-link>
       </div>
       <el-menu ref="navmenu" :default-active="$route.path" background-color="#03152A" text-color="rgba(255,255,255,.8)" active-text-color="#ffffff" router unique-opened>
-        <el-submenu v-for="item in menus" :key="item.path" :index="item.path">
-          <template slot="title">
-            <span slot="title">{{ $t(item.title) }}</span>
-          </template>
-          <el-menu-item v-for="subItem in item.children" :key="item.path + subItem.path" :index="subItem.path">{{ $t(subItem.title) }}</el-menu-item>
-        </el-submenu>
+        <template v-for="menu in menus">
+          <el-submenu v-if="menu.children" :key="menu.path" :index="menu.path">
+            <template slot="title">
+              <span slot="title">{{ $t(menu.title) }}</span>
+            </template>
+            <el-menu-item v-for="submenu in menu.children" :key="submenu.path" :index="submenu.path">{{ $t(submenu.title) }}</el-menu-item>
+          </el-submenu>
+          <el-menu-item v-else :key="menu.path" :index="menu.path">{{ $t(menu.title) }}</el-menu-item>
+        </template>
       </el-menu>
     </el-aside>
   </div>
@@ -44,12 +47,13 @@ export default {
   },
   watch: {
     '$route.path'(path) {
-      if (path === '/home' && this.opened !== '') {
+      const paths = path.split('/');
+
+      if (paths.length === 2 && this.opened !== '') {
         this.$refs['navmenu'].close(this.opened);
         return;
       }
 
-      const paths = this.$route.path.split('/');
       if (paths.length === 3)
         this.opened = '/' + paths[1];
     }

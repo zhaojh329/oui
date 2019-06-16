@@ -7,27 +7,37 @@ const menu = {}
 function parseMenus(raw) {
   let menus = {};
 
-  Object.keys(raw).map(key => {
-    if (key.indexOf('/') < 0) {
-      menus[key] = Object.assign({children: []}, raw[key]);
-      delete(raw[key]);
+  Object.keys(raw).forEach(m => {
+    const paths = m.split('/');
+    if (paths.length === 1)
+      menus[paths[0]] = raw[m];
+  });
+
+  Object.keys(raw).forEach(m => {
+    const [menu, submenu] = m.split('/');
+    if (submenu && menus[menu]) {
+      if (!menus[menu].children)
+        menus[menu].children = {};
+      menus[menu].children[submenu] = raw[m];
     }
   });
 
-  Object.keys(raw).map(key => {
-    const paths = key.split('/');
-    raw[key].path = '/' + key;
-
-    menus[paths[0]].children.push(raw[key]);
+  menus = Object.keys(menus).map(k => {
+    return {path: '/' + k, ...menus[k]};
   });
 
-  menus = Object.keys(menus).map(k => Object.assign({path: '/' + k}, menus[k]));
+  menus.forEach(m => {
+    if (!m.children)
+      return;
+
+    m.children = Object.keys(m.children).map(k => {
+      return {path: `${m.path}/${k}`, ...m.children[k]};
+    });
+
+    m.children.sort((a, b) => a.index - b.index);
+  });
 
   menus.sort((a, b) => a.index - b.index);
-
-  menus.forEach(e => {
-    e.children.sort((a, b) => a.index - b.index);
-  });
 
   return menus;
 }
@@ -35,25 +45,37 @@ function parseMenus(raw) {
 function buildRoutes(menus) {
   const routes = [];
 
-  menus.forEach(e => {
+  menus.forEach(menu => {
     const route = {
-      path: e.path,
+      path: '/',
       component: () => import('@/components/layout'),
       meta: {
-        title: e.title
+        title: menu.title
       },
       children: []
     };
 
-    e.children.forEach(c => {
+    if (menu.view) {
+      route.redirect = menu.path;
       route.children.push({
-        path: c.path,
-        component: () => import(`@/views/${c.view}.vue`),
+        path: menu.path,
+        component: () => import(`@/views/${menu.view}.vue`),
         meta: {
-          title: c.title
+          title: menu.title
         }
       });
-    });
+    } else if (menu.children) {
+      menu.children.forEach(sm => {
+        route.children.push({
+          path: sm.path,
+          component: () => import(`@/views/${sm.view}.vue`),
+          meta: {
+            title: sm.title
+          }
+        });
+      });
+    }
+
     routes.push(route);
   });
 

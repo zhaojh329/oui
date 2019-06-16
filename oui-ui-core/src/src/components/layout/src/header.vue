@@ -79,13 +79,17 @@ export default {
       const homeItem = {title: homeRoute.meta.title};
       const matched = route.matched;
 
-      if (matched.some(item => item.path === '/home')) {
+      if (matched.some(item => item.path === '/home'))
         return [homeItem];
-      }
 
       homeItem.to = '/home';
 
-      return [homeItem, matched[0].meta, matched[1].meta];
+      const list = [homeItem, matched[0].meta];
+
+      if (!matched[0].redirect)
+        list.push(matched[1].meta);
+
+      return list;
     },
     onLangCommand(cmd) {
       this.$ubus.call('uci', 'set', {config: 'oui', section: 'main', values: {lang: cmd}}).then(() => {
