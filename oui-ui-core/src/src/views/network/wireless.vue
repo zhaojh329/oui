@@ -68,7 +68,7 @@ export default {
   },
   created() {
     const loading = this.$loading({
-      text: this.$t('loading...'),
+      text: this.$t('Loading...'),
       spinner: 'el-icon-loading',
       background: 'rgba(0, 0, 0, 0.7)'
     });

@@ -127,7 +127,7 @@ export default {
     del(name) {
       this.$confirm(this.$t('Really delete this interface? The deletion cannot be undone!You might lose access to this device if you are connected via this interface.'), `${this.$t('Delete interface')} "${name}"`).then(() => {
         const loading = this.$loading({
-          text: this.$t('loading...'),
+          text: this.$t('Loading...'),
           spinner: 'el-icon-loading',
           background: 'rgba(0, 0, 0, 0.7)'
         });

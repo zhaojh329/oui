@@ -39,7 +39,7 @@ export default {
     },
     test() {
       const loading = this.$loading({
-        text: 'loading...',
+        text: 'Loading...',
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
