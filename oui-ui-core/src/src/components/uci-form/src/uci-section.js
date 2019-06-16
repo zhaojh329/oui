@@ -29,7 +29,12 @@ export default {
       type: Object,
       default: () => {}
     },
-    add: Function
+    add: Function,
+    collabsible: {
+      type: Boolean,
+      default: true
+    },
+    teasers: Array
   },
   data() {
     return {
@@ -122,6 +127,38 @@ export default {
       this.$uci.del(this.config, sid);
       this.delForm(sid);
       this.load();
+    },
+    teasersValue(sid) {
+      const teasers = [];
+
+      if (this.teasers) {
+        this.teasers.forEach(t => {
+          const o = this.findOption(t);
+          teasers.push([o.label, o.formValue(sid)]);
+        });
+      } else {
+        this.options.forEach(o => {
+          teasers.push([o.label, o.formValue(sid)]);
+        });
+
+        this.tabs.forEach(tab => {
+          tab.options.forEach(o => {
+            teasers.push([o.label, o.formValue(sid)]);
+          });
+        });
+      }
+
+      teasers[teasers.length - 1].push('end');
+
+      return teasers;
+    },
+    getErrorNum(sid) {
+      const validates = this.uciForm.validates;
+      const keys = Object.keys(validates).filter(key => {
+        return sid === validates[key].sid && !validates[key].valid;
+      });
+
+      return keys.length;
     }
   },
   render(h) {

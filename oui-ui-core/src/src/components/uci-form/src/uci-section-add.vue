@@ -47,6 +47,7 @@ export default {
 
       if (sid) {
         this.sestion.nsid = sid;
+        this.uciForm.activeCollapseItem = sid;
         this.sestion.load();
       }
     },

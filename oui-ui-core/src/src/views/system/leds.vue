@@ -1,6 +1,6 @@
 <template>
    <uci-form config="system" v-if="sysfs.length > 0">
-    <uci-section type="led" addable>
+    <uci-section type="led" addable :teasers="['name', 'sysfs', 'default', 'trigger']">
       <uci-option type="input" :label="$t('Name')" name="name" required></uci-option>
       <uci-option type="list" :label="$t('Led Name')" name="sysfs" :options="sysfs" required :initial="sysfs[0]"></uci-option>
       <uci-option type="switch" :label="$t('Default state')" name="default"></uci-option>

@@ -16,7 +16,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div v-else v-for="(u, i) in s.uciSections" :key="u['.name']" class="none-table">
+          <div v-else-if="s.uciSections.length < 2 || !s.collabsible" v-for="(u, i) in s.uciSections" :key="u['.name']" class="none-table">
             <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
             <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
               <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
@@ -30,6 +30,29 @@
             <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
             <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
           </div>
+          <el-collapse v-else v-model="activeCollapseItem" accordion class="none-table">
+            <el-collapse-item v-for="u in s.uciSections" :key="u['.name']" :title="u['.name']" :name="u['.name']">
+              <template slot="title">
+                <span v-if="activeCollapseItem === u['.name']"></span>
+                <span v-else>
+                  <el-badge :key="'badge' + i" v-if="s.getErrorNum(u['.name']) > 0" :value="s.getErrorNum(u['.name'])"></el-badge>
+                  <template v-for="(t, i) in s.teasersValue(u['.name'])">
+                    {{ t[0] }}: <strong :key="i">{{ t[1] }}</strong>{{ t[2] ? '' : ' | ' }}
+                  </template>
+                </span>
+              </template>
+              <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
+                <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
+                  <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
+                    <span slot="label">
+                      {{ tab.title }}<el-badge v-if="tab.getErrorNum(u['.name']) > 0" :value="tab.getErrorNum(u['.name'])"></el-badge>
+                    </span>
+                    <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
+                  </el-tab-pane>
+                </el-tabs>
+                <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
+              </el-collapse-item>
+            </el-collapse>
           <uci-section-add :sestion="s" :form="form"></uci-section-add>
         </el-card>
       </template>
@@ -68,7 +91,8 @@ export default {
       form: {},
       rules: {},
       validates: {},
-      sections: [] /* UciSection instances */
+      sections: [] /* UciSection instances */,
+      activeCollapseItem: ''
     }
   },
   methods: {
