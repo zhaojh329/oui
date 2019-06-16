@@ -8,10 +8,10 @@
       </el-table-column>
       <el-table-column :label="$t('Status')">
         <template v-slot="{ row }">
-          <strong>{{ $t('Uptime') }}</strong>: {{ row.isUp() ? row.getUptime() : $t('Interface is down') }}<br/>
+          <strong>{{ $t('Uptime') }}</strong>: {{ row.isUp() ? '%t'.format(row.getUptime()) : $t('Interface is down') }}<br/>
           <strong>MAC</strong>: {{ row.getDevice() ? row.getDevice().macaddr : '' }}<br/>
-          <strong>RX</strong>: {{ row.getStatistics().rx_bytes }}<br/>
-          <strong>TX</strong>: {{ row.getStatistics().tx_bytes }}<br/>
+          <strong>RX</strong>: {{ '%mB'.format(row.getStatistics().rx_bytes) }}<br/>
+          <strong>TX</strong>: {{ '%mB'.format(row.getStatistics().tx_bytes) }}<br/>
           <strong>IPv4</strong>: {{ row.getIPv4Addrs().join(',') }}<br/>
           <strong>IPv6</strong>: {{ row.getIPv6Addrs().join(',') }}<br/>
         </template>
@@ -25,42 +25,24 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-button type="primary" size="small" style="margin-top: 10px" @click="handleAdd">+ {{ $t('Add interface') }}</el-button>
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" custom-class="interface-edit-dialog">
-      <uci-form config="network">
+      <uci-form config="network" v-if="dialogVisible">
         <uci-section :name="editorIface">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option type="switch" :label="$t('Start on boot')" name="auto" initial="1"></uci-option>
-            <uci-option type="list" :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required></uci-option>
-            <uci-option type="input" :label="$t('Hostname')" name="hostname" depend="proto == 'dhcp'" :placeholder="hostname" rules="hostname"></uci-option>
-            <uci-option type="input" :label="$t('IPv4 address')" name="ipaddr" depend="proto == 'static'" required rules="ip4addr"></uci-option>
-            <uci-option type="input" :label="$t('IPv4 netmask')" name="netmask" depend="proto == 'static'" required rules="netmask4"></uci-option>
-            <uci-option type="input" :label="$t('IPv4 broadcast')" name="broadcast" depend="proto == 'static'" rules="ip4addr"></uci-option>
-            <uci-option type="input" :label="$t('IPv4 gateway')" name="gateway" depend="proto == 'static'" rules="ip4addr"></uci-option>
-            <uci-option type="dlist" :label="$t('DNS servers')" name="dns_static" uci-option="dns" depend="proto == 'static'" rules="ipaddr"></uci-option>
-            <uci-option type="input" :label="$t('Server')" name="server" depend="proto == 'pptp' || proto == 'l2tp'" required rules="host"></uci-option>
-            <uci-option type="list" :label="$t('Modem device')" name="device" :options="modemDevices" depend="proto == '3g'"></uci-option>
-            <uci-option type="list" :label="$t('Service Type')" name="service_3g" uci-option="service" :options="services" required depend="proto == '3g'"></uci-option>
-            <uci-option type="input" label="APN" name="apn" depend="proto == '3g'"></uci-option>
-            <uci-option type="input" label="PIN" name="pincode" depend="proto == '3g'"></uci-option>
-            <uci-option type="input" :label="$t('PAP/CHAP username')" name="username" depend="proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
-            <uci-option type="input" :label="$t('PAP/CHAP password')" name="password" password depend="proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
-            <uci-option type="input" :label="$t('Access Concentrator')" name="ac" placeholder="auto" depend="proto == 'pppoe'"></uci-option>
-            <uci-option type="input" :label="$t('Service Name')" name="service_pppoe" uci-option="service" placeholder="auto" depend="proto == 'pppoe'"></uci-option>
-            <uci-option type="input" :label="$t('Dial number')" name="dialnumber" depend="proto == '3g'" placeholder="*99***1#"></uci-option>
+            <uci-option type="list" :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required @change="onProtoChange"></uci-option>
           </uci-tab>
-          <uci-tab :title="$t('Advanced Settings')" name="advanced">
-            <uci-option type="input" :label="$t('Modem init timeout')" name="maxwait" depend="proto == '3g'" placeholder="20" :rules="{type: 'integer', min: 1}"></uci-option>
-            <uci-option type="switch" :label="$t('Use broadcast')" name="broadcast" depend="proto == 'dhcp'"></uci-option>
-            <uci-option type="switch" :label="$t('Use gateway')" name="defaultroute" initial="1" depend="proto == 'dhcp' || proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
-            <uci-option type="switch" :label="$t('Use DNS')" name="peerdns" initial="1" depend="proto == 'dhcp' || proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g'"></uci-option>
-            <uci-option type="dlist" :label="$t('Custom DNS')" name="dns_custom" uci-option="dns" depend="(proto == 'dhcp' || proto == 'pppoe' || proto == 'pptp' || proto == 'l2tp' || proto == '3g') && !peerdns" rules="ipaddr"></uci-option>
-            <uci-option type="input" :label="$t('Inactivity timeout')" name="demand" placeholder="0" depend="proto == 'pppoe'" rules="uinteger"></uci-option>
-            <uci-option type="input" :label="$t('Client ID')" name="clientid" depend="proto == 'dhcp'"></uci-option>
-            <uci-option type="input" :label="$t('Vendor Class')" name="vendorid" depend="proto == 'dhcp'"></uci-option>
-          </uci-tab>
+          <uci-tab :title="$t('Advanced Settings')" name="advanced"></uci-tab>
           <uci-tab title="IPv6" name="ipv6"></uci-tab>
           <uci-tab :title="$t('Physical Settings')" name="physical"></uci-tab>
           <uci-tab :title="$t('Firewall Settings')" name="firewall"></uci-tab>
+          <oui-proto-dhcp :proto="proto"></oui-proto-dhcp>
+          <oui-proto-static :proto="proto"></oui-proto-static>
+          <oui-proto-pppoe :proto="proto"></oui-proto-pppoe>
+          <oui-proto-pptp :proto="proto"></oui-proto-pptp>
+          <oui-proto-l2tp :proto="proto"></oui-proto-l2tp>
+          <oui-proto-3g :proto="proto"></oui-proto-3g>
         </uci-section>
       </uci-form>
     </el-dialog>
@@ -69,10 +51,17 @@
 
 <script>
 import OuiNetworkBadge from './oui-network-badge.vue'
+import OuiProtoDhcp from './proto/dhcp.vue'
+import OuiProtoStatic from './proto/static.vue'
+import OuiProtoPppoe from './proto/pppoe.vue'
+import OuiProtoPptp from './proto/pptp.vue'
+import OuiProtoL2tp from './proto/l2tp.vue'
+import OuiProto3g from './proto/3g.vue'
 
 export default {
   data() {
     return {
+      proto: '',
       interfaces: [],
       dialogVisible: false,
       editorIface: '',
@@ -84,25 +73,21 @@ export default {
         ['pptp', 'PPtP'],
         ['l2tp', 'L2TP'],
         ['3g', '3G']
-      ],
-      modemDevices: [],
-      services: [
-        ['umts', 'UMTS/GPRS'],
-        ['umts_only', this.$t('UMTS only')],
-        ['gprs_only', this.$t('GPRS only')],
-        ['evdo', 'CDMA/EV-DO']
       ]
     }
   },
   components: {
-    OuiNetworkBadge
+    OuiNetworkBadge,
+    OuiProtoDhcp,
+    OuiProtoStatic,
+    OuiProtoPppoe,
+    OuiProtoPptp,
+    OuiProtoL2tp,
+    OuiProto3g
   },
   computed: {
     dialogTitle() {
       return `${this.$t('Configure')} "${this.editorIface}"`
-    },
-    hostname() {
-      return this.$store.state.hostname;
     }
   },
   timers: {
@@ -113,6 +98,9 @@ export default {
       this.$network.load().then(() => {
         this.interfaces = this.$network.getInterfaces().filter(i => i.name !== 'loopback');
       });
+    },
+    onProtoChange(proto) {
+      this.proto = proto;
     },
     edit(iface) {
       this.editorIface = iface;
@@ -126,11 +114,7 @@ export default {
     },
     del(name) {
       this.$confirm(this.$t('Really delete this interface? The deletion cannot be undone!You might lose access to this device if you are connected via this interface.'), `${this.$t('Delete interface')} "${name}"`).then(() => {
-        const loading = this.$loading({
-          text: this.$t('Loading...'),
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+        const loading = this.$getLoading();
 
         this.$uci.del('network', name);
         this.$uci.save().then(() => {
@@ -140,12 +124,34 @@ export default {
           });
         });
       });
+    },
+    add(name) {
+      const loading = this.$getLoading();
+
+      this.$uci.add('network', 'interface', name);
+      this.$uci.save().then(() => {
+        this.$uci.apply().then(() => {
+          this.load();
+          loading.close();
+        });
+      });
+    },
+    handleAdd() {
+      this.$prompt(this.$t('Please input a name'), this.$t('Add'), {
+        inputValidator: value => {
+          if (!value || value.match(/^[a-zA-Z0-9_]+$/) === null)
+            return this.$t('Must be a valid UCI identifier');
+
+          for (let i = 0; i < this.interfaces.length; i++)
+            if (this.interfaces[i].name === value)
+              return this.$t('Name already used');
+
+          return true;
+        }
+      }).then(r => {
+        this.add(r.value);
+      });
     }
-  },
-  created() {
-    this.$ubus.call('oui.network', 'modem_list').then(r => {
-      this.modemDevices = r.devices;
-    });
   }
 }
 </script>

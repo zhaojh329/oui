@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {system} from './plugins/system'
 
 Vue.use(Vuex)
 
@@ -17,17 +16,8 @@ export default new Vuex.Store({
     setLang(state, lang) {
       state.lang = lang;
     },
-    updateData(state) {
-      system.getBoardInfo().then(r => {
-        state.hostname = r.hostname;
-      });
-    }
-  },
-  actions: {
-    updateData({ commit }) {
-      setTimeout(() => {
-        commit('updateData');
-      }, 2000);
+    setHostname(state, hostname) {
+      state.hostname = hostname;
     }
   }
 })

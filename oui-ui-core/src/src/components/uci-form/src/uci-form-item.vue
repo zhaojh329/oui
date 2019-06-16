@@ -31,7 +31,7 @@ export default {
       return this.option.label;
     },
     prop() {
-      return this.option.prop(this.sid);
+      return this.option.formProp(this.sid);
     },
     type() {
       return this.option.type;
@@ -44,7 +44,7 @@ export default {
       let expr = depend.expr;
 
       depend.names.forEach(name => {
-        const o = this.option.uciSection.findOption(name);
+        const o = this.option.uciSection.options[name];
         if (!o)
           return false;
         let v = o.formValue(this.sid);

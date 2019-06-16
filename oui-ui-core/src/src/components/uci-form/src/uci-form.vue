@@ -4,56 +4,39 @@
     <el-form class="form" label-width="280px" ref="form" :model="form" :rules="rules" @validate="onValidate">
       <template v-for="(s, i) in sections">
         <el-card :key="i" :header="s.title">
-          <el-table v-if="s.table" :data="s.uciSections">
-            <el-table-column v-for="o in s.allOptions" :key="o.name" :label="o.label">
+          <el-table v-if="s.table" :data="s.sids">
+            <el-table-column v-for="o in s.arrayedOptions" :key="o.name" :label="o.label">
+              <template slot="header" v-if="o.header">
+                <span v-html="o.header"></span>
+              </template>
               <template v-slot="{ row }">
-                <uci-form-item :option="o" :sid="row['.name']" :form="form" table></uci-form-item>
+                <uci-form-item :option="o" :sid="row" :form="form" table></uci-form-item>
               </template>
             </el-table-column>
             <el-table-column v-if="s.addable && s.type && !s.name">
               <template v-slot="{ row }">
-                <el-button type="danger" style="margin-bottom: 22px" @click="s.del(row['.name'])">{{ $t('Delete') }}</el-button>
+                <el-button type="danger" style="margin-bottom: 22px" @click="s.del(row)">{{ $t('Delete') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <div v-else-if="s.uciSections.length < 2 || !s.collabsible" v-for="(u, i) in s.uciSections" :key="u['.name']" class="none-table">
-            <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
-            <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
-              <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
-                <span slot="label">
-                  {{ tab.title }}<el-badge v-if="tab.getErrorNum(u['.name']) > 0" :value="tab.getErrorNum(u['.name'])"></el-badge>
-                </span>
-                <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
-                <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
-              </el-tab-pane>
-            </el-tabs>
-            <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
-            <el-divider v-if="i < s.uciSections.length - 1" :key="'divider-' + u['.name']"></el-divider>
-          </div>
-          <el-collapse v-else v-model="activeCollapseItem" accordion class="none-table">
-            <el-collapse-item v-for="u in s.uciSections" :key="u['.name']" :title="u['.name']" :name="u['.name']">
+          <el-collapse v-else-if="s.collapse" v-model="activeCollapseItem" accordion>
+            <el-collapse-item v-for="sid in s.sids" :key="sid" :title="sid" :name="sid">
               <template slot="title">
-                <span v-if="activeCollapseItem === u['.name']"></span>
+                <span v-if="activeCollapseItem === sid"></span>
                 <span v-else>
-                  <el-badge :key="'badge' + i" v-if="s.getErrorNum(u['.name']) > 0" :value="s.getErrorNum(u['.name'])"></el-badge>
-                  <template v-for="(t, i) in s.teasersValue(u['.name'])">
+                  <el-badge :key="'badge' + i" v-if="s.getErrorNum(sid) > 0" :value="s.getErrorNum(sid)"></el-badge>
+                  <template v-for="(t, i) in s.teasersValue(sid)">
                     {{ t[0] }}: <strong :key="i">{{ t[1] }}</strong>{{ t[2] ? '' : ' | ' }}
                   </template>
                 </span>
               </template>
-              <uci-section-del :sestion="s" :sid="u['.name']"></uci-section-del>
-                <el-tabs v-if="s.tabs.length > 0" :value="s.tabs[0].name">
-                  <el-tab-pane v-for="tab in s.tabs" :key="tab.name" :name="tab.name">
-                    <span slot="label">
-                      {{ tab.title }}<el-badge v-if="tab.getErrorNum(u['.name']) > 0" :value="tab.getErrorNum(u['.name'])"></el-badge>
-                    </span>
-                    <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
-                  </el-tab-pane>
-                </el-tabs>
-                <uci-form-item v-for="o in s.options" :key="o.name" :option="o" :sid="u['.name']" :form="form"></uci-form-item>
-              </el-collapse-item>
-            </el-collapse>
-          <uci-section-add :sestion="s" :form="form"></uci-section-add>
+              <uci-section-ui :sestion="s" :sid="sid"></uci-section-ui>
+            </el-collapse-item>
+          </el-collapse>
+          <div v-else v-for="(sid, i) in s.sids" :key="sid">
+            <uci-section-ui :sestion="s" :sid="sid" :divider="i < s.sids.length - 1"></uci-section-ui>
+          </div>
+          <uci-section-add :sestion="s"></uci-section-add>
         </el-card>
       </template>
     </el-form>
@@ -66,7 +49,7 @@
 
 <script>
 import UciSectionAdd from './uci-section-add'
-import UciSectionDel from './uci-section-del'
+import UciSectionUi from './uci-section-ui'
 
 export default {
   name: 'UciForm',
@@ -83,84 +66,44 @@ export default {
   },
   components: {
     UciSectionAdd,
-    UciSectionDel
+    UciSectionUi
   },
   data() {
     return {
-      loaded: 0,
+      loaded: false, /* Indicates whether the data is loaded */
+      uid: 0, /* Used for unique identification of each uci-option vue instance */
       form: {},
       rules: {},
       validates: {},
-      sections: [] /* UciSection instances */,
+      sections: [], /* UciSection vue instances */
       activeCollapseItem: ''
     }
   },
   methods: {
-    loading(text) {
-      return this.$loading({
-        text: text,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      });
+    getUID() {
+      return this.uid++;
     },
-    load(force) {
-      return this.$uci.load(this.config, force);
+    load() {
+      return this.$uci.load(this.config);
     },
     onValidate(name, valid) {
       if (this.validates[name])
         this.validates[name].valid = valid;
-    },
-    saveOptions(options, uciSection) {
-      const sid = uciSection['.name'];
-      options.forEach(o => {
-        o.saveUCI(sid);
-      });
-    },
-    save() {
-      this.sections.forEach(s => {
-        const uciSections = s.uciSections;
-        uciSections.forEach(uciSection => {
-          this.saveOptions(s.options, uciSection);
-          s.tabs.forEach(tab => {
-            this.saveOptions(tab.options, uciSection);
-          });
-        });
-      });
-    },
-    applyOptions(options, uciSection) {
-      const promises = [];
-      const sid = uciSection['.name'];
-      options.forEach(o => {
-        const p = o.applyUCI(sid);
-        if (p)
-          promises.push(p);
-      });
-      return promises;
-    },
-    applyAllOptions() {
-      const allPromises = [];
-
-      this.sections.forEach(s => {
-        const uciSections = s.uciSections;
-        uciSections.forEach(uciSection => {
-          const promises = this.applyOptions(s.options, uciSection);
-          allPromises.push(...promises);
-          s.tabs.forEach(tab => {
-            const promises = this.applyOptions(tab.options, uciSection);
-            allPromises.push(...promises);
-          });
-        });
-      });
-      return allPromises;
     },
     apply() {
       this.$refs['form'].validate(valid => {
         if (!valid)
           return;
 
-        this.save();
+        this.sections.forEach(s => {
+          s.save();
+        });
 
-        const promises = this.applyAllOptions();
+        const promises = [];
+
+        this.sections.forEach(s => {
+          promises.push(...s.apply());
+        });
 
         if (this.$uci.changed() > 0) {
           const p = new Promise(resolve => {
@@ -178,27 +121,37 @@ export default {
           return;
         }
 
-        const loading = this.loading(this.$t('Waiting for configuration to be applied...'));
+        const loading = this.$getLoading(this.$t('Waiting for configuration to be applied...'));
 
         Promise.all(promises).then(() => {
-          loading.close();
-          this.$emit('apply');
-          this.load(true).then(() => {
+          this.load().then(() => {
+            this.reset();
+            this.$emit('apply');
+            loading.close();
             this.$message.success(this.$t('Configuration has been applied'));
-            this.$store.dispatch('updateData');
           });
         });
       });
     },
     reset() {
+      this.form = {};
+      this.rules = {};
+      this.validates = {};
+
       this.$uci.reset();
-      this.loaded++;
+
+      this.activeCollapseItem = '';
+
+      this.sections.forEach(s => {
+        s.load();
+        s.buildForm();
+      });
     }
   },
   created() {
-    const loading = this.loading(this.$t('Loading...'));
+    const loading = this.$getLoading(this.$t('Loading...'));
     this.load().then(() => {
-      this.loaded++;
+      this.loaded = true;
       loading.close();
     });
   },

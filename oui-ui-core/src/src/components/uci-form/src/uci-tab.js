@@ -5,24 +5,14 @@ export default {
     title: String,
     name: String
   },
-  data() {
-    return {
-      options: [] /* UciOption instances */
+  computed: {
+    options() {
+      return this.uciSection.arrayedOptions.filter(o => o.tabName === this.name);
     }
   },
   methods: {
     getErrorNum(sid) {
-      const validates = this.uciForm.validates;
-      const keys = Object.keys(validates).filter(key => {
-        return sid === validates[key].sid && validates[key].tab === this.name && !validates[key].valid;
-      });
-
-      return keys.length;
-    }
-  },
-  watch: {
-    options() {
-      this.uciSection.buildForm();
+      return this.uciSection.getErrorNum(sid, this.name);
     }
   },
   created() {

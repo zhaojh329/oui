@@ -38,17 +38,23 @@ export default {
   },
   data() {
     return {
-      tabs: [], /* UciTab instances */
-      options: [], /* UciOption instances */
-      sections: [], /* uci sections */
-      nsid: '' /* Added sid, waiting to be rendered */
+      loaded: false, /* Indicates whether the data is loaded */
+      tabs: [], /* uci-tab vue instances */
+      options: {}, /* uci-option vue instances */
+      sections: [] /* uci sections */
     }
   },
   computed: {
-    loaded() {
-      return this.uciForm.loaded;
+    config() {
+      return this.uciForm.config;
     },
-    uciSections() {
+    collapse() {
+      return this.sids.length > 1 && this.collabsible;
+    },
+    arrayedOptions() {
+      return Object.keys(this.options).map(name => this.options[name]).sort((a, b) => a.uid - b.uid);
+    },
+    sids() {
       let sections = [];
 
       if (this.name)
@@ -58,111 +64,85 @@ export default {
 
       if (this.filter)
         sections = sections.filter(s => this.filter(this, s));
-      return sections;
-    },
-    config() {
-      return this.uciForm.config;
-    },
-    allOptions() {
-      const options = [...this.options];
-      this.tabs.forEach(tab => {
-        options.push(...tab.options);
-      });
-      return options;
+      return sections.map(s => s['.name']);
     }
   },
   watch: {
-    loaded() {
+    'uciForm.loaded'() {
       this.load();
-    },
-    sections() {
-      this.buildForm();
-    },
-    options() {
-      this.buildForm();
     }
-  },
-  created() {
-    this.uciForm.sections.push(this);
   },
   methods: {
     load() {
       this.sections = this.$uci.sections(this.config, this.type);
+      this.loaded = true;
     },
-    buildFormOptions(options, sid) {
-      options.forEach(o => {
-        o.buildForm(sid);
-      });
+    buildForm(sid) {
+      for (const name in this.options)
+        this.options[name].buildForm(sid);
     },
-    buildForm() {
-      const uciSections = this.uciSections;
-      uciSections.forEach(uciSection => {
-        const sid = uciSection['.name'];
-        if (this.nsid !== '' && sid !== this.nsid)
-          return;
-        this.buildFormOptions(this.options, sid);
-        this.tabs.forEach(tab => {
-          this.buildFormOptions(tab.options, sid);
-        });
-      });
-      this.nsid = '';
-    },
-    delForm(sid) {
-      for (const prop in this.uciForm.form) {
-        if (prop.match(sid))
-          this.$delete(this.uciForm.form, prop);
-      }
-    },
-    findOption(name) {
-      for (let i = 0; i < this.options.length; i++)
-        if (this.options[i].name === name)
-          return this.options[i];
-
-      for (let i = 0; i < this.tabs.length; i++) {
-        const options = this.tabs[i].options;
-        for (let j = 0; j < options.length; j++)
-          if (options[j].name === name)
-            return options[j];
-      }
-      return null;
+    destroyForm(sid) {
+      for (const name in this.options)
+        this.options[name].destroyFormSid(sid);
     },
     del(sid) {
       this.$uci.del(this.config, sid);
-      this.delForm(sid);
       this.load();
+      this.destroyForm(sid);
     },
     teasersValue(sid) {
       const teasers = [];
 
       if (this.teasers) {
-        this.teasers.forEach(t => {
-          const o = this.findOption(t);
+        this.teasers.forEach(name => {
+          const o = this.options[name];
           teasers.push([o.label, o.formValue(sid)]);
         });
       } else {
-        this.options.forEach(o => {
-          teasers.push([o.label, o.formValue(sid)]);
-        });
-
-        this.tabs.forEach(tab => {
-          tab.options.forEach(o => {
-            teasers.push([o.label, o.formValue(sid)]);
-          });
-        });
+        for (const name in this.options) {
+          const o = this.options[name];
+          const v = o.formValue(sid)
+          teasers.push([o.label, v]);
+        }
       }
 
       teasers[teasers.length - 1].push('end');
 
       return teasers;
     },
-    getErrorNum(sid) {
+    getErrorNum(sid, tab) {
       const validates = this.uciForm.validates;
       const keys = Object.keys(validates).filter(key => {
-        return sid === validates[key].sid && !validates[key].valid;
+        const err = sid === validates[key].sid && !validates[key].valid;
+        if (tab)
+          return err && validates[key].tab === tab;
+        return err;
       });
 
       return keys.length;
+    },
+    save() {
+      this.sids.forEach(sid => {
+        for (const name in this.options)
+          this.options[name].saveUCI(sid);
+      });
+    },
+    apply() {
+      const promises = [];
+      this.sids.forEach(sid => {
+        for (const name in this.options) {
+          const p = this.options[name].applyUCI(sid);
+          if (p)
+            promises.push(p);
+        }
+      });
+      return promises;
     }
+  },
+  created() {
+    this.uciForm.sections.push(this);
+    if (this.uciForm.loaded)
+      this.load();
   },
   render(h) {
     return h('div', this.$slots.default);

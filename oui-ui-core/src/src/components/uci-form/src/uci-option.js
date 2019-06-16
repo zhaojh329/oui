@@ -18,11 +18,6 @@ export default {
     required: Boolean,
     /* If load from uci fails, the value of the property is used as the form value. */
     initial: [Number, String, Array],
-    /* Whether to access the uci value */
-    uci: {
-      type: Boolean,
-      default: true
-    },
     /* If this prop is provided, the uci value will be accessed with this prop instead of the name prop. */
     uciOption: String,
     /* Used for switch */
@@ -41,13 +36,16 @@ export default {
         return [];
       }
     },
-    /* If this function is provided, the form loads the value by the function instead of from uci */
-    load: Function,
     /*
-    ** If this function is provided, it will be called when oui saves the uci configuration.
-    ** If it returns false, it will terminate the save inside oui.
+    ** If a function provided, the form loads the value by the function instead of from uci.
+    ** If other type provided, the form loads the value from the prop's value.
     */
-    save: Function,
+    load: [String, Array, Function],
+    /*
+    ** If a function provided, it will be called when oui saves the uci configuration.
+    ** If an any string provided, indicates don't save uci.
+    */
+    save: [String, Function],
     /* If this function is provided, it will be called when oui applys the uci configuration. */
     apply: Function,
     /* depend="(a == 12 || a == 'x') && y == 4 && q != 5 && !z" */
@@ -63,24 +61,24 @@ export default {
     /* Used for list */
     allowCreate: Boolean,
     password: Boolean,
-    tab: String
+    tab: String,
+    /* Used for custom header of table column */
+    header: String
   },
   data() {
     return {
       /* original value */
-      original: null
+      original: null,
+      uid: -1
     }
   },
   computed: {
-    tabParent() {
-      let parent = this.$getParent('UciTab');
-      if (!parent && this.tab)
-        [parent] = this.uciSection.tabs.filter(tab => tab.name === this.tab);
-      return parent;
-    },
     tabName() {
-      if (this.tabParent)
-        return this.tabParent.name;
+      if (this.tab)
+        return this.tab;
+      let parent = this.$getParent('UciTab');
+      if (parent)
+        return parent.name;
       return undefined;
     },
     config() {
@@ -232,18 +230,17 @@ export default {
       return rules;
     }
   },
-  created() {
-    if (this.tabParent)
-      this.tabParent.options.push(this);
-    else
-      this.uciSection.options.push(this);
+  watch: {
+    'uciSection.loaded'() {
+      this.buildForm();
+    }
   },
   methods: {
-    prop(sid) {
-      return `${sid}_${this.name}`;
+    formProp(sid) {
+      return `${sid}_${this.uid}_${this.name}`;
     },
     formValue(sid) {
-      return this.form[this.prop(sid)];
+      return this.form[this.formProp(sid)];
     },
     buildFormRule(sid) {
       const rules = [];
@@ -256,7 +253,7 @@ export default {
         rules.push(...rule);
       });
 
-      const prop = this.prop(sid);
+      const prop = this.formProp(sid);
       this.$set(this.uciForm.rules, prop, rules);
       this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tabName, sid: sid});
     },
@@ -280,7 +277,7 @@ export default {
           value = '';
       }
 
-      const prop = this.prop(sid);
+      const prop = this.formProp(sid);
       this.original = value;
       this.$set(this.form, prop, value);
 
@@ -290,30 +287,46 @@ export default {
 
       this.$emit('change', value, this);
     },
-    buildForm(sid) {
+    buildFormSid(sid) {
       let value = undefined;
 
-      if (this.load) {
+      if (typeof(this.load) === 'function') {
         new Promise(resolve => {
           this.load(resolve, sid, this.name);
         }).then(v => {
           this.buildFormValue(sid, v);
         });
-      } else if (this.uci) {
+      } else if (typeof(this.load) !== 'undefined') {
+        this.buildFormValue(sid, this.load);
+        this.$watch('load', value => {
+          this.$set(this.form, this.formProp(sid), value);
+        });
+      } else {
         value = this.$uci.get(this.config, sid, this.uciOptName);
       }
 
       this.buildFormValue(sid, value);
       this.buildFormRule(sid);
     },
+    buildForm(sid) {
+      if (sid) {
+        this.buildFormSid(sid);
+        return;
+      }
+
+      this.uciSection.sids.forEach(sid => {
+        this.buildFormSid(sid);
+      });
+    },
+    destroyFormSid(sid) {
+      const prop = this.formProp(sid);
+      this.$delete(this.uciForm.form, prop);
+      this.$delete(this.uciForm.rules, prop);
+      this.$delete(this.uciForm.validates, prop);
+    },
     destroyForm() {
-      Object.keys(this.form).forEach(prop => {
-        const name = prop.substr(prop.indexOf('_') + 1);
-        if (name === this.name) {
-          this.$delete(this.uciForm.form, prop);
-          this.$delete(this.uciForm.rules, prop);
-          this.$delete(this.uciForm.validates, prop);
-        }
+      this.uciSection.sids.forEach(sid => {
+        this.destroyFormSid(sid);
       });
     },
     saveUCI(sid) {
@@ -324,14 +337,11 @@ export default {
       if (value === this.original)
         return;
 
-      if (typeof(this.save) !== 'undefined') {
-        const ret = this.save(this.config, sid, this.name, value);
-        if (ret === false)
-          return;
-      }
-
-      if (!this.uci)
+      if (this.save) {
+        if (typeof(this.save) === 'function')
+          this.save(this.config, sid, this.name, value);
         return;
+      }
 
       if (this.type === 'list' && this.multiple)
         value = value.join(' ');
@@ -356,20 +366,20 @@ export default {
       return null;
     }
   },
+  created() {
+    this.uid = this.uciForm.getUID();
+    this.$set(this.uciSection.options, this.name, this);
+
+    if (this.uciSection.loaded)
+      this.buildForm();
+  },
   render(h) {
     return h('div', this.$slots.default);
   },
   destroyed() {
-    const parent = this.$getParent('UciTab');
-    if (parent) {
-      const i = parent.options.indexOf(this);
-      if (i > -1)
-        parent.options.splice(i, 1);
-    } else {
-      const i = this.uciSection.options.indexOf(this);
-      if (i > -1)
-        this.uciSection.options.splice(i, 1);
-    }
+    const o = this.uciSection.options[this.name];
+    if (o.uid === this.uid)
+      this.$delete(this.uciSection.options, this.name);
 
     this.destroyForm();
   }

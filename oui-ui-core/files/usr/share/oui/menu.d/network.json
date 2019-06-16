@@ -12,6 +12,7 @@
     "network/wireless": {
         "title": "Wireless",
         "acls": [ "network" ],
+        "files": [ "/etc/config/wireless" ],
         "view": "network/wireless",
         "index": 20
     },

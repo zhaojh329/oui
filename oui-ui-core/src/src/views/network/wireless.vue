@@ -67,11 +67,7 @@ export default {
     }
   },
   created() {
-    const loading = this.$loading({
-      text: this.$t('Loading...'),
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)'
-    });
+    const loading = this.$getLoading();
 
     this.$uci.load('wireless').then(() => {
       const sections = this.$uci.sections('wireless', 'wifi-device');

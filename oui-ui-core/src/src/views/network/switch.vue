@@ -8,7 +8,7 @@
         </uci-section>
         <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :option="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
           <uci-option type="input" label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option>
-          <uci-option v-for="(port, i) in s.ports" :key="i" type="list" :label="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option>
+          <uci-option v-for="(port, i) in s.ports" :key="i" type="list" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option>
         </uci-section>
       </uci-form>
     </el-tab-pane>
@@ -35,17 +35,20 @@ export default {
       return this.$t('VLANs on-', {name: `"${info.name}"(${info.model})`});
     },
     portLabel(n, info) {
-      let label = 'Port' + n;
-      if (info.link) {
-        label += `(${info.speed}baseT`;
+      let label = `<span>Port ${n}</span><br/>`;
 
+      if (info.link) {
+        label += '<img src="/icons/port_up.png"/><br/>'
+        label += '<span>' + info.speed + 'baseT ';
         if (info.full_duplex)
-          label += ' Full-duplex)';
+          label += this.$t('Full-duplex');
         else
-          label += ' Half-duplex)';
+          label += this.$t('Half-duplex');
       } else {
-        label += '(No link)';
+        label += '<img src="/icons/port_down.png"/><br/>'
+        label += '<span>' + this.$t('No link');
       }
+      label += '</span>'
       return label;
     },
     filterVlanSection(vm, s) {
@@ -125,8 +128,6 @@ export default {
         ports.push(id + 't');
 
       this.$uci.set(config, sid, 'ports', ports.join(' '));
-
-      return false;
     }
   },
   created() {

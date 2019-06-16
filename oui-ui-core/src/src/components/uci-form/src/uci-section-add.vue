@@ -1,10 +1,5 @@
 <template>
-  <div v-if="visible" style="margin-top: 10px">
-    <el-form-item v-if="nameVisible" size="mini" label-width="auto" style="width: 200px" :prop="prop" :rules="rules">
-      <el-input placeholder="Please input a name" v-model="form[prop]" ref="name" @keyup.enter.native="handleNameConfirm" @blur="handleNameConfirm"></el-input>
-    </el-form-item>
-    <el-button v-else type="primary" size="mini" @click="handleAdd">+ {{ $t('Add') }}</el-button>
-  </div>
+  <el-button v-if="visible" style="margin-top: 10px" type="primary" size="mini" @click="handleAdd">+ {{ $t('Add') }}</el-button>
 </template>
 
 <script>
@@ -12,8 +7,7 @@ export default {
   name: 'UciSectionAdd',
   inject: ['uciForm'],
   props: {
-    sestion: Object,
-    form: Object
+    sestion: Object
   },
   computed: {
     visible() {
@@ -33,10 +27,6 @@ export default {
       valid: false
     }
   },
-  created() {
-    if (this.visible)
-      this.$set(this.uciForm.form, this.prop, '');
-  },
   methods: {
     add(name) {
       let sid;
@@ -47,9 +37,9 @@ export default {
         sid = this.$uci.add(this.sestion.config, this.sestion.type, name);
 
       if (sid) {
-        this.sestion.nsid = sid;
         this.uciForm.activeCollapseItem = sid;
         this.sestion.load();
+        this.sestion.buildForm(sid);
       }
     },
     handleAdd() {
@@ -58,35 +48,20 @@ export default {
         return;
       }
 
-      this.nameVisible = true;
-      this.$nextTick(() => {
-        this.$refs['name'].focus();
+      this.$prompt(this.$t('Please input a name'), this.$t('Add'), {
+        inputValidator: value => {
+          if (!value || value.match(/^[a-zA-Z0-9_]+$/) === null)
+            return this.$t('Must be a valid UCI identifier');
+
+          for (let i = 0; i < this.sestion.sids.length; i++)
+            if (this.sestion.sids[i] === value)
+              return this.$t('Name already used');
+
+          return true;
+        }
+      }).then(r => {
+        this.add(r.value);
       });
-    },
-    handleNameConfirm() {
-      const name = this.uciForm.form[this.prop];
-
-      this.nameVisible = false;
-
-      if (name === '')
-        return;
-
-      this.uciForm.form[this.prop] = '';
-
-      if (this.valid)
-        this.add(name);
-    },
-    validateName(rule, value, callback) {
-      let error = undefined;
-
-      this.sestion.uciSections.forEach(s => {
-        if (s['.name'] === value)
-          error = new Error('Name already used');
-      });
-
-      this.valid = !error;
-
-      callback(error);
     }
   }
 }

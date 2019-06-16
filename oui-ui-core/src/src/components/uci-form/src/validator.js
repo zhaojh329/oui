@@ -270,6 +270,14 @@ const types = {
     validator: (rule, value, cb) => {
       performCallback(types, rule, value, cb, i18n.t('Must be a valid MAC address'));
     }
+  },
+  uciname: {
+    verify: (value) => {
+      return value.match(/^[a-zA-Z0-9_]+$/) !== null;
+    },
+    validator: (rule, value, cb) => {
+      performCallback(types, rule, value, cb, i18n.t('Must be a valid UCI identifier'));
+    }
   }
 }
 

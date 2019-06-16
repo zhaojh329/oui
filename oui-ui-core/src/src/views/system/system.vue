@@ -1,10 +1,10 @@
 <template>
-  <uci-form config="system">
+  <uci-form config="system" @apply="onApply">
     <uci-section :title="$t('System Properties')" type="system">
       <uci-tab :title="$t('General Settings')" name="general">
         <uci-option type="dummy" :label="$t('Local Time')" :load="localTime" name="__time"></uci-option>
         <uci-option type="input" :label="$t('Hostname')" name="hostname" required rules="hostname"></uci-option>
-        <uci-option type="list" :label="$t('Timezone')" name="zonename" initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
+        <uci-option type="list" :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
       </uci-tab>
       <uci-tab :title="$t('Logging')" name="logging">
         <uci-option type="input" :label="$t('System log buffer size')" name="log_size" placeholder="16" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
@@ -17,7 +17,7 @@
       </uci-tab>
     </uci-section>
     <uci-section :title="$t('Time Synchronization')" name="ntp">
-      <uci-option type="switch" :label="$t('Enable NTP client')" name="enable" :uci="false" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option>
+      <uci-option type="switch" :label="$t('Enable NTP client')" name="enable" save="_" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option>
       <uci-option type="switch" :label="$t('Provide NTP server')" name="enable_server" depend="enable"></uci-option>
       <uci-option type="dlist" :label="$t('NTP server candidates')" name="server" depend="enable"></uci-option>
     </uci-section>
@@ -30,6 +30,7 @@ import zoneinfo from '@/plugins/zoneinfo'
 export default {
   data() {
     return {
+      localTime: '',
       logProtos: [
         ['udp', 'UDP'],
         ['tcp', 'TCP']
@@ -56,11 +57,13 @@ export default {
       return zoneinfo.map(item => item[0]);
     }
   },
+  timers: {
+    loadLocalTime: {time: 3000, autostart: true, immediate: true, repeat: true}
+  },
   methods: {
-    localTime(resolve) {
+    loadLocalTime() {
       this.$system.getSystemInfo().then(r => {
-        const localTime = new Date(r.localtime * 1000).toString();
-        resolve(localTime);
+        this.localTime = new Date(r.localtime * 1000).toString();
       });
     },
     saveTimezone(config, sid, name, value) {
@@ -73,6 +76,7 @@ export default {
         }
       }
 
+      this.$uci.set(config, sid, 'zonename', value);
       this.$uci.set(config, sid, 'timezone', timezone);
     },
     ntpCliEnabled(resolve) {
@@ -94,6 +98,14 @@ export default {
           });
         });
       }
+    },
+    setHostname() {
+      this.$system.getBoardInfo().then(r => {
+        this.$store.commit('setHostname', r.hostname);
+      });
+    },
+    onApply() {
+      setTimeout(this.setHostname, 500);
     }
   }
 }

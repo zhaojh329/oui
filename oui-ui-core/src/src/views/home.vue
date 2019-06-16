@@ -20,26 +20,25 @@ export default {
     }
   },
   created() {
-    this.$system.getInfo().then(r => {
-      const load = r.load
+    this.$system.getInfo().then(({hostname, load, model, system, release, kernel, localtime, uptime}) => {
       this.sysinfo = [
-        [this.$t('Hostname'), r.hostname],
-        [this.$t('Model'), r.model],
-        [this.$t('Architecture'), r.system],
-        [this.$t('Firmware Version'), r.release.revision],
-        [this.$t('Kernel Version'), r.kernel],
-        [this.$t('Local Time'), new Date(r.localtime * 1000).toString()],
-        [this.$t('Uptime'), r.uptime],
-        [this.$t('Load Average'), `${this.formatLoad(load[0])} ${this.formatLoad(load[1])} ${this.formatLoad(load[2])}`]
+        [this.$t('Hostname'), hostname],
+        [this.$t('Model'), model],
+        [this.$t('Architecture'), system],
+        [this.$t('Firmware Version'), release.revision],
+        [this.$t('Kernel Version'), kernel],
+        [this.$t('Local Time'), new Date(localtime * 1000).toString()],
+        [this.$t('Uptime'), '%t'.format(uptime)],
+        [this.$t('Load Average'), '%.2f %.2f %.2f'.format(load[0] / 65535, load[1] / 65535, load[2] / 65535)]
       ];
     });
 
     this.$network.load().then(() => {
       const iface = this.$network.getInterface('wan');
       this.waninfo = [
-        [this.$t('IP Address'), iface.getIPv4Addrs().join(',')],
+        [this.$t('IP Address'), iface.getIPv4Addrs().join(', ')],
         [this.$t('Gateway'), iface.getIPv4Gateway()],
-        ['DNS', iface.getDNSAddrs().join(',')]
+        ['DNS', iface.getDNSAddrs().join(', ')]
       ];
     });
   }

@@ -27,11 +27,7 @@ export default {
     }
 
     Vue.prototype.$reconnect = function(title) {
-      const loading = this.$loading({
-        text: title,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      });
+      const loading = this.$getLoading(title);
 
       const vm = this;
 
@@ -56,6 +52,14 @@ export default {
         if (lang === 'auto')
           lang = navigator.language;
         this.$i18n.locale = lang;
+      });
+    }
+
+    Vue.prototype.$getLoading = function(text) {
+      return this.$loading({
+        text: text || this.$t('Loading...'),
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
     }
   }

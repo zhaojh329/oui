@@ -79,13 +79,6 @@ export default {
     }
   },
   methods: {
-    loading(text) {
-      return this.$loading({
-        text: text,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      });
-    },
     doFetchPackageList(cmd, offset, limit, pattern) {
       return new Promise((resolve, reject) => {
         this.$ubus.call('oui.opkg', cmd, {offset, limit, pattern}).then(r1 => {
@@ -208,7 +201,7 @@ export default {
       this.$confirm(msg, title, {
         type: 'info'
       }).then(() => {
-        const loading = this.loading(this.$t('Waiting for package manager...'));
+        const loading = this.$getLoading(this.$t('Waiting for package manager...'));
         this.doInstallRemovePackage(name, cmd).then(r => {
           loading.close();
           this.showStatus(r, title);
@@ -219,7 +212,7 @@ export default {
       return this.$ubus.call('oui.opkg', 'update');
     },
     updatePackage() {
-      const loading = this.loading(this.$t('Waiting for package manager...'));
+      const loading = this.$getLoading(this.$t('Waiting for package manager...'));
       this.doUpdatePackage().then(r => {
         loading.close();
         this.showStatus(r, 'Updating package lists');

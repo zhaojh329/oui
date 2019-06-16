@@ -13,9 +13,9 @@ const uci = {
   }
 }
 
-uci.load = function(conf, force) {
+uci.load = function(conf) {
   return new Promise(resolve => {
-    if (!force && this.state.values[conf]) {
+    if (this.state.values[conf]) {
       resolve();
       return;
     }
@@ -167,11 +167,12 @@ uci.save = function() {
 
   return new Promise(resolve => {
     const batch = [];
+    const confs = {};
 
     for (const conf in c) {
-      for (const sid in c[conf]) {
+      for (const sid in c[conf])
         batch.push(['uci', 'set', {config: conf, section: sid, values: c[conf][sid]}]);
-      }
+      confs[conf] = true;
     }
 
     for (const conf in n) {
@@ -187,14 +188,19 @@ uci.save = function() {
         }
         batch.push(['uci', 'add', params]);
       }
+      confs[conf] = true;
     }
 
     for (const conf in d) {
       for (const sid in d[conf])
         batch.push(['uci', 'delete', {config: conf, section: sid}]);
+      confs[conf] = true;
     }
 
     this.reset();
+
+    for (const conf in confs)
+      delete this.state.values[conf];
 
     if (batch.length === 0) {
       resolve();

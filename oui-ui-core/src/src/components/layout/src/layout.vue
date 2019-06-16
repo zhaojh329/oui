@@ -8,8 +8,7 @@
           <router-view></router-view>
         </transition>
       </el-main>
-      <el-backtop target=".el-main" class="backtop">
-        <div class="text">{{ $t('backtop-UP') }}</div>
+      <el-backtop target=".el-main" :bottom="100">
         <i class="el-icon-caret-top"></i>
       </el-backtop>
       <el-footer class="footer" height="40px">
@@ -40,7 +39,9 @@ export default {
     }
   },
   created() {
-    this.$store.commit('updateData');
+    this.$system.getBoardInfo().then(r => {
+      this.$store.commit('setHostname', r.hostname);
+    });
   }
 }
 </script>
@@ -66,20 +67,5 @@ export default {
   color: #999999;
   text-align: right;
   padding-right: 100px;
-}
-
-.backtop {
-  display: flex;
-  flex-direction: column;
-
-  .text {
-    height: 100%;
-    width: 100%;
-    background-color: #f2f5f6;
-    box-shadow: 0 0 6px rgba(0,0,0, .12);
-    text-align: center;
-    line-height: 40px;
-    color: #1989fa;
-  }
 }
 </style>
