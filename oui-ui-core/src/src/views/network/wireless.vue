@@ -1,6 +1,6 @@
 <template>
   <el-tabs v-if="radios.length > 0" :value="radios[0].name">
-    <el-tab-pane v-for="radio in radios" :key="radio.name" :name="radio.name" :label="radio.name">
+    <el-tab-pane v-for="radio in radios" :key="radio.name" :name="radio.name" :label="radio.name + ` (${radio.hardware})`">
       <uci-form config="wireless">
         <uci-section :name="radio.name">
           <uci-tab :title="$t('General Settings')" name="general">
@@ -107,6 +107,7 @@ export default {
 
           this.radios.push({
             name: device,
+            hardware: rs[0].hardware.name,
             hwmodes: rs[0].hwmodes.map(mode => '11' + mode),
             htmodes: rs[0].htmodes,
             freqlist: freqlist,
