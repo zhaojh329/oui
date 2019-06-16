@@ -62,7 +62,8 @@ export default {
     rules: [String, Object, Function, Array],
     /* Used for list */
     allowCreate: Boolean,
-    password: Boolean
+    password: Boolean,
+    tab: String
   },
   data() {
     return {
@@ -71,10 +72,15 @@ export default {
     }
   },
   computed: {
-    tab() {
-      const parent = this.$parent;
-      if (parent.$options.name === 'UciTab')
-        return parent.name;
+    tabParent() {
+      let parent = this.$getParent('UciTab');
+      if (!parent && this.tab)
+        [parent] = this.uciSection.tabs.filter(tab => tab.name === this.tab);
+      return parent;
+    },
+    tabName() {
+      if (this.tabParent)
+        return this.tabParent.name;
       return undefined;
     },
     config() {
@@ -227,8 +233,8 @@ export default {
     }
   },
   created() {
-    if (this.tab)
-      this.$parent.options.push(this);
+    if (this.tabParent)
+      this.tabParent.options.push(this);
     else
       this.uciSection.options.push(this);
   },
@@ -252,7 +258,7 @@ export default {
 
       const prop = this.prop(sid);
       this.$set(this.uciForm.rules, prop, rules);
-      this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tab, sid: sid});
+      this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tabName, sid: sid});
     },
     buildFormValue(sid, value) {
       if (typeof(value) === 'undefined' && typeof(this.initial) !== 'undefined')
