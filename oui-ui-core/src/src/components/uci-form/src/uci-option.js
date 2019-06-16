@@ -274,8 +274,15 @@ export default {
           value = '';
       }
 
+      const prop = this.prop(sid);
       this.original = value;
-      this.$set(this.form, this.prop(sid), value);
+      this.$set(this.form, prop, value);
+
+      this.$watch(`form.${prop}`, value => {
+        this.$emit('change', value, this);
+      });
+
+      this.$emit('change', value, this);
     },
     buildForm(sid) {
       let value = undefined;
