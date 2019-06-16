@@ -1,23 +1,24 @@
 <template>
-  <uci-form config="network" v-if="loaded">
-    <template v-for="s in switchs">
-      <uci-section :key="s.name" :title="switchTitle(s)" :name="s.sid">
-        <uci-option v-if="s.attrs['enable_vlan']" type="switch" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option>
-        <uci-option v-if="s.attrs['enable_learning']" type="switch" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option>
-      </uci-section>
-      <uci-section :key="s.name + '_vlan'" :title="vlanTitle(s)" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :option="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
-        <uci-option type="input" label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option>
-        <uci-option v-for="(port, i) in s.ports" :key="i" type="list" :label="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option>
-      </uci-section>
-    </template>
-  </uci-form>
+  <el-tabs v-if="switchs.length > 0" :value="switchs[0].name">
+    <el-tab-pane v-for="s in switchs" :key="s.name" :name="s.name" :label="switchTitle(s)">
+      <uci-form config="network">
+        <uci-section :name="s.sid">
+          <uci-option v-if="s.attrs['enable_vlan']" type="switch" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option>
+          <uci-option v-if="s.attrs['enable_learning']" type="switch" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option>
+        </uci-section>
+        <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :option="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
+          <uci-option type="input" label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option>
+          <uci-option v-for="(port, i) in s.ports" :key="i" type="list" :label="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option>
+        </uci-section>
+      </uci-form>
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      loaded: false,
       switchs: [],
       switchPortState: [
         ['n', this.$t('Switch port state - off')],
@@ -131,18 +132,14 @@ export default {
   created() {
     this.$uci.load('network').then(() => {
       const sections = this.$uci.sections('network', 'switch');
-      let batch = [];
-
       sections.forEach(s => {
+        let batch = [];
         batch.push(['oui.network', 'switch_info', {switch: s.name}]);
-      });
+        batch.push(['oui.network', 'switch_status', {switch: s.name}]);
 
-      this.$ubus.callBatch(batch).then(rs => {
-        if (!Array.isArray(rs))
-          rs = [rs];
-
-        rs.forEach((r, i) => {
-          const info = r.info;
+        this.$ubus.callBatch(batch).then(rs => {
+          const info = rs[0].info;
+          const ports = rs[1].ports;
           const attrs = {};
 
           info.switch.forEach(attr => {
@@ -155,27 +152,12 @@ export default {
             max_vid = 4094;
 
           this.switchs.push(Object.assign({
-            name: sections[i].name,
-            sid: sections[i]['.name'],
+            name: s.name,
+            sid: s['.name'],
             max_vid: max_vid,
-            attrs: attrs
+            attrs: attrs,
+            ports: ports
           }, info));
-        });
-
-
-        let batch = [];
-        this.switchs.forEach(s => {
-          batch.push(['oui.network', 'switch_status', {switch: s.name}]);
-        });
-
-        this.$ubus.callBatch(batch).then(rs => {
-          if (!Array.isArray(rs))
-            rs = [rs];
-
-          rs.forEach((r, i) => {
-            this.switchs[i].ports = r.ports;
-          });
-          this.loaded = true;
         });
       });
     });
