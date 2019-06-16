@@ -20,6 +20,11 @@ export default {
       return keys.length;
     }
   },
+  watch: {
+    options() {
+      this.uciSection.buildForm();
+    }
+  },
   created() {
     this.uciSection.tabs.push(this);
   },
