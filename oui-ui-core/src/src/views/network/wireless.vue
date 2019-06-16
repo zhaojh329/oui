@@ -6,12 +6,12 @@
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option type="switch" :label="$t('Disabled')" name="disabled"></uci-option>
             <uci-option type="list" :label="$t('Mode')" name="hwmode" :options="radio.hwmodes" required></uci-option>
-            <uci-option type="list" :label="$t('Band')" name="htmode" :options="radio.htmodes" required></uci-option>
-            <uci-option type="list" :label="$t('Channel')" name="channel" :options="radio.freqlist" required></uci-option>
-            <uci-option type="list" :label="$t('Transmit Power')" name="txpower" :options="radio.txpowerlist"></uci-option>
+            <uci-option type="list" :label="$t('Band')" name="htmode" :options="radio.htmodes"></uci-option>
+            <uci-option type="list" :label="$t('Channel')" name="channel" :options="radio.channels" :initial="radio.channel" required></uci-option>
+            <uci-option type="list" :label="$t('Transmit Power')" name="txpower" :options="radio.txpowerlist" :initial="radio.txpower" required></uci-option>
           </uci-tab>
           <uci-tab :title="$t('Advanced Settings')" name="advanced">
-            <uci-option type="list" :label="$t('Country Code')" name="country" :options="radio.countrylist" initial="00" required></uci-option>
+            <uci-option type="list" :label="$t('Country Code')" name="country" :options="radio.countrylist" :initial="radio.country" required></uci-option>
             <uci-option type="input" :label="$t('Distance Optimization')" name="distance" rules="uinteger"></uci-option>
           </uci-tab>
         </uci-section>
@@ -87,14 +87,16 @@ export default {
         batch.push(['iwinfo', 'countrylist', {device}]);
 
         this.$ubus.callBatch(batch).then(rs => {
-          const freqlist = [['auto', this.$t('Automatic')]];
+          const channels = [['auto', this.$t('Automatic')]];
+          const info = rs[0];
+          const freqlist = rs[1].results
           const txpowerlist = [];
           const countrylist = [];
 
-          rs[1].results.forEach(f => {
+          freqlist.forEach(f => {
             if (f.restricted)
               return;
-            freqlist.push([f.channel + '', `${f.channel} (${f.mhz} MHz)`]);
+            channels.push([f.channel + '', `${f.channel} (${f.mhz} MHz)`]);
           });
 
           rs[2].results.forEach(tx => {
@@ -105,12 +107,20 @@ export default {
             countrylist.push([c.code, `${c.code} - ${c.country}`]);
           });
 
+          const hwmodes = ['11g'];
+
+          if (info.hwmodes.indexOf('a') > -1 || info.hwmodes.indexOf('ac') > -1)
+            hwmodes.push('11a');
+
           this.radios.push({
             name: device,
-            hardware: rs[0].hardware.name,
-            hwmodes: rs[0].hwmodes.map(mode => '11' + mode),
-            htmodes: rs[0].htmodes,
-            freqlist: freqlist,
+            channel: info.channel,
+            txpower: info.txpower,
+            country: info.country,
+            hardware: info.hardware.name,
+            hwmodes: hwmodes,
+            htmodes: info.htmodes,
+            channels: channels,
             txpowerlist: txpowerlist,
             countrylist: countrylist
           });
