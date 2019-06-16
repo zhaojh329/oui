@@ -34,7 +34,8 @@ export default {
     }
   },
   created() {
-    this.$set(this.uciForm.form, this.prop, '');
+    if (this.visible)
+      this.$set(this.uciForm.form, this.prop, '');
   },
   methods: {
     add(name) {
