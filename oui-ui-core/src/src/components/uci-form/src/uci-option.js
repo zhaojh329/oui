@@ -300,6 +300,16 @@ export default {
       this.buildFormValue(sid, value);
       this.buildFormRule(sid);
     },
+    destroyForm() {
+      Object.keys(this.form).forEach(prop => {
+        const name = prop.substr(prop.indexOf('_') + 1);
+        if (name === this.name) {
+          this.$delete(this.uciForm.form, prop);
+          this.$delete(this.uciForm.rules, prop);
+          this.$delete(this.uciForm.validates, prop);
+        }
+      });
+    },
     saveUCI(sid) {
       if (this.type === 'dummy')
         return;
@@ -342,5 +352,19 @@ export default {
   },
   render(h) {
     return h('div', this.$slots.default);
+  },
+  destroyed() {
+    const parent = this.$getParent('UciTab');
+    if (parent) {
+      const i = parent.options.indexOf(this);
+      if (i > -1)
+        parent.options.splice(i, 1);
+    } else {
+      const i = this.uciSection.options.indexOf(this);
+      if (i > -1)
+        this.uciSection.options.splice(i, 1);
+    }
+
+    this.destroyForm();
   }
 }

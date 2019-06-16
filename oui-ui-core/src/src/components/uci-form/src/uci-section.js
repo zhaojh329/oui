@@ -77,6 +77,9 @@ export default {
     },
     sections() {
       this.buildForm();
+    },
+    options() {
+      this.buildForm();
     }
   },
   created() {
