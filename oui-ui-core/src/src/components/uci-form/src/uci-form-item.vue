@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="10" type="flex" align="middle" v-if="visible">
-    <el-col :md="20" :lg="14" :xl="11">
+    <el-col :md="20" :lg="lgForm" :xl="xlForm">
       <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
         <el-input v-if="type === 'input'" v-model="form[prop]" :placeholder="option.placeholder" :show-password="option.password" ></el-input>
         <el-input v-else-if="type === 'dummy'" :value="form[prop]" readonly></el-input>
@@ -11,7 +11,7 @@
         <uci-dlist v-else-if="type === 'dlist'" v-model="form[prop]" :prop="prop"></uci-dlist>
       </el-form-item>
     </el-col>
-    <el-col :md="4" :lg="10" :xl="13">{{ option.description }}</el-col>
+    <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
   </el-row>
 </template>
 
@@ -66,6 +66,29 @@ export default {
       });
 
       return eval(expr);
+    },
+    inDialog() {
+      return this.$getParent('ElDialog');
+    },
+    lgForm() {
+      if (this.inDialog)
+        return 20;
+      return 14;
+    },
+    lgDesc() {
+      if (this.inDialog)
+        return 4;
+      return 10;
+    },
+    xlForm() {
+      if (this.inDialog)
+        return 14;
+      return 11;
+    },
+    xlDesc() {
+      if (this.inDialog)
+        return 10;
+      return 13;
     }
   }
 }
