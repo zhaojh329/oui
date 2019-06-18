@@ -7,7 +7,7 @@
         <uci-option type="list" :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
       </uci-tab>
       <uci-tab :title="$t('Logging')" name="logging">
-        <uci-option type="input" :label="$t('System log buffer size')" name="log_size" placeholder="16" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
+        <uci-option type="input" :label="$t('System log buffer size')" name="log_size" placeholder="16" description="kiB" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
         <uci-option type="input" :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option>
         <uci-option type="input" :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option>
         <uci-option type="list" :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos"></uci-option>

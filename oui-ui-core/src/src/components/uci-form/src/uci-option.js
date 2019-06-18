@@ -15,6 +15,7 @@ export default {
       type: String,
       required: true
     },
+    description: String,
     required: Boolean,
     /* If load from uci fails, the value of the property is used as the form value. */
     initial: [Number, String, Array],

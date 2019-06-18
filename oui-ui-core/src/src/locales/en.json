@@ -259,7 +259,6 @@
   "Static Leases": "Static Leases",
   "Use broadcast flag": "Use broadcast flag",
   "Client ID": "Client ID",
-  "Vendor Class": "Vendor Class",
   "Load Average": "Load Average",
   "IP Address": "IP Address",
   "Gateway": "Gateway",
@@ -326,5 +325,18 @@
   "Add interface": "Add interface",
   "Please enter your password": "Please enter your password",
   "Please enter your password again": "Please enter your password again",
-  "Inconsistent input password twice!": "Inconsistent input password twice!"
+  "Inconsistent input password twice!": "Inconsistent input password twice!",
+  "Listen only on the given interface or, if unspecified, on all": "Listen only on the given interface or, if unspecified, on all",
+  "Specifies the listening port of this Dropbear instance": "Specifies the listening port of this Dropbear instance",
+  "Allow SSH password authentication": "Allow SSH password authentication",
+  "Allow the root user to login with password": "Allow the root user to login with password",
+  "Allow remote hosts to connect to local SSH forwarded ports": "Allow remote hosts to connect to local SSH forwarded ports",
+  "Time in milliseconds the LED stays on": "Time in milliseconds the LED stays on",
+  "Time in milliseconds the LED stays off": "Time in milliseconds the LED stays off",
+  "Hostname to send when requesting DHCP": "Hostname to send when requesting DHCP",
+  "Required for certain ISPs, e.g. Charter with DOCSIS3": "Required for certain ISPs, e.g. Charter with DOCSIS3",
+  "If unchecked, no default route is configured": "If unchecked, no default route is configured",
+  "Client ID to send when requesting DHCP": "Client ID to send when requesting DHCP",
+  "Vendor Class to send when requesting DHCP": "Vendor Class to send when requesting DHCP",
+  "Override MAC address": "Override MAC address"
 }

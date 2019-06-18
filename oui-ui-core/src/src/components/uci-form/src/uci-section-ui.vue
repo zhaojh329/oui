@@ -1,5 +1,5 @@
 <template>
-  <div class="none-table">
+  <div>
     <uci-section-del :sestion="sestion" :sid="sid"></uci-section-del>
     <el-tabs v-if="tabs.length > 0" :value="tabs[0].name">
       <template v-for="tab in tabs">

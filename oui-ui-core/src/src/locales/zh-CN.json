@@ -259,7 +259,6 @@
   "Static Leases": "静态地址分配",
   "Use broadcast flag": "使用广播标签",
   "Client ID": "客户ID",
-  "Vendor Class": "供应商类",
   "Load Average": "平均负载",
   "IP Address": "IP地址",
   "Gateway": "网关",
@@ -326,5 +325,18 @@
   "Add interface": "添加接口",
   "Please enter your password": "请输入密码",
   "Please enter your password again": "请再次输入密码",
-  "Inconsistent input password twice!": "两次密码输入不一致"
+  "Inconsistent input password twice!": "两次密码输入不一致",
+  "Listen only on the given interface or, if unspecified, on all": "仅监听指定的接口，未指定则监听全部",
+  "Specifies the listening port of this Dropbear instance": "指定此 Dropbear 实例的监听端口",
+  "Allow SSH password authentication": "允许SSH密码验证",
+  "Allow the root user to login with password": "允许root用户凭密码登录",
+  "Allow remote hosts to connect to local SSH forwarded ports": "允许远程主机连接到本地SSH转发端口",
+  "Time in milliseconds the LED stays on": "LED保持通电时间（以毫秒为单位）",
+  "Time in milliseconds the LED stays off": "LED保持关闭时间（以毫秒为单位）",
+  "Hostname to send when requesting DHCP": "请求DHCP时发送的主机名",
+  "Required for certain ISPs, e.g. Charter with DOCSIS3": "某些ISP需要，例如：同轴线网络DOCSIS 3",
+  "If unchecked, no default route is configured": "如果未选中，则不配置默认路由",
+  "Client ID to send when requesting DHCP": "请求DHCP时发送的客户端ID",
+  "Vendor Class to send when requesting DHCP": "请求DHCP时发送的Vendor Class选项",
+  "Override MAC address": "重设MAC地址"
 }

@@ -178,12 +178,6 @@ export default {
     margin-right: 50px;
   }
 
-  .none-table {
-    .el-form-item {
-      width: 60%;
-    }
-  }
-
   .dlist {
     display: flex;
     flex-direction: column;
