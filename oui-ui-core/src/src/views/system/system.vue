@@ -1,9 +1,9 @@
 <template>
-  <uci-form config="system" @apply="onApply">
+  <uci-form config="system">
     <uci-section :title="$t('System Properties')" type="system">
       <uci-tab :title="$t('General Settings')" name="general">
         <uci-option type="dummy" :label="$t('Local Time')" :load="localTime" name="__time"></uci-option>
-        <uci-option type="input" :label="$t('Hostname')" name="hostname" required rules="hostname"></uci-option>
+        <uci-option type="input" :label="$t('Hostname')" name="hostname" required rules="hostname" :apply="updateHostname"></uci-option>
         <uci-option type="list" :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
       </uci-tab>
       <uci-tab :title="$t('Logging')" name="logging">
@@ -99,13 +99,9 @@ export default {
         });
       }
     },
-    setHostname() {
-      this.$system.getBoardInfo().then(r => {
-        this.$store.commit('setHostname', r.hostname);
-      });
-    },
-    onApply() {
-      setTimeout(this.setHostname, 500);
+    updateHostname(resolve, value) {
+      this.$store.commit('setHostname', value);
+      resolve();
     }
   }
 }
