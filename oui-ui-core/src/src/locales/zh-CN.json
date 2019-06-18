@@ -323,5 +323,8 @@
   "LCP echo interval": "LCP响应间隔",
   "Override MTU": "重设MTU",
   "Use gateway metric": "使用网关跃点",
-  "Add interface": "添加接口"
+  "Add interface": "添加接口",
+  "Please enter your password": "请输入密码",
+  "Please enter your password again": "请再次输入密码",
+  "Inconsistent input password twice!": "两次密码输入不一致"
 }

@@ -323,5 +323,8 @@
   "LCP echo interval": "LCP echo interval",
   "Override MTU": "Override MTU",
   "Use gateway metric": "Use gateway metric",
-  "Add interface": "Add interface"
+  "Add interface": "Add interface",
+  "Please enter your password": "Please enter your password",
+  "Please enter your password again": "Please enter your password again",
+  "Inconsistent input password twice!": "Inconsistent input password twice!"
 }

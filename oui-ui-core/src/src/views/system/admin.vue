@@ -35,7 +35,7 @@ export default {
   data() {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('Please enter your password'));
+        callback(new Error(this.$t('Please enter your password')));
       } else {
         if (this.passwordForm.confirm !== '')
           this.$refs['passwordForm'].validateField('confirm');
@@ -45,9 +45,9 @@ export default {
 
     const validatorConfirm = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('Please enter your password again'));
+        callback(new Error(this.$t('Please enter your password again')));
       } else if (value !== this.passwordForm.password) {
-        callback(new Error('Inconsistent input password twice!'));
+        callback(new Error(this.$t('Inconsistent input password twice!')));
       } else {
         callback();
       }
