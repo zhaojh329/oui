@@ -66,8 +66,9 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
 	vi vue.config.js
 
-然后执行如下命令运行调试服务器
+然后执行如下命令安装依赖包并运行调试服务器
 
+	npm i
 	npm run serve
 
 # [捐赠](https://gitee.com/zhaojh329/oui#project-donate-overview)

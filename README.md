@@ -68,8 +68,9 @@ You may need to modify proxy.
 
 	vi vue.config.js
 
-Then execute the following command to start the debug server
+Then execute the following command to install the dependencies and start the debug server
 
+	npm i
 	npm run serve
 
 # [Donate](https://gitee.com/zhaojh329/oui#project-donate-overview)
