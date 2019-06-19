@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import zoneinfo from '@/plugins/zoneinfo'
+import zoneinfo from './zoneinfo'
 
 export default {
   data() {
