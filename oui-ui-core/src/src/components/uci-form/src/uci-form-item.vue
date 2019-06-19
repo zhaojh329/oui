@@ -47,16 +47,7 @@ export default {
         const o = this.option.uciSection.options[name];
         if (!o)
           return false;
-        let v = o.formValue(this.sid);
-        if (o.type === 'switch') {
-          if (v === o.activeValue)
-            v = 'true';
-          else
-            v = 'false';
-        } else {
-          v = `'${v}'`;
-        }
-
+        let v = o.dependExprValue(this.sid);
         expr = expr.replace(new RegExp(name, 'gm'), v);
       });
 

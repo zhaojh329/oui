@@ -1,15 +1,8 @@
 import validator from './validator'
 
 export default {
-  name: 'UciOption',
   inject: ['uciForm', 'uciSection'],
   props: {
-    type: {
-      required: true,
-      validator: value => {
-        return ['input', 'dummy', 'list', 'dlist', 'switch'].indexOf(value) !== -1;
-      }
-    },
     label: String,
     name: {
       type: String,
@@ -18,25 +11,9 @@ export default {
     description: String,
     required: Boolean,
     /* If load from uci fails, the value of the property is used as the form value. */
-    initial: [Number, String, Array],
+    initial: [String, Number],
     /* If this prop is provided, the uci value will be accessed with this prop instead of the name prop. */
     uciOption: String,
-    /* Used for switch */
-    activeValue: {
-      type: String,
-      default: '1'
-    },
-    inactiveValue: {
-      type: String,
-      default: '0'
-    },
-    /* Used for list */
-    options: {
-      type: Array,
-      default() {
-        return [];
-      }
-    },
     /*
     ** If a function provided, the form loads the value by the function instead of from uci.
     ** If other type provided, the form loads the value from the prop's value.
@@ -54,14 +31,8 @@ export default {
       type: String,
       default: ''
     },
-    placeholder: String,
-    /* Used for multiple list */
-    multiple: Boolean,
     /* validator rules */
     rules: [String, Object, Function, Array],
-    /* Used for list */
-    allowCreate: Boolean,
-    password: Boolean,
     tab: String,
     /* Used for custom header of table column */
     header: String
@@ -243,6 +214,10 @@ export default {
     formValue(sid) {
       return this.form[this.formProp(sid)];
     },
+    dependExprValue(sid) {
+      const v = this.formValue(sid);
+      return `'${v}'`;
+    },
     buildFormRule(sid) {
       const rules = [];
 
@@ -258,26 +233,18 @@ export default {
       this.$set(this.uciForm.rules, prop, rules);
       this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tabName, sid: sid});
     },
+    convertFromUCI(value) {
+      if (typeof(value) !== 'undefined')
+        value = value.toString();
+      return value;
+    },
+    getUciValue(sid) {
+      let value = this.$uci.get(this.config, sid, this.uciOptName);
+      if (typeof(value) === 'undefined')
+        value = this.initial;
+      return this.convertFromUCI(value);
+    },
     buildFormValue(sid, value) {
-      if (typeof(value) === 'undefined' && typeof(this.initial) !== 'undefined')
-        value = this.initial + '';
-
-      if (typeof(value) !== 'undefined') {
-        if (this.type === 'list' && this.multiple)
-          value = value.replace(/\s+/g, ' ').split(' ');
-      }
-
-      if (typeof(value) === 'undefined') {
-        if (this.type === 'dlist')
-          value = [];
-        else if (this.type === 'list')
-          value = this.multiple ? [] : '';
-        else if (this.type === 'switch')
-          value = '0';
-        else
-          value = '';
-      }
-
       const prop = this.formProp(sid);
       this.original = value;
       this.$set(this.form, prop, value);
@@ -303,7 +270,7 @@ export default {
           this.$set(this.form, this.formProp(sid), value);
         });
       } else {
-        value = this.$uci.get(this.config, sid, this.uciOptName);
+        value = this.getUciValue(sid);
       }
 
       this.buildFormValue(sid, value);
@@ -330,10 +297,10 @@ export default {
         this.destroyFormSid(sid);
       });
     },
+    convertToUCI(value) {
+      return value;
+    },
     saveUCI(sid) {
-      if (this.type === 'dummy')
-        return;
-
       let value = this.formValue(sid);
       if (value === this.original)
         return;
@@ -344,15 +311,9 @@ export default {
         return;
       }
 
-      if (this.type === 'list' && this.multiple)
-        value = value.join(' ');
-
-      this.$uci.set(this.config, sid, this.uciOptName, value);
+      this.$uci.set(this.config, sid, this.uciOptName, this.convertToUCI(value));
     },
     applyUCI(sid) {
-      if (this.type === 'dummy')
-        return null;
-
       const value = this.formValue(sid);
       if (value === this.original)
         return null;

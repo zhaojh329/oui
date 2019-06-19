@@ -2,24 +2,24 @@
   <uci-form config="system">
     <uci-section :title="$t('System Properties')" type="system">
       <uci-tab :title="$t('General Settings')" name="general">
-        <uci-option type="dummy" :label="$t('Local Time')" :load="localTime" name="__time"></uci-option>
-        <uci-option type="input" :label="$t('Hostname')" name="hostname" required rules="hostname" :apply="updateHostname"></uci-option>
-        <uci-option type="list" :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option>
+        <uci-option-dummy :label="$t('Local Time')" :load="localTime" name="__time"></uci-option-dummy>
+        <uci-option-input type="input" :label="$t('Hostname')" name="hostname" required rules="hostname" :apply="updateHostname"></uci-option-input>
+        <uci-option-list :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option-list>
       </uci-tab>
       <uci-tab :title="$t('Logging')" name="logging">
-        <uci-option type="input" :label="$t('System log buffer size')" name="log_size" placeholder="16" description="kiB" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option>
-        <uci-option type="input" :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option>
-        <uci-option type="input" :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option>
-        <uci-option type="list" :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos"></uci-option>
-        <uci-option type="input" :label="$t('Write system log to file')" name="log_file"></uci-option>
-        <uci-option type="list" :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels" required></uci-option>
-        <uci-option type="list" :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option>
+        <uci-option-input :label="$t('System log buffer size')" name="log_size" placeholder="16" description="kiB" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option-input>
+        <uci-option-input :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option-input>
+        <uci-option-input :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option-input>
+        <uci-option-list :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos"></uci-option-list>
+        <uci-option-input :label="$t('Write system log to file')" name="log_file"></uci-option-input>
+        <uci-option-list :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels" required></uci-option-list>
+        <uci-option-list :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option-list>
       </uci-tab>
     </uci-section>
     <uci-section :title="$t('Time Synchronization')" name="ntp">
-      <uci-option type="switch" :label="$t('Enable NTP client')" name="enable" save="_" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option>
-      <uci-option type="switch" :label="$t('Provide NTP server')" name="enable_server" depend="enable"></uci-option>
-      <uci-option type="dlist" :label="$t('NTP server candidates')" name="server" depend="enable"></uci-option>
+      <uci-option-switch :label="$t('Enable NTP client')" name="enable" save="_" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option-switch>
+      <uci-option-switch :label="$t('Provide NTP server')" name="enable_server" depend="enable"></uci-option-switch>
+      <uci-option-dlist :label="$t('NTP server candidates')" name="server" depend="enable"></uci-option-dlist>
     </uci-section>
   </uci-form>
 </template>
@@ -81,11 +81,11 @@ export default {
     },
     ntpCliEnabled(resolve) {
       this.$system.initEnabled('sysntpd').then(enabled => {
-        resolve(enabled ? '1' : '0');
+        resolve(enabled);
       });
     },
     ntpCliEnableApply(resolve, v) {
-      if (v === '1') {
+      if (v) {
         this.$system.initStart('sysntpd').then(() => {
           this.$system.initEnable('sysntpd').then(() => {
             resolve();

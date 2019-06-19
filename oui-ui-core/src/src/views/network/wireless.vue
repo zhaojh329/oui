@@ -4,33 +4,33 @@
       <uci-form config="wireless">
         <uci-section :name="radio.name">
           <uci-tab :title="$t('General Settings')" name="general">
-            <uci-option type="switch" :label="$t('Disabled')" name="disabled"></uci-option>
-            <uci-option type="list" :label="$t('Mode')" name="hwmode" :options="radio.hwmodes" required></uci-option>
-            <uci-option type="list" :label="$t('Band')" name="htmode" :options="radio.htmodes"></uci-option>
-            <uci-option type="list" :label="$t('Channel')" name="channel" :options="radio.channels" :initial="radio.channel" required></uci-option>
-            <uci-option type="list" :label="$t('Transmit Power')" name="txpower" :options="radio.txpowerlist" :initial="radio.txpower" required></uci-option>
+            <uci-option-switch :label="$t('Disabled')" name="disabled"></uci-option-switch>
+            <uci-option-list :label="$t('Mode')" name="hwmode" :options="radio.hwmodes" required></uci-option-list>
+            <uci-option-list :label="$t('Band')" name="htmode" :options="radio.htmodes"></uci-option-list>
+            <uci-option-list :label="$t('Channel')" name="channel" :options="radio.channels" :initial="radio.channel" required></uci-option-list>
+            <uci-option-list :label="$t('Transmit Power')" name="txpower" :options="radio.txpowerlist" :initial="radio.txpower" required></uci-option-list>
           </uci-tab>
           <uci-tab :title="$t('Advanced Settings')" name="advanced">
-            <uci-option type="list" :label="$t('Country Code')" name="country" :options="radio.countrylist" :initial="radio.country" required></uci-option>
-            <uci-option type="input" :label="$t('Distance Optimization')" name="distance" rules="uinteger"></uci-option>
+            <uci-option-list :label="$t('Country Code')" name="country" :options="radio.countrylist" :initial="radio.country" required></uci-option-list>
+            <uci-option-input :label="$t('Distance Optimization')" name="distance" rules="uinteger"></uci-option-input>
           </uci-tab>
         </uci-section>
         <uci-section :title="$t('Interface')" type="wifi-iface" :option="{radio: radio.name}" :filter="filterInterface" addable>
           <uci-tab :title="$t('General Settings')" name="general">
-            <uci-option type="switch" :label="$t('Disabled')" name="disabled"></uci-option>
-            <uci-option type="list" :label="$t('Mode')" name="mode" required :options="modes"></uci-option>
-            <uci-option type="input" label="SSID" name="ssid" required></uci-option>
-            <uci-option type="list" :label="$t('Network')" name="network" :options="interfaces"></uci-option>
-            <uci-option type="switch" :label="$t('Hide ESSID')" name="hidden" depend="mode == 'ap'"></uci-option>
-            <uci-option type="switch" :label="$t('WMM Mode')" name="wmm" depend="mode == 'ap'" initial="1"></uci-option>
+            <uci-option-switch :label="$t('Disabled')" name="disabled"></uci-option-switch>
+            <uci-option-list :label="$t('Mode')" name="mode" required :options="modes"></uci-option-list>
+            <uci-option-input label="SSID" name="ssid" required></uci-option-input>
+            <uci-option-list :label="$t('Network')" name="network" :options="interfaces"></uci-option-list>
+            <uci-option-switch :label="$t('Hide ESSID')" name="hidden" depend="mode == 'ap'"></uci-option-switch>
+            <uci-option-switch :label="$t('WMM Mode')" name="wmm" depend="mode == 'ap'" initial="1"></uci-option-switch>
           </uci-tab>
           <uci-tab :title="$t('Wireless Security')" name="security">
-            <uci-option type="list" :label="$t('Encryption')" name="encryption" :options="encryptions" initial="none"></uci-option>
-            <uci-option type="input" :label="$t('Passphrase')" name="key" depend="encryption != 'none'" password></uci-option>
+            <uci-option-list :label="$t('Encryption')" name="encryption" :options="encryptions" initial="none"></uci-option-list>
+            <uci-option-input :label="$t('Passphrase')" name="key" depend="encryption != 'none'" password></uci-option-input>
           </uci-tab>
           <uci-tab :title="$t('MAC-Filter')" name="macfilter">
-            <uci-option type="list" :label="$t('Mode')" name="macfilter" :options="macfilters" depend="mode == 'ap'"></uci-option>
-            <uci-option type="dlist" :label="$t('MAC-List')" name="maclist" depend="macfilter == 'allow' || macfilter == 'deny'" rules="macaddr"></uci-option>
+            <uci-option-list :label="$t('Mode')" name="macfilter" :options="macfilters" depend="mode == 'ap'"></uci-option-list>
+            <uci-option-dlist :label="$t('MAC-List')" name="maclist" depend="macfilter == 'allow' || macfilter == 'deny'" rules="macaddr"></uci-option-dlist>
           </uci-tab>
         </uci-section>
       </uci-form>

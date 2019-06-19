@@ -30,8 +30,8 @@
       <uci-form config="network" v-if="dialogVisible">
         <uci-section :name="editorIface">
           <uci-tab :title="$t('General Settings')" name="general">
-            <uci-option type="switch" :label="$t('Start on boot')" name="auto" initial="1"></uci-option>
-            <uci-option type="list" :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required @change="onProtoChange"></uci-option>
+            <uci-option-switch :label="$t('Start on boot')" name="auto" initial="1"></uci-option-switch>
+            <uci-option-list :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required @change="onProtoChange"></uci-option-list>
           </uci-tab>
           <uci-tab :title="$t('Advanced Settings')" name="advanced"></uci-tab>
           <uci-tab title="IPv6" name="ipv6"></uci-tab>

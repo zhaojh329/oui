@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import UciFormItem from './uci-form-item'
 import UciSectionAdd from './uci-section-add'
 import UciSectionUi from './uci-section-ui'
 
@@ -65,6 +66,7 @@ export default {
     }
   },
   components: {
+    UciFormItem,
     UciSectionAdd,
     UciSectionUi
   },

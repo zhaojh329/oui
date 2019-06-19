@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import UciFormItem from './uci-form-item'
 import UciSectionDel from './uci-section-del'
 
 export default {
@@ -28,6 +29,7 @@ export default {
     divider: Boolean
   },
   components: {
+    UciFormItem,
     UciSectionDel
   },
   computed: {

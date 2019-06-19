@@ -3,12 +3,12 @@
     <el-tab-pane v-for="s in switchs" :key="s.name" :name="s.name" :label="switchTitle(s)">
       <uci-form config="network">
         <uci-section :name="s.sid">
-          <uci-option v-if="s.attrs['enable_vlan']" type="switch" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option>
-          <uci-option v-if="s.attrs['enable_learning']" type="switch" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option>
+          <uci-option-switch v-if="s.attrs['enable_vlan']" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option-switch>
+          <uci-option-switch v-if="s.attrs['enable_learning']" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option-switch>
         </uci-section>
         <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :option="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
-          <uci-option type="input" label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option>
-          <uci-option v-for="(port, i) in s.ports" :key="i" type="list" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option>
+          <uci-option-input label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option-input>
+          <uci-option-list v-for="(port, i) in s.ports" :key="i" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option-list>
         </uci-section>
       </uci-form>
     </el-tab-pane>
