@@ -338,5 +338,14 @@
   "If unchecked, no default route is configured": "If unchecked, no default route is configured",
   "Client ID to send when requesting DHCP": "Client ID to send when requesting DHCP",
   "Vendor Class to send when requesting DHCP": "Vendor Class to send when requesting DHCP",
-  "Override MAC address": "Override MAC address"
+  "Override MAC address": "Override MAC address",
+  "Debug": "Debug",
+  "Info": "Info",
+  "Notice": "Notice",
+  "Warning": "Warning",
+  "Error": "Error",
+  "Critical": "Critical",
+  "Alert": "Alert",
+  "Emergency": "Emergency",
+  "Normal": "Normal"
 }

@@ -12,8 +12,8 @@
         <uci-option type="input" :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option>
         <uci-option type="list" :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos"></uci-option>
         <uci-option type="input" :label="$t('Write system log to file')" name="log_file"></uci-option>
-        <uci-option type="list" :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels"></uci-option>
-        <uci-option type="list" :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels"></uci-option>
+        <uci-option type="list" :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels" required></uci-option>
+        <uci-option type="list" :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option>
       </uci-tab>
     </uci-section>
     <uci-section :title="$t('Time Synchronization')" name="ntp">
@@ -36,19 +36,19 @@ export default {
         ['tcp', 'TCP']
       ],
       conlogLevels: [
-        ['8', 'Debug'],
-        ['7', 'Info'],
-        ['6', 'Notice'],
-        ['5', 'Warning'],
-        ['4', 'Error'],
-        ['3', 'Critical'],
-        ['2', 'Alert'],
-        ['1', 'Emergency']
+        ['8', this.$t('Debug')],
+        ['7', this.$t('Info')],
+        ['6', this.$t('Notice')],
+        ['5', this.$t('Warning')],
+        ['4', this.$t('Error')],
+        ['3', this.$t('Critical')],
+        ['2', this.$t('Alert')],
+        ['1', this.$t('Emergency')]
       ],
       cronlogLevels: [
-        ['5', 'Debug'],
-        ['8', 'Normal'],
-        ['9', 'Warning']
+        ['5', this.$t('Debug')],
+        ['8', this.$t('Normal')],
+        ['9', this.$t('Warning')]
       ]
     }
   },

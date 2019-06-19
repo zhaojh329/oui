@@ -338,5 +338,14 @@
   "If unchecked, no default route is configured": "如果未选中，则不配置默认路由",
   "Client ID to send when requesting DHCP": "请求DHCP时发送的客户端ID",
   "Vendor Class to send when requesting DHCP": "请求DHCP时发送的Vendor Class选项",
-  "Override MAC address": "重设MAC地址"
+  "Override MAC address": "重设MAC地址",
+  "Debug": "调试",
+  "Info": "信息",
+  "Notice": "注意",
+  "Warning": "警告",
+  "Error": "错误",
+  "Critical": "致命错误",
+  "Alert": "警戒",
+  "Emergency": "紧急",
+  "Normal": "正常"
 }
