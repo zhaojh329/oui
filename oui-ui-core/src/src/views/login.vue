@@ -1,5 +1,6 @@
 <template>
-  <el-card :header="$t('Authorization Required')" class="login">
+  <el-card :header="$t('Authorization Required')" class="oui-login">
+    <el-alert :title="$t('Wrong username or password given!')" type="error" effect="dark" :closable="false" v-if="!valid"></el-alert>
     <el-form ref="login" :model="form" label-width="100px" label-position="left" :rules="rules">
       <el-form-item :label="$t('Username')" prop="username">
         <el-input v-model="form.username" prefix-icon="el-icon-user-solid" :placeholder="$t('Please input username')" @keyup.enter.native="handleLogin"></el-input>
@@ -27,7 +28,8 @@ export default {
         username: [
           {required: true, message: this.$t('This field is required')}
         ]
-      }
+      },
+      valid: true
     }
   },
   methods: {
@@ -40,13 +42,14 @@ export default {
               return;
             }
 
-            this.$message.error('Login fail');
+            this.valid = false;
           });
         }
       });
     },
     reset() {
       this.$refs['login'].resetFields();
+      this.valid = true;
     }
   },
   created() {
@@ -56,12 +59,16 @@ export default {
 }
 </script>
 
-<style scoped>
-.login {
+<style lang="scss">
+.oui-login {
   width: 500px;
   top: 50%;
   left: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
+
+  .el-alert {
+    margin-bottom: 10px;
+  }
 }
 </style>

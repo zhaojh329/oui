@@ -347,5 +347,6 @@
   "Critical": "Critical",
   "Alert": "Alert",
   "Emergency": "Emergency",
-  "Normal": "Normal"
+  "Normal": "Normal",
+  "Wrong username or password given!": "Wrong username or password given!"
 }

@@ -347,5 +347,6 @@
   "Critical": "致命错误",
   "Alert": "警戒",
   "Emergency": "紧急",
-  "Normal": "正常"
+  "Normal": "正常",
+  "Wrong username or password given!": "用户名或密码错误!"
 }
