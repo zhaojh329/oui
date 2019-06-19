@@ -7,11 +7,11 @@
           <span slot="label">
             {{ tab.title }}<el-badge v-if="tab.getErrorNum(sid) > 0" :value="tab.getErrorNum(sid)"></el-badge>
           </span>
-          <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="sid" :form="form"></uci-form-item>
+          <uci-form-item v-for="o in tab.options" :key="o.name" :option="o" :sid="sid"></uci-form-item>
         </el-tab-pane>
       </template>
     </el-tabs>
-    <uci-form-item v-for="o in noTabOptions" :key="o.name" :option="o" :sid="sid" :form="form"></uci-form-item>
+    <uci-form-item v-for="o in noTabOptions" :key="o.name" :option="o" :sid="sid"></uci-form-item>
     <el-divider v-if="divider"></el-divider>
   </div>
 </template>
@@ -31,9 +31,6 @@ export default {
     UciSectionDel
   },
   computed: {
-    form() {
-      return this.uciForm.form;
-    },
     tabs() {
       return this.sestion.tabs;
     },

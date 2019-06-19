@@ -2,13 +2,7 @@
   <el-row :gutter="10" type="flex" align="middle" v-if="visible">
     <el-col :md="20" :lg="lgForm" :xl="xlForm">
       <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
-        <el-input v-if="type === 'input'" v-model="form[prop]" :placeholder="option.placeholder" :show-password="option.password" ></el-input>
-        <el-input v-else-if="type === 'dummy'" :value="form[prop]" readonly></el-input>
-        <el-switch v-else-if="type === 'switch'" v-model="form[prop]" :active-value="option.activeValue" :inactive-value="option.inactiveValue"></el-switch>
-        <el-select v-else-if="type === 'list'" v-model="form[prop]" :clearable="!option.required" :multiple="option.multiple" filterable :allow-create="option.allowCreate">
-          <el-option v-for="oo in option.transformedOptions" :key="oo[0]" :label="oo[1] || oo[0]" :value="oo[0]"></el-option>
-        </el-select>
-        <uci-dlist v-else-if="type === 'dlist'" v-model="form[prop]" :prop="prop"></uci-dlist>
+        <uci-option-ui :sid="sid" :option="option" v-model="form[prop]"></uci-option-ui>
       </el-form-item>
     </el-col>
     <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
@@ -16,18 +10,19 @@
 </template>
 
 <script>
-import UciDlist from './uci-dlist'
+
+import UciOptionUi from './uci-option-ui'
 
 export default {
   name: 'UciFormItem',
+  inject: ['uciForm'],
   props: {
     sid: String,
     option: Object,
-    form: Object,
     table: Boolean
   },
   components: {
-    UciDlist
+    UciOptionUi
   },
   computed: {
     label() {
@@ -35,11 +30,11 @@ export default {
         return undefined;
       return this.option.label;
     },
+    form() {
+      return this.uciForm.form;
+    },
     prop() {
       return this.option.formProp(this.sid);
-    },
-    type() {
-      return this.option.type;
     },
     visible() {
       const depend = this.option.parsedDepend;
