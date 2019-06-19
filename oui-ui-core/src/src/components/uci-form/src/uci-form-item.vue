@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="10" type="flex" align="middle" v-if="visible">
+  <el-row :gutter="10" v-if="visible">
     <el-col :md="20" :lg="lgForm" :xl="xlForm">
       <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
         <uci-option-ui :sid="sid" :option="option" v-model="form[prop]"></uci-option-ui>
