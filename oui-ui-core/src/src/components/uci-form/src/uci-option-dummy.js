@@ -8,10 +8,7 @@ export default {
       children.push(data.props.value);
       return 'span';
     },
-    saveUCI() {
-    },
-    applyUCI() {
-      return null;
+    _save() {
     }
   }
 }
