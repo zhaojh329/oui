@@ -108,12 +108,7 @@ function isNetmask(addr) {
 }
 
 function performCallback(types, rule, value, cb, msg, arg) {
-  if (value === '') {
-    cb();
-    return;
-  }
-
-  if (Array.isArray(value) && value.length === 0) {
+  if (value === undefined || value === '' || value === []) {
     cb();
     return;
   }
