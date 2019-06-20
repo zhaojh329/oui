@@ -47,9 +47,9 @@ export default {
 
       return r.toString();
     },
-    renderOpt(h, attrs, props) {
-      props.activeValue = this.activeValue;
-      props.inactiveValue = this.inactiveValue;
+    renderOpt(h, data) {
+      data.props.activeValue = this.activeValue;
+      data.props.inactiveValue = this.inactiveValue;
 
       return 'el-switch';
     }

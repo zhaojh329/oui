@@ -15,6 +15,18 @@ export default {
     multiple: Boolean,
     allowCreate: Boolean
   },
+  computed: {
+    transformedOptions() {
+      return this.options.map(o => {
+        if (!Array.isArray(o))
+          o = [o];
+        o[0] = o[0] + '';
+        if (o.length === 1)
+          return [o[0], o[0]];
+        return o;
+      });
+    }
+  },
   methods: {
     convertFromUCI(value) {
       if (this.multiple) {
@@ -34,11 +46,11 @@ export default {
         value = value.join(' ');
       return value;
     },
-    renderOpt(h, attrs, props, children) {
-      props.clearable = !this.required;
-      props.multiple = this.multiple;
-      props.filterable = true;
-      props.allowCreate = this.allowCreate;
+    renderOpt(h, data, children) {
+      data.props.clearable = !this.required;
+      data.props.multiple = this.multiple;
+      data.props.filterable = true;
+      data.props.allowCreate = this.allowCreate;
 
       this.transformedOptions.forEach(o => {
         const dom = h('el-option', {

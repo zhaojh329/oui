@@ -8,9 +8,10 @@ export default {
     password: Boolean
   },
   methods: {
-    renderOpt(h, attrs, props) {
-      attrs.placeholder = this.placeholder;
-      props.showPassword = this.password;
+    renderOpt(h, data) {
+      data.attrs = {};
+      data.attrs.placeholder = this.placeholder;
+      data.props.showPassword = this.password;
 
       return 'el-input';
     }

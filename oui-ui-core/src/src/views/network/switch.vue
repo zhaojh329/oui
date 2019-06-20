@@ -6,7 +6,7 @@
           <uci-option-switch v-if="s.attrs['enable_vlan']" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option-switch>
           <uci-option-switch v-if="s.attrs['enable_learning']" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option-switch>
         </uci-section>
-        <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :option="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
+        <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :options="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
           <uci-option-input label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option-input>
           <uci-option-list v-for="(port, i) in s.ports" :key="i" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option-list>
         </uci-section>
@@ -51,28 +51,28 @@ export default {
       label += '</span>'
       return label;
     },
-    filterVlanSection(vm, s) {
-      return vm.option.swname === s.device;
+    filterVlanSection(self, s) {
+      return self.options.swname === s.device;
     },
-    addVlanSection(vm) {
+    addVlanSection(self) {
       const usedVID = {};
 
-      vm.uciSections.forEach(s => {
+      self.uciSections.forEach(s => {
         if (s.vlan)
           usedVID[s.vlan] = true;
       });
 
-      for (let i = 1; i < vm.option.num_vlans; i++) {
+      for (let i = 1; i < self.options.num_vlans; i++) {
         if (usedVID[i.toString()])
           continue;
         const sid = this.$uci.add('network', 'switch_vlan');
-        this.$uci.set('network', sid, 'device', vm.option.swname);
+        this.$uci.set('network', sid, 'device', self.options.swname);
         this.$uci.set('network', sid, 'vlan', i.toString());
         return sid;
       }
     },
-    vidValidator(val, vm) {
-      const sections = vm.uciSection.uciSections;
+    vidValidator(val, self) {
+      const sections = self.uciSection.uciSections;
       const usedVID = {};
 
       if (!val)
@@ -80,7 +80,7 @@ export default {
 
       for (let i = 0; i < sections.length; i++) {
         const sid = sections[i]['.name'];
-        const v = vm.formValue(sid);
+        const v = self.formValue(sid);
         if (!v)
           continue;
         if (usedVID[v])
@@ -88,7 +88,7 @@ export default {
         usedVID[v] = true;
       }
 
-      const max = vm.uciSection.option.max_vid;
+      const max = self.uciSection.options.max_vid;
       if (!val.match(/[^0-9]/)) {
         val = parseInt(val);
         if (val >= 1 && val <= max)

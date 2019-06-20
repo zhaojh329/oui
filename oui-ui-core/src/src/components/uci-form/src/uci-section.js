@@ -24,11 +24,16 @@ export default {
     },
     /* Render in a table */
     table: Boolean,
+    /* Parameters: self, uci section */
     filter: Function,
-    option: {
+    options: {
       type: Object,
       default: () => {}
     },
+    /*
+    ** Custom add function
+    ** Parameters: self, name
+    */
     add: Function,
     collabsible: {
       type: Boolean,
@@ -40,7 +45,7 @@ export default {
     return {
       loaded: false, /* Indicates whether the data is loaded */
       tabs: [], /* uci-tab vue instances */
-      options: {}, /* uci-option vue instances */
+      children: {}, /* uci-option vue instances */
       sections: [] /* uci sections */
     }
   },
@@ -52,7 +57,7 @@ export default {
       return this.sids.length > 1 && this.collabsible;
     },
     arrayedOptions() {
-      return Object.keys(this.options).map(name => this.options[name]).sort((a, b) => a.uid - b.uid);
+      return Object.keys(this.children).map(name => this.children[name]).sort((a, b) => a.uid - b.uid);
     },
     sids() {
       let sections = [];
@@ -73,17 +78,25 @@ export default {
     }
   },
   methods: {
+    addChild(o) {
+      this.$set(this.children, o.name, o);
+    },
+    delChild(o) {
+      const d = this.children[o.name];
+      if (d && d.uid === o.uid)
+        this.$delete(this.children, o.name);
+    },
     load() {
       this.sections = this.$uci.sections(this.config, this.type);
       this.loaded = true;
     },
     buildForm(sid) {
-      for (const name in this.options)
-        this.options[name].buildForm(sid);
+      for (const name in this.children)
+        this.children[name].buildForm(sid);
     },
     destroyForm(sid) {
-      for (const name in this.options)
-        this.options[name].destroyFormSid(sid);
+      for (const name in this.children)
+        this.children[name].destroyFormSid(sid);
     },
     del(sid) {
       this.$uci.del(this.config, sid);
@@ -95,12 +108,12 @@ export default {
 
       if (this.teasers) {
         this.teasers.forEach(name => {
-          const o = this.options[name];
+          const o = this.children[name];
           teasers.push([o.label, o.formValue(sid)]);
         });
       } else {
-        for (const name in this.options) {
-          const o = this.options[name];
+        for (const name in this.children) {
+          const o = this.children[name];
           const v = o.formValue(sid)
           teasers.push([o.label, v]);
         }
@@ -123,15 +136,15 @@ export default {
     },
     save() {
       this.sids.forEach(sid => {
-        for (const name in this.options)
-          this.options[name].saveUCI(sid);
+        for (const name in this.children)
+          this.children[name]._save(sid);
       });
     },
     apply() {
       const promises = [];
       this.sids.forEach(sid => {
-        for (const name in this.options) {
-          const p = this.options[name].applyUCI(sid);
+        for (const name in this.children) {
+          const p = this.children[name]._apply(sid);
           if (p)
             promises.push(p);
         }

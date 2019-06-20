@@ -5,39 +5,38 @@ export default {
   inject: ['uciForm'],
   props: {
     option: Object,
-    sid: String,
-    value: [String, Array, Object, Boolean]
+    sid: String
   },
   components: {
     UciDlist
   },
   computed: {
+    form() {
+      return this.uciForm.form;
+    },
     prop() {
       return this.option.formProp(this.sid);
     }
   },
   render(h) {
-    const self = this;
-    const children = [];
-    const attrs = {};
-    const props = {
-      value: this.value,
-      prop: this.prop
-    }
-
-    if (this.option.$scopedSlots.default)
-      return this.option.$scopedSlots.default(props);
-
-    const tag = this.option.renderOpt(h, attrs, props, children);
-
-    return h(tag, {
-      attrs: attrs,
-      props: props,
+    const data = {
+      props: {
+        value: this.form[this.prop],
+        prop: this.prop
+      },
       on: {
         input: value => {
-          self.$emit('input', value)
+          this.form[this.prop] = value;
         }
       }
-    }, children);
+    };
+    const children = [];
+
+    if (this.option.$scopedSlots.default)
+      return this.option.$scopedSlots.default({sid: this.sid, o: this.option});
+
+    const tag = this.option.renderOpt(h, data, children);
+
+    return h(tag, data, children);
   }
 }

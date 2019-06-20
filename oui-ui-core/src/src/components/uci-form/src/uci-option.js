@@ -17,14 +17,19 @@ export default {
     /*
     ** If a function provided, the form loads the value by the function instead of from uci.
     ** If other type provided, the form loads the value from the prop's value.
+    ** Parameters: resolve, sid, name, self
     */
     load: [String, Array, Function],
     /*
     ** If a function provided, it will be called when oui saves the uci configuration.
     ** If an any string provided, indicates don't save uci.
+    ** Parameters: config, sid, name, value, self
     */
     save: [String, Function],
-    /* If this function is provided, it will be called when oui applys the uci configuration. */
+    /*
+    ** If this function is provided, it will be called when oui applys the uci configuration.
+    ** Parameters: resolve, value, self
+    */
     apply: Function,
     /* depend="(a == 12 || a == 'x') && y == 4 && q != 5 && !z" */
     depend: {
@@ -174,17 +179,7 @@ export default {
 
       return {expr, names: Object.keys(names)};
     },
-    transformedOptions() {
-      return this.options.map(o => {
-        if (!Array.isArray(o))
-          o = [o];
-        o[0] = o[0] + '';
-        if (o.length === 1)
-          return [o[0], o[0]];
-        return o;
-      });
-    },
-    uciOptName() {
+    uciopt() {
       return this.uciOption || this.name;
     },
     parsedRules() {
@@ -239,7 +234,7 @@ export default {
       return value;
     },
     getUciValue(sid) {
-      let value = this.$uci.get(this.config, sid, this.uciOptName);
+      let value = this.$uci.get(this.config, sid, this.uciopt);
       if (typeof(value) === 'undefined')
         value = this.initial;
       return this.convertFromUCI(value);
@@ -260,7 +255,7 @@ export default {
 
       if (typeof(this.load) === 'function') {
         new Promise(resolve => {
-          this.load(resolve, sid, this.name);
+          this.load(resolve, sid, this.name, this);
         }).then(v => {
           this.buildFormValue(sid, v);
         });
@@ -300,27 +295,27 @@ export default {
     convertToUCI(value) {
       return value;
     },
-    saveUCI(sid) {
+    _save(sid) {
       let value = this.formValue(sid);
       if (value === this.original)
         return;
 
       if (this.save) {
         if (typeof(this.save) === 'function')
-          this.save(this.config, sid, this.name, value);
+          this.save(this.config, sid, this.name, value, this);
         return;
       }
 
-      this.$uci.set(this.config, sid, this.uciOptName, this.convertToUCI(value));
+      this.$uci.set(this.config, sid, this.uciopt, this.convertToUCI(value));
     },
-    applyUCI(sid) {
+    _apply(sid) {
       const value = this.formValue(sid);
       if (value === this.original)
         return null;
 
       if (typeof(this.apply) !== 'undefined') {
         const p = new Promise(resolve => {
-          this.apply(resolve, value);
+          this.apply(resolve, value, this);
         });
         return p;
       }
@@ -330,7 +325,7 @@ export default {
   },
   created() {
     this.uid = this.uciForm.getUID();
-    this.$set(this.uciSection.options, this.name, this);
+    this.uciSection.addChild(this);
 
     if (this.uciSection.loaded)
       this.buildForm();
@@ -339,10 +334,7 @@ export default {
     return h('div', this.$slots.default);
   },
   destroyed() {
-    const o = this.uciSection.options[this.name];
-    if (o.uid === this.uid)
-      this.$delete(this.uciSection.options, this.name);
-
+    this.uciSection.delChild(this);
     this.destroyForm();
   }
 }

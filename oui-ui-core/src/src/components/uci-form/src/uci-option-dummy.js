@@ -4,8 +4,8 @@ export default {
   name: 'UciOptionDummy',
   mixins: [mixin],
   methods: {
-    renderOpt(h, attrs, props, children) {
-      children.push(props.value);
+    renderOpt(h, data, children) {
+      children.push(data.props.value);
       return 'span';
     },
     saveUCI() {

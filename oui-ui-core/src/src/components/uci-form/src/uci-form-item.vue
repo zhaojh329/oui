@@ -2,7 +2,7 @@
   <el-row :gutter="10" v-if="visible">
     <el-col :md="20" :lg="lgForm" :xl="xlForm">
       <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
-        <uci-option-ui :sid="sid" :option="option" v-model="form[prop]"></uci-option-ui>
+        <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
       </el-form-item>
     </el-col>
     <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
@@ -30,9 +30,6 @@ export default {
         return undefined;
       return this.option.label;
     },
-    form() {
-      return this.uciForm.form;
-    },
     prop() {
       return this.option.formProp(this.sid);
     },
@@ -44,7 +41,7 @@ export default {
       let expr = depend.expr;
 
       depend.names.forEach(name => {
-        const o = this.option.uciSection.options[name];
+        const o = this.option.uciSection.children[name];
         if (!o)
           return false;
         let v = o.dependExprValue(this.sid);
