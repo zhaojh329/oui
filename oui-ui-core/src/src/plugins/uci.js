@@ -2,7 +2,7 @@
 
 import {ubus} from './ubus'
 
-const uci = {
+export const uci = {
   state: {
     newidx: 0,
     changed: 0,
