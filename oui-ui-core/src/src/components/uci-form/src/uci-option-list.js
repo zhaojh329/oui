@@ -5,7 +5,7 @@ export default {
   mixins: [mixin],
   props: {
     /* If load from uci fails, the value of the property is used as the form value. */
-    initial: [String, Array],
+    initial: [String, Number, Array],
     options: {
       type: Array,
       default() {
