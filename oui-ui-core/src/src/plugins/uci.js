@@ -13,6 +13,8 @@ export const uci = {
   }
 }
 
+const isEmptyArray = window.oui.isEmptyArray
+
 uci.load = function(conf) {
   return new Promise(resolve => {
     if (this.state.values[conf]) {
@@ -67,6 +69,7 @@ uci.set = function(conf, sid, opt, val) {
   const v = this.state.values;
   const c = this.state.changes;
   const n = this.state.creates;
+  const d = this.state.deletes;
 
   if (typeof(sid) === 'undefined' ||
     typeof(opt) === 'undefined' ||
@@ -74,15 +77,23 @@ uci.set = function(conf, sid, opt, val) {
     return;
 
   if (n[conf] && n[conf][sid]) {
-    n[conf][sid][opt] = val;
-    this.state.changed++;
-    return;
-  }
+    if (typeof(val) !== 'undefined' && !isEmptyArray(val)) {
+      n[conf][sid][opt] = val;
+    } else {
+      delete n[conf][sid][opt];
+    }
+  } else if (typeof(val) !== 'undefined' && val !== '' && !isEmptyArray(val)) {
+    /* do not set within deleted section */
+    if (d[conf] && d[conf][sid] === true)
+      return;
 
-  if (v[conf] && v[conf][sid]) {
+    /* only set in existing sections */
+    if (!v[conf] || !v[conf][sid])
+      return;
+
     /* Ignore the same value */
     const old = v[conf][sid][opt];
-    if (typeof(old) === 'undefined' && (val === '' || val === []))
+    if (typeof(old) === 'undefined' && (val === '' || isEmptyArray(val)))
       return;
     if (old === val)
       return;
@@ -93,7 +104,28 @@ uci.set = function(conf, sid, opt, val) {
     if (!c[conf][sid])
       c[conf][sid] = {};
 
+    /* undelete option */
+    if (d[conf] && d[conf][sid]) {
+      if (Array.isArray(d[conf][sid]))
+        d[conf][sid].splice(d[conf][sid].indexOf(opt), 1);
+    }
+
     c[conf][sid][opt] = val;
+    this.state.changed++;
+  } else {
+    /* only delete in existing sections */
+    if (!v[conf] || !v[conf][sid])
+      return;
+
+    if (!d[conf])
+      d[conf] = {};
+
+    if (!d[conf][sid])
+      d[conf][sid] = [];
+
+    if (d[conf][sid] !== true)
+      d[conf][sid].push(opt);
+
     this.state.changed++;
   }
 }
@@ -192,8 +224,10 @@ uci.save = function() {
     }
 
     for (const conf in d) {
-      for (const sid in d[conf])
-        batch.push(['uci', 'delete', {config: conf, section: sid}]);
+      for (const sid in d[conf]) {
+        const options = d[conf][sid];
+        batch.push(['uci', 'delete', {config: conf, section: sid, options: (options === true) ? undefined : options}]);
+      }
       confs[conf] = true;
     }
 

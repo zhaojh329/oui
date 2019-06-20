@@ -108,7 +108,7 @@ function isNetmask(addr) {
 }
 
 function performCallback(types, rule, value, cb, msg, arg) {
-  if (value === undefined || value === '' || value === []) {
+  if (value === undefined || value === '' || window.oui.isEmptyArray(value)) {
     cb();
     return;
   }
