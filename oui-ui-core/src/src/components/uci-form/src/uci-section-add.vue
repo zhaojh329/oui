@@ -36,11 +36,8 @@ export default {
       else
         sid = this.$uci.add(this.sestion.config, this.sestion.type, name);
 
-      if (sid) {
-        this.uciForm.activeCollapseItem = sid;
-        this.sestion.load();
-        this.sestion.buildForm(sid);
-      }
+      if (sid)
+        this.sestion.postAdd(sid);
     },
     handleAdd() {
       if (this.sestion.anonymous) {

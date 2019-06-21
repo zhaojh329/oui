@@ -109,6 +109,11 @@ export default {
       for (const name in this.children)
         this.children[name].destroyFormSid(sid);
     },
+    postAdd(sid) {
+      this.uciForm.activeCollapseItem = sid;
+      this.load();
+      this.buildForm(sid);
+    },
     del(sid) {
       this.$uci.del(this.config, sid);
       this.load();

@@ -348,5 +348,12 @@
   "Alert": "Alert",
   "Emergency": "Emergency",
   "Normal": "Normal",
-  "Wrong username or password given!": "Wrong username or password given!"
+  "Wrong username or password given!": "Wrong username or password given!",
+  "Use the Linux system user password": "Use the Linux system user password",
+  "acl-password-description": "Specifies the password for the guest account. If you enter a plaintext password here, it will get replaced with a crypted password hash on save.",
+  "User ACLs": "User ACLs",
+  "ACL Group": "ACL Group",
+  "acl-acl-description": "Specifies the access levels of this account. The \"N\" column means no access, \"R\" stands for read only access and \"F\" for full access.",
+  "Please input a username": "Please input a username",
+  "Username already used": "Username already used"
 }

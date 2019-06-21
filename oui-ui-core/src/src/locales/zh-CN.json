@@ -348,5 +348,12 @@
   "Alert": "警戒",
   "Emergency": "紧急",
   "Normal": "正常",
-  "Wrong username or password given!": "用户名或密码错误!"
+  "Wrong username or password given!": "用户名或密码错误!",
+  "Use the Linux system user password": "使用Linux系统用户密码",
+  "acl-password-description": "为该用户设置密码。如果您输入明文，将被加密保存",
+  "User ACLs": "用户访问权限",
+  "ACL Group": "访问权限类",
+  "acl-acl-description": "为该用户指定访问级别。“N”表示没有访问权限，“R”表示只能访问，“F”表示拥有所有权限（访问和设置）",
+  "Please input a username": "请输入一个用户名",
+  "Username already used": "用户名已被使用"
 }

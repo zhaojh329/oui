@@ -1,26 +1,26 @@
 <template>
   <uci-form config="rpcd">
-    <uci-section type="login" addable :teasers="['username', 'shadow']">
-      <uci-option type="input" :label="$t('Username')" name="username"></uci-option>
-      <uci-option type="switch" :label="$t('Use the Linux system password')" name="shadow" :load="isShadow"></uci-option>
-      <uci-option type="input" :label="$t('Password')" name="password" depend="!shadow" password></uci-option>
-      <uci-option :label="$t('User ACLs')" name="acls" :description="$t('acls-description')" :load="loadAclsFromUCI">
-        <template v-slot="prop">
-          <el-table :data="groups" class="oui-acls-table">
+    <uci-section type="login" addable :teasers="['username', 'shadow']" :add="addUser">
+      <uci-option-dummy :label="$t('Username')" name="username"></uci-option-dummy>
+      <uci-option-switch :label="$t('Use the Linux system user password')" name="shadow" :load="isShadow" @change="shadowChanged" save=""></uci-option-switch>
+      <uci-option-input :label="$t('Password')" name="password" depend="!shadow" required password :description="$t('acl-password-description')" :save="savePasswd"></uci-option-input>
+      <uci-option :label="$t('User ACLs')" name="acls" :load="loadAcls" :save="saveAcls" :description="$t('acl-acl-description')">
+        <template v-slot="{sid, o}">
+          <el-table :data="o.formValue(sid)" class="oui-acls-table">
             <el-table-column :label="$t('ACL Group')" prop="description"></el-table-column>
             <el-table-column label="N" width="30">
               <template v-slot="{row}">
-                <el-radio v-model="row.value" label="n"></el-radio>
+                <el-radio v-model="row.acl" label="n"></el-radio>
               </template>
             </el-table-column>
             <el-table-column label="R" width="30">
               <template v-slot="{row}">
-                <el-radio v-model="row.value" label="r"></el-radio>
+                <el-radio v-model="row.acl" label="r"></el-radio>
               </template>
             </el-table-column>
             <el-table-column label="F" width="30">
               <template v-slot="{row}">
-                <el-radio v-model="row.value" label="w"></el-radio>
+                <el-radio v-model="row.acl" label="f"></el-radio>
               </template>
             </el-table-column>
           </el-table>
@@ -34,21 +34,72 @@
 export default {
   data() {
     return {
-      acls: {},
-      radio: '',
-      groups: []
+      groups: null
     }
   },
   methods: {
+    cryptPassword(data) {
+      return this.$ubus.call('oui.ui', 'crypt', {data});
+    },
     callACLs() {
       return this.$ubus.call('oui.ui', 'acls');
     },
     isShadow(resolve, sid) {
-      let r = '0';
+      let r = false;
       const pw = this.$uci.get('rpcd', sid, 'password');
       if (pw && pw.indexOf('$p$') === 0)
-        r = '1';
+        r = true;
       resolve(r);
+    },
+    shadowChanged(v, sid, self) {
+      const s = self.uciSection;
+      const pw = s.formValue('password', sid);
+
+      if (!v && pw && pw.indexOf('$p$') === 0)
+        s.setFormValue('password', sid, '');
+    },
+    savePasswd(config, sid, name, value, self) {
+      const s = self.uciSection;
+      const username = s.formValue('username', sid);
+      let sh = s.formValue('shadow', sid);
+      let pw = value;
+
+      if (sh)
+        pw = '$p$' + username;
+
+      if (pw.match(/^\$[0-9p][a-z]?\$/)) {
+        if (pw !== this.$uci.get('rpcd', sid, 'password'))
+          this.$uci.set('rpcd', sid, 'password', pw);
+      } else {
+        return new Promise(resolve => {
+          this.cryptPassword(pw).then(r => {
+            this.$uci.set('rpcd', sid, 'password', r.crypt);
+            resolve();
+          });
+        });
+      }
+    },
+    addUser(self) {
+      this.$prompt(this.$t('Please input a username'), this.$t('Add'), {
+        inputValidator: value => {
+          if (!value)
+            return true;
+
+          const sections = self.sections;
+          for (let i = 0; i < sections.length; i++)
+            if (sections[i].username === value)
+              return this.$t('Username already used');
+
+          return true;
+        }
+      }).then(r => {
+        if (!r.value)
+          return;
+
+        const sid = this.$uci.add('rpcd', 'login');
+        this.$uci.set('rpcd', sid, 'username', r.value);
+        self.postAdd(sid);
+      });
     },
     mergeACLScope(aclScope, scope) {
       if (Array.isArray(scope)) {
@@ -93,29 +144,112 @@ export default {
         read: s.read || [],
         write: s.write || []
       });
-    }
-  },
-  created() {
-    this.callACLs().then(r => {
-      const acls = {};
+    },
+    aclMatch(list, group) {
+      if (list.indexOf('!' + group) > -1)
+        return false;
 
-      r.acls.forEach(tree => {
-        for (const name in tree) {
-          const aclAroup = acls[name] || (acls[name] = {});
-          this.mergeACLGroup(aclAroup, tree[name]);
+      if (list.indexOf(group) > -1)
+        return true;
+
+      if (list[0] === '*')
+        return true;
+    },
+    loadGroups() {
+      return new Promise(resolve => {
+        if (this.groups) {
+          resolve();
+          return;
+        }
+
+        this.callACLs().then(r => {
+          const acls = {};
+
+          r.acls.forEach(tree => {
+            for (const name in tree) {
+              const aclAroup = acls[name] || (acls[name] = {});
+              this.mergeACLGroup(aclAroup, tree[name]);
+            }
+          });
+
+          const groups = [];
+
+          for (const groupName in acls) {
+            groups.push({
+              description: acls[groupName].description,
+              name: groupName
+            });
+          }
+
+          this.groups = groups;
+          resolve();
+        });
+      });
+    },
+    loadAcls(resolve, sid) {
+      this.loadGroups().then(() => {
+        const readList = this.$uci.get('rpcd', sid, 'read') || [];
+        const writeList = this.$uci.get('rpcd', sid, 'write') || [];
+        const groups = [];
+
+        this.groups.forEach(g => {
+          const r = this.aclMatch(readList, g.name);
+          const w = this.aclMatch(writeList, g.name);
+
+          groups.push({
+            acl: w ? 'f' : (r ? 'r' : 'n'),
+            ...g
+          });
+        });
+
+        resolve(groups);
+      });
+    },
+    aclToUCI(list) {
+      if (list.length < this.groups.length / 2)
+        return list;
+
+      const set = {};
+      list.forEach(v => {
+        set[v] = true;
+      });
+
+      const rv = ['*'];
+
+      this.groups.forEach(g => {
+        if (!set[g.name])
+          rv.push('!' + g.name);
+      });
+
+      return rv;
+    },
+    saveAcls(config, sid, name, value) {
+      let readList = [];
+      let writeList = [];
+
+      value.forEach(group => {
+        const name = group.name;
+        const acl = group.acl;
+        if (acl === 'f') {
+          readList.push(name);
+          writeList.push(name);
+        } else if (acl === 'r') {
+          readList.push(name);
         }
       });
 
-      console.log(acls);
+      readList = this.aclToUCI(readList);
+      writeList = this.aclToUCI(writeList);
 
-      this.acls = acls;
+      const originalReadList = this.$uci.get('rpcd', sid, 'read') || [];
+      const originalWriteList = this.$uci.get('rpcd', sid, 'write') || [];
 
-      for (const groupName in acls) {
-        this.groups.push({
-          description: acls[groupName].description
-        });
-      }
-    });
+      if (!window.oui.isEqual(readList, originalReadList))
+        this.$uci.set('rpcd', sid, 'read', this.aclToUCI(readList));
+
+      if (!window.oui.isEqual(writeList, originalWriteList))
+        this.$uci.set('rpcd', sid, 'write', this.aclToUCI(writeList));
+    }
   }
 }
 </script>
