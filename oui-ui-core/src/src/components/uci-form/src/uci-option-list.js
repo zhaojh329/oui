@@ -36,7 +36,9 @@ export default {
           value = value.map(v => v.toString());
         else
           value = [];
-      } else if (typeof(value) !== 'undefined') {
+      } else {
+        if (typeof(value) === 'undefined')
+          value = '';
         value = value.toString();
       }
       return value;

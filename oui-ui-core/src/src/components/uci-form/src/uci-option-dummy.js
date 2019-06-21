@@ -9,6 +9,8 @@ export default {
       return 'span';
     },
     _save() {
+    },
+    _apply() {
     }
   }
 }

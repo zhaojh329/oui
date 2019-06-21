@@ -77,7 +77,7 @@ uci.set = function(conf, sid, opt, val) {
     return;
 
   if (n[conf] && n[conf][sid]) {
-    if (typeof(val) !== 'undefined' && !isEmptyArray(val)) {
+    if (typeof(val) !== 'undefined' && val !== '' && !isEmptyArray(val)) {
       n[conf][sid][opt] = val;
     } else {
       delete n[conf][sid][opt];
@@ -89,13 +89,6 @@ uci.set = function(conf, sid, opt, val) {
 
     /* only set in existing sections */
     if (!v[conf] || !v[conf][sid])
-      return;
-
-    /* Ignore the same value */
-    const old = v[conf][sid][opt];
-    if (typeof(old) === 'undefined' && (val === '' || isEmptyArray(val)))
-      return;
-    if (old === val)
       return;
 
     if (!c[conf])

@@ -229,9 +229,9 @@ export default {
       this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tabName, sid: sid});
     },
     convertFromUCI(value) {
-      if (typeof(value) !== 'undefined')
-        value = value.toString();
-      return value;
+      if (typeof(value) === 'undefined')
+        value = '';
+      return value.toString();
     },
     getUciValue(sid) {
       let value = this.$uci.get(this.config, sid, this.uciopt);
@@ -241,7 +241,12 @@ export default {
     },
     buildFormValue(sid, value) {
       const prop = this.formProp(sid);
-      this.original = value;
+
+      if (typeof(value) === 'object')
+        this.original = JSON.parse(JSON.stringify(value));
+      else
+        this.original = value;
+
       this.$set(this.form, prop, value);
 
       this.$watch(`form.${prop}`, value => {
@@ -297,7 +302,8 @@ export default {
     },
     _save(sid) {
       let value = this.formValue(sid);
-      if (value === this.original)
+
+      if (window.oui.isEqual(value, this.original))
         return;
 
       if (this.save) {
@@ -310,8 +316,9 @@ export default {
     },
     _apply(sid) {
       const value = this.formValue(sid);
-      if (value === this.original)
-        return null;
+
+      if (window.oui.isEqual(value, this.original))
+        return;
 
       if (typeof(this.apply) !== 'undefined') {
         const p = new Promise(resolve => {

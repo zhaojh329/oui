@@ -21,6 +21,7 @@ export default {
   methods: {
     convertFromUCI(value) {
       let inactiveValue = false;
+
       if (typeof(this.inactiveValue) !== 'undefined')
         inactiveValue = this.inactiveValue;
 
