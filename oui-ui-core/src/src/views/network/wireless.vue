@@ -62,7 +62,7 @@ export default {
     }
   },
   methods: {
-    filterInterface(self, s) {
+    filterInterface(s, self) {
       return self.options.radio === s.device;
     }
   },

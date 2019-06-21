@@ -24,7 +24,7 @@ export default {
     },
     /* Render in a table */
     table: Boolean,
-    /* Parameters: self, uci section */
+    /* Parameters: uci section, self */
     filter: Function,
     options: {
       type: Object,
@@ -68,7 +68,7 @@ export default {
         sections = this.sections;
 
       if (this.filter)
-        sections = sections.filter(s => this.filter(this, s));
+        sections = sections.filter(s => this.filter(s, this));
       return sections.map(s => s['.name']);
     }
   },

@@ -51,7 +51,7 @@ export default {
       label += '</span>'
       return label;
     },
-    filterVlanSection(self, s) {
+    filterVlanSection(s, self) {
       return self.options.swname === s.device;
     },
     addVlanSection(self) {
