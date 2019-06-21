@@ -109,12 +109,12 @@ export default {
       if (this.teasers) {
         this.teasers.forEach(name => {
           const o = this.children[name];
-          teasers.push([o.label, o.formValue(sid)]);
+          teasers.push([o.label, o.textValue(sid)]);
         });
       } else {
         for (const name in this.children) {
           const o = this.children[name];
-          const v = o.formValue(sid)
+          const v = o.textValue(sid)
           teasers.push([o.label, v]);
         }
       }

@@ -210,6 +210,18 @@ export default {
     formValue(sid) {
       return this.form[this.formProp(sid)];
     },
+    textValue(sid) {
+      let v = this.formValue(sid);
+
+      if (typeof(v) === 'object') {
+        if (Array.isArray(v))
+          v = v.join(', ');
+        else
+          v = JSON.stringify(v);
+      }
+
+      return v;
+    },
     dependExprValue(sid) {
       const v = this.formValue(sid);
       return `'${v}'`;

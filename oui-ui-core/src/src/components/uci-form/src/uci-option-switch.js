@@ -18,7 +18,27 @@ export default {
       default: () => undefined
     }
   },
+  data() {
+    return {
+      trueValues: ['1', 'yes', 'on', 'true', 'enabled']
+    }
+  },
   methods: {
+    textValue(sid) {
+      let v = this.formValue(sid);
+
+      if (typeof(this.activeValue) !== 'undefined') {
+        if (v === this.activeValue)
+          return 'yes';
+        else
+          return 'no';
+      } else {
+        if (v)
+          return 'yes';
+        else
+          return 'no';
+      }
+    },
     convertFromUCI(value) {
       let inactiveValue = false;
 
@@ -29,7 +49,7 @@ export default {
         if (value !== this.activeValue)
           value = inactiveValue;
       } else {
-        if (value && value !== '0')
+        if (this.trueValues.indexOf(value) > -1)
           value = true;
         else
           value = inactiveValue;
