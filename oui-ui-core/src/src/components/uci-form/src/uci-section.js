@@ -84,6 +84,11 @@ export default {
         return o.formValue(sid);
       return undefined;
     },
+    setFormValue(name, sid, val) {
+      const o = this.children[name];
+      if (o)
+        o.setFormValue(sid, val);
+    },
     addChild(o) {
       this.$set(this.children, o.name, o);
     },

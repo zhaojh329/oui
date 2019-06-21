@@ -210,6 +210,9 @@ export default {
     formValue(sid) {
       return this.form[this.formProp(sid)];
     },
+    setFormValue(sid, val) {
+      this.form[this.formProp(sid)] = val;
+    },
     textValue(sid) {
       let v = this.formValue(sid);
 
