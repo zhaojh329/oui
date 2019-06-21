@@ -17,7 +17,7 @@
       </uci-tab>
     </uci-section>
     <uci-section :title="$t('Time Synchronization')" name="ntp">
-      <uci-option-switch :label="$t('Enable NTP client')" name="enable" save="_" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option-switch>
+      <uci-option-switch :label="$t('Enable NTP client')" name="enable" save="" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option-switch>
       <uci-option-switch :label="$t('Provide NTP server')" name="enable_server" depend="enable"></uci-option-switch>
       <uci-option-dlist :label="$t('NTP server candidates')" name="server" depend="enable"></uci-option-dlist>
     </uci-section>

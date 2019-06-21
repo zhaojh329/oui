@@ -23,7 +23,7 @@ export default {
     load: [String, Array, Function],
     /*
     ** If a function provided, it will be called when oui saves the uci configuration.
-    ** If an any string provided, indicates don't save uci.
+    ** If any other value provided, indicates don't save uci.
     ** Parameters: config, sid, name, value, self
     */
     save: [String, Function],
@@ -322,7 +322,7 @@ export default {
       if (window.oui.isEqual(value, this.original[sid]))
         return;
 
-      if (this.save) {
+      if (typeof(this.save) !== 'undefined') {
         if (typeof(this.save) === 'function')
           return this.save(this.config, sid, this.name, value, this);
         return;
