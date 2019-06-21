@@ -92,45 +92,60 @@ export default {
       if (this.validates[name])
         this.validates[name].valid = valid;
     },
+    save() {
+      return new Promise(resolve => {
+        const promises = [];
+
+        this.sections.forEach(s => {
+          promises.push(...s.save());
+        });
+
+        if (promises.length > 0) {
+          Promise.all(promises).then(() => {
+            resolve();
+          });
+        } else {
+          resolve();
+        }
+      });
+    },
     apply() {
       this.$refs['form'].validate(valid => {
         if (!valid)
           return;
 
-        this.sections.forEach(s => {
-          s.save();
-        });
+        this.save().then(() => {
+          const promises = [];
 
-        const promises = [];
+          this.sections.forEach(s => {
+            promises.push(...s.apply());
+          });
 
-        this.sections.forEach(s => {
-          promises.push(...s.apply());
-        });
-
-        if (this.$uci.changed() > 0) {
-          const p = new Promise(resolve => {
-            this.$uci.save().then(() => {
-              this.$uci.apply().then(() => {
-                resolve();
+          if (this.$uci.changed() > 0) {
+            const p = new Promise(resolve => {
+              this.$uci.save().then(() => {
+                this.$uci.apply().then(() => {
+                  resolve();
+                });
               });
             });
-          });
-          promises.push(p);
-        }
+            promises.push(p);
+          }
 
-        if (promises.length === 0) {
-          this.$message.warning(this.$t('There are no changes to apply'));
-          return;
-        }
+          if (promises.length === 0) {
+            this.$message.warning(this.$t('There are no changes to apply'));
+            return;
+          }
 
-        const loading = this.$getLoading(this.$t('Waiting for configuration to be applied...'));
+          const loading = this.$getLoading(this.$t('Waiting for configuration to be applied...'));
 
-        Promise.all(promises).then(() => {
-          this.load().then(() => {
-            this.reset();
-            this.$emit('apply');
-            loading.close();
-            this.$message.success(this.$t('Configuration has been applied'));
+          Promise.all(promises).then(() => {
+            this.load().then(() => {
+              this.reset();
+              this.$emit('apply');
+              loading.close();
+              this.$message.success(this.$t('Configuration has been applied'));
+            });
           });
         });
       });

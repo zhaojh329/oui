@@ -37,6 +37,11 @@
       } else {
         return v1 === v2;
       }
+    },
+
+    isPromise(obj) {
+      return typeof(obj) === 'object' && obj !== null &&
+        typeof(obj.then) === 'function' && typeof(obj.catch) === 'function';
     }
   }
 })()

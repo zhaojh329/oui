@@ -78,6 +78,12 @@ export default {
     }
   },
   methods: {
+    formValue(name, sid) {
+      const o = this.children[name];
+      if (o)
+        return o.formValue(sid);
+      return undefined;
+    },
     addChild(o) {
       this.$set(this.children, o.name, o);
     },
@@ -135,20 +141,29 @@ export default {
       return keys.length;
     },
     save() {
-      this.sids.forEach(sid => {
-        for (const name in this.children)
-          this.children[name]._save(sid);
-      });
-    },
-    apply() {
       const promises = [];
+
       this.sids.forEach(sid => {
         for (const name in this.children) {
-          const p = this.children[name]._apply(sid);
-          if (p)
+          const p = this.children[name]._save(sid);
+          if (window.oui.isPromise(p))
             promises.push(p);
         }
       });
+
+      return promises;
+    },
+    apply() {
+      const promises = [];
+
+      this.sids.forEach(sid => {
+        for (const name in this.children) {
+          const p = this.children[name]._apply(sid);
+          if (window.oui.isPromise(p))
+            promises.push(p);
+        }
+      });
+
       return promises;
     }
   },

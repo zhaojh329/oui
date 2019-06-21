@@ -263,10 +263,10 @@ export default {
       this.$set(this.form, prop, value);
 
       this.$watch(`form.${prop}`, value => {
-        this.$emit('change', value, this);
+        this.$emit('change', value, sid, this);
       });
 
-      this.$emit('change', value, this);
+      this.$emit('change', value, sid, this);
     },
     buildFormSid(sid) {
       let value = undefined;
@@ -321,7 +321,7 @@ export default {
 
       if (this.save) {
         if (typeof(this.save) === 'function')
-          this.save(this.config, sid, this.name, value, this);
+          return this.save(this.config, sid, this.name, value, this);
         return;
       }
 
@@ -333,14 +333,8 @@ export default {
       if (window.oui.isEqual(value, this.original))
         return;
 
-      if (typeof(this.apply) !== 'undefined') {
-        const p = new Promise(resolve => {
-          this.apply(resolve, value, this);
-        });
-        return p;
-      }
-
-      return null;
+      if (typeof(this.apply) !== 'undefined')
+        return this.apply(value, this);
     },
     renderOpt() {
       return 'div';

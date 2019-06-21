@@ -84,24 +84,25 @@ export default {
         resolve(enabled);
       });
     },
-    ntpCliEnableApply(resolve, v) {
-      if (v) {
-        this.$system.initStart('sysntpd').then(() => {
-          this.$system.initEnable('sysntpd').then(() => {
-            resolve();
+    ntpCliEnableApply(v) {
+      return new Promise(resolve => {
+        if (v) {
+          this.$system.initStart('sysntpd').then(() => {
+            this.$system.initEnable('sysntpd').then(() => {
+              resolve();
+            });
           });
-        });
-      } else {
-        this.$system.initStop('sysntpd').then(() => {
-          this.$system.initDisable('sysntpd').then(() => {
-            resolve();
+        } else {
+          this.$system.initStop('sysntpd').then(() => {
+            this.$system.initDisable('sysntpd').then(() => {
+              resolve();
+            });
           });
-        });
-      }
+        }
+      });
     },
-    updateHostname(resolve, value) {
+    updateHostname(value) {
       this.$store.commit('setHostname', value);
-      resolve();
     }
   }
 }
