@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       /* original value */
-      original: null,
+      original: {},
       uid: -1
     }
   },
@@ -259,9 +259,9 @@ export default {
       const prop = this.formProp(sid);
 
       if (typeof(value) === 'object')
-        this.original = JSON.parse(JSON.stringify(value));
+        this.original[sid] = JSON.parse(JSON.stringify(value));
       else
-        this.original = value;
+        this.original[sid] = value;
 
       this.$set(this.form, prop, value);
 
@@ -319,7 +319,7 @@ export default {
     _save(sid) {
       let value = this.formValue(sid);
 
-      if (window.oui.isEqual(value, this.original))
+      if (window.oui.isEqual(value, this.original[sid]))
         return;
 
       if (this.save) {
@@ -333,7 +333,7 @@ export default {
     _apply(sid) {
       const value = this.formValue(sid);
 
-      if (window.oui.isEqual(value, this.original))
+      if (window.oui.isEqual(value, this.original[sid]))
         return;
 
       if (typeof(this.apply) !== 'undefined')
