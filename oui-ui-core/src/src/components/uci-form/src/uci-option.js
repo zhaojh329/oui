@@ -1,6 +1,7 @@
 import validator from './validator'
 
 export default {
+  name: 'UciOption',
   inject: ['uciForm', 'uciSection'],
   props: {
     label: String,
@@ -328,6 +329,9 @@ export default {
       }
 
       return null;
+    },
+    renderOpt() {
+      return 'div';
     }
   },
   created() {
