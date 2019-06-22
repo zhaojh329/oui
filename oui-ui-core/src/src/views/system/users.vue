@@ -2,7 +2,7 @@
   <uci-form config="rpcd">
     <uci-section type="login" addable :teasers="['username', 'shadow']" :add="addUser">
       <uci-option-dummy :label="$t('Username')" name="username"></uci-option-dummy>
-      <uci-option-switch :label="$t('Use the Linux system user password')" name="shadow" :load="isShadow" @change="shadowChanged" save=""></uci-option-switch>
+      <uci-option-switch :label="$t('Use the Linux system user password')" name="shadow" :load="isShadow" @change="shadowChanged" :save="saveShadow"></uci-option-switch>
       <uci-option-input :label="$t('Password')" name="password" depend="!shadow" required password :description="$t('acl-password-description')" :save="savePasswd"></uci-option-input>
       <uci-option :label="$t('User ACLs')" name="acls" :load="loadAcls" :save="saveAcls" :description="$t('acl-acl-description')">
         <template v-slot="{sid, o}">
@@ -58,11 +58,10 @@ export default {
       if (!v && pw && pw.indexOf('$p$') === 0)
         s.setFormValue('password', sid, '');
     },
-    savePasswd(config, sid, name, value, self) {
-      const s = self.uciSection;
+    doSavePasswd(s, sid) {
       const username = s.formValue('username', sid);
-      let sh = s.formValue('shadow', sid);
-      let pw = value;
+      const sh = s.formValue('shadow', sid);
+      let pw = s.formValue('password', sid);
 
       if (sh)
         pw = '$p$' + username;
@@ -72,12 +71,19 @@ export default {
           this.$uci.set('rpcd', sid, 'password', pw);
       } else {
         return new Promise(resolve => {
-          this.cryptPassword(pw).then(r => {
-            this.$uci.set('rpcd', sid, 'password', r.crypt);
+          this.cryptPassword(pw).then(({crypt}) => {
+            if (crypt !== this.$uci.get('rpcd', sid, 'password'))
+              this.$uci.set('rpcd', sid, 'password', crypt);
             resolve();
           });
         });
       }
+    },
+    saveShadow(config, sid, name, value, self) {
+      return this.doSavePasswd(self.uciSection, sid);
+    },
+    savePasswd(config, sid, name, value, self) {
+      return this.doSavePasswd(self.uciSection, sid);
     },
     addUser(self) {
       this.$prompt(this.$t('Please input a username'), this.$t('Add'), {
