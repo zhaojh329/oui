@@ -369,5 +369,6 @@
   "Network diagnostic tools": "Network diagnostic tools",
   "Host entry management": "Host entry management",
   "Network, switch and routing configuration": "Network, switch and routing configuration",
-  "Firewall configuration": "Firewall configuration"
+  "Firewall configuration": "Firewall configuration",
+  "Really reboot now?": "Really reboot now?"
 }

@@ -102,8 +102,10 @@ export default {
       if (cmd === 'logout') {
         this.$router.push('/login');
       } else if (cmd === 'reboot') {
-        this.$system.reboot().then(() => {
-          this.$reconnect('Rebooting...');
+        this.$confirm(this.$t('Really reboot now?'), this.$t('Reboot')).then(() => {
+          this.$system.reboot().then(() => {
+            this.$reconnect('Rebooting...');
+          });
         });
       }
     }

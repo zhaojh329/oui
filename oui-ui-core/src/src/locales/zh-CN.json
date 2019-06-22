@@ -138,7 +138,7 @@
   "Flash new firmware image": "刷写新的固件",
   "Really reset all changes?": "确定要放弃所有更改？",
   "This will reset the system to its initial configuration, all changes made since the initial flash will be lost!": "该操作将把设备恢复到初始配置状态，您的所有更改将被丢失!",
-  "Rebooting...": "正在重启",
+  "Rebooting...": "正在重启...",
   "Backup restore": "备份恢复",
   "backup archive was uploaded completely": "备份存档已上传，请注意核对文件大小和校验值！单击“{btn}”执行恢复操作",
   "Checksum": "校验值",
@@ -369,5 +369,6 @@
   "Network diagnostic tools": "网络诊断工具",
   "Host entry management": "主机名管理",
   "Network, switch and routing configuration": "网络，交换机和路由配置",
-  "Firewall configuration": "防火墙配置"
+  "Firewall configuration": "防火墙配置",
+  "Really reboot now?": "确定要重启吗？"
 }
