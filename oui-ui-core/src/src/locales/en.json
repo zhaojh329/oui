@@ -393,5 +393,6 @@
   "Limit log messages": "Limit log messages",
   "IPv4 only": "IPv4 only",
   "IPv6 only": "IPv6 only",
-  "IPv4 and IPv6": "IPv4 and IPv6"
+  "IPv4 and IPv6": "IPv4 and IPv6",
+  "unspecified": "unspecified"
 }

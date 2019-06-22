@@ -393,5 +393,6 @@
   "Limit log messages": "限制日志信息",
   "IPv4 only": "仅IPv4",
   "IPv6 only": "仅IPv6",
-  "IPv4 and IPv6": "IPv4和IPv6"
+  "IPv4 and IPv6": "IPv4和IPv6",
+  "unspecified": "未指定"
 }

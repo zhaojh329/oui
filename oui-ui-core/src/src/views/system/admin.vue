@@ -62,7 +62,9 @@ export default {
         password: [{validator: validatePass}],
         confirm: [{validator: validatorConfirm}]
       },
-      interfaces: [],
+      interfaces: [
+        ['', this.$t('unspecified')]
+      ],
       hasDropbear: false
     }
   },
@@ -78,7 +80,7 @@ export default {
   created() {
     this.$network.load().then(() => {
       const interfaces = this.$network.getInterfaces();
-      this.interfaces = interfaces.map(item => item.name);
+      this.interfaces.push(...interfaces.map(item => item.name));
     });
 
     this.$uci.load('dropbear').then(() => {
