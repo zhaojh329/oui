@@ -74,6 +74,15 @@ export default {
         return 10;
       return 13;
     }
+  },
+  watch: {
+    visible() {
+      if (this.visible) {
+        this.$nextTick(() => {
+          this.uciForm.$refs['form'].validateField(this.prop);
+        });
+      }
+    }
   }
 }
 </script>
