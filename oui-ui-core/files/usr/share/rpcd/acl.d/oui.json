@@ -11,7 +11,7 @@
 	},
 
 	"core": {
-		"description": "Core functions for LuCI",
+		"description": "Core functions for OUI",
 		"read": {
 			"ubus": {
 				"oui.ui": [
@@ -23,7 +23,7 @@
 					"get"
 				],
 				"uci": [
-					"*"
+					"oui"
 				]
 			}
 		}
@@ -94,20 +94,14 @@
 				"oui.system": [
 					"init_list"
 				]
-			},
-			"uci": [
-				"oui"
-			]
+			}
 		},
 		"write": {
 			"ubus": {
 				"oui.system": [
 					"init_action"
 				]
-			},
-			"uci": [
-				"oui"
-			]
+			}
 		}
 	},
 
@@ -139,11 +133,21 @@
 	"users": {
 		"description": "Guest login settings",
 		"read": {
+			"ubus": {
+				"oui.ui": [
+					"acls"
+				]
+			},
 			"uci": [
 				"rpcd"
 			]
 		},
 		"write": {
+			"ubus": {
+				"oui.ui": [
+					"crypt"
+				]
+			},
 			"uci": [
 				"rpcd"
 			]

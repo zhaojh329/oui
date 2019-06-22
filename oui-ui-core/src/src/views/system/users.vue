@@ -175,6 +175,8 @@ export default {
           const groups = [];
 
           for (const groupName in acls) {
+            if (groupName === 'unauthenticated')
+              continue;
             groups.push({
               description: acls[groupName].description,
               name: groupName
