@@ -1,13 +1,9 @@
 <template>
   <div v-if="visible">
-    <el-form-item v-if="table" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
-      <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
-    </el-form-item>
+    <uci-option-ui v-if="table" :table="table" :label="label" :prop="prop" :sid="sid" :option="option"></uci-option-ui>
     <el-row v-else :gutter="10">
       <el-col :md="20" :lg="lgForm" :xl="xlForm">
-        <el-form-item :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
-          <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
-        </el-form-item>
+        <uci-option-ui :table="table" :label="label" :prop="prop" :sid="sid" :option="option"></uci-option-ui>
       </el-col>
       <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
     </el-row>

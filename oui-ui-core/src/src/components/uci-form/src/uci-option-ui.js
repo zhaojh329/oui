@@ -4,6 +4,8 @@ export default {
   name: 'UciOptionUi',
   inject: ['uciForm'],
   props: {
+    label: String,
+    table: Boolean,
     option: Object,
     sid: String
   },
@@ -19,6 +21,7 @@ export default {
     }
   },
   render(h) {
+    const self = this;
     const data = {
       props: {
         value: this.form[this.prop],
@@ -32,11 +35,21 @@ export default {
     };
     const children = [];
 
-    if (this.option.$scopedSlots.default)
-      return this.option.$scopedSlots.default({sid: this.sid, o: this.option});
+    let opt;
 
-    const tag = this.option.renderOpt(h, data, children);
+    if (this.option.$scopedSlots.default) {
+      opt = this.option.$scopedSlots.default({sid: this.sid, o: this.option});
+    } else {
+      const tag = this.option.renderOpt(h, data, children);
+      opt = h(tag, data, children);
+    }
 
-    return h(tag, data, children);
+    return h('el-form-item', {
+      props: {
+        label: self.label,
+        prop: self.prop,
+        labelWidth: self.table ? 'auto' : ''
+      }
+    }, [opt]);
   }
 }
