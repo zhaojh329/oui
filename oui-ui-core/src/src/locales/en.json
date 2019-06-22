@@ -382,5 +382,16 @@
   "drop": "drop",
   "accept": "accept",
   "Masquerading": "Masquerading",
-  "MSS clamping": "MSS clamping"
+  "MSS clamping": "MSS clamping",
+  "Zone": "Zone",
+  "Covered networks": "Covered networks",
+  "Restrict to address family": "Restrict to address family",
+  "Restrict Masquerading to given source subnets": "Restrict Masquerading to given source subnets",
+  "Restrict Masquerading to given destination subnets": "Restrict Masquerading to given destination subnets",
+  "Force connection tracking": "Force connection tracking",
+  "Enable logging on this zone": "Enable logging on this zone",
+  "Limit log messages": "Limit log messages",
+  "IPv4 only": "IPv4 only",
+  "IPv6 only": "IPv6 only",
+  "IPv4 and IPv6": "IPv4 and IPv6"
 }

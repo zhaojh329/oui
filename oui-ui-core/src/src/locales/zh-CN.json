@@ -382,5 +382,16 @@
   "drop": "丢弃",
   "accept": "接受",
   "Masquerading": "IP动态伪装",
-  "MSS clamping": "MSS钳制"
+  "MSS clamping": "MSS钳制",
+  "Zone": "区域",
+  "Covered networks": "覆盖网络",
+  "Restrict to address family": "限制地址",
+  "Restrict Masquerading to given source subnets": "要限制IP动态伪装的源子网",
+  "Restrict Masquerading to given destination subnets": "要限制IP动态伪装的目标子网",
+  "Force connection tracking": "强制连接追踪",
+  "Enable logging on this zone": "启用此区域的日志记录",
+  "Limit log messages": "限制日志信息",
+  "IPv4 only": "仅IPv4",
+  "IPv6 only": "仅IPv6",
+  "IPv4 and IPv6": "IPv4和IPv6"
 }
