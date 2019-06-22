@@ -1,12 +1,17 @@
 <template>
-  <el-row :gutter="10" v-if="visible">
-    <el-col :md="20" :lg="lgForm" :xl="xlForm">
-      <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
-        <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
-      </el-form-item>
-    </el-col>
-    <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
-  </el-row>
+  <div v-if="visible">
+    <el-form-item v-if="table" ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
+      <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
+    </el-form-item>
+    <el-row v-else :gutter="10">
+      <el-col :md="20" :lg="lgForm" :xl="xlForm">
+        <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
+          <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
+        </el-form-item>
+      </el-col>
+      <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>

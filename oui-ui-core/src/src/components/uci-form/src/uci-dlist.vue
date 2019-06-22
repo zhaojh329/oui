@@ -1,5 +1,5 @@
 <template>
-  <div class="dlist">
+  <div class="oui-uci-dlist">
     <el-tag closable v-for="tag in value" :key="tag" :disable-transitions="false" @close="handleDelDlist(tag)">{{ tag }}</el-tag>
     <el-input v-if="inputVisible" size="small" ref="input" v-model="inputValue" @keyup.enter.native="handleinputConfirm" @blur="handleinputConfirm"></el-input>
     <el-button v-else size="mini" type="primary" plain @click="showInput">+ {{ $t('Add') }}</el-button>
@@ -78,8 +78,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.dlist {
+<style lang="scss">
+.oui-uci-dlist {
   display: flex;
   flex-direction: column;
 

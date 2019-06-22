@@ -13,9 +13,9 @@
                 <uci-form-item :option="o" :sid="row" :form="form" table></uci-form-item>
               </template>
             </el-table-column>
-            <el-table-column v-if="s.addable && s.type && !s.name">
+            <el-table-column v-if="s.addable && s.type && !s.name" width="70">
               <template v-slot="{ row }">
-                <el-button type="danger" style="margin-bottom: 22px" @click="s.del(row)">{{ $t('Delete') }}</el-button>
+                <el-button type="danger" size="mini" style="margin-bottom: 22px" @click="s.del(row)">{{ $t('Delete') }}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -193,19 +193,6 @@ export default {
   .apply-btn {
     float: right;
     margin-right: 50px;
-  }
-
-  .dlist {
-    display: flex;
-    flex-direction: column;
-
-    > * {
-      margin-bottom: 5px;
-    }
-
-    .el-button {
-      width: 100px;
-    }
   }
 }
 </style>
