@@ -178,7 +178,7 @@ export default {
             if (groupName === 'unauthenticated')
               continue;
             groups.push({
-              description: acls[groupName].description,
+              description: this.$t(acls[groupName].description),
               name: groupName
             });
           }

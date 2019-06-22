@@ -16,7 +16,7 @@
         "index": 20
     },
     "system/users": {
-        "title": "Guest Logins",
+        "title": "User & Acls",
         "acls": [ "users" ],
         "view": "system/users",
         "index": 30

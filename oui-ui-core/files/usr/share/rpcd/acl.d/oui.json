@@ -131,7 +131,7 @@
 	},
 
 	"users": {
-		"description": "Guest login settings",
+		"description": "User & Acls",
 		"read": {
 			"ubus": {
 				"oui.ui": [
@@ -155,7 +155,7 @@
 	},
 
 	"software": {
-		"description": "Package management",
+		"description": "Software package management",
 		"read": {
 			"ubus": {
 				"system": [
@@ -310,20 +310,6 @@
 					"nslookup"
 				]
 			}
-		}
-	},
-
-	"routes": {
-		"description": "Set static routing",
-		"read": {
-			"uci": [
-				"network"
-			]
-		},
-		"write": {
-			"uci": [
-				"network"
-			]
 		}
 	},
 
