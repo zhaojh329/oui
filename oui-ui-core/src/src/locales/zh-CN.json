@@ -370,5 +370,17 @@
   "Host entry management": "主机名管理",
   "Network, switch and routing configuration": "网络，交换机和路由配置",
   "Firewall configuration": "防火墙配置",
-  "Really reboot now?": "确定要重启吗？"
+  "Really reboot now?": "确定要重启吗？",
+  "Firewall": "防火墙",
+  "Enable SYN-flood protection": "启用SYN-flood防御",
+  "Drop invalid packets": "丢弃无效数据包",
+  "Input": "入站数据",
+  "Output": "出站数据",
+  "Forward": "转发",
+  "Zones": "区域",
+  "reject": "拒绝",
+  "drop": "丢弃",
+  "accept": "接受",
+  "Masquerading": "IP动态伪装",
+  "MSS clamping": "MSS钳制"
 }

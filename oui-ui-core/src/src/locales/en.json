@@ -370,5 +370,17 @@
   "Host entry management": "Host entry management",
   "Network, switch and routing configuration": "Network, switch and routing configuration",
   "Firewall configuration": "Firewall configuration",
-  "Really reboot now?": "Really reboot now?"
+  "Really reboot now?": "Really reboot now?",
+  "Firewall": "Firewall",
+  "Enable SYN-flood protection": "Enable SYN-flood protection",
+  "Drop invalid packets": "Drop invalid packets",
+  "Input": "Input",
+  "Output": "Output",
+  "Forward": "Forward",
+  "Zones": "Zones",
+  "reject": "reject",
+  "drop": "drop",
+  "accept": "accept",
+  "Masquerading": "Masquerading",
+  "MSS clamping": "MSS clamping"
 }

@@ -37,6 +37,13 @@
         "view": "network/hosts",
         "index": 50
     },
+    "network/firewall": {
+        "title": "Firewall",
+        "acls": [ "firewall" ],
+        "files": [ "/etc/config/firewall" ],
+        "view": "network/firewall",
+        "index": 60
+    },
     "network/routes": {
         "title": "Routes",
         "acls": [ "routes" ],
