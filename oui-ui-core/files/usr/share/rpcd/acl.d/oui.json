@@ -23,7 +23,7 @@
 					"get"
 				],
 				"uci": [
-					"oui"
+					"*"
 				]
 			}
 		}
@@ -86,6 +86,9 @@
 	"system": {
 		"description": "General system settings",
 		"read": {
+			"uci": [
+				"system"
+			],
 			"ubus": {
 				"system": [
 					"info",
@@ -101,7 +104,10 @@
 				"oui.system": [
 					"init_action"
 				]
-			}
+			},
+			"uci": [
+				"system"
+			]
 		}
 	},
 
@@ -286,15 +292,7 @@
 					"led_list",
 					"usb_list"
 				]
-			},
-			"uci": [
-				"system"
-			]
-		},
-		"write": {
-			"uci": [
-				"system"
-			]
+			}
 		}
 	},
 

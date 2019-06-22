@@ -48,7 +48,7 @@
     },
     "system/leds": {
         "title": "LED Configuration",
-        "acls": [ "leds" ],
+        "acls": [ "system", "leds" ],
         "files": [ "/etc/init.d/led" ],
         "view": "system/leds",
         "index": 80
