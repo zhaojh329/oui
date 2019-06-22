@@ -81,6 +81,8 @@ export default {
         this.$nextTick(() => {
           this.uciForm.$refs['form'].validateField(this.prop);
         });
+      } else {
+        this.uciForm.validates[this.prop].valid = true;
       }
     }
   }
