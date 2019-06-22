@@ -24,6 +24,10 @@ export default {
     },
     /* Render in a table */
     table: Boolean,
+    tableActionWidth: {
+      type: String,
+      default: '70'
+    },
     /* Parameters: uci section, self */
     filter: Function,
     options: {

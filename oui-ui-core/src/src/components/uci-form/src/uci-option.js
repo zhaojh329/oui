@@ -41,7 +41,9 @@ export default {
     rules: [String, Object, Function, Array],
     tab: String,
     /* Used for custom header of table column */
-    header: String
+    header: String,
+    /* Used for table section */
+    width: String
   },
   data() {
     return {

@@ -5,7 +5,7 @@
       <template v-for="(s, i) in sections">
         <el-card :key="i" :header="s.title">
           <el-table v-if="s.table" :data="s.sids">
-            <el-table-column v-for="o in s.arrayedOptions" :key="o.name" :label="o.label">
+            <el-table-column v-for="o in s.arrayedOptions" :key="o.name" :label="o.label" :width="o.width">
               <template slot="header" v-if="o.header">
                 <span v-html="o.header"></span>
               </template>
@@ -13,9 +13,9 @@
                 <uci-form-item :option="o" :sid="row" :form="form" table></uci-form-item>
               </template>
             </el-table-column>
-            <el-table-column v-if="s.addable && s.type && !s.name" width="70">
+            <el-table-column v-if="s.addable && s.type && !s.name" :width="s.tableActionWidth">
               <template v-slot="{ row }">
-                <el-button type="danger" size="mini" style="margin-bottom: 22px" @click="s.del(row)">{{ $t('Delete') }}</el-button>
+                <uci-section-table-action-ui style="margin-bottom: 22px" :section="s" :sid="row"></uci-section-table-action-ui>
               </template>
             </el-table-column>
           </el-table>
@@ -51,6 +51,7 @@
 import UciFormItem from './uci-form-item'
 import UciSectionAdd from './uci-section-add'
 import UciSectionUi from './uci-section-ui'
+import UciSectionTableActionUi from './uci-section-table-action-ui'
 
 export default {
   name: 'UciForm',
@@ -68,7 +69,8 @@ export default {
   components: {
     UciFormItem,
     UciSectionAdd,
-    UciSectionUi
+    UciSectionUi,
+    UciSectionTableActionUi
   },
   data() {
     return {
