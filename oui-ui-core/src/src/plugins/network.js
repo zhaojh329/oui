@@ -138,7 +138,7 @@ network.load = function() {
         this.devices.push({name: name, ...devices[name]});
       });
 
-      this.interfaces = r[1].interface.map(iface => new Interface(iface));
+      this.interfaces = r[1].interface.map(iface => new Interface(iface)).filter(i => i.name !== 'loopback');
 
       resolve();
     });

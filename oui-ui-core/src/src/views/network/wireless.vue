@@ -131,7 +131,7 @@ export default {
 
     this.$network.load().then(() => {
       const interfaces = this.$network.getInterfaces();
-      this.interfaces = interfaces.map(item => item.name).filter(name => name !== 'loopback');
+      this.interfaces = interfaces.map(item => item.name);
     });
   }
 }

@@ -96,7 +96,7 @@ export default {
   methods: {
     load() {
       this.$network.load().then(() => {
-        this.interfaces = this.$network.getInterfaces().filter(i => i.name !== 'loopback');
+        this.interfaces = this.$network.getInterfaces();
       });
     },
     onProtoChange(proto) {
