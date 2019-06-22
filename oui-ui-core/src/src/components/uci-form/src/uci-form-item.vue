@@ -1,11 +1,11 @@
 <template>
   <div v-if="visible">
-    <el-form-item v-if="table" ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
+    <el-form-item v-if="table" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
       <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
     </el-form-item>
     <el-row v-else :gutter="10">
       <el-col :md="20" :lg="lgForm" :xl="xlForm">
-        <el-form-item ref="form-item" :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
+        <el-form-item :label="label" :prop="prop" :label-width="table ? 'auto' : ''">
           <uci-option-ui :sid="sid" :option="option"></uci-option-ui>
         </el-form-item>
       </el-col>
