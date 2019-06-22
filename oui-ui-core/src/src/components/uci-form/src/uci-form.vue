@@ -1,7 +1,7 @@
 <template>
   <div class="uci-form">
     <div class="hidden-Section"><slot></slot></div>
-    <el-form class="form" label-width="280px" ref="form" :model="form" :rules="rules" @validate="onValidate">
+    <el-form class="form" label-width="280px" ref="form" :model="form" :rules="rules" @validate="onValidate" :disabled="readonly">
       <template v-for="(s, i) in sections">
         <el-card :key="i" :header="s.title">
           <el-table v-if="s.table" :data="s.sids">
@@ -79,6 +79,11 @@ export default {
       validates: {},
       sections: [], /* UciSection vue instances */
       activeCollapseItem: ''
+    }
+  },
+  computed: {
+    readonly() {
+      return !this.$uci.writable(this.config);
     }
   },
   methods: {

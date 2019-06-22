@@ -4,7 +4,9 @@ import {ubus} from './ubus'
 
 const DEFAULT_SESSION_ID	= '00000000000000000000000000000000'
 
-export const session = { }
+export const session = {
+  aclCache: null
+}
 
 session.sid = function() {
   return sessionStorage.getItem('sid') || DEFAULT_SESSION_ID;
@@ -85,6 +87,29 @@ session.stopHeartbeat = function() {
     window.clearInterval(this._hearbeatInterval);
     delete this._hearbeatInterval;
   }
+}
+
+session.updateACLs = function() {
+  return new Promise(resolve => {
+    ubus.call('session', 'access').then(acls => {
+      this.aclCache = acls || {};
+      resolve();
+    });
+  });
+}
+
+session.hasACL = function(scope, object, func) {
+  const acls = this.aclCache;
+
+  if (typeof(func) === 'undefined')
+    return (acls && acls[scope] && acls[scope][object]);
+
+  if (acls && acls[scope] && acls[scope][object])
+    for (let i = 0; i < acls[scope][object].length; i++)
+      if (acls[scope][object][i] === func)
+        return true;
+
+  return false;
 }
 
 export default {

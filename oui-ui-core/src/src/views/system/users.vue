@@ -1,5 +1,5 @@
 <template>
-  <uci-form config="rpcd">
+  <uci-form config="rpcd" @apply="onApply">
     <uci-section type="login" addable :teasers="['username', 'shadow']" :add="addUser">
       <uci-option-dummy :label="$t('Username')" name="username"></uci-option-dummy>
       <uci-option-switch :label="$t('Use the Linux system user password')" name="shadow" :load="isShadow" @change="shadowChanged" :save="saveShadow"></uci-option-switch>
@@ -257,6 +257,9 @@ export default {
 
       if (!window.oui.isEqual(writeList, originalWriteList))
         this.$uci.set('rpcd', sid, 'write', this.aclToUCI(writeList));
+    },
+    onApply() {
+      this.$session.updateACLs();
     }
   }
 }

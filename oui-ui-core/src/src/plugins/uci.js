@@ -1,5 +1,6 @@
 'use strict'
 
+import {session} from './session'
 import {ubus} from './ubus'
 
 export const uci = {
@@ -265,6 +266,14 @@ uci.apply = function(timeout) {
       reject(e);
     });
   });
+}
+
+uci.readable = function(conf) {
+  return session.hasACL('uci', conf, 'read');
+}
+
+uci.writable = function(conf) {
+  return session.hasACL('uci', conf, 'write');
 }
 
 export default {

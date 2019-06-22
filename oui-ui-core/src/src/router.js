@@ -36,7 +36,14 @@ router.beforeEach((to, from, next) => {
     session.isAlive().then(alive => {
       if (alive) {
         session.startHeartbeat();
-        next();
+
+        if (!session.aclCache) {
+          session.updateACLs().then(() => {
+            next();
+          });
+        } else {
+          next();
+        }
       } else {
         next('/login');
       }

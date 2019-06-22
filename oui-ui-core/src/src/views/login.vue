@@ -38,7 +38,9 @@ export default {
         if (valid) {
           this.$session.login(this.form.username, this.form.password).then(valid => {
             if (valid) {
-              this.$router.push('/');
+              this.$session.updateACLs().then(() => {
+                this.$router.push('/');
+              });
               return;
             }
 
