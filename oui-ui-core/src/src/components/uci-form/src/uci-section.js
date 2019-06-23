@@ -24,10 +24,7 @@ export default {
     },
     /* Render in a table */
     table: Boolean,
-    tableActionWidth: {
-      type: String,
-      default: '70'
-    },
+    tableActionWidth: String,
     /* Parameters: uci section, self */
     filter: Function,
     options: {
@@ -43,7 +40,8 @@ export default {
       type: Boolean,
       default: true
     },
-    teasers: Array
+    teasers: Array,
+    sortable: Boolean
   },
   data() {
     return {
@@ -74,6 +72,13 @@ export default {
       if (this.filter)
         sections = sections.filter(s => this.filter(s, this));
       return sections.map(s => s['.name']);
+    },
+    tableActionWidthCalc() {
+      if (this.tableActionWidth)
+        return this.tableActionWidth;
+      if (this.sortable)
+        return '150';
+      return '70';
     }
   },
   watch: {
@@ -122,6 +127,10 @@ export default {
       this.$uci.del(this.config, sid);
       this.load();
       this.destroyForm(sid);
+    },
+    swap(sid1, sid2) {
+      this.$uci.swap(this.config, sid1, sid2);
+      this.load();
     },
     teasersValue(sid) {
       const teasers = [];

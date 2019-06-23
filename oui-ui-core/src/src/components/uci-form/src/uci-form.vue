@@ -13,7 +13,7 @@
                 <uci-form-item :option="o" :sid="row" :form="form" table></uci-form-item>
               </template>
             </el-table-column>
-            <el-table-column v-if="s.addable && s.type && !s.name" :width="s.tableActionWidth">
+            <el-table-column v-if="s.addable && s.type && !s.name" :width="s.tableActionWidthCalc">
               <template v-slot="{ row }">
                 <uci-section-table-action-ui style="margin-bottom: 22px" :section="s" :sid="row"></uci-section-table-action-ui>
               </template>
@@ -50,7 +50,7 @@
                 <uci-form-item :option="o" :sid="row" :form="form" table></uci-form-item>
               </template>
             </el-table-column>
-            <el-table-column v-if="s.addable && s.type && !s.name" :width="s.tableActionWidth">
+            <el-table-column v-if="s.addable && s.type && !s.name" :width="s.tableActionWidthCalc">
               <template v-slot="{ row }">
                 <uci-section-table-action-ui style="margin-bottom: 22px" :section="s" :sid="row"></uci-section-table-action-ui>
               </template>

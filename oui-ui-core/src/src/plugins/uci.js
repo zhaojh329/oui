@@ -8,7 +8,8 @@ export const uci = {
     values: {},
     changes: {},
     creates: {},
-    deletes: {}
+    deletes: {},
+    reorder: {}
   }
 }
 
@@ -42,7 +43,7 @@ uci.sections = function(conf, type) {
   }));
   sections.push(...Object.keys(n).map(sid => n[sid]).filter(s => !type || s['.type'] === type));
 
-  return sections;
+  return sections.sort((a, b) => a['.index'] - b['.index']);
 }
 
 uci.get = function(conf, sid, opt) {
@@ -172,6 +173,24 @@ uci.del = function(conf, sid) {
   this.state.changed++;
 }
 
+uci.swap = function(conf, sid1, sid2) {
+  const s1 = this.get(conf, sid1);
+  const s2 = this.get(conf, sid2);
+  const n1 = s1 ? s1['.index'] : NaN;
+  const n2 = s2 ? s2['.index'] : NaN;
+
+  if (isNaN(n1) || isNaN(n2))
+    return false;
+
+  s1['.index'] = n2;
+  s2['.index'] = n1;
+
+  this.state.reorder[conf] = true;
+  this.state.changed++;
+
+  return true;
+},
+
 uci.changed = function() {
   return this.state.changed;
 }
@@ -180,8 +199,50 @@ uci.reset = function() {
   this.state.changes = {};
   this.state.creates = {};
   this.state.deletes = {};
+  this.state.reorder = {};
   this.state.changed = 0;
   this.state.newidx = 0;
+}
+
+uci.reorderSections = function() {
+  const v = this.state.values;
+  const n = this.state.creates;
+  const r = this.state.reorder;
+
+  const batch = [];
+
+  /*
+  ** gather all created and existing sections, sort them according
+  ** to their index value and issue an uci order call
+  */
+  for (const conf in r) {
+    const orders = [];
+
+    if (n[conf]) {
+      for (const s in n[conf])
+        orders.push(n[conf][s]);
+    }
+
+    for (const s in v[conf])
+      orders.push(v[conf][s]);
+
+    orders.sort((a, b) => a['.index'] - b['.index']);
+    const sids = orders.map(o => o['.name']);
+
+    if (sids.length > 0)
+      batch.push(['uci', 'order', {config: conf, sections: sids}]);
+  }
+
+  return new Promise(resolve => {
+    if (batch.length === 0) {
+      resolve();
+      return;
+    }
+
+    ubus.callBatch(batch).then(() => {
+      resolve();
+    });
+  });
 }
 
 uci.save = function() {
@@ -223,18 +284,23 @@ uci.save = function() {
       confs[conf] = true;
     }
 
-    this.reset();
-
-    for (const conf in confs)
-      delete this.state.values[conf];
-
     if (batch.length === 0) {
-      resolve();
+      this.reorderSections().then(() => {
+        this.reset();
+        for (const conf in confs)
+          delete this.state.values[conf];
+        resolve();
+      });
       return;
     }
 
     ubus.callBatch(batch).then(() => {
-      resolve();
+      this.reorderSections().then(() => {
+        this.reset();
+        for (const conf in confs)
+          delete this.state.values[conf];
+        resolve();
+      });
     });
   });
 }
