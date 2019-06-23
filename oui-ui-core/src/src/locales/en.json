@@ -394,5 +394,8 @@
   "IPv4 only": "IPv4 only",
   "IPv6 only": "IPv6 only",
   "IPv4 and IPv6": "IPv4 and IPv6",
-  "unspecified": "unspecified"
+  "unspecified": "unspecified",
+  "Inter-Zone Forwarding": "Inter-Zone Forwarding",
+  "Allow forward to destination zones": "Allow forward to destination zones",
+  "Allow forward from source zones": "Allow forward from source zones"
 }

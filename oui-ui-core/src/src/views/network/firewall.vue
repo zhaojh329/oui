@@ -25,7 +25,7 @@
     </uci-form>
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" custom-class="zone-edit-dialog">
       <uci-form config="firewall" v-if="dialogVisible" @apply="onApply">
-        <uci-section :name="editorZoneSid">
+        <uci-section :name="editorZone.sid">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option-list :label="$t('Input')" name="input" :options="targets" initial="ACCEPT" required></uci-option-list>
             <uci-option-list :label="$t('Output')" name="output" :options="targets" initial="ACCEPT" required></uci-option-list>
@@ -41,6 +41,10 @@
             <uci-option-switch :label="$t('Force connection tracking')" name="conntrack"></uci-option-switch>
             <uci-option-switch :label="$t('Enable logging on this zone')" name="log"></uci-option-switch>
             <uci-option-input :label="$t('Limit log messages')" name="log_limit" placeholder="10/minute" depend="log"></uci-option-input>
+          </uci-tab>
+          <uci-tab :title="$t('Inter-Zone Forwarding')" name="fwd">
+            <uci-option-list :label="$t('Allow forward to destination zones')" name="out" :load="loadDestZones" :save="saveDestZones" :options="zones.filter(name => name !== editorZone.name())" multiple></uci-option-list>
+            <uci-option-list :label="$t('Allow forward from source zones')" name="in" :load="loadSrcZones" :save="saveSrcZones" :options="zones.filter(name => name !== editorZone.name())" multiple></uci-option-list>
           </uci-tab>
         </uci-section>
       </uci-form>
@@ -58,19 +62,21 @@ export default {
         ['ACCEPT', this.$t('accept')]
       ],
       dialogVisible: false,
-      editorZoneSid: '',
-      editorZoneName: '',
+      editorZone: null,
       interfaces: [],
       families:[
         ['', this.$t('IPv4 and IPv6')],
         ['ipv4', this.$t('IPv4 only')],
         ['ipv6', this.$t('IPv6 only')]
-      ]
+      ],
+      zones: []
     }
   },
   computed: {
     dialogTitle() {
-      return `${this.$t('Zone')} "${this.editorZoneName}"`
+      if (!this.editorZone)
+        return '';
+      return `${this.$t('Zone')} "${this.editorZone.name()}"`
     }
   },
   methods: {
@@ -91,25 +97,93 @@ export default {
         if (!value)
           return;
 
-        const sid = this.$uci.add('firewall', 'zone');
-        this.$uci.set('firewall', sid, 'name', value);
-        self.postAdd(sid);
+        const loading = this.$getLoading(this.$t('Loading...'));
+
+        this.$firewall.createZone(value);
+
+        this.$uci.save().then(() => {
+          this.$uci.apply().then(() => {
+            this.$uci.load('firewall').then(() => {
+              this.$refs['form'].reset();
+              this.load();
+              loading.close();
+            });
+          });
+        });
       });
     },
     edit(sid) {
-      this.editorZoneSid = sid;
+      this.editorZone = this.$firewall.findZoneBySid(sid);
       this.dialogVisible = true;
-      this.editorZoneName = this.$uci.get('firewall', sid, 'name');
     },
     onApply() {
       this.$refs['form'].reset();
+    },
+    loadDestZones(resolve) {
+      const zones = this.editorZone.findForwardsBy('src').map(z => z.dest());
+      resolve(zones);
+    },
+    loadSrcZones(resolve) {
+      const zones = this.editorZone.findForwardsBy('dest').map(z => z.src());
+      resolve(zones);
+    },
+    saveDestZones(config, sid, name, value) {
+      const dests = value;
+      let i = 0;
+
+      this.$firewall.forwards.forEach(fwd => {
+        if (fwd.src() !== this.editorZone.name())
+          return;
+
+        if (i < dests.length)
+          fwd.set('dest', dests[i++]);
+        else
+          this.$uci.del('firewall', fwd.sid);
+      });
+
+      while (i < dests.length) {
+        const sid = this.$uci.add('firewall', 'forwarding');
+        const fwd = new this.$firewall.Forward(sid);
+
+        fwd.set('src', this.editorZone.name());
+        fwd.set('dest', dests[i++]);
+      }
+    },
+    saveSrcZones(config, sid, name, value) {
+      const srcs = value;
+      let i = 0;
+
+      this.$firewall.forwards.forEach(fwd => {
+        if (fwd.dest() !== this.editorZone.name())
+          return;
+
+        if (i < srcs.length)
+          fwd.set('src', srcs[i++]);
+        else
+          this.$uci.del('firewall', fwd.sid);
+      });
+
+      while (i < srcs.length) {
+        const sid = this.$uci.add('firewall', 'forwarding');
+        const fwd = new this.$firewall.Forward(sid);
+
+        fwd.set('src', srcs[i++]);
+        fwd.set('dest', this.editorZone.name());
+      }
+    },
+    load() {
+      this.$network.load().then(() => {
+        const interfaces = this.$network.getInterfaces();
+        this.interfaces = interfaces.map(item => item.name);
+      });
+
+      this.$firewall.load().then(() => {
+        this.zones = this.$firewall.zones.map(z => z.name());
+      });
     }
   },
   created() {
-    this.$network.load().then(() => {
-      const interfaces = this.$network.getInterfaces();
-      this.interfaces = interfaces.map(item => item.name);
-    });
+    this.load();
   }
 }
 </script>
