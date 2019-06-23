@@ -397,5 +397,18 @@
   "unspecified": "unspecified",
   "Inter-Zone Forwarding": "Inter-Zone Forwarding",
   "Allow forward to destination zones": "Allow forward to destination zones",
-  "Allow forward from source zones": "Allow forward from source zones"
+  "Allow forward from source zones": "Allow forward from source zones",
+  "Port Forwards": "Port Forwards",
+  "Source zone": "Source zone",
+  "Source MAC address": "Source MAC address",
+  "Source IP address": "Source IP address",
+  "Source port": "Source port",
+  "External IP address": "External IP address",
+  "External port": "External port",
+  "Internal zone": "Internal zone",
+  "Internal IP address": "Internal IP address",
+  "Internal port": "Internal port",
+  "Enable NAT Loopback": "Enable NAT Loopback",
+  "any": "any",
+  "Enable": "Enable"
 }

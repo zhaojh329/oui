@@ -397,5 +397,18 @@
   "unspecified": "未指定",
   "Inter-Zone Forwarding": "端口转发",
   "Allow forward to destination zones": "允许转发到目标区域",
-  "Allow forward from source zones": "允许从源区域转发"
+  "Allow forward from source zones": "允许从源区域转发",
+  "Port Forwards": "端口转发",
+  "Source zone": "源区域",
+  "Source MAC address": "源MAC地址",
+  "Source IP address": "源IP地址",
+  "Source port": "源端口",
+  "External IP address": "外部IP地址",
+  "External port": "外部端口",
+  "Internal zone": "内部区域",
+  "Internal IP address": "内部IP地址",
+  "Internal port": "内部端口",
+  "Enable NAT Loopback": "启用NAT环回",
+  "any": "所有",
+  "Enable": "启用"
 }

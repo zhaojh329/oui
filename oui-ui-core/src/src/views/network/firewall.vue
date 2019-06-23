@@ -1,6 +1,6 @@
 <template>
   <div>
-    <uci-form config="firewall" ref="form">
+    <uci-form config="firewall" ref="form" tabbed>
       <uci-section type="defaults" :title="$t('General Settings')">
         <uci-option-switch :label="$t('Enable SYN-flood protection')" name="syn_flood"></uci-option-switch>
         <uci-option-switch :label="$t('Drop invalid packets')" name="drop_invalid"></uci-option-switch>
@@ -17,14 +17,30 @@
         <uci-option-switch :label="$t('MSS clamping')" name="mtu_fix"></uci-option-switch>
         <template v-slot:action="{s, sid}">
           <el-button-group>
-            <el-button type="primary" size="mini" @click="edit(sid)">{{ $t('Edit') }}</el-button>
+            <el-button type="primary" size="mini" @click="editZone(sid)">{{ $t('Edit') }}</el-button>
+            <el-button type="danger" size="mini" @click="s.del(sid)">{{ $t('Delete') }}</el-button>
+          </el-button-group>
+        </template>
+      </uci-section>
+      <uci-section type="redirect" :title="$t('Port Forwards')" table addable :filter="filterRedirect" :add="addRedirect" table-action-width="140">
+        <uci-option-input :label="$t('Name')" name="name"></uci-option-input>
+        <uci-option-list :label="$t('Protocol')" name="proto" :options="protos" initial="tcp udp" allow-create></uci-option-list>
+        <uci-option-list :label="$t('Source zone')" name="src" :options="zones" required></uci-option-list>
+        <uci-option-input :label="$t('External port')" name="src_dport" rules="port"></uci-option-input>
+        <uci-option-list :label="$t('Internal zone')" name="dest" :options="zones" required></uci-option-list>
+        <uci-option-list :label="$t('Internal IP address')" name="dest_ip" :options="arps" allow-create rules="ip4addr"></uci-option-list>
+        <uci-option-input :label="$t('Internal port')" name="dest_port" rules="port"></uci-option-input>
+        <uci-option-switch :label="$t('Enable')" name="enabled" initial="1"></uci-option-switch>
+        <template v-slot:action="{s, sid}">
+          <el-button-group>
+            <el-button type="primary" size="mini" @click="editDnat(sid)">{{ $t('Edit') }}</el-button>
             <el-button type="danger" size="mini" @click="s.del(sid)">{{ $t('Delete') }}</el-button>
           </el-button-group>
         </template>
       </uci-section>
     </uci-form>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" custom-class="zone-edit-dialog">
-      <uci-form config="firewall" v-if="dialogVisible" @apply="onApply">
+    <el-dialog :title="dialogZoneTitle" :visible.sync="dialogZoneVisible" custom-class="firewall-edit-dialog">
+      <uci-form config="firewall" v-if="dialogZoneVisible" @apply="onApply">
         <uci-section :name="editorZone.sid">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option-list :label="$t('Input')" name="input" :options="targets" initial="ACCEPT" required></uci-option-list>
@@ -49,6 +65,24 @@
         </uci-section>
       </uci-form>
     </el-dialog>
+    <el-dialog :title="dialogDnatTitle" :visible.sync="dialogDnatVisible" custom-class="firewall-edit-dialog">
+      <uci-form config="firewall" v-if="dialogDnatVisible" @apply="onApply">
+        <uci-section :name="editorDnatSid">
+          <uci-option-input :label="$t('Name')" name="name"></uci-option-input>
+          <uci-option-list :label="$t('Protocol')" name="proto" :options="protos" initial="tcp udp" allow-create></uci-option-list>
+          <uci-option-list :label="$t('Source zone')" name="src" :options="zones" required></uci-option-list>
+          <uci-option-dlist :label="$t('Source MAC address')" name="src_mac" rules="macaddr"></uci-option-dlist>
+          <uci-option-input :label="$t('Source IP address')" name="src_ip" rules="ip4addr" :placeholder="$t('any')"></uci-option-input>
+          <uci-option-input :label="$t('Source port')" name="src_port" rules="port" :placeholder="$t('any')" depend="proto == 'tcp' || proto == 'udp' || proto == 'tcp udp'"></uci-option-input>
+          <uci-option-input :label="$t('External IP address')" name="src_dip" rules="ip4addr" :placeholder="$t('any')"></uci-option-input>
+          <uci-option-input :label="$t('External port')" name="src_dport" rules="port" depend="proto == 'tcp' || proto == 'udp' || proto == 'tcp udp'"></uci-option-input>
+          <uci-option-list :label="$t('Internal zone')" name="dest" :options="zones" required></uci-option-list>
+          <uci-option-list :label="$t('Internal IP address')" name="dest_ip" :options="arps" allow-create rules="ip4addr"></uci-option-list>
+          <uci-option-input :label="$t('Internal port')" name="dest_port" :placeholder="$t('any')" rules="port" depend="proto == 'tcp' || proto == 'udp' || proto == 'tcp udp'"></uci-option-input>
+          <uci-option-switch :label="$t('Enable NAT Loopback')" name="reflection" initial="1"></uci-option-switch>
+        </uci-section>
+      </uci-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -61,7 +95,7 @@ export default {
         ['DROP', this.$t('drop')],
         ['ACCEPT', this.$t('accept')]
       ],
-      dialogVisible: false,
+      dialogZoneVisible: false,
       editorZone: null,
       interfaces: [],
       families:[
@@ -69,14 +103,29 @@ export default {
         ['ipv4', this.$t('IPv4 only')],
         ['ipv6', this.$t('IPv6 only')]
       ],
-      zones: []
+      zones: [],
+      protos: [
+        ['tcp udp', 'TCP+UDP'],
+        ['tcp', 'TCP'],
+        ['udp', 'UDP'],
+        ['icmp', 'ICMP']
+      ],
+      arps: [],
+      editorDnatSid: '',
+      dialogDnatVisible: false
     }
   },
   computed: {
-    dialogTitle() {
+    dialogZoneTitle() {
       if (!this.editorZone)
         return '';
       return `${this.$t('Zone')} "${this.editorZone.name()}"`
+    },
+    dialogDnatTitle() {
+      if (!this.editorDnatSid)
+        return '';
+      const name = this.$uci.get('firewall', this.editorDnatSid, 'name') || '';
+      return `${this.$t('Port Forwards')} "${name}"`
     }
   },
   methods: {
@@ -112,9 +161,13 @@ export default {
         });
       });
     },
-    edit(sid) {
+    editZone(sid) {
       this.editorZone = this.$firewall.findZoneBySid(sid);
-      this.dialogVisible = true;
+      this.dialogZoneVisible = true;
+    },
+    editDnat(sid) {
+      this.editorDnatSid = sid;
+      this.dialogDnatVisible = true;
     },
     onApply() {
       this.$refs['form'].reset();
@@ -171,6 +224,32 @@ export default {
         fwd.set('dest', this.editorZone.name());
       }
     },
+    filterRedirect(s) {
+      return s.target !== 'SNAT';
+    },
+    addRedirect() {
+      const loading = this.$getLoading(this.$t('Loading...'));
+
+      const sid = this.$uci.add('firewall', 'redirect');
+
+      this.$uci.set('firewall', sid, 'target', 'DNAT');
+      this.$uci.set('firewall', sid, 'src', 'wan');
+      this.$uci.set('firewall', sid, 'dest', 'lan');
+      this.$uci.set('firewall', sid, 'proto', 'tcp udp');
+
+      this.$uci.save().then(() => {
+        this.$uci.apply().then(() => {
+          this.$uci.load('firewall').then(() => {
+            this.$refs['form'].reset();
+            this.load();
+            loading.close();
+          });
+        });
+      });
+    },
+    getARPTable() {
+      return this.$ubus.call('oui.network', 'arp_table');
+    },
     load() {
       this.$network.load().then(() => {
         const interfaces = this.$network.getInterfaces();
@@ -184,12 +263,21 @@ export default {
   },
   created() {
     this.load();
+
+    this.getARPTable().then(r => {
+      r.entries.forEach(arp => {
+        if (arp.macaddr === '00:00:00:00:00:00')
+          return;
+
+        this.arps.push([arp.ipaddr, `${arp.ipaddr} (${arp.macaddr})`]);
+      });
+    });
   }
 }
 </script>
 
 <style lang="scss">
-.zone-edit-dialog {
+.firewall-edit-dialog {
   .el-dialog__header {
     padding: 10px 20px 10px;
   }
