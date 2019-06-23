@@ -1,5 +1,3 @@
-'use strict'
-
 import {ubus} from './ubus'
 
 const DEFAULT_SESSION_ID	= '00000000000000000000000000000000'

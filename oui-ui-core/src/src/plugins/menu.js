@@ -1,5 +1,3 @@
-'use strict'
-
 import {ubus} from './ubus'
 
 const menu = {}

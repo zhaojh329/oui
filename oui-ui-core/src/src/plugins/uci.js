@@ -1,5 +1,3 @@
-'use strict'
-
 import {session} from './session'
 import {ubus} from './ubus'
 
