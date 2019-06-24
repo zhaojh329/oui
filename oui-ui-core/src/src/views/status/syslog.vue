@@ -1,5 +1,5 @@
 <template>
-  <el-input type="textarea" v-model="syslog" :autosize="true"></el-input>
+  <el-input type="textarea" v-model="syslog" :autosize="true" readonly></el-input>
 </template>
 
 <script>

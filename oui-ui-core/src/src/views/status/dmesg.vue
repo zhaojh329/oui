@@ -1,5 +1,5 @@
 <template>
-  <el-input type="textarea" v-model="dmesg" :autosize="true"></el-input>
+  <el-input type="textarea" v-model="dmesg" :autosize="true" readonly></el-input>
 </template>
 
 <script>
