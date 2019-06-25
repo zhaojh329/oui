@@ -231,7 +231,7 @@ export default {
       const v = this.formValue(sid);
       return `'${v}'`;
     },
-    buildFormRule(sid) {
+    buildFormRule() {
       const rules = [];
 
       if (this.required)
@@ -242,9 +242,7 @@ export default {
         rules.push(...rule);
       });
 
-      const prop = this.formProp(sid);
-      this.$set(this.uciForm.rules, prop, rules);
-      this.$set(this.uciForm.validates, prop, {valid: true, tab: this.tabName, sid: sid});
+      return rules;
     },
     convertFromUCI(value) {
       if (typeof(value) === 'undefined')
@@ -265,7 +263,7 @@ export default {
       else
         this.original[sid] = value;
 
-      this.$set(this.form, prop, value);
+      this.setFormValue(sid, value);
 
       this.$watch(`form.${prop}`, value => {
         this.$emit('change', value, sid, this);
@@ -274,25 +272,27 @@ export default {
       this.$emit('change', value, sid, this);
     },
     buildFormSid(sid) {
-      let value = undefined;
+      const prop = this.formProp(sid);
+      const rules = this.buildFormRule(sid);
+      const value = this.convertFromUCI();
+
+      this.uciForm.addProp(prop, {value, rules, tab: this.tabName});
 
       if (typeof(this.load) === 'function') {
         new Promise(resolve => {
           this.load(resolve, sid, this.name, this);
-        }).then(v => {
-          this.buildFormValue(sid, v);
+        }).then(value => {
+          this.buildFormValue(sid, value);
         });
       } else if (typeof(this.load) !== 'undefined') {
         this.buildFormValue(sid, this.load);
         this.$watch('load', value => {
-          this.$set(this.form, this.formProp(sid), value);
+          this.setFormValue(sid, value);
         });
       } else {
-        value = this.getUciValue(sid);
+        const value = this.getUciValue(sid);
+        this.buildFormValue(sid, value);
       }
-
-      this.buildFormValue(sid, value);
-      this.buildFormRule(sid);
     },
     buildForm(sid) {
       if (sid) {
@@ -306,9 +306,7 @@ export default {
     },
     destroyFormSid(sid) {
       const prop = this.formProp(sid);
-      this.$delete(this.uciForm.form, prop);
-      this.$delete(this.uciForm.rules, prop);
-      this.$delete(this.uciForm.validates, prop);
+      this.uciForm.delProp(prop);
     },
     destroyForm() {
       this.uciSection.sids.forEach(sid => {
@@ -341,8 +339,10 @@ export default {
       if (typeof(this.apply) !== 'undefined')
         return this.apply(value, this);
     },
-    renderOpt() {
-      return 'div';
+    view(prop, sid) {
+      if (this.$scopedSlots.default)
+        return this.$scopedSlots.default({sid, prop, o: this});
+      return '';
     }
   },
   created() {

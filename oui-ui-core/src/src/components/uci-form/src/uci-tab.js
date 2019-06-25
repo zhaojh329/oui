@@ -12,7 +12,7 @@ export default {
   },
   methods: {
     getErrorNum(sid) {
-      return this.uciSection.getErrorNum(sid, this.name);
+      return this.uciForm.getErrorNum(sid, this.name);
     }
   },
   created() {

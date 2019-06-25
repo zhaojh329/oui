@@ -1,3 +1,7 @@
+import UciFormItem from './uci-form-item'
+import UciSectionAdd from './uci-section-add'
+import UciSectionTableAction from './uci-section-table-action'
+
 export default {
   name: 'UciSection',
   provide() {
@@ -43,20 +47,23 @@ export default {
     teasers: Array,
     sortable: Boolean
   },
+  components: {
+    UciFormItem,
+    UciSectionAdd,
+    UciSectionTableAction
+  },
   data() {
     return {
       loaded: false, /* Indicates whether the data is loaded */
       tabs: [], /* uci-tab vue instances */
       children: {}, /* uci-option vue instances */
-      sections: [] /* uci sections */
+      sections: [], /* uci sections */
+      activeCollapseItem: ''
     }
   },
   computed: {
     config() {
       return this.uciForm.config;
-    },
-    collapse() {
-      return this.sids.length > 1 && this.collabsible;
     },
     arrayedOptions() {
       return Object.keys(this.children).map(name => this.children[name]).sort((a, b) => a.uid - b.uid);
@@ -119,7 +126,7 @@ export default {
         this.children[name].destroyFormSid(sid);
     },
     postAdd(sid) {
-      this.uciForm.activeCollapseItem = sid;
+      this.activeCollapseItem = sid;
       this.load();
       this.buildForm(sid);
     },
@@ -152,13 +159,11 @@ export default {
 
       return teasers;
     },
-    getErrorNum(sid, tab) {
+    getErrorNum() {
       const validates = this.uciForm.validates;
       const keys = Object.keys(validates).filter(key => {
-        const err = sid === validates[key].sid && !validates[key].valid;
-        if (tab)
-          return err && validates[key].tab === tab;
-        return err;
+        const [sid] = key.split('_');
+        return this.sids.indexOf(sid) > -1 && !validates[key].valid;
       });
 
       return keys.length;
@@ -188,6 +193,97 @@ export default {
       });
 
       return promises;
+    },
+    sectionView(sid, divider) {
+      const views = [];
+
+      if (this.addable && this.type && !this.name) {
+        views.push((
+          <el-row>
+            <el-button style="float:right" type="danger" size="mini" on-click={this.del.bind(this, sid)}>{ this.$t('Delete') }</el-button>
+          </el-row>
+        ));
+      }
+
+      if (this.tabs.length > 0) {
+        const tabPanes = this.tabs.map(tab => {
+          const errNum = tab.getErrorNum(sid);
+          return (
+            <el-tab-pane name={tab.name}>
+              <span slot="label">{ tab.title }{errNum > 0 && <el-badge value={errNum} />}</span>
+              { tab.options.map(o => <uci-form-item option={o} sid={sid} />) }
+            </el-tab-pane>
+          );
+        });
+        views.push(<el-tabs value={this.tabs[0].name}>{ tabPanes }</el-tabs>);
+      }
+      const noTabOptions = this.arrayedOptions.filter(o => !o.tabName);
+      views.push(noTabOptions.map(o => <uci-form-item option={o} sid={sid} />));
+
+      if (divider)
+        views.push(<el-divider />);
+
+      return views;
+    },
+    tableView() {
+      const columns = [];
+
+      columns.push(...this.arrayedOptions.map(o => {
+        const scopedSlots = {
+          default: props => <uci-form-item option={o} sid={props.row} table={true} />
+        };
+        return <el-table-column label={o.label} width={o.width} scopedSlots={scopedSlots} />;
+      }));
+
+      if (this.addable && this.type && !this.name) {
+        const scopedSlots = {
+          default: props => <uci-section-table-action style="margin-bottom: 22px" section={this} sid={props.row} />
+        };
+        columns.push(<el-table-column width={this.tableActionWidthCalc} scopedSlots={scopedSlots} />);
+      }
+
+      return <el-table data={this.sids}>{columns}</el-table>;
+    },
+    collapseView() {
+      const items = this.sids.map(sid => {
+        let title = [];
+
+        if (sid !== this.activeCollapseItem) {
+          const errNum = this.uciForm.getErrorNum(sid);
+          if (errNum > 0)
+            title.push(<el-badge value={errNum} />);
+
+          const teasersValue = this.teasersValue(sid);
+          const teasers = teasersValue.map((t, i) => {
+            return `${t[0]}: <strong>${t[1]}</strong>${i < teasersValue.length - 1 ? ' | ' : ''}`;
+          });
+          title.push(<span domPropsInnerHTML={teasers.join('')}/>);
+        }
+
+        return (
+          <el-collapse-item title={sid} name={sid}>
+            <div slot="title">{title}</div>
+            { this.sectionView(sid) }
+          </el-collapse-item>
+        );
+      });
+
+      return <el-collapse accordion v-model={this.activeCollapseItem}>{items}</el-collapse>;
+    },
+    view() {
+      let view;
+
+      if (this.table)
+        view = this.tableView();
+      else if (this.collabsible && this.sids.length > 1)
+        view = this.collapseView();
+      else
+        view = this.sids.map(sid => this.sectionView(sid, this.addable));
+
+      if (this.addable && this.type && !this.name)
+        return [view, <uci-section-add sestion={this} />];
+      else
+        return view;
     }
   },
   created() {

@@ -8,12 +8,8 @@ export default {
     password: Boolean
   },
   methods: {
-    renderOpt(h, data) {
-      data.attrs = {};
-      data.attrs.placeholder = this.placeholder;
-      data.props.showPassword = this.password;
-
-      return 'el-input';
+    view(prop) {
+      return <el-input placeholder={this.placeholder} show-password={this.password} v-model={this.form[prop]} />;
     }
   }
 }

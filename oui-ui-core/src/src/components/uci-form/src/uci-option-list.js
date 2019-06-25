@@ -48,23 +48,15 @@ export default {
         value = value.join(' ');
       return value;
     },
-    renderOpt(h, data, children) {
-      data.props.clearable = !this.required;
-      data.props.multiple = this.multiple;
-      data.props.filterable = true;
-      data.props.allowCreate = this.allowCreate;
+    view(prop) {
+      const props = {
+        filterable: true,
+        clearable: !this.required,
+        multiple: this.multiple,
+        allowCreate: this.allowCreate
+      }
 
-      this.transformedOptions.forEach(o => {
-        const dom = h('el-option', {
-          props: {
-            value: o[0],
-            label: o[1]
-          }
-        });
-        children.push(dom);
-      });
-
-      return 'el-select';
+      return <el-select props={props} v-model={this.form[prop]}>{this.transformedOptions.map(o => <el-option value={o[0]} label={o[1]} />)}</el-select>;
     }
   }
 }

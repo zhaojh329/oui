@@ -1,31 +1,12 @@
 <template>
-  <el-button v-if="visible" style="margin-top: 10px" type="primary" size="mini" @click="handleAdd">+ {{ $t('Add') }}</el-button>
+  <el-button style="margin-top: 10px" type="primary" size="mini" @click="handleAdd">{{ $t('Add') }}</el-button>
 </template>
 
 <script>
 export default {
   name: 'UciSectionAdd',
-  inject: ['uciForm'],
   props: {
     sestion: Object
-  },
-  computed: {
-    visible() {
-      const s = this.sestion;
-      return s.addable && s.type && !s.name;
-    },
-    prop() {
-      return 'uci_sestion_' + this.sestion.type;
-    }
-  },
-  data() {
-    return {
-      nameVisible: false,
-      rules: [
-        {validator: this.validateName}
-      ],
-      valid: false
-    }
   },
   methods: {
     add(name) {

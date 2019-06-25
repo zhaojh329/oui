@@ -1,19 +1,3 @@
-<template>
-  <div v-if="visible">
-    <uci-option-ui v-if="table" :table="table" :label="label" :prop="prop" :sid="sid" :option="option"></uci-option-ui>
-    <el-row v-else :gutter="10">
-      <el-col :md="20" :lg="lgForm" :xl="xlForm">
-        <uci-option-ui :table="table" :label="label" :prop="prop" :sid="sid" :option="option"></uci-option-ui>
-      </el-col>
-      <el-col :md="4" :lg="lgDesc" :xl="xlDesc">{{ option.description }}</el-col>
-    </el-row>
-  </div>
-</template>
-
-<script>
-
-import UciOptionUi from './uci-option-ui'
-
 export default {
   name: 'UciFormItem',
   inject: ['uciForm'],
@@ -21,9 +5,6 @@ export default {
     sid: String,
     option: Object,
     table: Boolean
-  },
-  components: {
-    UciOptionUi
   },
   computed: {
     label() {
@@ -85,6 +66,22 @@ export default {
         this.uciForm.validates[this.prop].valid = true;
       }
     }
+  },
+  render() {
+    if (!this.visible)
+      return '';
+
+    const optView = this.option.view(this.prop, this.sid);
+    const formItem = <el-form-item label={this.label} prop={this.prop} label-width={this.table ? 'auto' : ''}>{ optView }</el-form-item>;
+
+    if (this.table)
+      return formItem;
+
+    return (
+      <el-row gutter={10}>
+        <el-col md={20} lg={this.lgForm} xl={this.xlForm}>{ formItem }</el-col>
+        <el-col md={4} lg={this.lgDesc} xl={this.xlDesc}>{ this.option.description }</el-col>
+      </el-row>
+    );
   }
 }
-</script>

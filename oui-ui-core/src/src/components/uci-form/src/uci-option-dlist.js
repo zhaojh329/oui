@@ -1,4 +1,5 @@
 import mixin from './uci-option'
+import UciDlist from './uci-dlist'
 
 export default {
   name: 'UciOptionDlist',
@@ -7,14 +8,17 @@ export default {
     /* If load from uci fails, the value of the property is used as the form value. */
     initial: Array
   },
+  components: {
+    UciDlist
+  },
   methods: {
     convertFromUCI(value) {
       if (typeof(value) === 'undefined')
         value = [];
       return value;
     },
-    renderOpt() {
-      return 'uci-dlist';
+    view(prop) {
+      return <uci-dlist prop={prop} v-model={this.form[prop]} />;
     }
   }
 }

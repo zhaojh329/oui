@@ -68,11 +68,8 @@ export default {
 
       return r.toString();
     },
-    renderOpt(h, data) {
-      data.props.activeValue = this.activeValue;
-      data.props.inactiveValue = this.inactiveValue;
-
-      return 'el-switch';
+    view(prop) {
+      return <el-switch active-value={this.activeValue} inactive-value={this.inactiveValue} v-model={this.form[prop]} />;
     }
   }
 }
