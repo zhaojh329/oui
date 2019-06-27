@@ -35,13 +35,13 @@ export default {
     onKIChange(v) {
       this.keepalive.interval = v;
     },
-    loadKF(resolve, sid) {
+    loadKF(sid) {
       const [v] = (this.$uci.get('network', sid, 'keepalive') || '').split(' ');
-      resolve(v);
+      return v;
     },
-    loadKI(resolve, sid) {
+    loadKI(sid) {
       const v = (this.$uci.get('network', sid, 'keepalive') || '').split(' ');
-      resolve(v[1] || '');
+      return v[1] || '';
     },
     saveKeepalive(config, sid) {
       if (!this.keepalive.failure && !this.keepalive.interval)

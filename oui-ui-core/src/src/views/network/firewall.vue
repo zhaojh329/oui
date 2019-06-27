@@ -233,13 +233,11 @@ export default {
     onApply() {
       this.$refs['form'].reset();
     },
-    loadDestZones(resolve) {
-      const zones = this.editorZone.findForwardsBy('src').map(z => z.dest());
-      resolve(zones);
+    loadDestZones() {
+      return this.editorZone.findForwardsBy('src').map(z => z.dest());
     },
-    loadSrcZones(resolve) {
-      const zones = this.editorZone.findForwardsBy('dest').map(z => z.src());
-      resolve(zones);
+    loadSrcZones() {
+      return this.editorZone.findForwardsBy('dest').map(z => z.src());
     },
     saveDestZones(config, sid, name, value) {
       const dests = value;

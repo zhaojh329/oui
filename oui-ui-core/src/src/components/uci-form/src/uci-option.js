@@ -18,7 +18,8 @@ export default {
     /*
     ** If a function provided, the form loads the value by the function instead of from uci.
     ** If other type provided, the form loads the value from the prop's value.
-    ** Parameters: resolve, sid, name, self
+    ** Parameters: sid, name, self
+    ** Return:  Promise object or value
     */
     load: [String, Array, Function],
     /*
@@ -287,11 +288,14 @@ export default {
       this.uciForm.addProp(prop, {value, rules, tab: this.tabName});
 
       if (typeof(this.load) === 'function') {
-        new Promise(resolve => {
-          this.load(resolve, sid, this.name, this);
-        }).then(value => {
-          this.buildFormValue(sid, value);
-        });
+        const r = this.load(sid, this.name, this);
+        if (window.oui.isPromise(r)) {
+          r.then(value => {
+            this.buildFormValue(sid, value);
+          });
+        } else {
+          this.buildFormValue(sid, r);
+        }
       } else if (typeof(this.load) !== 'undefined') {
         this.buildFormValue(sid, this.load);
         this.$watch('load', value => {

@@ -44,12 +44,12 @@ export default {
     callACLs() {
       return this.$ubus.call('oui.ui', 'acls');
     },
-    isShadow(resolve, sid) {
+    isShadow(sid) {
       let r = false;
       const pw = this.$uci.get('rpcd', sid, 'password');
       if (pw && pw.indexOf('$p$') === 0)
         r = true;
-      resolve(r);
+      return r;
     },
     shadowChanged(v, sid, self) {
       const s = self.uciSection;
@@ -194,23 +194,25 @@ export default {
         });
       });
     },
-    loadAcls(resolve, sid) {
-      this.loadGroups().then(() => {
-        const readList = this.$uci.get('rpcd', sid, 'read') || [];
-        const writeList = this.$uci.get('rpcd', sid, 'write') || [];
-        const groups = [];
+    loadAcls(sid) {
+      return new Promise(resolve => {
+        this.loadGroups().then(() => {
+          const readList = this.$uci.get('rpcd', sid, 'read') || [];
+          const writeList = this.$uci.get('rpcd', sid, 'write') || [];
+          const groups = [];
 
-        this.groups.forEach(g => {
-          const r = this.aclMatch(readList, g.name);
-          const w = this.aclMatch(writeList, g.name);
+          this.groups.forEach(g => {
+            const r = this.aclMatch(readList, g.name);
+            const w = this.aclMatch(writeList, g.name);
 
-          groups.push({
-            acl: w ? 'f' : (r ? 'r' : 'n'),
-            ...g
+            groups.push({
+              acl: w ? 'f' : (r ? 'r' : 'n'),
+              ...g
+            });
           });
-        });
 
-        resolve(groups);
+          resolve(groups);
+        });
       });
     },
     aclToUCI(list) {

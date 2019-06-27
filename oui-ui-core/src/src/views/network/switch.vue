@@ -8,7 +8,7 @@
         </uci-section>
         <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :options="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
           <uci-option-input label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option-input>
-          <uci-option-list v-for="(port, i) in s.ports" :key="i" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="portLoad" :save="savePort"></uci-option-list>
+          <uci-option-list v-for="(port, i) in s.ports" :key="i" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="loadPort" :save="savePort"></uci-option-list>
         </uci-section>
       </uci-form>
     </el-tab-pane>
@@ -97,7 +97,7 @@ export default {
 
       return this.$t('VID-ERR-MSG', {max: max});
     },
-    portLoad(resolve, sid, name) {
+    loadPort(sid, name) {
       let ports = this.$uci.get('network', sid, 'ports') || '';
       ports = ports.split(' ');
       const id = name.substr(4);
@@ -109,7 +109,7 @@ export default {
       if (ports.indexOf(id) > -1)
         v = 'u';
 
-      resolve(v);
+      return v;
     },
     savePort(config, sid, name, val) {
       const ports = this.$uci.get('network', sid, 'ports').split(' ');

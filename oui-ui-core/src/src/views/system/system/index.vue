@@ -79,10 +79,8 @@ export default {
       this.$uci.set(config, sid, 'zonename', value);
       this.$uci.set(config, sid, 'timezone', timezone);
     },
-    ntpCliEnabled(resolve) {
-      this.$system.initEnabled('sysntpd').then(enabled => {
-        resolve(enabled);
-      });
+    ntpCliEnabled() {
+      return this.$system.initEnabled('sysntpd');
     },
     ntpCliEnableApply(v) {
       return new Promise(resolve => {
