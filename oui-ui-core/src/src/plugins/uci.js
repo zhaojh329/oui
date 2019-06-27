@@ -150,7 +150,6 @@ uci.add = function(conf, type, name) {
     '.index': 1000 + this.state.newidx++
   };
 
-  this.state.changed++;
   return sid;
 }
 
@@ -170,7 +169,6 @@ uci.del = function(conf, sid) {
 
     d[conf][sid] = true;
   }
-  this.state.changed++;
 }
 
 uci.swap = function(conf, sid1, sid2) {
@@ -192,7 +190,17 @@ uci.swap = function(conf, sid1, sid2) {
 },
 
 uci.changed = function() {
-  return this.state.changed;
+  let changed = this.state.changed;
+  const n = this.state.creates;
+  const d = this.state.deletes;
+
+  for (const conf in n)
+    changed += Object.keys(n[conf]).length;
+
+  for (const conf in d)
+    changed += Object.keys(d[conf]).length;
+
+  return changed;
 }
 
 uci.reset = function() {
