@@ -341,7 +341,7 @@ export default {
     },
     view(prop, sid) {
       if (this.$scopedSlots.default)
-        return this.$scopedSlots.default({sid, prop, o: this});
+        return this.$scopedSlots.default({sid, prop, value: this.formValue(sid), self: this});
       return '';
     }
   },

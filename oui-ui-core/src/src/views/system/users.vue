@@ -5,8 +5,8 @@
       <uci-option-switch :label="$t('Use the Linux system user password')" name="shadow" :load="isShadow" @change="shadowChanged" :save="saveShadow"></uci-option-switch>
       <uci-option-input :label="$t('Password')" name="password" depend="!shadow" required password :description="$t('acl-password-description')" :save="savePasswd"></uci-option-input>
       <uci-option :label="$t('User ACLs')" name="acls" :load="loadAcls" :save="saveAcls" :description="$t('acl-acl-description')">
-        <template v-slot="{sid, o}">
-          <el-table :data="o.formValue(sid)" class="oui-acls-table">
+        <template v-slot="{value}">
+          <el-table :data="value || []" class="oui-acls-table">
             <el-table-column :label="$t('ACL Group')" prop="description"></el-table-column>
             <el-table-column label="N" width="30">
               <template v-slot="{row}">
