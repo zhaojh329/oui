@@ -13,10 +13,11 @@ export default {
       }
     },
     multiple: Boolean,
-    allowCreate: Boolean
+    allowCreate: Boolean,
+    exclude: [String, Function]
   },
   computed: {
-    transformedOptions() {
+    fixedOptions() {
       return this.options.map(o => {
         if (!Array.isArray(o))
           o = [o];
@@ -48,7 +49,7 @@ export default {
         value = value.join(' ');
       return value;
     },
-    view(prop) {
+    view(prop, sid) {
       const props = {
         filterable: true,
         clearable: !this.required,
@@ -56,7 +57,18 @@ export default {
         allowCreate: this.allowCreate
       }
 
-      return <el-select props={props} v-model={this.form[prop]}>{this.transformedOptions.map(o => <el-option value={o[0]} label={o[1]} />)}</el-select>;
+      let options = this.fixedOptions;
+      let exclude;
+
+      if (typeof(this.exclude) === 'string')
+        exclude = this.exclude;
+      else if (typeof(this.exclude) === 'function')
+        exclude = this.exclude(sid, this);
+
+      if (exclude)
+        options = options.filter(o => o[0] !== exclude);
+
+      return <el-select props={props} v-model={this.form[prop]}>{options.map(o => <el-option value={o[0]} label={o[1]} />)}</el-select>;
     }
   }
 }
