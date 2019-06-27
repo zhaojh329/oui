@@ -88,11 +88,20 @@ class Forward {
   }
 }
 
-firewall.load = function() {
+firewall.loadFromLocal = function() {
+  this.zones = uci.sections('firewall', 'zone').map(s => new Zone(s['.name']));
+  this.forwards = uci.sections('firewall', 'forwarding').map(s => new Forward(s['.name']));
+}
+
+firewall.load = function(local) {
+  if (local) {
+    this.loadFromLocal();
+    return;
+  }
+
   return new Promise(resolve => {
     uci.load('firewall').then(() => {
-      this.zones = uci.sections('firewall', 'zone').map(s => new Zone(s['.name']));
-      this.forwards = uci.sections('firewall', 'forwarding').map(s => new Forward(s['.name']));
+      this.loadFromLocal();
       resolve();
     });
   });
