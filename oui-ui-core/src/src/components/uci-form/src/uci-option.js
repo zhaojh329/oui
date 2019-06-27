@@ -198,6 +198,12 @@ export default {
         rules = [];
 
       return rules;
+    },
+    isTableExpand() {
+      let parent = this.$getParent('UciTableExpand');
+      if (parent)
+        return true;
+      return false;
     }
   },
   watch: {

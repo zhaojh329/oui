@@ -40,6 +40,7 @@ export default {
     ** Parameters: self, name
     */
     add: Function,
+    beforeDel: Function,
     collabsible: {
       type: Boolean,
       default: true
@@ -65,8 +66,20 @@ export default {
     config() {
       return this.uciForm.config;
     },
+    tableExpandTabs() {
+      return this.tabs.filter(tab => tab.isTableExpand);
+    },
     arrayedOptions() {
-      return Object.keys(this.children).map(name => this.children[name]).sort((a, b) => a.uid - b.uid);
+      return Object.keys(this.children)
+        .map(name => this.children[name])
+        .sort((a, b) => a.uid - b.uid)
+        .filter(o => !o.isTableExpand);
+    },
+    arrayedTableExpandOptions() {
+      return Object.keys(this.children)
+        .map(name => this.children[name])
+        .sort((a, b) => a.uid - b.uid)
+        .filter(o => o.isTableExpand);
     },
     sids() {
       let sections = [];
@@ -131,6 +144,8 @@ export default {
       this.buildForm(sid);
     },
     del(sid) {
+      if (this.beforeDel)
+        this.beforeDel(sid, this);
       this.$uci.del(this.config, sid);
       this.load();
       this.destroyForm(sid);
@@ -227,6 +242,35 @@ export default {
     },
     tableView() {
       const columns = [];
+
+      if (this.arrayedTableExpandOptions.length > 0) {
+        const scopedSlots = {
+          default: props => {
+            const sid = props.row;
+            const views = [];
+
+            if (this.tableExpandTabs.length > 0) {
+              const tabPanes = this.tableExpandTabs.map(tab => {
+                const errNum = tab.getErrorNum(sid);
+                return (
+                  <el-tab-pane name={tab.name}>
+                    <span slot="label">{ tab.title }{errNum > 0 && <el-badge value={errNum} />}</span>
+                    { tab.options.map(o => <uci-form-item option={o} sid={sid} />) }
+                  </el-tab-pane>
+                );
+              });
+              views.push(<el-tabs value={this.tabs[0].name}>{ tabPanes }</el-tabs>);
+            }
+
+            const noTabOptions = this.arrayedTableExpandOptions.filter(o => !o.tabName);
+            views.push(noTabOptions.map(o => <uci-form-item option={o} sid={sid} />));
+
+            return views;
+          }
+        };
+
+        columns.push(<el-table-column type="expand" scopedSlots={scopedSlots} />);
+      }
 
       columns.push(...this.arrayedOptions.map(o => {
         const scopedSlots = {
