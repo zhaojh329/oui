@@ -26,7 +26,8 @@ export default {
       type: String,
       required: true
     },
-    tabbed: Boolean
+    tabbed: Boolean,
+    afterLoaded: Function
   },
   components: {
     UciFormBody
@@ -68,7 +69,14 @@ export default {
       this.$delete(this.validates, prop);
     },
     load() {
-      return this.$uci.load(this.config);
+      return new Promise(resolve => {
+        this.$uci.load(this.config).then(() => {
+          this.readonly = !this.$uci.writable(this.config);
+          if (this.afterLoaded)
+            this.afterLoaded();
+          resolve();
+        });
+      });
     },
     onValidate(name, valid) {
       if (this.validates[name])
@@ -123,7 +131,6 @@ export default {
 
           Promise.all(promises).then(() => {
             this.load().then(() => {
-              this.readonly = !this.$uci.writable(this.config);
               this.reset();
               this.$emit('apply');
               loading.close();
@@ -137,7 +144,6 @@ export default {
       this.form = {};
       this.rules = {};
       this.validates = {};
-
       this.$uci.reset();
 
       this.sections.forEach(s => {
@@ -151,7 +157,6 @@ export default {
     const loading = this.$getLoading(this.$t('Loading...'));
     this.load().then(() => {
       this.loaded = true;
-      this.readonly = !this.$uci.writable(this.config);
       loading.close();
     });
   },
