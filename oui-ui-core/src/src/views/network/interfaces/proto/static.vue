@@ -1,22 +1,18 @@
 <template>
-  <div v-if="proto === 'static'">
-    <uci-option-input tab="general" :label="$t('IPv4 address')" name="ipaddr" depend="proto == 'static'" required rules="ip4addr" @change="ipChange"></uci-option-input>
-    <uci-option-list tab="general" :label="$t('IPv4 netmask')" name="netmask" allow-create :options="netmasks" depend="proto == 'static'" required rules="netmask4" @change="maskChange"></uci-option-list>
-    <uci-option-input tab="general" :label="$t('IPv4 broadcast')" name="broadcast" :placeholder="broadcast" depend="proto == 'static'" rules="ip4addr"></uci-option-input>
-    <uci-option-input tab="general" :label="$t('IPv4 gateway')" name="gateway" depend="proto == 'static'" rules="ip4addr"></uci-option-input>
-    <uci-option-dlist tab="general" :label="$t('DNS servers')" name="dns" depend="proto == 'static'" rules="ipaddr"></uci-option-dlist>
-    <uci-option-input tab="advanced" :label="$t('Override MAC address')" name="macaddr" :placeholder="macaddr" depend="proto == 'static'" rules="macaddr"></uci-option-input>
-    <uci-option-input tab="advanced" :label="$t('Override MTU')" name="mtu" placeholder="1500" depend="proto == 'static'" :rules="{type: 'uinteger', max: 9200}"></uci-option-input>
+  <div>
+    <uci-option-input tab="general" :label="$t('IPv4 address')" name="ipaddr" required rules="ip4addr" @change="ipChange"></uci-option-input>
+    <uci-option-list tab="general" :label="$t('IPv4 netmask')" name="netmask" allow-create :options="netmasks" required rules="netmask4" @change="maskChange"></uci-option-list>
+    <uci-option-input tab="general" :label="$t('IPv4 broadcast')" name="broadcast" :placeholder="broadcast" rules="ip4addr"></uci-option-input>
+    <uci-option-input tab="general" :label="$t('IPv4 gateway')" name="gateway" rules="ip4addr"></uci-option-input>
+    <uci-option-dlist tab="general" :label="$t('DNS servers')" name="dns" rules="ipaddr"></uci-option-dlist>
+    <uci-option-input tab="advanced" :label="$t('Override MAC address')" name="macaddr" :placeholder="macaddr" rules="macaddr"></uci-option-input>
+    <uci-option-input tab="advanced" :label="$t('Override MTU')" name="mtu" placeholder="1500" :rules="{type: 'uinteger', max: 9200}"></uci-option-input>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'OuiProtoStatic',
   inject: ['uciSection'],
-  props: {
-    proto: String
-  },
   data() {
     return {
       ipaddr: '',

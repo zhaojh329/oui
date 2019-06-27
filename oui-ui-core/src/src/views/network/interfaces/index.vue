@@ -37,12 +37,7 @@
           <uci-tab title="IPv6" name="ipv6"></uci-tab>
           <uci-tab :title="$t('Physical Settings')" name="physical"></uci-tab>
           <uci-tab :title="$t('Firewall Settings')" name="firewall"></uci-tab>
-          <oui-proto-dhcp :proto="proto"></oui-proto-dhcp>
-          <oui-proto-static :proto="proto"></oui-proto-static>
-          <oui-proto-pppoe :proto="proto"></oui-proto-pppoe>
-          <oui-proto-pptp :proto="proto"></oui-proto-pptp>
-          <oui-proto-l2tp :proto="proto"></oui-proto-l2tp>
-          <oui-proto-3g :proto="proto"></oui-proto-3g>
+          <component v-if="proto !== '' && proto !== 'none'" :is="'oui-proto-' + proto" :proto="proto"></component>
         </uci-section>
       </uci-form>
     </el-dialog>
