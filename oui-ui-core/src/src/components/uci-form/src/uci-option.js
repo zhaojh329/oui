@@ -25,11 +25,13 @@ export default {
     ** If a function provided, it will be called when oui saves the uci configuration.
     ** If any other value provided, indicates don't save uci.
     ** Parameters: config, sid, name, value, self
+    ** Return:  Promise object or undefined
     */
     save: [String, Function],
     /*
     ** If this function is provided, it will be called when oui applys the uci configuration.
-    ** Parameters: resolve, value, self
+    ** Parameters: value, self
+    ** Return:  Promise object or undefined
     */
     apply: Function,
     /* depend="(a == 12 || a == 'x') && y == 4 && q != 5 && !z" */
