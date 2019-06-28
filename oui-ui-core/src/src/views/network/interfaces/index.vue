@@ -3,7 +3,7 @@
     <el-table :data="interfaces">
       <el-table-column :label="$t('Network')" width="140">
         <template v-slot="{ row }">
-          <oui-network-badge :iface="row.name" :device="row.getDevice() && row.getDevice().name"></oui-network-badge>
+          <network-badge :iface="row.name" :device="row.getDevice() && row.getDevice().name"></network-badge>
         </template>
       </el-table-column>
       <el-table-column :label="$t('Status')">
@@ -37,7 +37,7 @@
           <uci-tab title="IPv6" name="ipv6"></uci-tab>
           <uci-tab :title="$t('Physical Settings')" name="physical"></uci-tab>
           <uci-tab :title="$t('Firewall Settings')" name="firewall"></uci-tab>
-          <component v-if="proto !== '' && proto !== 'none'" :is="'oui-proto-' + proto" :proto="proto"></component>
+          <component v-if="proto !== '' && proto !== 'none'" :is="'proto-' + proto" :proto="proto"></component>
         </uci-section>
       </uci-form>
     </el-dialog>
@@ -45,13 +45,13 @@
 </template>
 
 <script>
-import OuiNetworkBadge from './oui-network-badge.vue'
-import OuiProtoDhcp from './proto/dhcp.vue'
-import OuiProtoStatic from './proto/static.vue'
-import OuiProtoPppoe from './proto/pppoe.vue'
-import OuiProtoPptp from './proto/pptp.vue'
-import OuiProtoL2tp from './proto/l2tp.vue'
-import OuiProto3g from './proto/3g.vue'
+import NetworkBadge from './network-badge.vue'
+import ProtoDhcp from './proto/dhcp.vue'
+import ProtoStatic from './proto/static.vue'
+import ProtoPppoe from './proto/pppoe.vue'
+import ProtoPptp from './proto/pptp.vue'
+import ProtoL2tp from './proto/l2tp.vue'
+import Proto3g from './proto/3g.vue'
 
 export default {
   data() {
@@ -72,13 +72,13 @@ export default {
     }
   },
   components: {
-    OuiNetworkBadge,
-    OuiProtoDhcp,
-    OuiProtoStatic,
-    OuiProtoPppoe,
-    OuiProtoPptp,
-    OuiProtoL2tp,
-    OuiProto3g
+    NetworkBadge,
+    ProtoDhcp,
+    ProtoStatic,
+    ProtoPppoe,
+    ProtoPptp,
+    ProtoL2tp,
+    Proto3g
   },
   computed: {
     dialogTitle() {
