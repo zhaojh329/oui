@@ -9,16 +9,26 @@
     <uci-option-dlist tab="advanced" :label="$t('Use custom DNS servers')" name="dns" depend="!peerdns" rules="ipaddr"></uci-option-dlist>
     <lcp-keepalive></lcp-keepalive>
     <uci-option-input tab="advanced" :label="$t('Inactivity timeout')" name="demand" placeholder="0" rules="uinteger"></uci-option-input>
-    <uci-option-input tab="advanced" :label="$t('Override MTU')" name="mtu" placeholder="1500" :rules="{type: 'uinteger', max: 9200}"></uci-option-input>
+    <override-mtu></override-mtu>
   </div>
 </template>
 
 <script>
+import mixin from './proto'
 import LcpKeepalive from './lcp-keepalive'
+import OverrideMtu from './override-mtu'
 
 export default {
+  mixins: [mixin],
   components: {
-    LcpKeepalive
+    LcpKeepalive,
+    OverrideMtu
+  },
+  data() {
+    return {
+      virtual: true,
+      floating: true
+    }
   }
 }
 </script>

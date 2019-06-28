@@ -1,6 +1,6 @@
 <template>
   <div class="oui-network-badge">
-    <div class="head">{{ iface }}</div>
+    <div class="head" :style="{backgroundColor: color}">{{ iface }}</div>
     <div>{{ device }}</div>
   </div>
 </template>
@@ -11,6 +11,18 @@ export default {
   props: {
     iface: String,
     device: String
+  },
+  data() {
+    return {
+      color: '#eeeeee'
+    }
+  },
+  created() {
+    this.$firewall.load().then(() => {
+      const z = this.$firewall.findZoneByNetwork(this.iface);
+      if (z)
+        this.color = z.color();
+    });
   }
 }
 </script>
@@ -25,7 +37,6 @@ export default {
 
   .head {
     border-bottom: 1px solid #DDDDDD;
-    background-color: rgb(204, 204, 204);
     padding: 0 3px;
   }
 }

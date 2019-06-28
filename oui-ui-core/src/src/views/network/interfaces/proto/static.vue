@@ -5,22 +5,34 @@
     <uci-option-input tab="general" :label="$t('IPv4 broadcast')" name="broadcast" :placeholder="broadcast" rules="ip4addr"></uci-option-input>
     <uci-option-input tab="general" :label="$t('IPv4 gateway')" name="gateway" rules="ip4addr"></uci-option-input>
     <uci-option-dlist tab="general" :label="$t('DNS servers')" name="dns" rules="ipaddr"></uci-option-dlist>
-    <uci-option-input tab="advanced" :label="$t('Override MAC address')" name="macaddr" :placeholder="macaddr" rules="macaddr"></uci-option-input>
+    <override-mac></override-mac>
+    <override-mtu></override-mtu>
     <uci-option-input tab="advanced" :label="$t('Override MTU')" name="mtu" placeholder="1500" :rules="{type: 'uinteger', max: 9200}"></uci-option-input>
   </div>
 </template>
 
 <script>
+import mixin from './proto'
+import OverrideMac from './override-mac'
+import OverrideMtu from './override-mtu'
+
 export default {
+  mixins: [mixin],
   inject: ['uciSection'],
   data() {
     return {
+      virtual: false,
+      floating: false,
       ipaddr: '',
       netmask: '',
       netmasks: ['255.255.255.0', '255.255.0.0', '255.0.0.0'],
       broadcast: '',
       macaddr: ''
     }
+  },
+  components: {
+    OverrideMac,
+    OverrideMtu
   },
   methods: {
     calculateBroadcast() {

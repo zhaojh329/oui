@@ -18,11 +18,15 @@
 </template>
 
 <script>
+import mixin from './proto'
 import LcpKeepalive from './lcp-keepalive'
 
 export default {
+  mixins: [mixin],
   data() {
     return {
+      virtual: true,
+      floating: true,
       modemDevices: [],
       services: [
         ['umts', 'UMTS/GPRS'],

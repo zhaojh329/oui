@@ -7,6 +7,24 @@
     <uci-option-input tab="advanced" :label="$t('Use gateway metric')" name="metric" placeholder="0" depend="defaultroute" rules="uinteger"></uci-option-input>
     <uci-option-switch tab="advanced" :label="$t('Use DNS servers advertised by peer')" name="peerdns" initial="1"></uci-option-switch>
     <uci-option-dlist tab="advanced" :label="$t('Use custom DNS servers')" name="dns" depend="!peerdns" rules="ipaddr"></uci-option-dlist>
-    <uci-option-input tab="advanced" :label="$t('Override MTU')" name="mtu" placeholder="1500" :rules="{type: 'uinteger', max: 9200}"></uci-option-input>
+    <override-mtu></override-mtu>
   </div>
 </template>
+
+<script>
+import mixin from './proto'
+import OverrideMtu from './override-mtu'
+
+export default {
+  mixins: [mixin],
+  data() {
+    return {
+      virtual: true,
+      floating: true
+    }
+  },
+  components: {
+    OverrideMtu
+  }
+}
+</script>

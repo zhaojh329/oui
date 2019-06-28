@@ -131,10 +131,10 @@ network.load = function() {
   return new Promise(resolve => {
     Promise.all(promises).then(r => {
       const devices = r[0];
-      this.devices = [];
-      Object.keys(devices).forEach(name => {
-        this.devices.push({name: name, ...devices[name]});
-      });
+
+      this.devices = Object.keys(devices).map(name => {
+        return {name: name, ...devices[name]};
+      }).filter(d => d.name !== 'lo');
 
       this.interfaces = r[1].interface.map(iface => new Interface(iface)).filter(i => i.name !== 'loopback');
 

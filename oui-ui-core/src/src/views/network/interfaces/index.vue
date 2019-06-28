@@ -31,13 +31,25 @@
         <uci-section :name="editorIface">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option-switch :label="$t('Start on boot')" name="auto" initial="1"></uci-option-switch>
-            <uci-option-list :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required @change="onProtoChange"></uci-option-list>
+            <uci-option-list :label="$t('Protocol')" name="proto" :options="protocols" initial="none" required @change="protoChanged"></uci-option-list>
           </uci-tab>
-          <uci-tab :title="$t('Advanced Settings')" name="advanced"></uci-tab>
-          <uci-tab title="IPv6" name="ipv6"></uci-tab>
-          <uci-tab :title="$t('Physical Settings')" name="physical"></uci-tab>
-          <uci-tab :title="$t('Firewall Settings')" name="firewall"></uci-tab>
-          <component v-if="proto !== '' && proto !== 'none'" :is="'proto-' + proto"></component>
+          <uci-tab :title="$t('Advanced Settings')" name="advanced">
+            <uci-option-switch :label="$t('Use builtin IPv6-management')" name="delegate" initial="1"></uci-option-switch>
+            <uci-option-switch :label="$t('Force link')" name="force_link" :initial="proto === 'static' ? true : false" :description="$t('Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers).')"></uci-option-switch>
+          </uci-tab>
+          <uci-tab :title="$t('Physical Settings')" name="physical">
+            <template v-if="!virtual">
+              <uci-option-switch :label="$t('Bridge interfaces')" name="type" active-value="bridge" :save="saveType" depend="proto == 'static' || proto == 'dhcp' || proto == 'none'" :description="$t('creates a bridge over specified interface(s)')"></uci-option-switch>
+              <uci-option-switch :label="$t('Enable STP')" name="stp" depend="type" :description="$t('Enables the Spanning Tree Protocol on this bridge')"></uci-option-switch>
+              <uci-option-switch :label="$t('Enable IGMP')" name="igmp_snooping" depend="type" :description="$t('Enables IGMP snooping on this bridge')"></uci-option-switch>
+            </template>
+            <ifname v-if="!floating"></ifname>
+            <ifname v-if="!virtual" multiple></ifname>
+          </uci-tab>
+          <uci-tab :title="$t('Firewall Settings')" name="firewall">
+            <uci-option-list :label="$t('Create / Assign firewall-zone')" name="_fwzone" :options="zones" :load="loadZone" :save="saveZone" allow-create :description="$t('interface-config-zone-desc')"></uci-option-list>
+          </uci-tab>
+          <component v-if="proto !== '' && proto !== 'none'" :is="'proto-' + proto" @mounted="onProtoMounted"></component>
         </uci-section>
       </uci-form>
     </el-dialog>
@@ -52,12 +64,17 @@ import ProtoPppoe from './proto/pppoe.vue'
 import ProtoPptp from './proto/pptp.vue'
 import ProtoL2tp from './proto/l2tp.vue'
 import Proto3g from './proto/3g.vue'
+import Ifname from './ifname.vue'
 
 export default {
   data() {
     return {
       proto: '',
+      virtual: false,
+      floating: false,
       interfaces: [],
+      devices: [],
+      zones: [],
       dialogVisible: false,
       editorIface: '',
       protocols: [
@@ -78,7 +95,8 @@ export default {
     ProtoPppoe,
     ProtoPptp,
     ProtoL2tp,
-    Proto3g
+    Proto3g,
+    Ifname
   },
   computed: {
     dialogTitle() {
@@ -94,8 +112,54 @@ export default {
         this.interfaces = this.$network.getInterfaces();
       });
     },
-    onProtoChange(proto) {
+    protoChanged(proto, sid, self) {
       this.proto = proto;
+
+      const forceLink = self.uciSection.children['force_link'];
+      let value = this.$uci.get('network', sid, 'force_link');
+      if (typeof(value) === 'undefined' && proto === 'static')
+        value = true;
+      value = forceLink.convertFromUCI(value);
+      forceLink.original[sid] = value;
+      forceLink.setFormValue(sid, value);
+    },
+    onProtoMounted(proto) {
+      this.virtual = proto.virtual;
+      this.floating = proto.floating;
+    },
+    saveType(sid, value) {
+      this.$uci.set('network', sid, 'type', value || '');
+    },
+    loadZone() {
+      return new Promise(resolve => {
+        this.$firewall.load().then(() => {
+          this.zones = this.$firewall.zones.map(z => z.name());
+          const z = this.$firewall.findZoneByNetwork(this.editorIface);
+          if (z)
+            resolve(z.name());
+          resolve();
+        });
+      });
+    },
+    saveZone(sid, value) {
+      let z = this.$firewall.findZoneByNetwork(this.editorIface);
+
+      if (!value) {
+        if (z)
+          z.delNetwork(this.editorIface);
+        return;
+      }
+
+      if (z) {
+        if (value === z.name())
+          return;
+        z.delNetwork(this.editorIface);
+      }
+
+      z = this.$firewall.findZoneByName(value);
+      if (!z)
+        z = this.$firewall.createZone(value);
+      z.addNetwork(this.editorIface);
     },
     edit(iface) {
       this.editorIface = iface;

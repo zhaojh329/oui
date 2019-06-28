@@ -65,6 +65,28 @@ class Zone {
 
     return forwards;
   }
+
+  color() {
+    const name = this.name()
+    if (name === 'lan')
+      return '#90f090';
+    else if (name === 'wan')
+      return '#f09090';
+
+    const r = parseInt(Math.random() * 128) + 1;
+    const g = parseInt(Math.random() * 128) + 1;
+    let min = 0;
+    let max = 128;
+
+    if (r + g < 128)
+      min = 128 - r - g;
+    else
+      max = 255 - r - g;
+
+    const b = min + Math.floor(Math.random() * (max - min));
+
+    return '#%02x%02x%02x'.format(0xFF - r, 0xFF - g, 0xFF - b);
+  }
 }
 
 class Forward {

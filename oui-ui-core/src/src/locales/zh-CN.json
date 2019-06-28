@@ -428,5 +428,16 @@
   "Wednesday": "星期三",
   "Thursday": "星期四",
   "Friday": "星期五",
-  "Saturday": "星期六"
+  "Saturday": "星期六",
+  "Bridge interfaces": "桥接接口",
+  "creates a bridge over specified interface(s)": "为指定接口创建桥接",
+  "Enable STP": "开启STP",
+  "Enables the Spanning Tree Protocol on this bridge": "在此桥接上启用生成树协议",
+  "Enable IGMP": "启用IGMP嗅探",
+  "Enables IGMP snooping on this bridge": "在此桥接上启用 IGMP 窥探",
+  "Create / Assign firewall-zone": "创建/分配防火墙区域",
+  "interface-config-zone-desc": "为此接口分配所属的防火墙区域，不指定可将该接口移出已关联的区域，或者创建一个新的区域，并将当前接口与之建立关联。",
+  "Use builtin IPv6-management": "使用内置的IPv6管理",
+  "Force link": "强制链路",
+  "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers).": "不管接口的链路状态如何，总是用应用设置（如果勾选，链路状态变更将不再触发hotplug事件处理）。"
 }

@@ -7,18 +7,30 @@
     <uci-option-dlist tab="advanced" :label="$t('Use custom DNS servers')" name="dns" depend="!peerdns" rules="ipaddr"></uci-option-dlist>
     <uci-option-input tab="advanced" :label="$t('Client ID')" name="clientid" :description="$t('Client ID to send when requesting DHCP')"></uci-option-input>
     <uci-option-input tab="advanced" label="Vendor Class" name="vendorid" :description="$t('Vendor Class to send when requesting DHCP')"></uci-option-input>
-    <uci-option-input tab="advanced" :label="$t('Override MAC address')" name="macaddr" :placeholder="macaddr" rules="macaddr"></uci-option-input>
+    <override-mac></override-mac>
+    <override-mtu></override-mtu>
     <uci-option-input tab="advanced" :label="$t('Override MTU')" name="mtu" placeholder="1500" :rules="{type: 'uinteger', max: 9200}"></uci-option-input>
   </div>
 </template>
 
 <script>
+import mixin from './proto'
+import OverrideMac from './override-mac'
+import OverrideMtu from './override-mtu'
+
 export default {
+  mixins: [mixin],
   inject: ['uciSection'],
   data() {
     return {
+      virtual: false,
+      floating: false,
       macaddr: ''
     }
+  },
+  components: {
+    OverrideMac,
+    OverrideMtu
   },
   computed: {
     hostname() {

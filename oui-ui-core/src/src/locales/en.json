@@ -428,5 +428,16 @@
   "Wednesday": "Wednesday",
   "Thursday": "Thursday",
   "Friday": "Friday",
-  "Saturday": "Saturday"
+  "Saturday": "Saturday",
+  "Bridge interfaces": "Bridge interfaces",
+  "creates a bridge over specified interface(s)": "creates a bridge over specified interface(s)",
+  "Enable STP": "Enable STP",
+  "Enables the Spanning Tree Protocol on this bridge": "Enables the Spanning Tree Protocol on this bridge",
+  "Enable IGMP": "Enable IGMP",
+  "Enables IGMP snooping on this bridge": "Enables IGMP snooping on this bridge",
+  "Create / Assign firewall-zone": "Create / Assign firewall-zone",
+  "interface-config-zone-desc": "Choose the firewall zone you want to assign to this interface. Select \"unspecified\" to remove the interface from the associated zone or define a new zone and attach the interface to it.",
+  "Use builtin IPv6-management": "Use builtin IPv6-management",
+  "Force link": "Force link",
+  "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers).": "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers)."
 }
