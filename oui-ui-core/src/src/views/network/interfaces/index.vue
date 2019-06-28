@@ -37,7 +37,7 @@
           <uci-tab title="IPv6" name="ipv6"></uci-tab>
           <uci-tab :title="$t('Physical Settings')" name="physical"></uci-tab>
           <uci-tab :title="$t('Firewall Settings')" name="firewall"></uci-tab>
-          <component v-if="proto !== '' && proto !== 'none'" :is="'proto-' + proto" :proto="proto"></component>
+          <component v-if="proto !== '' && proto !== 'none'" :is="'proto-' + proto"></component>
         </uci-section>
       </uci-form>
     </el-dialog>
