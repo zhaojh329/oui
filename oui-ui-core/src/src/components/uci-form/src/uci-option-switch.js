@@ -20,7 +20,7 @@ export default {
   },
   data() {
     return {
-      trueValues: ['1', 'yes', 'on', 'true', 'enabled']
+      trueValues: ['1', 'yes', 'on', 'true', 'enabled', true]
     }
   },
   methods: {
