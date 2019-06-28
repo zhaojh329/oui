@@ -51,7 +51,7 @@ export default {
         return z.name();
       return undefined;
     },
-    saveDestZones(config, sid, name, value) {
+    saveDestZones(sid, value) {
       const z = this.$firewall.findZoneBySid(sid);
       const dests = value;
       let i = 0;
@@ -73,7 +73,7 @@ export default {
         this.$uci.set('firewall', sid, 'dest', dests[i++]);
       }
     },
-    saveSrcZones(config, sid, name, value) {
+    saveSrcZones(sid, value) {
       const z = this.$firewall.findZoneBySid(sid);
       const srcs = value;
       let i = 0;

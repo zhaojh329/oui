@@ -18,14 +18,14 @@ export default {
     /*
     ** If a function provided, the form loads the value by the function instead of from uci.
     ** If other type provided, the form loads the value from the prop's value.
-    ** Parameters: sid, name, self
+    ** Parameters: sid, self
     ** Return:  Promise object or value
     */
     load: [String, Array, Function],
     /*
     ** If a function provided, it will be called when oui saves the uci configuration.
     ** If any other value provided, indicates don't save uci.
-    ** Parameters: config, sid, name, value, self
+    ** Parameters: sid, value, self
     ** Return:  Promise object or undefined
     */
     save: [String, Function],
@@ -288,7 +288,7 @@ export default {
       this.uciForm.addProp(prop, {value, rules, tab: this.tabName});
 
       if (typeof(this.load) === 'function') {
-        const r = this.load(sid, this.name, this);
+        const r = this.load(sid, this);
         if (window.oui.isPromise(r)) {
           r.then(value => {
             this.buildFormValue(sid, value);
@@ -336,7 +336,7 @@ export default {
 
       if (typeof(this.save) !== 'undefined') {
         if (typeof(this.save) === 'function')
-          return this.save(this.config, sid, this.name, value, this);
+          return this.save(sid, value, this);
         return;
       }
 

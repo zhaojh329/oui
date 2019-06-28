@@ -79,10 +79,10 @@ export default {
         });
       }
     },
-    saveShadow(config, sid, name, value, self) {
+    saveShadow(sid, value, self) {
       return this.doSavePasswd(self.uciSection, sid);
     },
-    savePasswd(config, sid, name, value, self) {
+    savePasswd(sid, value, self) {
       return this.doSavePasswd(self.uciSection, sid);
     },
     addUser(self) {
@@ -233,7 +233,7 @@ export default {
 
       return rv;
     },
-    saveAcls(config, sid, name, value) {
+    saveAcls(sid, value) {
       let readList = [];
       let writeList = [];
 

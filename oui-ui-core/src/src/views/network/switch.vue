@@ -111,7 +111,7 @@ export default {
 
       return v;
     },
-    savePort(config, sid, name, val) {
+    savePort(sid, val) {
       const ports = this.$uci.get('network', sid, 'ports').split(' ');
       const id = name.substr(4);
 
@@ -127,7 +127,7 @@ export default {
       else if (val === 't')
         ports.push(id + 't');
 
-      this.$uci.set(config, sid, 'ports', ports.join(' '));
+      this.$uci.set('network', sid, 'ports', ports.join(' '));
     }
   },
   created() {

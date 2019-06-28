@@ -66,7 +66,7 @@ export default {
         this.localTime = new Date(r.localtime * 1000).toString();
       });
     },
-    saveTimezone(config, sid, name, value) {
+    saveTimezone(sid, value) {
       let timezone = 'UTC';
 
       for (let i = 0; i < zoneinfo.length; i++) {
@@ -76,8 +76,8 @@ export default {
         }
       }
 
-      this.$uci.set(config, sid, 'zonename', value);
-      this.$uci.set(config, sid, 'timezone', timezone);
+      this.$uci.set('system', sid, 'zonename', value);
+      this.$uci.set('system', sid, 'timezone', timezone);
     },
     ntpCliEnabled() {
       return this.$system.initEnabled('sysntpd');
