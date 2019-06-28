@@ -97,10 +97,10 @@ export default {
 
       return this.$t('VID-ERR-MSG', {max: max});
     },
-    loadPort(sid, name) {
+    loadPort(sid, self) {
       let ports = this.$uci.get('network', sid, 'ports') || '';
       ports = ports.split(' ');
-      const id = name.substr(4);
+      const id = self.name.substr(4);
       let v = 'n';
 
       if (ports.indexOf(id + 't') > -1)
@@ -111,9 +111,9 @@ export default {
 
       return v;
     },
-    savePort(sid, val) {
+    savePort(sid, val, self) {
       const ports = this.$uci.get('network', sid, 'ports').split(' ');
-      const id = name.substr(4);
+      const id = self.name.substr(4);
 
       let i = ports.indexOf(id);
       if (i === -1)
