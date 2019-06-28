@@ -25,29 +25,30 @@ class Zone {
   network() {
     let nets = this.get('network') || [];
 
-    if (!Array.isArray)
-      nets = [nets];
+    if (!Array.isArray(nets))
+      nets = nets.split(' ');
 
     return nets;
   }
 
   addNetwork(net) {
-    let nets = this.get('network');
+    let nets = this.network();
 
-    if (nets.indexOf(net) < 0)
-      nets.push(net);
+    if (nets.indexOf(net) > -1)
+      return;
 
-    this.set('network', nets);
+    nets.push(net);
+    this.set('network', nets.join(' '));
   }
 
   delNetwork(net) {
-    let nets = this.get('network');
+    let nets = this.network();
 
     if (nets.indexOf(net) < 0)
       return;
 
     nets.splice(nets.indexOf(net), 1);
-    this.set('network', nets);
+    this.set('network', nets.join(' '));
   }
 
   findForwardsBy(what) {
@@ -110,7 +111,7 @@ firewall.load = function(local) {
 firewall.findZoneByNetwork = function(net) {
   for (let i = 0; i < this.zones.length; i++) {
     const zone = this.zones[i];
-    const nets = zone.get('network');
+    const nets = zone.network();
     if (nets.indexOf(net) > -1)
       return zone;
   }
