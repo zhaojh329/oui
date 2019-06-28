@@ -359,10 +359,12 @@ export default {
   },
   created() {
     this.uid = this.uciForm.getUID();
-    this.uciSection.addChild(this);
-
-    if (this.uciSection.loaded)
-      this.buildForm();
+    /* Ensure that option with the same name are deleted */
+    this.$nextTick(() => {
+      this.uciSection.addChild(this);
+      if (this.uciSection.loaded)
+        this.buildForm();
+    });
   },
   render(h) {
     return h('div', this.$slots.default);
