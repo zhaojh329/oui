@@ -243,6 +243,10 @@ export default {
     tableView() {
       const columns = [];
 
+      /* If don't do this, an exception occurs when rendering the expandable table. */
+      if (this.arrayedOptions.length < 1)
+        return undefined;
+
       if (this.arrayedTableExpandOptions.length > 0) {
         const scopedSlots = {
           default: props => {
