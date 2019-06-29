@@ -13,6 +13,7 @@
 	"core": {
 		"description": "Core functions for OUI",
 		"read": {
+			"uci": ["oui"],
 			"ubus": {
 				"oui.ui": [
 					"*"
@@ -26,6 +27,9 @@
 					"*"
 				]
 			}
+		},
+		"write": {
+			"uci": ["oui"]
 		}
 	},
 
