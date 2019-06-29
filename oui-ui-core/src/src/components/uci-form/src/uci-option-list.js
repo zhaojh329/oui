@@ -68,7 +68,7 @@ export default {
       if (exclude)
         options = options.filter(o => o[0] !== exclude);
 
-      return <el-select props={props} v-model={this.form[prop]}>{options.map(o => <el-option value={o[0]} label={o[1]} />)}</el-select>;
+      return <el-select style="width: 100%" props={props} v-model={this.form[prop]}>{options.map(o => <el-option value={o[0]} label={o[1]} />)}</el-select>;
     }
   }
 }

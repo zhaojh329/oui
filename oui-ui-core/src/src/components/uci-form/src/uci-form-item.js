@@ -31,29 +31,6 @@ export default {
       });
 
       return eval(expr);
-    },
-    inDialog() {
-      return this.$getParent('ElDialog');
-    },
-    lgForm() {
-      if (this.inDialog)
-        return 20;
-      return 14;
-    },
-    lgDesc() {
-      if (this.inDialog)
-        return 4;
-      return 10;
-    },
-    xlForm() {
-      if (this.inDialog)
-        return 14;
-      return 11;
-    },
-    xlDesc() {
-      if (this.inDialog)
-        return 10;
-      return 13;
     }
   },
   watch: {
@@ -71,17 +48,22 @@ export default {
     if (!this.visible)
       return '';
 
-    const optView = this.option.view(this.prop, this.sid);
-    const formItem = <el-form-item label={this.label} prop={this.prop} label-width={this.table ? 'auto' : ''}>{ optView }</el-form-item>;
-
-    if (this.table)
-      return formItem;
-
     return (
-      <el-row gutter={10}>
-        <el-col md={20} lg={this.lgForm} xl={this.xlForm}>{ formItem }</el-col>
-        <el-col md={4} lg={this.lgDesc} xl={this.xlDesc}>{ this.option.description }</el-col>
-      </el-row>
+      <el-form-item prop={this.prop} label-width={this.table ? 'auto' : ''} style="max-width: 700px">
+        {
+          this.label &&
+          <span slot="label">
+            {this.label}
+            {
+              this.option.description &&
+              <el-tooltip content={this.option.description} placement="top">
+                <i class="iconfont iconhelp" style="color: #3980DE" />
+              </el-tooltip>
+            }
+          </span>
+        }
+        { this.option.view(this.prop, this.sid) }
+      </el-form-item>
     );
   }
 }
