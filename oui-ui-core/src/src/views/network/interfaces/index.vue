@@ -112,16 +112,8 @@ export default {
         this.interfaces = this.$network.getInterfaces();
       });
     },
-    protoChanged(proto, sid, self) {
+    protoChanged(proto) {
       this.proto = proto;
-
-      const forceLink = self.uciSection.children['force_link'];
-      let value = this.$uci.get('network', sid, 'force_link');
-      if (typeof(value) === 'undefined' && proto === 'static')
-        value = true;
-      value = forceLink.convertFromUCI(value);
-      forceLink.original[sid] = value;
-      forceLink.setFormValue(sid, value);
     },
     onProtoMounted(proto) {
       this.virtual = proto.virtual;
