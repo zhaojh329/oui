@@ -1,6 +1,5 @@
 import UciFormItem from './uci-form-item'
 import UciSectionAdd from './uci-section-add'
-import UciSectionTableAction from './uci-section-table-action'
 
 export default {
   name: 'UciSection',
@@ -28,7 +27,6 @@ export default {
     },
     /* Render in a table */
     table: Boolean,
-    tableActionWidth: String,
     /* Parameters: uci section, self */
     filter: Function,
     options: {
@@ -50,8 +48,7 @@ export default {
   },
   components: {
     UciFormItem,
-    UciSectionAdd,
-    UciSectionTableAction
+    UciSectionAdd
   },
   data() {
     return {
@@ -209,6 +206,21 @@ export default {
 
       return promises;
     },
+    handleSort(sid, up) {
+      const sids = this.sids;
+      let index = sids.indexOf(sid);
+
+      if (up)
+        index--;
+      else
+        index++;
+
+      if (index < 0 || index === sids.length)
+        return;
+
+      const nsid = sids[index];
+      this.swap(sid, nsid);
+    },
     sectionView(sid, divider) {
       const views = [];
 
@@ -283,11 +295,29 @@ export default {
         return <el-table-column label={o.label} width={o.width} scopedSlots={scopedSlots} />;
       }));
 
-      if (this.addable && this.type && !this.name) {
+      let actionWidth = 0;
+      if (this.addable && this.type && !this.name)
+        actionWidth += 60;
+      if (this.sortable)
+        actionWidth += 100;
+
+      if (actionWidth > 0) {
         const scopedSlots = {
-          default: props => <uci-section-table-action style="margin-bottom: 22px" section={this} sid={props.row} />
+          default: props => {
+            const actions = [];
+
+            if (this.sortable) {
+              actions.push(<el-button type="success" size="mini" on-click={this.handleSort.bind(this, props.row, true)}>↑</el-button>);
+              actions.push(<el-button type="success" size="mini" on-click={this.handleSort.bind(this, props.row, false)}>↓</el-button>);
+            }
+
+            if (this.addable && this.type && !this.name)
+              actions.push(<el-button type="danger" size="mini" on-click={this.del.bind(this, props.row)}>{this.$t('Delete')}</el-button>);
+
+            return <el-button-group style="margin-bottom: 22px">{ actions }</el-button-group>;
+          }
         };
-        columns.push(<el-table-column width={this.tableActionWidthCalc} scopedSlots={scopedSlots} />);
+        columns.push(<el-table-column scopedSlots={scopedSlots} width={actionWidth + 25} />);
       }
 
       return <el-table data={this.sids}>{columns}</el-table>;
