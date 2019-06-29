@@ -46,7 +46,7 @@ export default {
     /* Used for custom header of table column */
     header: String,
     /* Used for table section */
-    width: String
+    width: [String, Number]
   },
   data() {
     return {
