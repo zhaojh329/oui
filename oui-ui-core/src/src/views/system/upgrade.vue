@@ -5,8 +5,8 @@
         <input v-show="false" type="text" :value="sid" name="sessionid" />
       </form>
       <p>{{ $t('Backup-Restore-desc') }}</p>
-      <el-button type="primary" @click="generateArchive">{{ $t('Generate archive') }}</el-button>
-      <el-button type="danger" @click="performReset">{{ $t('Perform reset') }}</el-button>
+      <el-button type="primary" size="small" @click="generateArchive">{{ $t('Generate archive') }}</el-button>
+      <el-button type="danger" size="small" @click="performReset">{{ $t('Perform reset') }}</el-button>
       <p>{{ $t('To restore configuration files, you can upload a previously generated backup archive here.') }}</p>
       <el-upload ref="archive" action="/cgi-bin/oui-upload" :on-success="onUploadArchiveSuccess" :file-list="fileListArchive" :auto-upload="false" :limit="1" :data="{filename: '/tmp/backup.tar.gz', sessionid: sid}" style="width: 600px">
         <el-button slot="trigger" size="small" type="primary">{{ $t('Select File') }}</el-button>
