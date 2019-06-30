@@ -16,23 +16,23 @@
       </el-table-column>
     </el-table>
     <el-dialog :visible.sync="dialogVisible" :title="add ? $t('Add') : $t('Edit')">
-      <el-form label-width="100px" label-position="left" :model="edit" ref="edit">
-        <el-form-item :label="$t('Minute')" prop="min" required>
+      <el-form label-width="100px" label-position="left" :model="edit" ref="edit" :rules="rules">
+        <el-form-item :label="$t('Minute')" prop="min">
           <el-input v-model="edit.min"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('Hour')" prop="hour" required>
+        <el-form-item :label="$t('Hour')" prop="hour">
           <el-input v-model="edit.hour"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('Day')" prop="day" required>
+        <el-form-item :label="$t('Day')" prop="day">
           <el-input v-model="edit.day"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('Month')" prop="month" required>
+        <el-form-item :label="$t('Month')" prop="month">
           <el-input v-model="edit.month"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('Week')" prop="week" required>
+        <el-form-item :label="$t('Week')" prop="week">
           <el-input v-model="edit.week"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('Command')" prop="command" required>
+        <el-form-item :label="$t('Command')" prop="command">
           <el-input v-model="edit.command"></el-input>
         </el-form-item>
       </el-form>
@@ -59,6 +59,26 @@ export default {
         month: '',
         week: '',
         command: ''
+      },
+      rules: {
+        min: [
+          {required: true, message: this.$t('This field is required')}
+        ],
+        hour: [
+          {required: true, message: this.$t('This field is required')}
+        ],
+        day: [
+          {required: true, message: this.$t('This field is required')}
+        ],
+        month: [
+          {required: true, message: this.$t('This field is required')}
+        ],
+        week: [
+          {required: true, message: this.$t('This field is required')}
+        ],
+        command: [
+          {required: true, message: this.$t('This field is required')}
+        ]
       }
     }
   },
