@@ -19,9 +19,9 @@ footer: MIT Licensed
 
 ``` bash
 # Add feed
-echo "src-git oui https://gitee.com/zhaojh329/oui.git" >> feeds.conf.default
+echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
 # OR if exist feeds.conf
-echo "src-git oui https://gitee.com/zhaojh329/oui.git" >> feeds.conf
+echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf
 
 # install feed of oui
 ./scripts/feeds update oui
