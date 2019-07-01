@@ -1,4 +1,5 @@
 module.exports = {
+  base: '/oui/',
   title: 'oui',
   locales: {
     '/': {
