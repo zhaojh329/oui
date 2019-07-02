@@ -22,8 +22,8 @@ module.exports = {
       '/en/': {
         selectText: 'Languages',
         nav: [
-          { text: 'Guide', link: '/guide/' },
-          { text: 'uci', link: '/uci/' }
+          { text: 'Guide', link: '/en/guide/' },
+          { text: 'uci', link: '/en/uci/' }
         ]
       }
     },

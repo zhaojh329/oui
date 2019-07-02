@@ -61,6 +61,18 @@ Webpack在构建vue代码时，分两个版本，一个为开发版本(上节介
 按F12快捷键打开浏览器的控制台，我们可以在控制台中查询uci配置以及调用ubus。
 ![](./web_con.png)
 
+## $uci
+
+oui给Vue实例添加了属性`$uci`，该属性提供了用于操作uci的方法。
+
+具体用法请参考源码：`oui/oui-ui-core/src/src/plugins/uci.js`
+
+## $ubus
+
+oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方法。
+
+具体用法请参考源码：`oui/oui-ui-core/src/src/plugins/ubus.js`
+
 ## 添加一个页面
 
 ### 首先添加导航菜单
