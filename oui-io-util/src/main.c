@@ -117,7 +117,7 @@ out:
 }
 
 static char *
-checksum(const char *applet, size_t sumlen, const char *file)
+md5sum(const char *file)
 {
 	pid_t pid;
 	int fds[2];
@@ -141,14 +141,14 @@ checksum(const char *applet, size_t sumlen, const char *file)
 		close(fds[0]);
 		close(fds[1]);
 
-		if (execl("/bin/busybox", "/bin/busybox", applet, file, NULL))
+		if (execl("/bin/busybox", "/bin/busybox", "md5sum", file, NULL))
 			return NULL;
 
 		break;
 
 	default:
 		memset(chksum, 0, sizeof(chksum));
-		read(fds[0], chksum, sumlen);
+		read(fds[0], chksum, 32);
 		waitpid(pid, NULL, 0);
 		close(fds[0]);
 		close(fds[1]);
@@ -279,14 +279,8 @@ response(bool success, const char *message)
 		else
 			printf("\t\"size\": null,\n");
 
-		chksum = checksum("md5sum", 32, st.filename);
-		printf("\t\"checksum\": %s%s%s,\n",
-			chksum ? "\"" : "",
-			chksum ? chksum : "null",
-			chksum ? "\"" : "");
-
-		chksum = checksum("sha256sum", 64, st.filename);
-		printf("\t\"sha256sum\": %s%s%s\n",
+		chksum = md5sum(st.filename);
+		printf("\t\"checksum\": %s%s%s\n",
 			chksum ? "\"" : "",
 			chksum ? chksum : "null",
 			chksum ? "\"" : "");
