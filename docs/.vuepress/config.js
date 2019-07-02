@@ -30,8 +30,8 @@ module.exports = {
     sidebar: {
       '/guide/': ['', 'getting-started'],
       '/en/guide/': ['', 'getting-started'],
-      '/uci/': ['', 'attribute'],
-      '/en/uci/': ['', 'attribute']
+      '/uci/': ['', 'components'],
+      '/en/uci/': ['', 'components']
     }
   }
 }
