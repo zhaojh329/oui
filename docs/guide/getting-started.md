@@ -4,6 +4,63 @@
 阅读本教程，需要开发者具备[vue](https://cn.vuejs.org/)基础知识
 :::
 
+## 调试前端代码
+
+如果我们每修改一次代码，就编译一次，然后上传到设备，这样的开发效率实在是无法忍受。
+
+Webpack提供了热更新技术。可使我们的每一次修改，都能立即呈现在浏览器上。
+
+1.安装[nodejs](https://nodejs.org)(8.11.0+)。你可以使用[nvm](https://github.com/creationix/nvm)
+或[nvm-windows](https://github.com/coreybutler/nvm-windows) 在同一台电脑中管理多个Node版本。
+
+2.克隆oui代码到你的开发主机的任意位置
+``` bash
+git clone https://github.com/zhaojh329/oui.git
+```
+
+3.进入：oui/oui-ui-core/src/
+``` bash
+cd oui/oui-ui-core/src/
+```
+
+4.修改代理配置, 将`vue.config.js`里面的`openwrt.lan`更改为你的设备的IP地址
+``` js
+module.exports = {
+  indexPath: 'oui.html',
+  productionSourceMap: false,
+  devServer: {
+    proxy: {
+      '/ubus': {
+        target: 'http://openwrt.lan'
+      },
+      '/cgi-bin/': {
+        target: 'http://openwrt.lan'
+      }
+    }
+  }
+  ...
+}
+```
+
+5.安装依赖包
+``` bash
+npm insstall
+```
+
+6.启动调试服务器
+``` bash
+npm run serve
+```
+
+7.根据输出提示，在浏览器中访问调试服务器。这时，你对代码的修改，都会立即更新到浏览器上面。
+
+## Web控制台调试
+
+Webpack在构建vue代码时，分两个版本，一个为开发版本(上节介绍的调试即为开发版本)，一个为生产版本。在开发版本中，oui导出了用于调试的uci和ubus工具。
+
+按F12快捷键打开浏览器的控制台，我们可以在控制台中查询uci配置以及调用ubus。
+![](./web_con.png)
+
 ## 添加一个页面
 
 ### 首先添加导航菜单
@@ -68,11 +125,36 @@
 重新编译oui并更新到设备。效果如下：
 ![](./example_nav2.png)
 
-## 存取数据
+## 如何注册ubus服务
 
-oui存取的所有数据均来自于后端提供的`ubus`服务。因此你必须为你的数据提供`ubus`服务。
+oui存取的所有数据均来自于后端提供的`ubus`服务。因此你必须为你的数据注册`ubus`服务。
 
-OpenWrt提供了多种方式，用来注册ubus服务。这里给出了一个计数器的例子。
+对于大多数数据，OpenWrt已经为我们注册了ubus服务，如果没有，就需要我们自己注册。
+
+::: tip
+对于uci配置文件，OpenWrt自带软件包rpcd已经为我们提供了ubus服务，供我们操作uci配置文件。
+``` bash
+root@OpenWrt:~# ubus -v list uci
+'uci' @301dba5a
+        "configs":{}
+        "get":{"config":"String","section":"String","option":"String","type":"String","match":"Table","ubus_rpc_session":"String"}
+        "state":{"config":"String","section":"String","option":"String","type":"String","match":"Table","ubus_rpc_session":"String"}
+        "add":{"config":"String","type":"String","name":"String","values":"Table","ubus_rpc_session":"String"}
+        "set":{"config":"String","section":"String","type":"String","match":"Table","values":"Table","ubus_rpc_session":"String"}
+        "delete":{"config":"String","section":"String","type":"String","match":"Table","option":"String","options":"Array","ubus_rpc_session":"String"}
+        "rename":{"config":"String","section":"String","option":"String","name":"String","ubus_rpc_session":"String"}
+        "order":{"config":"String","sections":"Array","ubus_rpc_session":"String"}
+        "changes":{"config":"String","ubus_rpc_session":"String"}
+        "revert":{"config":"String","ubus_rpc_session":"String"}
+        "commit":{"config":"String","ubus_rpc_session":"String"}
+        "apply":{"rollback":"Boolean","timeout":"Integer","ubus_rpc_session":"String"}
+        "confirm":{"ubus_rpc_session":"String"}
+        "rollback":{"ubus_rpc_session":"String"}
+        "reload_config":{}
+```
+:::
+
+OpenWrt提供了多种方式，用来注册ubus服务。这里给出了一个计数器的例子,效果如下：
 ``` bash
 root@OpenWrt:~# ubus -v list counter
 'counter' @18abaa64
@@ -223,6 +305,8 @@ uloop.run()
 
 方式2: 编写[rpcd](https://openwrt.org/start?id=docs/techref/rpcd)插件
 
+很多时候，我们没必要为每一个ubus服务开启一个常驻的daemon，这时我们可以通过给rpcd添加插件的方式来注册我们自己的ubus服务。
+
   Shell
 ``` bash
 #!/bin/sh
@@ -293,4 +377,65 @@ elseif arg[1] == "call" then
 		print(cjson.encode({count = count}))
 	end
 end
+```
+
+## 存取数据
+
+我们通过网页来展示上节示例中的count值，并通过网页设置。
+
+修改前面章节添加的vue组件：`oui/oui-ui-core/src/src/views/test/sub.vue`
+``` vue
+<template>
+  <div>
+    <p>{{ count }}</p>
+    <el-button type="primary" @click="add">+</el-button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      count: ''
+    }
+  },
+  created() {
+    this.$ubus.call('counter', 'get').then(r => {
+      this.count = r.count;
+    });
+  },
+  methods: {
+    add() {
+      this.$ubus.call('counter', 'add', {value: 1}).then(r => {
+        this.count = r.count;
+      });
+    }
+  }
+}
+</script>
+```
+
+这里的`$ubus`是oui针对ubus封装的API，用于调用后端提供的ubus服务。
+
+现在我们的页面还无法正常工作，我们还需要给counter这个ubus服务注册权限。
+
+权限配置文件存储路径为：`oui/oui-ui-core/files/usr/share/rpcd/acl.d`。我们可以在现有的权限配置文件中修改，或者新建一个权限配置文件。
+
+我们这里新建一个权限配置文件：`oui/oui-ui-core/files/usr/share/rpcd/acl.d/counter`
+``` json
+{
+  "counter": {
+    "description": "Counter test",
+    "read": {
+      "ubus": {
+        "counter": ["get"]
+      }
+    },
+    "write": {
+      "ubus": {
+        "counter": ["add"]
+      }
+    }
+  }
+}
 ```
