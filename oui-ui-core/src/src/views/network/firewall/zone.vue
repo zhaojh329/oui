@@ -104,24 +104,26 @@ export default {
       });
     },
     addZone(self) {
-      this.$prompt(this.$t('Please input a name'), this.$t('Add'), {
-        inputValidator: value => {
-          if (!value)
+      return new Promise(resolve => {
+        this.$prompt(this.$t('Please input a name'), this.$t('Add'), {
+          inputValidator: value => {
+            if (!value)
+              return true;
+
+            const sections = self.sections;
+            for (let i = 0; i < sections.length; i++)
+              if (sections[i].name === value)
+                return this.$t('Name already used');
+
             return true;
+          }
+        }).then(r => {
+          if (!r.value)
+            return;
 
-          const sections = self.sections;
-          for (let i = 0; i < sections.length; i++)
-            if (sections[i].name === value)
-              return this.$t('Name already used');
-
-          return true;
-        }
-      }).then(r => {
-        if (!r.value)
-          return;
-
-        const z = this.$firewall.createZone(r.value);
-        self.postAdd(z.sid);
+          const z = this.$firewall.createZone(r.value);
+          resolve(z.sid);
+        });
       });
     }
   },

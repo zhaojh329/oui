@@ -86,25 +86,27 @@ export default {
       return this.doSavePasswd(self.uciSection, sid);
     },
     addUser(self) {
-      this.$prompt(this.$t('Please input a username'), this.$t('Add'), {
-        inputValidator: value => {
-          if (!value)
+      return new Promise(resolve => {
+        this.$prompt(this.$t('Please input a username'), this.$t('Add'), {
+          inputValidator: value => {
+            if (!value)
+              return true;
+
+            const sections = self.sections;
+            for (let i = 0; i < sections.length; i++)
+              if (sections[i].username === value)
+                return this.$t('Username already used');
+
             return true;
+          }
+        }).then(r => {
+          if (!r.value)
+            return;
 
-          const sections = self.sections;
-          for (let i = 0; i < sections.length; i++)
-            if (sections[i].username === value)
-              return this.$t('Username already used');
-
-          return true;
-        }
-      }).then(r => {
-        if (!r.value)
-          return;
-
-        const sid = this.$uci.add('rpcd', 'login');
-        this.$uci.set('rpcd', sid, 'username', r.value);
-        self.postAdd(sid);
+          const sid = this.$uci.add('rpcd', 'login');
+          this.$uci.set('rpcd', sid, 'username', r.value);
+          resolve(sid);
+        });
       });
     },
     mergeACLScope(aclScope, scope) {

@@ -12,13 +12,24 @@ export default {
     add(name) {
       let sid;
 
-      if (this.sestion.add)
-        sid = this.sestion.add(this.sestion, name);
-      else
+      if (this.sestion.add) {
+        sid = this.sestion.add(this.sestion);
+
+        if (window.oui.isPromise(sid)) {
+          sid.then(sid => {
+            if (sid)
+              this.sestion.afterAdd(sid);
+          }, () => {
+            /* ignore promise rejection */
+          });
+          return;
+        }
+      } else {
         sid = this.$uci.add(this.sestion.config, this.sestion.type, name);
+      }
 
       if (sid)
-        this.sestion.postAdd(sid);
+        this.sestion.afterAdd(sid);
     },
     handleAdd() {
       if (this.sestion.anonymous) {

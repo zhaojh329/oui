@@ -33,11 +33,9 @@ export default {
       type: Object,
       default: () => {}
     },
-    /*
-    ** Custom add function
-    ** Parameters: self, name
-    */
+    /* Custom add function */
     add: Function,
+    /* hook before del */
     beforeDel: Function,
     collabsible: {
       type: Boolean,
@@ -135,17 +133,32 @@ export default {
       for (const name in this.children)
         this.children[name].destroyFormSid(sid);
     },
-    postAdd(sid) {
+    afterAdd(sid) {
       this.activeCollapseItem = sid;
       this.load();
       this.buildForm(sid);
     },
-    del(sid) {
-      if (this.beforeDel)
-        this.beforeDel(sid, this);
+    performDel(sid) {
       this.$uci.del(this.config, sid);
       this.load();
       this.destroyForm(sid);
+    },
+    del(sid) {
+      if (this.beforeDel) {
+        const before = this.beforeDel(sid, this);
+        if (before === false)
+          return;
+
+        if (window.oui.isPromise(before)) {
+          before.then(() => {
+            this.performDel(sid);
+          }, () => {
+            /* ignore promise rejection */
+          });
+          return;
+        }
+      }
+      this.performDel(sid);
     },
     swap(sid1, sid2) {
       this.$uci.swap(this.config, sid1, sid2);
