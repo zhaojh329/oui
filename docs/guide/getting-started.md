@@ -451,3 +451,14 @@ export default {
   }
 }
 ```
+
+## 多语言支持
+
+语言文件存储路径为：`oui/oui-ui-core/src/src/locales`。目前仅支持英文和简体中文。把你需要翻译的内容添加到对应的语言文件中。
+
+在vue模板中使用`$t('content')`
+``` vue
+<uci-option-input :label="$t('Name')" name="name" required></uci-option-input>
+```
+
+在js中使用`this.$t('content')`
