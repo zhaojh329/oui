@@ -5,7 +5,7 @@ oui requires [nodejs](https://nodejs.org) version 8.11 or above to compile.
 You can choose to use the nodejs that comes with the host, or the nodejs package that comes with OpenWrt, or the nodejs package that comes with oui.
 
 It is recommended to use the nodejs that comes with the host, because it takes a long time to compile nodejs,
-and on the host [install nodejs via the package manager] (https://nodejs.org/en/download/package-manager/) is very fast.
+and on the host [install nodejs via the package manager](https://nodejs.org/en/download/package-manager/) is very fast.
 
 ## Add feed
 
