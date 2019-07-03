@@ -28,51 +28,6 @@ OpenWrt web user interface implemented in [vue.js] and [element-ui], inspired by
 oui uses [json-rpc] to communicate with OpenWrt subsystems. Call [ubus] via [json-rpc].
 To access any kind of system data through [ubus] with [json-rpc](with the help of [uhttpd-mod-ubus] to provide HTTP based API).
 
-# Requirements
-
-The following package is required to build the oui:
-
-* Node.js >= 8.11
-
-# How to use
-Add new feed into "feeds.conf.default":
-    
-    src-git oui https://github.com/zhaojh329/oui.git
-
-Install oui packages:
-    
-    ./scripts/feeds update oui
-    ./scripts/feeds install -a -p oui
-
-Select package oui in menuconfig and compile new image.
-
-    OUI  --->
-        <*>  oui-ui-core..................... Oui ui core
-
-Alternative use existing nodejs installation on the host system(The nodejs is only used to compile code)
-
-[Installing Node.js via package manager](https://nodejs.org/en/download/package-manager/)
-
-    <*> oui-ui-core
-        Configuration  --->
-            Node compiler config (oUI node)  --->
-			(*) oUI node
-
-# How to develop and debug
-First, clone the code to system.
-
-	cd oui/oui-ui-core/src
-
-Then modify the configuration file according to your own environment.
-You may need to modify proxy.
-
-	vi vue.config.js
-
-Then execute the following command to install the dependencies and start the debug server
-
-	npm i
-	npm run serve
-
 # [Donate](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
 * 深圳市云联芯科技有限公司 - 300¥

@@ -27,50 +27,6 @@ OpenWrt后台管理界面，使用[vue.js]和[element-ui]实现，灵感来自�
 
 oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
-# 依赖
-
-构建oui需要以下软件包
-
-* Node.js >= 8.11
-
-# 如何使用
-在"feeds.conf.default"里面添加新的feed:
-    
-    src-git oui https://gitee.com/zhaojh329/oui.git
-
-安装oui软件包:
-    
-    ./scripts/feeds update oui
-    ./scripts/feeds install -a -p oui
-
-在menuconfig里面选择oui软件包然后编译新固件.
-
-    oui  --->
-        <*>  oui-ui-core..................... Oui ui core
-
-另外，你可以使用已经安装在主机中的nodejs(Nodejs仅仅用来编译代码)
-
-[通过包过滤器安装Node.js](https://nodejs.org/en/download/package-manager/)
-
-    <*> oui-ui-core
-        Configuration  --->
-		Node compiler config (oUI node)  --->
-		(*) oUI node
-
-# 如何开发和调试
-首先克隆代码到你的系统，然后执行如下操作
-
-	cd oui/oui-ui-core/src
-
-然后根据自己的环境修改配置。您可能需要修改 proxy。
-
-	vi vue.config.js
-
-然后执行如下命令安装依赖包并运行调试服务器
-
-	npm i
-	npm run serve
-
 # [捐赠](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
 * 深圳市云联芯科技有限公司 - 300¥
