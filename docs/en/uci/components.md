@@ -48,6 +48,9 @@ Suppose there is such a uci configuration file: test
 config item
     option name qa
     option age 32
+config item
+    option name qa
+    option age 18
 ```
 Require only showing items older than 30:
 ``` vue

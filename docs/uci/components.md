@@ -50,6 +50,9 @@
 config item
     option name qa
     option age 32
+config item
+    option name qa
+    option age 18
 ```
 要求只展示年龄大于30的item:
 ``` vue
