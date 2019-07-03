@@ -18,23 +18,3 @@ footer: MIT Licensed
 <iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
 <iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
 <iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>
-
-``` bash
-# Add feed
-echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
-# OR if exist feeds.conf
-echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf
-
-# install feed of oui
-./scripts/feeds update oui
-./scripts/feeds install -a -p oui
-
-# configure
-oui  --->
-  <*>  oui-ui-core..................... Oui ui core
-
-# Build
-make V=s
-# Or only build oui
-make package/feeds/oui/oui-ui-core/compile V=s
-```

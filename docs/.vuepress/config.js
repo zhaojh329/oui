@@ -29,8 +29,8 @@ module.exports = {
       }
     },
     sidebar: {
-      '/guide/': ['', 'getting-started'],
-      '/en/guide/': ['', 'getting-started'],
+      '/guide/': ['', 'getting-started', 'compile'],
+      '/en/guide/': ['', 'getting-started', 'compile'],
       '/uci/': ['', 'components'],
       '/en/uci/': ['', 'components']
     }
