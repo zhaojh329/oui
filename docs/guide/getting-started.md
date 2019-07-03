@@ -1,7 +1,7 @@
 # 快速上手
 
 ::: tip
-阅读本教程，需要开发者具备[vue](https://cn.vuejs.org/)基础知识
+阅读本教程，需要开发者具备[vue](https://cn.vuejs.org/)和[element-ui](https://element.eleme.io)知识
 :::
 
 ## 调试前端代码
@@ -73,7 +73,7 @@ oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方
 
 具体用法请参考源码：`oui/oui-ui-core/src/src/plugins/ubus.js`
 
-## 添加一个页面
+## 如何添加一个页面
 
 ### 首先添加导航菜单
 
@@ -94,16 +94,16 @@ oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方
 ```
 
 - 这里的第一个`test`表示菜单的导航路径为`/test`
-- `title`: 菜单标题
-- `index`: 用于菜单排序，越小越靠前
-- `view`: 菜单对应的vue组件路径
+- `title`: 导航菜单标题
+- `index`: 用于导航菜单排序，越小越靠前
+- `view`: 导航菜单对应的vue组件路径
 
 ### 为刚刚添加的导航菜单添加页面
 
 创建一个非常简单的Vue组件: `oui/oui-ui-core/src/src/views/test.vue`
 
 ```
-<template>
+<template> vue
   <el-button type="primary">你好，Oui</el-button>
 </template>
 ```
@@ -426,8 +426,6 @@ export default {
 }
 </script>
 ```
-
-这里的`$ubus`是oui针对ubus封装的API，用于调用后端提供的ubus服务。
 
 现在我们的页面还无法正常工作，我们还需要给counter这个ubus服务注册权限。
 
