@@ -16,7 +16,8 @@ module.exports = {
         selectText: '语言',
         nav: [
           { text: '指南', link: '/guide/' },
-          { text: 'uci', link: '/uci/' }
+          { text: 'uci', link: '/uci/' },
+          { text: '中文站点(gitee)', link: 'http://zhaojh329.gitee.io/oui/' }
         ]
       },
       '/en/': {

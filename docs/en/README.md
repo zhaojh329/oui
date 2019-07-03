@@ -10,12 +10,14 @@ features:
   details: Use static pages; access any kind of system data via ubus
 - title: Multi User
   details: Support for multi-user and access management
-- title: Front and rear separation
-  details: Specialized in the industry (developer separation)
-- title: Vue-Powered
-  details: Enjoy the dev experience of Vue + webpack
+- title: Vue + Element-UI
+  details: Enjoy the dev experience of Vue + Element-UI
 footer: MIT Licensed
 ---
+
+<iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+<iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+<iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>
 
 ``` bash
 # Add feed
