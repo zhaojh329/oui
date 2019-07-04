@@ -1,4 +1,10 @@
-node_ver = $(subst v,,$(shell node -v))
+NODE ?= node
+NPM ?= npm
+
+$(info node: $(shell $(NODE) -v))
+$(info npm: $(shell $(NPM) -v))
+
+node_ver = $(subst v,,$(shell $(NODE) -v))
 node_ver_major = $(shell echo $(node_ver) | awk -F'.' '{print $$1}')
 node_ver_minor = $(shell echo $(node_ver) | awk -F'.' '{print $$2}')
 
@@ -19,11 +25,11 @@ endif
 all: build
 
 .tmp/.npm_stamp: package.json
-	npm install
-	mkdir -p .tmp
-	touch .tmp/.npm_stamp
+	@$(NPM) install
+	@mkdir -p .tmp
+	@touch .tmp/.npm_stamp
 
 prepare: .tmp/.npm_stamp
 
 build: prepare
-	npm run build
+	@$(NPM) run build

@@ -43,7 +43,15 @@ define Build/Prepare
 endef
 
 ifneq ($(CONFIG_OUI_BUILD_DEV),)
-  MAKE_VARS=NODE_ENV=development
+  MAKE_VARS = NODE_ENV=development
+endif
+
+ifneq ($(CONFIG_OUI_USE_HOST_NODE),)
+  MAKE_VARS += NODE=$(shell PATH=/usr/bin:/usr/local/bin which node)
+  MAKE_VARS += NPM=$(shell PATH=/usr/bin:/usr/local/bin which npm)
+else
+  MAKE_VARS += NODE=$(STAGING_DIR_HOST)/bin/node
+  MAKE_VARS += NPM=$(STAGING_DIR_HOST)/bin/npm
 endif
 
 define Package/oui-ui-core/install
