@@ -1,30 +1,31 @@
-# 编译
+# Compile
 
-编译oui需要用到[nodejs](https://nodejs.org)8.11或更高版本。
+oui requires [nodejs](https://nodejs.org) version 8.11 or above to compile.
 
-可以通过配置选择使用主机自带的nodejs，或者OpenWrt自带的nodejs软件包，或者oui自带的nodejs软件包。
+You can choose to use the nodejs that comes with the host, or the nodejs package that comes with OpenWrt, or the nodejs package that comes with oui.
 
-推荐使用主机自带的nodejs，因为编译nodejs需要相当长的时间，而在主机上[通过包管理器安装nodejs](https://nodejs.org/en/download/package-manager/)非常快。
+It is recommended to use the nodejs that comes with the host, because it takes a long time to compile nodejs,
+and on the host [install nodejs via the package manager](https://nodejs.org/en/download/package-manager/) is very fast.
 
-## 添加feed
+## Add feed
 
 ``` bash
 echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
 ```
 
-如果存在feeds.conf
+If there is feeds.conf
 ``` bash
 echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf
 ```
 
-## 更新feed
+## Update feed
 
 ``` bash
 ./scripts/feeds update oui
 ./scripts/feeds install -a -p oui
 ```
 
-## 配置
+## Configure
 
 ```
 OUI  --->
@@ -33,13 +34,13 @@ OUI  --->
           Node compiler config (Host Node)  --->
 ```
 
-## 编译
+## Compile
 
 ``` bash
 make V=s
 ```
 
-或者只编译oui
+Or just compile oui
 ``` bash
 make package/feeds/oui/oui-ui-core/compile V=s
 ```

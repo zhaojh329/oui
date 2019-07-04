@@ -1,6 +1,6 @@
-# 指南
+# Guide
 
-oui针对uci封装了一些vue组件，方便开发人员调用。
+Oui encapsulates some Vue components for uci, which is convenient for developers to call.
 
 ``` vue
 <template>
@@ -11,22 +11,23 @@ oui针对uci封装了一些vue组件，方便开发人员调用。
   </uci-form>
 </template>
 ```
-这是一个uci配置页面的基本结构。
+This is the basic structure of the UCI configuration page.
 
-`uci-form`组件在创建后，会通过调用ubus加载`config`属性指定的uci配置文件。然后根据子组件生成表单。
+Once created, the `uci-form` component loads the UCI configuration file specified by the `config`
+property by calling ubus. The form is then generated from the subcomponent.
 
-## 表单验证
+## Form Validation
 
-通过给`uci-option-xx`组件指定`rules`属性实现表单验证。该属性支持字符串，对象以及自定义函数。
+Form validation is implemented by specifying `rules` attribute to `uci-option-xx` components. This property supports strings, objects, and custom functions.
 
 ``` vue
 <uci-option-input label="ID" name="id" rules="integer"></uci-option-input>
 ```
-等价于
+Equivalent to
 ``` vue
 <uci-option-input label="ID" name="id" :rules="{type: 'integer'}"></uci-option-input>
 ```
-等价于
+Equivalent to
 ``` vue
 <uci-option-input label="ID" name="id" :rules="validateID"></uci-option-input>
 ...
@@ -36,7 +37,7 @@ export default {
     validateID(value) {
       if (value === '')
         return;
-        
+
       if (!isNaN(value) && parseInt(value).toString() === value)
         return;
 
@@ -47,17 +48,17 @@ export default {
 </script>
 ```
 
-通过对象方式可以指定多个规则：
+Multiple rules can be specified by object:
 ``` vue
 <uci-option-input label="ID" name="id" :rules="{type: 'integer', min: 12, max: 100}"></uci-option-input>
 ```
 
-如果该选项为必填项，可设置`required`属性，该属性类型为布尔值，默认为false。
+If this option is mandatory, you can set the `required` attribute, which is of Boolean type and defaults to false.
 ``` vue
 <uci-option-input label="ID" name="id" required></uci-option-input>
 ```
 
-oui目前支持的验证规则：
+Oui currently supports validation rules:
 - url
 - email
 - number
@@ -76,29 +77,31 @@ oui目前支持的验证规则：
 - macaddr
 - uciname
 
-## 选项依赖
+## Option dependency
 
-选项的显示与否依赖于一个或者多个其它选项的值。
+The display of options depends on the value of one or more other options.
 
-给`uci-option-xx`组件设置`depend`属性可以实现依赖。该属性的类型为字符串。我们需要提供一个以字符串表示的表达式。
+Dependency can be implemented by setting the `depend` attribute to the `uci-option-xx` component. The type of this property is a string. We need to provide an expression in string.
 ``` js
 depend="(a == 12 || a == 'x') && y == 4 && q != 5 && !z"
 ```
 
-a选项依赖于b选项，如果b选项的值为'5'，a选项则显示，否则不显示：
+The `a` option depends on the `b` option. If the value of the `b` option is '5', the `a` option will be displayed, otherwise it will not be displayed:
 ``` vue
 <uci-option-input label="A" name="a" depend="b == '5'"></uci-option-input>
 <uci-option-input label="B" name="b"></uci-option-input>
 ```
 
-a选项依赖于b选项和c选项，如果b选项的值为'oui'，而且c选项的值不等于'u'，a选项则显示，否则不显示：
+The `a` option depends on the `b` option and the `c` option. If the value of the `b` option is 'oui', and the value of the `c` option
+is not equal to 'u', the `a` option will be displayed, otherwise it will not be displayed:
 ``` vue
 <uci-option-input label="A" name="a" depend="b == 'oui' && c != 'u'"></uci-option-input>
 <uci-option-input label="B" name="b"></uci-option-input>
 <uci-option-input label="C" name="c"></uci-option-input>
 ```
 
-a选项依赖于b选项和c选项，如果b选项的值为真，而且c选项的值为假，a选项则显示，否则不显示：
+The `a` option depends on the `b` option and the `c` option. If the value of the `b` option is true and the value of the
+`c` option is false, the a option will be displayed, otherwise it will not be displayed:
 ``` vue
 <uci-option-input label="A" name="a" depend="b && !c"></uci-option-input>
 <uci-option-switch label="B" name="b"></uci-option-switch>

@@ -1,29 +1,32 @@
-# 快速上手
+# Getting Started
 
 ::: tip
-阅读本教程，需要开发者具备[vue](https://cn.vuejs.org/)和[element-ui](https://element.eleme.io)知识
+To read this tutorial, developers need to have knowledge of [vue](https://cn.vuejs.org/) and [element-ui](https://element.eleme.io)
 :::
 
-## 调试前端代码
+## Debugging front-end code
 
-如果我们每修改一次代码，就编译一次，然后上传到设备，这样的开发效率实在是无法忍受。
+Debugging front-end code is unbearable if we compile it every time we modify it and upload it to the device.
 
-Webpack提供了热更新技术。可使我们的每一次修改，都能立即呈现在浏览器上。
+Webpack provides hot update technology. We can make every change displaied on our browser immediately.
 
-1.安装[nodejs](https://nodejs.org)(8.11.0+)。你可以使用[nvm](https://github.com/creationix/nvm)
-或[nvm-windows](https://github.com/coreybutler/nvm-windows) 在同一台电脑中管理多个Node版本。
+1.Install [nodejs](https://nodejs.org)(8.11.0+). You can manage multiple versions of Node on the same machine
+with [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows)
 
-2.克隆oui代码到你的开发主机的任意位置
+2.Clone the oui code to any location on your development host machine.
 ``` bash
 git clone https://github.com/zhaojh329/oui.git
 ```
 
-3.进入：oui/oui-ui-core/src/
+3.Enter：oui/oui-ui-core/src/
 ``` bash
 cd oui/oui-ui-core/src/
 ```
 
 4.修改代理配置, 将`vue.config.js`里面的`openwrt.lan`更改为你的设备的IP地址
+
+4.Modify the proxy configuration: replace `openwrt.lan` in `vue.config.js` with the IP address of your device.
+
 ``` js
 module.exports = {
   indexPath: 'oui.html',
@@ -42,46 +45,48 @@ module.exports = {
 }
 ```
 
-5.安装依赖包
+5.Install dependency packages
 ``` bash
 npm insstall
 ```
 
-6.启动调试服务器
+6.Start the Debugging Server
 ``` bash
 npm run serve
 ```
 
-7.根据输出提示，在浏览器中访问调试服务器。这时，你对代码的修改，都会立即更新到浏览器上面。
+7.According to the output prompt, access the debugging server in the browser. At this point, your code changes will be immediately updated to the browser.
 
-## Web控制台调试
+## Web Console Debugging
 
-Webpack在构建vue代码时，分两个版本，一个为开发版本(上节介绍的调试即为开发版本)，一个为生产版本。在开发版本中，oui导出了用于调试的uci和ubus工具。
+Webpack builds Vue code in two versions, one for the development version(the debugging described in the previous section is the development version) and the other for the production version.
+In the development version, oui exported UCI and UBUS tools for debugging.
 
-按F12快捷键打开浏览器的控制台，我们可以在控制台中查询uci配置以及调用ubus。
+Press the F12 shortcut to open the browser's console, where we can query the UCI configuration and call ubus.
 ![](./web_con.png)
 
 ## $uci
 
-oui给Vue实例添加了属性`$uci`，该属性提供了用于操作uci的方法。
+Oui adds the attribute `$uci` to the Vue instance, which provides a series of methods for manipulating uci.
 
-具体用法请参考源码：`oui/oui-ui-core/src/src/plugins/uci.js`
+Refer to the source code for specific usage：`oui/oui-ui-core/src/src/plugins/uci.js`
 
 ## $ubus
 
-oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方法。
+Oui adds the attribute `$ubus` to the Vue instance, which provides a series of methods for call ubus.
 
-具体用法请参考源码：`oui/oui-ui-core/src/src/plugins/ubus.js`
+Refer to the source code for specific usage：`oui/oui-ui-core/src/src/plugins/ubus.js`
 
-## 如何添加一个页面
+## How to add a page
 
-### 首先添加导航菜单
+### First add the navigation menu
 
-导航菜单配置文件存储路径为：`oui-ui-core/files/usr/share/oui/menu.d`
+The navigation menu configuration file storage path is：`oui-ui-core/files/usr/share/oui/menu.d`
 
-你可以在已有的菜单配置文件里面添加或者新建一个文件。导航菜单分为一级导航菜单和二级导航菜单。
+You can add in an existing menu configuration or create a new file. Navigation menu
+is divided into first-level navigation menu and second-level navigation menu.
 
-比如新建一个导航菜单配置文件：`oui-ui-core/files/usr/share/oui/menu.d/test.json`
+For example, create a new navigation menu configuration file：`oui-ui-core/files/usr/share/oui/menu.d/test.json`
 
 ``` json
 {
@@ -92,26 +97,25 @@ oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方
   }
 }
 ```
+- The first `test` here indicates that the navigation path of the menu is `test`
+- `title`: Navigation menu title
+- `index`: Used for sorting navigation menus, smaller and closer to the front
+- `view`: Vue component path corresponding to navigation menu
 
-- 这里的第一个`test`表示菜单的导航路径为`/test`
-- `title`: 导航菜单标题
-- `index`: 用于导航菜单排序，越小越靠前
-- `view`: 导航菜单对应的vue组件路径
+### Add pages for the navigation menu just added
 
-### 为刚刚添加的导航菜单添加页面
+Create a very simple Vue component: `oui/oui-ui-core/src/src/views/test.vue`
 
-创建一个非常简单的Vue组件: `oui/oui-ui-core/src/src/views/test.vue`
-
-```
-<template> vue
-  <el-button type="primary">你好，Oui</el-button>
+``` vue
+<template>
+  <el-button type="primary">Hello，Oui</el-button>
 </template>
 ```
 
-重新编译oui并更新到设备。效果如下：
+Recompile oui and update it to the device. The results are as follows:
 ![](./example_nav.png)
 
-### 二级导航菜单
+### Secondary navigation menu
 
 ``` json
 {
@@ -127,24 +131,25 @@ oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方
 }
 ```
 
-将之前添加的test.vue删除，并添加新的vue组件：`oui/oui-ui-core/src/src/views/test/sub.vue`
+Delete the previously added `test.Vue` and add a new Vue component：`oui/oui-ui-core/src/src/views/test/sub.vue`
 
 ```
 <template>
-  <el-button type="primary">二级导航菜单</el-button>
+  <el-button type="primary">Secondary navigation menu</el-button>
 </template>
 ```
-重新编译oui并更新到设备。效果如下：
+Recompile oui and update it to the device. The results are as follows:
 ![](./example_nav2.png)
 
-## 如何注册ubus服务
+## How to register UBUS service
 
-oui存取的所有数据均来自于后端提供的`ubus`服务。因此你必须为你的数据注册`ubus`服务。
+All data accessed by oui comes from the `ubus` service provided by the back end. So you have to register `ubus` for your data.
 
-对于大多数数据，OpenWrt已经为我们注册了ubus服务，如果没有，就需要我们自己注册。
+For most of the data, OpenWrt has registered UBUS services for us. If not, we need to register ourselves.
 
 ::: tip
-对于uci配置文件，OpenWrt自带软件包rpcd已经为我们提供了ubus服务，供我们操作uci配置文件。
+For UCI configuration files, OpenWrt's own software package [rpcd](https://openwrt.org/start?id=docs/techref/rpcd) has provided
+us with UBUS services to manipulate UCI configuration files.
 ``` bash
 root@OpenWrt:~# ubus -v list uci
 'uci' @301dba5a
@@ -166,7 +171,7 @@ root@OpenWrt:~# ubus -v list uci
 ```
 :::
 
-OpenWrt提供了多种方式，用来注册ubus服务。这里给出了一个计数器的例子,效果如下：
+OpenWrt provides a variety of ways to register UBUS services. An example of a counter is given here. The effect is as follows:
 ``` bash
 root@OpenWrt:~# ubus -v list counter
 'counter' @18abaa64
@@ -186,9 +191,9 @@ root@OpenWrt:~# ubus call counter get
 }
 ```
 
-### 方式1: 调用ubus提供的库，编写独立运行的可执行程序。
+### Mode 1: Call the library provided by UBUS and write an executable program that runs independently.
 
-C语言版本
+C
 ``` C
 #include <libubox/blobmsg_json.h>
 #include <libubus.h>
@@ -280,7 +285,7 @@ int main(int argc, char **argv)
 }
 ```
 
-Lua版本
+Lua
 ``` Lua
 #!/usr/bin/lua
 
@@ -315,9 +320,9 @@ conn:add(methods)
 uloop.run()
 ```
 
-方式2: 编写[rpcd](https://openwrt.org/start?id=docs/techref/rpcd)插件
+Mode 2: Write [rpcd](https://openwrt.org/start?Id=docs/techref/rpcd)plugin
 
-很多时候，我们没必要为每一个ubus服务开启一个常驻的daemon，这时我们可以通过给rpcd添加插件的方式来注册我们自己的ubus服务。
+Many times, we don't need to open a resident daemon for every UBUS service, so we can register our own UBUS service by adding plugins to rpcd.
 
   Shell
 ``` bash
@@ -391,11 +396,11 @@ elseif arg[1] == "call" then
 end
 ```
 
-## 存取数据
+## Access Data
 
-我们通过网页来展示上节示例中的count值，并通过网页设置。
+We show the count value in the example from previous section through the web page and set it up through the web page.
 
-修改前面章节添加的vue组件：`oui/oui-ui-core/src/src/views/test/sub.vue`
+Modify the Vue component added in the previous section：`oui/oui-ui-core/src/src/views/test/sub.vue`
 ``` vue
 <template>
   <div>
@@ -426,12 +431,11 @@ export default {
 }
 </script>
 ```
+Now that our page is not working properly, we need to add permission for the counter UBUS service.
 
-现在我们的页面还无法正常工作，我们还需要给counter这个ubus服务注册权限。
+The permission profile storage path is：`oui/oui-ui-core/files/usr/share/rpcd/acl.d`。We can modify the existing permission profile or create a new one.
 
-权限配置文件存储路径为：`oui/oui-ui-core/files/usr/share/rpcd/acl.d`。我们可以在现有的权限配置文件中修改，或者新建一个权限配置文件。
-
-我们这里新建一个权限配置文件：`oui/oui-ui-core/files/usr/share/rpcd/acl.d/counter`
+Let's create a new permission profile here：`oui/oui-ui-core/files/usr/share/rpcd/acl.d/counter`
 ``` json
 {
   "counter": {
@@ -450,13 +454,14 @@ export default {
 }
 ```
 
-## 多语言支持
+## Multilingual support
 
-语言文件存储路径为：`oui/oui-ui-core/src/src/locales`。目前仅支持英文和简体中文。把你需要翻译的内容添加到对应的语言文件中。
+Language file storage path is：`oui/oui-ui-core/src/src/locales`。At present, only English and simplified
+Chinese are supported. Add the content you need to translate to the corresponding language file.
 
-在vue模板中使用`$t('content')`
+Use in Vue template: `$t('content')`
 ``` vue
 <uci-option-input :label="$t('Name')" name="name" required></uci-option-input>
 ```
 
-在js中使用`this.$t('content')`
+Use in JS: `this.$t('content')`

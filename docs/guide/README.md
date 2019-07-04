@@ -1,4 +1,4 @@
-# 介绍
+# Introduction
 
 [vue.js]: https://github.com/vuejs/vue
 [element-ui]: https://github.com/ElemeFE/element
@@ -7,13 +7,14 @@
 [ubus]: https://wiki.openwrt.org/doc/techref/ubus
 [uhttpd-mod-ubus]: https://wiki.openwrt.org/doc/techref/ubus#access_to_ubus_over_http
 
-oui使用[vue.js]和[element-ui]实现，灵感来自于[LuCI2]。
+oui implemented in [vue.js] and [element-ui], inspired by [LuCI2].
 
-oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
+oui uses [json-rpc] to communicate with OpenWrt subsystems. Call [ubus] via [json-rpc].
+To access any kind of system data through [ubus] with [json-rpc](with the help of [uhttpd-mod-ubus] to provide HTTP based API).
 
-## 特性
+## Features
 
-* 快
-* 多用户
-* 前后端分离
-* Vue驱动
+* Fast
+* Multi User
+* Front and rear separation
+* Vue-Powered

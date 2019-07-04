@@ -2,16 +2,16 @@
 home: true
 heroImage: /hero.png
 heroText: oui
-tagline: 基于Vue的OpenWrt后台管理UI框架
-actionText: 快速上手 →
+tagline: Vue-based OpenWrt background management UI framework
+actionText: Get Started →
 actionLink: /guide/
 features:
-- title: 快
-  details: 使用静态页面；通过ubus存取各种系统数据
-- title: 多用户
-  details: 支持多用户及权限管理
-- title: Vue + Element-UI 加持
-  details: 享受 Vue + Element-UI 的开发体验
+- title: Fast
+  details: Use static pages; access any kind of system data via ubus
+- title: Multi User
+  details: Support for multi-user and access management
+- title: Vue + Element-UI
+  details: Enjoy the dev experience of Vue + Element-UI
 footer: MIT Licensed
 ---
 

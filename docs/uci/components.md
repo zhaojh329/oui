@@ -1,51 +1,49 @@
-# 组件
+# Components
 
 ::: tip
-文中出现的`self`均表示当前组件实例本身。
+The `self` appearing in the text indicates the current component instance itself.
 :::
 
 ## uci-form
 
-代表一个uci配置文件。其它组件必须由该组件包裹。
+Represents a uci configuration file. Other components must be wrapped by this component.
 
-### 属性
-| 名称      | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name      | Description        | Type      | Accepted Values       | Default  |
 |---------- |------------ |---------- |-------------|-------- |
-| config    | uci配置文件  | string   | — | — |
-| tabbed    | 将每个uci-section渲染成Tab标签页 | boolean | — | false |
-| after-loaded | uci配置加载完成后的钩子 | Function() | — | — |
+| config    | uci configuration file  | string   | — | — |
+| tabbed    | Render each uci-section into a tab page | boolean | — | false |
+| after-loaded | hook function after uci loading is completed | Function() | — | — |
 
-### 事件
-| 事件名称   | 说明         | 回调参数   |
+### Events
+| Name   | Description         | Parameters   |
 |---------- |------------- |---------- |
-| apply     | 应用配置时触发 | — |
+| apply     | triggers when applying configuration | — |
 
 ## uci-section
 
-代表具有同一类型的uci section或者某个命名的uci section。
+Represents a uci section of the same type or a named uci section.
 
-### 属性
-| 名称      | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name      | Description        | Type      | Accepted Values       | Default  |
 |---------- |------------ |---------- |-------------|-------- |
-| type    | section类型  | string   | — | — |
-| name    | section名称  | string   | — | — |
-| title    | 标题  | string   | — | — |
-| addable   | 是否可以添加或者删除 | boolean | — |  false |
-| anonymous | 是否是匿名section，若为false，添加操作将添加一个命名section  | boolean   | — |  true |
-| table     | 是否渲染成一个表格 | boolean | — |  false |
-| sortable  | 是支持排序(table为true时有效) | boolean | — |  false |
-| filter    | 过滤 | Function(s, self) | — | — |
-| options   | 自定义选项 | object | — | — |
-| collabsible | 是否可折叠 | boolean | — | true |
-| teasers | 折叠时需要显示的选项名称(默认显示所有选项) | array | — | — |
-| add | 自定义添加函数。返回sid或者Promise | Function(self) | — | — |
-| before-del | 执行删除前的钩子,若返回 false 或者返回 Promise 且被 reject，则阻止删除 | Function(sid, self) | — | — |
+| type    | section type  | string   | — | — |
+| Name    | section name  | string   | — | — |
+| title    | title  | string   | — | — |
+| addable   | Can be added or removed | boolean | — |  false |
+| anonymous | Whether it is an anonymous section, if it is false, the add operation will add a named section  | boolean   | — |  true |
+| table     | Whether to render into a table | boolean | — |  false |
+| sortable  | Support for sorting (valid when table is true) | boolean | — |  false |
+| filter    | filter | Function(s, self) | — | — |
+| options   | Custom options | object | — | — |
+| collabsible | collabsible | boolean | — | true |
+| teasers | The name of the option to display when collapsed (all options are displayed by default) | array | — | — |
+| add | Custom add function. Return sid or Promise | Function(self) | — | — |
+| before-del | hook function before perform delete. If false is returned or a Promise is returned and then is rejected, deletes will be prevented | Function(sid, self) | — | — |
 
-### 过滤
+### Filter
 
-通过`filter`属性可实现过滤。该属性类型为一个函数，返回boolean值。
-
-假设有这样一个uci配置文件：test
+Suppose there is such a uci configuration file: test
 ```
 config item
     option name qa
@@ -54,7 +52,7 @@ config item
     option name qa
     option age 18
 ```
-要求只展示年龄大于30的item:
+Require only showing items older than 30:
 ``` vue
 <template>
   <uci-form config="test">
@@ -75,22 +73,22 @@ export default {
 </script>
 ```
 
-### 自定义添加
+### Custom add function
 
-通过`add`属性可实现自定义添加功能。该属性类型为一个函数，返回添加的section ID或者Promise对象。
+Returns the added section ID or Promise object.
 
-假设有这样一个uci配置文件：test
+Suppose there is such a uci configuration file: test
 ```
 config item
     option name qa
     option age 32
 ```
-要求其中的name选项在添加section时由用户输入，并且不能重复，而且一旦添加就不能修改。
+The name option is required to be entered by the user when adding a section, and cannot be repeated, and cannot be modified once added.
 ``` vue
 <template>
   <uci-form config="test" addable :add="addItem">
     <uci-section type="item" :filter="filter">
-      <uci-option-dummy label="名称" name="name"></uci-option-dummy>
+      <uci-option-dummy label="Name" name="name"></uci-option-dummy>
     </uci-section>
   </uci-form>
 </template>
@@ -100,7 +98,7 @@ export default {
   methods: {
     addItem() {
       return new Promise(resolve => {
-        this.$prompt('请输入名称', '添加', {
+        this.$prompt('Please input a name', 'add', {
           inputValidator: value => {
             if (!value)
               return true;
@@ -108,7 +106,7 @@ export default {
             const sections = self.sections;
             for (let i = 0; i < sections.length; i++)
               if (sections[i].name === value)
-                return '名称已存在';
+                return 'The name already exist';
       
             return true;
           }
@@ -129,46 +127,48 @@ export default {
 
 ## uci-tab
 
-将uci选项包裹在Tab标签页中
+Wrap the uci option in the Tab tab
 
-### 属性
-| 名称    | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name    | Description        | Type      | Accepted Values       | Default  |
 |-------- |------------ |---------- |-------------|-------- |
-| title   | 标题 | string | — | — |
-| name    | 唯一标识 | string | — | — |
+| title   | title | string | — | — |
+| Name    | identifier corresponding to the name of Tabs, representing the alias of the tab-pane | string | — | — |
 
 ## uci-option
 
-`uci-option`组件的所有属性被其它`uci-option-xx`组件所继承。
+All properties of the `uci-option` component are inherited by other `uci-option-xx` components.
 
-### 属性
-| 名称        | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name        | Description        | Type      | Accepted Values       | Default  |
 |------------ |------------ |---------- |-------------|-------- |
-| label       | 标签 | string | — | — |
-| name        | 名称 | string | — | — |
-| uci-option  | uci选项名称(如果提供该属性，则不再以name属性作为uci选项名称) | string | — | — |
-| description | 对该选项的一个简短描述 | string | — | — |
-| required    | 是否必填 | boolean | — | false |
-| initial     | 初始值 | string/number | — | — |
-| depend      | 依赖 | string | — | — |
-| rules       | 表单验证规则 | string/object/Function(value) | — | — |
-| load        | 自定义加载方式 | string/array/Function(sid, self) | — | — |
-| save        | 自定义保存函数 | string/Function(sid, value, self) | — | — |
-| apply       | 表单提交时的钩子函数 | Function(value, self) | — | — |
-| tab         | 明确指定该选项所属的Tab面板 | string | — | — |
-| header      | 自定义表格的列标题 | string | — | — |
-| width       | 表格的列宽度 | string/number | — | — |
+| label       | label | string | — | — |
+| name        | option name (under the same section, must be unique) | string | — | — |
+| uci-option  | Uci option name (if this attribute is provided, the name attribute is no longer used as the uci option name) | string | — | — |
+| description | a short description of the option | string | — | — |
+| required    | Required or not | boolean | — | false |
+| initial     | initial value | string/number | — | — |
+| depend      | depend | string | — | — |
+| rules       | form validation rule | string/object/Function(value) | — | — |
+| load        | Custom loading method | string/array/Function(sid, self) | — | — |
+| save        | Custom save function | string/Function(sid, value, self) | — | — |
+| apply       | hook function when submitting a form | Function(value, self) | — | — |
+| tab         | Specify the tab panel to which this option belongs | string | — | — |
+| header      | Custom table column header | string | — | — |
+| width       | Column width of the table | string/number | — | — |
 
-### 作用域插槽
-| 名称 | 说明     |
+### Scoped Slots
+| Name | Description     |
 |------|----------|
-| —    |自定义选项内容，参数为 {sid, prop, value, self} |
+| —    | Custom option content, the parameter is {sid, prop, value, self} |
 
-### 自定义选项加载方式。
+### Custom option loading method
 
-通过提供`load`属性实现。该属性支持字符串，数组，函数三种类型。如果提供一个函数，可直接返回一个值或者Promise对象。如果提供一个字符串或者数组，可动态更新该选项的值。
+Implemented by providing the `load` attribute. This property supports three types of strings, arrays, and functions.
+If you provide a function, you can return a value directly or a Promise object. If you supply a string or an array,
+you can dynamically update the value of this option.
 ``` vue
-<uci-option-switch label="测试" name="x" :load="xEnabled"></uci-option-switch>
+<uci-option-switch label="X" name="x" :load="xEnabled"></uci-option-switch>
 ...
 <script>
 export default {
@@ -185,14 +185,14 @@ export default {
 </script>  
 ```
 
-### 自定义保存函数
+### Custom save function
 
-通过提供`save`属性实现。该属性支持字符串和函数两种类型。如果提供一个字符串，表示不对该选项执行uci的保存操作。
-如果提供一个函数，可返回一个Promise对象实现异步保存。
+Implemented by providing the `save` attribute. This property supports both string and function types.
+If a string is provided, it means that uci is not saved for this option.
+If a function is provided, a Promise object can be returned for asynchronous save.
 
-### 自定义选项UI
+### Custom option UI
 
-通过默认作用域插槽实现。
 ``` vue
 <uci-option label="名称" name="name">
   <template v-slot="props">
@@ -200,67 +200,67 @@ export default {
   </template>
 </uci-option>
 ```
-等价于
+Equivalent to
 ``` vue
 <uci-option-dummy label="名称" name="name"></uci-option-dummy>
 ```
 
 ## uci-option-dummy
 
-仅用于显示值，不能编辑。
+Used only to display values, not for editing.
 
-### 属性
-| 名称        | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name        | Description        | Type      | Accepted Values       | Default  |
 |------------ |------------ |---------- |-------------|-------- |
 
 ## uci-option-input
 
-用于可编辑的uci选项。
+Used for editable uci options.
 
-### 属性
-| 名称        | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name        | Description        | Type      | Accepted Values       | Default  |
 |------------ |------------ |---------- |-------------|-------- |
-| placeholder | 占位符 | string | — | — |
-| password | 密码框 | boolean | — | false |
-| append | 输入框后置内容 | string | — | — |
+| placeholder | placeholder | string | — | — |
+| password | toggleable password input | boolean | — | false |
+| append | content to append after Input | string | — | — |
 
-### 输入框后置内容
+### content to append after Input
 
-比如某些选项需要在输入框后面添加一个单位。
+For example, some options require adding a unit after the input box.
 ![](./input_append.png)
 ``` vue
-<uci-option-input label="系统日志缓冲区大小" name="log_size" append="kiB"></uci-option-input>
+<uci-option-input label="Size" name="size" append="kiB"></uci-option-input>
 ```
 
 ## uci-option-switch
 
-用于具有开关状态的选项。
+Used for options with a switch state.
 
-### 属性
-| 名称           | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name           | Description        | Type      | Accepted Values       | Default  |
 |--------------- |------------ |---------- |-------------|-------- |
-| initial        | 初始值 | string/number/boolean | — | — |
-| active-value   | switch打开时的值 | string/number/boolean | — | true |
-| inactive-value | switch关闭时的值 | string/number/boolean | — | false |
+| initial        | initial value | string/number/boolean | — | — |
+| active-value   | switch value when in on state | string/number/boolean | — | true |
+| inactive-value | switch value when in off state | string/number/boolean | — | false |
 
 ## uci-option-list
 
-用于一个选项具有多个可选值的情况。
+Used when an option has multiple optional values.
 
-### 属性
-| 名称        | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name        | Description        | Type      | Accepted Values       | Default  |
 |------------ |------------ |---------- |-------------|-------- |
-| initial | 初始值 | string/number/array | — | — |
-| options | 可选列表值 | array | — | —  |
-| multiple | 多选 | boolean | — | false |
-| allow-create | 是否允许用户创建新条目 | boolean | — | false |
-| exclude | 排除列表中的值 | string/Function(sid, self) | — | — |
+| initial | initial value | string/number/array | — | — |
+| options | optional list value | array | — | —  |
+| multiple | whether multiple-select is activated | boolean | — | false |
+| allow-create | whether creating new items is allowed | boolean | — | false |
+| exclude | Exclude value in the list | string/Function(sid, self) | — | — |
 
 ## uci-option-dlist
 
-动态列表。对应uci配置里面的list。
+Dynamic list. Corresponds to the list in the uci configuration.
 
-### 属性
-| 名称        | 说明        | 类型      | 可选值       | 默认值  |
+### Attributes
+| Name        | Description        | Type      | Accepted Values       | Default  |
 |------------ |------------ |---------- |-------------|-------- |
-| initial | 初始值 | array | — | — |
+| initial | initial value | array | — | — |

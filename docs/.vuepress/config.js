@@ -3,36 +3,36 @@ module.exports = {
   title: 'oui',
   locales: {
     '/': {
-      lang: '简体中文'
-    },
-    '/en/': {
       lang: 'Englih'
+    },
+    '/zh/': {
+      lang: '简体中文'
     }
   },
   themeConfig: {
     repo: 'zhaojh329/oui',
     locales: {
       '/': {
-        selectText: '语言',
-        nav: [
-          { text: '指南', link: '/guide/' },
-          { text: 'uci', link: '/uci/' },
-          { text: '中文站点(gitee)', link: 'https://zhaojh329.gitee.io/oui/' }
-        ]
-      },
-      '/en/': {
         selectText: 'Languages',
         nav: [
-          { text: 'Guide', link: '/en/guide/' },
-          { text: 'uci', link: '/en/uci/' }
+          { text: 'Guide', link: '/guide/' },
+          { text: 'uci', link: '/uci/' }
+        ]
+      },
+      '/zh/': {
+        selectText: '语言',
+        nav: [
+          { text: '指南', link: '/zh/guide/' },
+          { text: 'uci', link: '/zh/uci/' },
+          { text: '中国站点(gitee)', link: 'https://zhaojh329.gitee.io/oui/' }
         ]
       }
     },
     sidebar: {
-      '/guide/': ['', 'getting-started', 'compile'],
-      '/en/guide/': ['', 'getting-started', 'compile'],
+      '/guide/': ['', 'compile', 'getting-started'],
+      '/zh/guide/': ['', 'compile', 'getting-started'],
       '/uci/': ['', 'components'],
-      '/en/uci/': ['', 'components']
+      '/zh/uci/': ['', 'components']
     }
   }
 }
