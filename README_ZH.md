@@ -21,7 +21,7 @@
 [ubus]: https://wiki.openwrt.org/doc/techref/ubus
 [uhttpd-mod-ubus]: https://wiki.openwrt.org/doc/techref/ubus#access_to_ubus_over_http
 
-![](/screen-be6656a.gif)
+![](/screenshots.png)
 
 OpenWrt后台管理界面，使用[vue.js]和[element-ui]实现，灵感来自于[LuCI2]。
 
