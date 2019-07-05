@@ -445,5 +445,9 @@
   "Enter keywords to filter":"Enter keywords to filter",
   "Facility-syslog": "Facility",
   "Level": "Level",
-  "Datetime": "Datetime"
+  "Datetime": "Datetime",
+  "System information": "System information",
+  "Resource usage": "Resource usage",
+  "Leasetime remaining": "Leasetime remaining",
+  "expired": "expired"
 }

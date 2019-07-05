@@ -68,7 +68,8 @@
 					"diskfree",
 					"syslog",
 					"dmesg",
-					"process_list"
+					"process_list",
+					"cpu_time"
 				],
 				"network": [
 					"get_proto_handlers"

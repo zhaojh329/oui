@@ -801,6 +801,16 @@ local methods = {
             function(req, msg)
                 os.execute("rm -f /tmp/backup.tar.gz")
             end, {}
+        },
+        cpu_time = {
+            function(req, msg)
+                local line = read_file("/proc/stat", "*l")
+                local times = {}
+                for t in line:sub(4):gmatch("%S+") do
+                    times[#times + 1] = tonumber(t)
+                end
+                ubus.reply(req, {times = times})
+            end, {}
         }
     }
 }

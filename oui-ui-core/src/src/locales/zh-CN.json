@@ -445,5 +445,9 @@
   "Enter keywords to filter": "输入关键字进行筛选",
   "Facility-syslog": "日志类型",
   "Level": "级别",
-  "Datetime": "日期时间"
+  "Datetime": "日期时间",
+  "System information": "系统信息",
+  "Resource usage": "资源使用率",
+  "Leasetime remaining": "剩余租期",
+  "expired": "已过期"
 }
