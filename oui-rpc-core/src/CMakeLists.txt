@@ -1,20 +1,12 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-project(oui-rpc-plugin C)
+project(oui C)
 
-add_definitions(-Os -Wall -Werror --std=gnu99 -g3 -Wmissing-declarations)
-
-find_library(crypt NAMES crypt)
-IF(crypt STREQUAL "LIBS-NOTFOUND")
-  set(crypt "")
-ENDIF()
+add_definitions(-O -Wall -Werror --std=gnu99 -D_GNU_SOURCE)
 
 add_library(oui MODULE oui.c)
-target_link_libraries(oui ubox ubus ${crypt})
 set_target_properties(oui PROPERTIES OUTPUT_NAME oui PREFIX "")
 
-add_library(bwmon MODULE bwmon.c)
-target_link_libraries(bwmon ubox ubus ${crypt})
-set_target_properties(bwmon PROPERTIES OUTPUT_NAME bwmon-oui PREFIX "")
-
-install(TARGETS oui bwmon LIBRARY DESTINATION lib)
+install(TARGETS oui
+    LIBRARY DESTINATION lib/lua/
+)

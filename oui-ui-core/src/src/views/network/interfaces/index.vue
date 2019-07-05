@@ -158,10 +158,10 @@ export default {
       this.dialogVisible = true;
     },
     ifup(name) {
-      this.$ubus.call('oui.network', 'ifup', {data: name});
+      this.$ubus.call('oui.network', 'ifup', {name: name});
     },
     ifdown(name) {
-      this.$ubus.call('oui.network', 'ifdown', {data: name});
+      this.$ubus.call('oui.network', 'ifdown', {name: name});
     },
     del(name) {
       this.$confirm(this.$t('Really delete this interface? The deletion cannot be undone!You might lose access to this device if you are connected via this interface.'), `${this.$t('Delete interface')} "${name}"`).then(() => {

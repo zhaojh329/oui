@@ -19,7 +19,9 @@ define Package/oui-rpc-core
   SECTION:=oui
   CATEGORY:=OUI
   TITLE:=Base OUI RPC calls
-  DEPENDS:=+rpcd +rpcd-mod-iwinfo +rpcd-mod-rpcsys +uhttpd +uhttpd-mod-ubus
+  DEPENDS:=+rpcd +rpcd-mod-iwinfo +rpcd-mod-file +rpcd-mod-rpcsys +uhttpd \
+		+uhttpd-mod-ubus +lua +libubox-lua +libubus-lua \
+		+libuci-lua +lua-cjson +liblua
   URL:=https://github.com/zhaojh329/oui
 endef
 
@@ -27,21 +29,11 @@ define Package/oui-rpc-core/description
  Provides the core RPC infrastructure to run OUI.
 endef
 
-define Build/Prepare
-	$(INSTALL_DIR) $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
-
 define Package/oui-rpc-core/install
-	$(INSTALL_DIR) $(1)/usr/lib/rpcd
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/oui.so $(1)/usr/lib/rpcd/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bwmon-oui.so $(1)/usr/lib/rpcd/
-endef
-
-define Package/oui-rpc-core/postinst
-#!/bin/sh
-killall -HUP rpcd 2>/dev/null
-exit 0
+	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/usr/lib/lua
+	$(INSTALL_BIN) ./files/oui.lua $(1)/usr/sbin/oui
+	$(INSTALL_BIN) ./files/oui.init $(1)/etc/init.d/oui
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/oui.so $(1)/usr/lib/lua
 endef
 
 $(eval $(call BuildPackage,oui-rpc-core))

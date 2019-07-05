@@ -25,7 +25,7 @@
       <div slot="header">
         <el-pagination background layout="prev, pager, next" :page-size="limit" :total="total" :current-page.sync="currentPage"></el-pagination>
       </div>
-      <el-table :data="packages" v-loading="pkgLoading" :element-loading-text="$t('Loading...')"  element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+      <el-table :data="packages" v-loading="loading" :element-loading-text="$t('Loading...')"  element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
         <el-table-column prop="name" :label="$t('Software-Package')" width="200"></el-table-column>
         <el-table-column prop="version" :label="$t('Version')" width="200" show-overflow-tooltip></el-table-column>
         <el-table-column prop="size" :label="$t('Size') + '(KB)'" width="100"></el-table-column>
@@ -35,8 +35,8 @@
           <template v-slot="{ row }">
             <div style="display: flex;">
               <el-button :type="row.installed ? 'success' : 'danger'" size="mini" @click="installRemovePackage(row.name, row.installed)">{{ row.installed ? $t('Installed') : $t('Not installed') }}</el-button>
-              <el-tooltip v-if="row.newVersion" placement="top" :content="$t('Can be upgrade to', {ver: row.newVersion})">
-                <el-button type="primary" size="mini" @click="installRemovePackage(row.name, row.installed, row.newVersion)">{{ $t('Upgradable') }}</el-button>
+              <el-tooltip v-if="row.new_version" placement="top" :content="$t('Can be upgrade to', {ver: row.new_version})">
+                <el-button type="primary" size="mini" @click="installRemovePackage(row.name, row.installed, row.new_version)">{{ $t('Upgradable') }}</el-button>
               </el-tooltip>
             </div>
           </template>
@@ -63,7 +63,7 @@ export default {
       currentPage: 1,
       displayInstalled: false,
       installedList: {},
-      pkgLoading: true
+      loading: true
     }
   },
   computed: {
@@ -123,7 +123,7 @@ export default {
     },
     fetchPackageList(offset) {
       let cmd = 'list';
-      let pattern = '*';
+      let pattern = '';
 
       if (this.filter.length > 0)
         pattern = `*${this.filter}*`;
@@ -131,22 +131,19 @@ export default {
       if (this.displayInstalled)
         cmd = 'list_installed'
 
-      this.pkgLoading = true;
+      this.loading = true;
       this.packages = [];
 
       this.doFetchPackageList(cmd, offset, this.limit, pattern).then(r => {
         this.total = r.total;
-        this.packages = r.packages.map(item => {
+        this.packages = r.packages.map(pkg => {
           return {
-            name: item[0],
-            version: item[1],
-            size: item[2] ? parseInt(item[2] / 1024) : '',
-            description: item[3],
-            installed: this.installedList[item[0]],
-            newVersion: this.installedList[item[0]] ? this.installedList[item[0]].newVersion : undefined
+            ...pkg,
+            installed: this.installedList[pkg.name],
+            new_version: this.installedList[pkg.name] ? this.installedList[pkg.name].new_version : undefined
           }
         });
-        this.pkgLoading = false;
+        this.loading = false;
       });
     },
     doInstallRemovePackage(name, cmd) {
@@ -172,14 +169,14 @@ export default {
         confirmButtonText: this.$t('Close')
       }).then(() => {
         if (!res.code) {
-          this.pkgLoading = true;
+          this.loading = true;
           this.updateInstalledList().then(() => {
             this.fetchPackageList((this.currentPage - 1) * this.limit);
           });
         }
       });
     },
-    installRemovePackage(name, installed, newVersion) {
+    installRemovePackage(name, installed, new_version) {
       if (name === '')
         return;
 
@@ -187,11 +184,11 @@ export default {
       let msg = installed ? 'Really remove package' : 'Really install package';
       let cmd = installed ? 'remove' : 'install';
 
-      if (newVersion) {
+      if (new_version) {
         title = 'Upgrading package';
         msg = 'Really upgrade package';
         cmd = 'upgrade';
-        msg = this.$t(msg, {name: name, ver: newVersion})
+        msg = this.$t(msg, {name: name, ver: new_version})
       } else {
         msg = this.$t(msg, {name: name})
       }
@@ -222,13 +219,13 @@ export default {
       return new Promise(resolve => {
         this.doFetchPackageList('list_installed').then(r => {
           this.installedList = {};
-          r.packages.forEach(item => {
-            this.installedList[item[0]] = {};
+          r.packages.forEach(pkg => {
+            this.installedList[pkg.name] = {};
           });
 
           this.doFetchPackageList('list_upgradable').then(r => {
-            r.packages.forEach(item => {
-              this.installedList[item[0]].newVersion = item[2];
+            r.packages.forEach(pkg => {
+              this.installedList[pkg.name].new_version = pkg.new_version;
             });
             resolve();
           }).catch(() => {

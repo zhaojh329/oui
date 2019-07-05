@@ -110,11 +110,11 @@ system.initDisable = function(name) {
 }
 
 system.setPassword = function(user, password) {
-  return ubus.call('oui.system', 'password_set', {user, password})
+  return ubus.call('rpc-sys', 'password_set', {user, password})
 }
 
 system.reboot = function() {
-  return ubus.call('oui.system', 'reboot')
+  return ubus.call('system', 'reboot')
 }
 
 export default {

@@ -86,23 +86,16 @@ export default {
     getCrontab() {
       return new Promise(resolve => {
         this.$ubus.call('oui.system', 'crontab_get').then(r => {
-          this.data = [];
-          const data = r.data.split('\n');
           let index = 0;
-          data.forEach(item => {
-            const cron = item.split(' ');
-            if (cron.length < 6)
-              return;
-            this.data.push({
+          const data = []
+
+          r.entries.forEach(item => {
+            data.push({
               index: index++,
-              min: cron[0],
-              hour: cron[1],
-              day: cron[2],
-              month: cron[3],
-              week: cron[4],
-              command: cron[5]
+              ...item
             });
           });
+          this.data = data;
           resolve();
         });
       });

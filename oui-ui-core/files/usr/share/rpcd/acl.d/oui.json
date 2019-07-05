@@ -118,19 +118,13 @@
 	"admin": {
 		"description": "Authentication and SSH settings",
 		"read": {
-			"ubus": {
-				"oui.system": [
-					"sshkeys_get"
-				]
-			},
 			"uci": [
 				"dropbear"
 			]
 		},
 		"write": {
 			"ubus": {
-				"oui.system": [
-					"sshkeys_set",
+				"rpc-sys": [
 					"password_set"
 				]
 			},
@@ -175,10 +169,7 @@
 				"oui.opkg": [
 					"list",
 					"list_installed",
-					"list_upgradable",
-					"find",
-					"config_get",
-					"info"
+					"list_upgradable"
 				]
 			}
 		},
@@ -188,8 +179,7 @@
 					"install",
 					"remove",
 					"upgrade",
-					"update",
-					"config_set"
+					"update"
 				]
 			}
 		}

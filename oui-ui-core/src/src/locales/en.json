@@ -439,5 +439,11 @@
   "interface-config-zone-desc": "Choose the firewall zone you want to assign to this interface. Select \"unspecified\" to remove the interface from the associated zone or define a new zone and attach the interface to it.",
   "Use builtin IPv6-management": "Use builtin IPv6-management",
   "Force link": "Force link",
-  "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers).": "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers)."
+  "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers).": "Set interface properties regardless of the link carrier (If set, carrier sense events do not invoke hotplug handlers).",
+  "Time": "Time",
+  "Message": "Message",
+  "Enter keywords to filter":"Enter keywords to filter",
+  "Facility-syslog": "Facility",
+  "Level": "Level",
+  "Datetime": "Datetime"
 }

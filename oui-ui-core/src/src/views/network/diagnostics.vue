@@ -22,20 +22,20 @@ export default {
     }
   },
   methods: {
-    runPing(data) {
-      return this.$ubus.call('oui.network', 'ping', {data});
+    runPing(name) {
+      return this.$ubus.call('oui.network', 'ping', {name});
     },
-    runPing6(data) {
-      return this.$ubus.call('oui.network', 'ping6', {data});
+    runPing6(name) {
+      return this.$ubus.call('oui.network', 'ping6', {name});
     },
-    runTraceroute(data) {
-      return this.$ubus.call('oui.network', 'traceroute', {data});
+    runTraceroute(name) {
+      return this.$ubus.call('oui.network', 'traceroute', {name});
     },
-    runTraceroute6(data) {
-      return this.$ubus.call('oui.network', 'traceroute6', {data});
+    runTraceroute6(name) {
+      return this.$ubus.call('oui.network', 'traceroute6', {name});
     },
-    runNslookup(data) {
-      return this.$ubus.call('oui.network', 'nslookup', {data});
+    runNslookup(name) {
+      return this.$ubus.call('oui.network', 'nslookup', {name});
     },
     test() {
       const loading = this.$getLoading();

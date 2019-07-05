@@ -1,10 +1,10 @@
 <template>
-  <el-table :data="data">
+  <el-table :data="data" :default-sort="{prop: 'pid', order: 'ascending'}">
     <el-table-column prop="pid" label="PID" width="100"></el-table-column>
     <el-table-column prop="user" :label="$t('Owner')" width="100"></el-table-column>
     <el-table-column prop="command" :label="$t('Command')" show-overflow-tooltip></el-table-column>
-    <el-table-column prop="cpu_percent" :label="$t('CPU usage') + '(%)'" width="120"></el-table-column>
-    <el-table-column prop="vsize_percent" :label="$t('Memory usage') + '(%)'" width="150"></el-table-column>
+    <el-table-column prop="cpu_percent" :label="$t('CPU usage')" width="100" :formatter="row => row.cpu_percent + '%'"></el-table-column>
+    <el-table-column prop="vsize_percent" :label="$t('Memory usage')" width="100" :formatter="row => row.vsize_percent + '%'"></el-table-column>
     <el-table-column width="320" :label="$t('Signal')">
       <template v-slot="{ row }">
         <el-button type="primary" size="mini" @click="kill(row.pid, 1)">{{ $t('Hang Up') }}</el-button>
