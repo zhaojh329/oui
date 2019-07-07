@@ -396,8 +396,7 @@ local methods = {
                         }
                     end
                 else
-                    leases = dnsmasq_leasefile();
-                    local r, lines = pcall(io.lines, leasefile)
+                    local r, lines = pcall(io.lines, dnsmasq_leasefile())
                     if r then
                         for line in lines do
                             local ts, mac, addr, name, duid  = line:match("(%S+) +(%S+) +(%S+) +(%S+) +(%S+)")
