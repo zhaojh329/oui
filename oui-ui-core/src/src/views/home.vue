@@ -1,50 +1,42 @@
 <template>
-  <div class="oui-home">
-    <el-row type="flex" justify="center" align="middle">
-      <div class="header" @click="content = 'devices'">
-        <img src="/icons/devices.png" />
-      </div>
-      <oui-line length="300px"></oui-line>
-      <div class="header" @click="content = 'router'">
-        <img src="/icons/router.png" />
-      </div>
-      <oui-line length="300px" :disconnect="!wanIsUp"></oui-line>
-      <div class="header" @click="content = 'internet'">
-        <img src="/icons/internet.png" />
-      </div>
+  <div>
+    <el-row type="flex" justify="center" align="middle" class="oui-home-status-img">
+      <img src="/icons/devices.png" @click="tab = 'devices'" />
+      <oui-line :length="statusLineLength"></oui-line>
+      <img src="/icons/router.png" @click="tab = 'router'" />
+      <oui-line :length="statusLineLength" :disconnect="!wanIsUp"></oui-line>
+      <img src="/icons/internet.png" @click="tab = 'internet'" />
     </el-row>
-    <el-row type="flex" justify="center" align="middle" style="margin-bottom: 15px">
-      <img src="/icons/arrow_up.png" :style="{opacity: content !== 'devices' ? 0 : 1}" />
-      <oui-line length="340px" style="opacity: 0"></oui-line>
-      <img src="/icons/arrow_up.png" :style="{opacity: content !== 'router' ? 0 : 1}" />
-      <oui-line length="340px" style="opacity: 0"></oui-line>
-      <img src="/icons/arrow_up.png" :style="{opacity: content !== 'internet' ? 0 : 1}" />
-    </el-row>
-    <div v-show="content === 'devices'">
-      <el-table :data="leases">
-        <el-table-column :label="$t('Hostname')" prop="hostname"></el-table-column>
-        <el-table-column :label="$t('IPv4-Address')" prop="ipaddr"></el-table-column>
-        <el-table-column :label="$t('MAC-Address')" prop="macaddr"></el-table-column>
-        <el-table-column :label="$t('Leasetime remaining')" :formatter="row => row.expires <= 0 ? $t('expired') : '%t'.format(row.expires)"></el-table-column>
-      </el-table>
-    </div>
-    <div v-show="content === 'router'">
-      <el-row :gutter="20" style="margin-bottom: 15px">
-        <el-col :span="12">
-          <card-list :title="$t('System information')" :list="sysinfo"></card-list>
-        </el-col>
-        <el-col :span="12">
-          <el-card :header="$t('Resource usage')">
-            <e-charts style="width: 100%" :options="resourceChart"></e-charts>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
-    <div v-show="content === 'internet'">
-      <el-row type="flex" justify="center">
-        <CardList :title="$t('Network')" :list="waninfo" style="width: 600px"></CardList>
-      </el-row>
-    </div>
+    <el-tabs v-model="tab" stretch>
+      <el-tab-pane name="devices">
+        <span slot="label">{{ $t('Terminal devices') }}</span>
+        <el-table :data="leases">
+          <el-table-column :label="$t('Hostname')" prop="hostname"></el-table-column>
+          <el-table-column :label="$t('IPv4-Address')" prop="ipaddr"></el-table-column>
+          <el-table-column :label="$t('MAC-Address')" prop="macaddr"></el-table-column>
+          <el-table-column :label="$t('Leasetime remaining')" :formatter="row => row.expires <= 0 ? $t('expired') : '%t'.format(row.expires)"></el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane name="router">
+        <span slot="label">{{ $t('System') }}</span>
+        <el-row :gutter="20" style="margin-bottom: 15px">
+          <el-col :span="12">
+            <card-list :title="$t('System information')" :list="sysinfo"></card-list>
+          </el-col>
+          <el-col :span="12">
+            <el-card :header="$t('Resource usage')">
+              <e-charts style="width: 100%" :options="resourceChart"></e-charts>
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane name="internet">
+        <span slot="label">WAN</span>
+        <el-row type="flex" justify="center">
+          <CardList :title="$t('Network')" :list="waninfo" style="width: 600px"></CardList>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -59,7 +51,8 @@ import 'echarts/lib/component/legendScroll'
 export default {
   data() {
     return {
-      content: 'router',
+      tab: 'router',
+      statusLineLength: '27%',
       sysinfo: [],
       waninfo: [],
       leases: [],
@@ -148,8 +141,8 @@ export default {
 </script>
 
 <style lang="scss">
-.oui-home {
-  .header {
+.oui-home-status-img {
+  img {
     cursor: pointer;
   }
 }

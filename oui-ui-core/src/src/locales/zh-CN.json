@@ -438,5 +438,6 @@
   "System information": "系统信息",
   "Resource usage": "资源使用率",
   "Leasetime remaining": "剩余租期",
-  "expired": "已过期"
+  "expired": "已过期",
+  "Terminal devices": "终端设备"
 }

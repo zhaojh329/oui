@@ -438,5 +438,6 @@
   "System information": "System information",
   "Resource usage": "Resource usage",
   "Leasetime remaining": "Leasetime remaining",
-  "expired": "expired"
+  "expired": "expired",
+  "Terminal devices": "Terminal devices"
 }
