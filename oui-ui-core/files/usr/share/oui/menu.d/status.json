@@ -26,11 +26,5 @@
         "acls": [ "status" ],
         "view": "status/processes",
         "index": 50
-    },
-    "status/realtime": {
-        "title": "Realtime Graphs",
-        "acls": [ "status" ],
-        "view": "status/realtime",
-        "index": 50
     }
 }
