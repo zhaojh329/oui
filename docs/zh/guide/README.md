@@ -13,7 +13,6 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
 ## 特性
 
-* 快
-* 多用户
-* 前后端分离
-* Vue驱动
+* 快: 使用静态页面；通过ubus存取各种系统数据
+* 多用户: 支持多用户及权限管理
+* Vue + Element-UI 加持: 享受 Vue + Element-UI 的开发体验

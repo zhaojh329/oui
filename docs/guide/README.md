@@ -14,7 +14,6 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 
 ## Features
 
-* Fast
-* Multi User
-* Front and rear separation
-* Vue-Powered
+* Fast: Use static pages; access any kind of system data via ubus
+* Multi User: Support for multi-user and access management
+* Vue + Element-UI: Enjoy the dev experience of Vue + Element-UI
