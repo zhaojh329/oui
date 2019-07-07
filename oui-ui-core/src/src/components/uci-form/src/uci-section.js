@@ -238,7 +238,7 @@ export default {
       const views = [];
 
       if (this.addable && this.type && !this.name)
-        views.push(<el-button style="float:right" type="danger" size="mini" on-click={this.del.bind(this, sid)}>{ this.$t('Delete') }</el-button>);
+        views.push(<el-row><el-button style="float:right" type="danger" size="mini" on-click={this.del.bind(this, sid)}>{ this.$t('Delete') }</el-button></el-row>);
 
       if (this.tabs.length > 0) {
         const tabPanes = this.tabs.map(tab => {
