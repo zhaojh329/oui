@@ -439,5 +439,14 @@
   "Resource usage": "资源使用率",
   "Leasetime remaining": "剩余租期",
   "expired": "已过期",
-  "Terminal devices": "终端设备"
+  "Terminal devices": "终端设备",
+  "Active DHCP Leases": "已分配的DHCP租约",
+  "Active DHCPv6 Leases": "已分配的DHCPv6租约",
+  "Host": "主机",
+  "IPv6-Address": "IPv6地址",
+  "Associated Stations": "已连接的WiFi设备",
+  "Disconnect": "断开连接",
+  "Noise": "噪声",
+  "RX Rate": "接收速率",
+  "TX Rate": "发送速率"
 }

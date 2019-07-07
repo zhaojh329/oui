@@ -439,5 +439,14 @@
   "Resource usage": "Resource usage",
   "Leasetime remaining": "Leasetime remaining",
   "expired": "expired",
-  "Terminal devices": "Terminal devices"
+  "Terminal devices": "Terminal devices",
+  "Active DHCP Leases": "Active DHCP Leases",
+  "Active DHCPv6 Leases": "Active DHCPv6 Leases",
+  "Host": "Host",
+  "IPv6-Address": "IPv6-Address",
+  "Associated Stations": "Associated Stations",
+  "Disconnect": "Disconnect",
+  "Noise": "Noise",
+  "RX Rate": "RX Rate",
+  "TX Rate": "TX Rate"
 }

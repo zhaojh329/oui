@@ -10,12 +10,36 @@
     <el-tabs v-model="tab" stretch>
       <el-tab-pane name="devices">
         <span slot="label">{{ $t('Terminal devices') }}</span>
-        <el-table :data="leases">
-          <el-table-column :label="$t('Hostname')" prop="hostname"></el-table-column>
-          <el-table-column :label="$t('IPv4-Address')" prop="ipaddr"></el-table-column>
-          <el-table-column :label="$t('MAC-Address')" prop="macaddr"></el-table-column>
-          <el-table-column :label="$t('Leasetime remaining')" :formatter="row => row.expires <= 0 ? $t('expired') : '%t'.format(row.expires)"></el-table-column>
-        </el-table>
+        <el-card :header="$t('Active DHCP Leases')" style="margin-bottom: 15px;">
+          <el-table :data="leases">
+            <el-table-column :label="$t('Hostname')" prop="hostname"></el-table-column>
+            <el-table-column :label="$t('IPv4-Address')" prop="ipaddr"></el-table-column>
+            <el-table-column :label="$t('MAC-Address')" prop="macaddr"></el-table-column>
+            <el-table-column :label="$t('Leasetime remaining')" :formatter="row => row.expires <= 0 ? $t('expired') : '%t'.format(row.expires)"></el-table-column>
+          </el-table>
+        </el-card>
+        <el-card :header="$t('Active DHCPv6 Leases')" style="margin-bottom: 15px;">
+          <el-table :data="leases6">
+            <el-table-column :label="$t('Host')" prop="name"></el-table-column>
+            <el-table-column :label="$t('IPv6-Address')" prop="ip6addr"></el-table-column>
+            <el-table-column label="DUID" prop="duid"></el-table-column>
+            <el-table-column :label="$t('Leasetime remaining')" :formatter="row => row.expires <= 0 ? $t('expired') : '%t'.format(row.expires)"></el-table-column>
+          </el-table>
+        </el-card>
+        <el-card :header="$t('Associated Stations')">
+          <el-table :data="assoclist">
+            <el-table-column :label="$t('MAC-Address')" prop="mac"></el-table-column>
+            <el-table-column :label="$t('Host')" prop="host"></el-table-column>
+            <el-table-column :label="$t('Signal') + ' / ' + $t('Noise')">
+              <template v-slot="{row}">
+                <img :src="wifiSignalIcon(row)" />
+                <span>{{' ' + row.signal + '/' + row.noise + ' dBm' }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('RX Rate')" :formatter="formatWifiRxRate"></el-table-column>
+            <el-table-column :label="$t('TX Rate')" :formatter="formatWifiTxRate"></el-table-column>
+          </el-table>
+        </el-card>
       </el-tab-pane>
       <el-tab-pane name="router">
         <span slot="label">{{ $t('System') }}</span>
@@ -56,6 +80,8 @@ export default {
       sysinfo: [],
       waninfo: [],
       leases: [],
+      leases6: [],
+      assoclist: [],
       wanIsUp: false,
       lastCPUTime: null,
       resourceChart: {
@@ -83,6 +109,39 @@ export default {
     update: {time: 2000, autostart: true, immediate: true, repeat: true}
   },
   methods: {
+    wifirate(sta, rx) {
+      const rate = rx ? sta.rx : sta.tx;
+      let s = '%.1f Mbit/s'.format(rate.rate / 1000);
+      s += ', %dMHz'.format(rate['40mhz'] ? 40 : 20);
+
+      if (rate.mcs > 0)
+        s += ', MCS ' + rate.mcs;
+
+      if (rate.short_gi)
+        s += ', Short GI'
+
+      return s;
+    },
+    wifiSignalIcon(s) {
+      let q = (-1 * (s.noise - s.signal)) / 5;
+      if (q < 1)
+        q = 1;
+      else if (q < 2)
+        q = 2;
+      else if (q < 3)
+        q = 3;
+      else if (q < 4)
+        q = 4;
+      else
+        q = 5;
+      return `/icons/signal_${q}.png`;
+    },
+    formatWifiRxRate(row) {
+      return this.wifirate(row, true);
+    },
+    formatWifiTxRate(row) {
+      return this.wifirate(row, false);
+    },
     update() {
       this.$ubus.call('oui.system', 'cpu_time').then(({times}) => {
         if (!this.lastCPUTime) {
@@ -134,6 +193,22 @@ export default {
 
       this.$ubus.call('oui.network', 'dhcp_leases').then(r => {
         this.leases = r.leases;
+      });
+
+      this.$ubus.call('oui.network', 'dhcp6_leases').then(r => {
+        this.leases6 = r.leases;
+      });
+
+      this.$wireless.getAssoclist().then(assoclist => {
+        const leases = {};
+        this.leases.forEach(l => {
+          leases[l.macaddr] = `${l.hostname}(${l.ipaddr})`;
+        });
+
+        this.assoclist = assoclist.map(sta => {
+          sta.host = leases[sta.mac.toLowerCase()]
+          return sta;
+        });
       });
     }
   }
