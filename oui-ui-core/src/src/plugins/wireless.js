@@ -2,10 +2,37 @@ import {ubus} from './ubus'
 
 const wireless = {}
 
+wireless.getDevices = function() {
+  return new Promise(resolve => {
+    if (this.devices) {
+      resolve(this.devices);
+      return;
+    }
+
+    ubus.call('iwinfo', 'devices').then(r => {
+      this.devices = r.devices;
+      resolve(this.devices);
+    });
+  });
+}
+
 wireless.getAssoclist = function() {
   return new Promise(resolve => {
-    ubus.call('iwinfo', 'assoclist', {device: 'wlan1'}).then(r => {
-      resolve(r.results);
+    this.getDevices().then(devices => {
+      const batch = [];
+      devices.forEach(dev => {
+        batch.push(['iwinfo', 'assoclist', {device: dev}]);
+      });
+
+      ubus.callBatch(batch).then(rs => {
+        const assoclist = [];
+
+        rs.forEach(r => {
+          assoclist.push(...r.results);
+        });
+
+        resolve(assoclist);
+      });
     });
   });
 }
