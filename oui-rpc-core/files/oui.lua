@@ -689,9 +689,9 @@ local methods = {
                             for line in io.lines("/etc/init.d/" .. name) do
                                 local k, v = line:match("(%S+)=(%d+)")
                                 if k == "START" then
-                                    start = tonumber(v)
+                                    start = v
                                 elseif k == "STOP" then
-                                    stop = tonumber(v)
+                                    stop = v
                                     break
                                 end
                             end
@@ -702,8 +702,8 @@ local methods = {
 
                                 initscripts[#initscripts + 1] = {
                                     name = name,
-                                    start = start,
-                                    stop = stop,
+                                    start = tonumber(start),
+                                    stop = tonumber(stop),
                                     enabled = enabled
                                 }
                             end
