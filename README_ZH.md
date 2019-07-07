@@ -29,7 +29,7 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
 # [捐赠](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
-* 深圳市云联芯科技有限公司 - 300¥
+* 深圳市云联芯科技有限公司 - 400¥
 * 北京钛铂云老戴 - 200¥
 * JunoSky - 100¥
 * 许玉善(北京友联智诚科技有限公司) - 100¥
