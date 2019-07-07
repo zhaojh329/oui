@@ -39,6 +39,7 @@ Represents a uci section of the same type or a named uci section.
 | collabsible | collabsible | boolean | — | true |
 | teasers | The name of the option to display when collapsed (all options are displayed by default) | array | — | — |
 | add | Custom add function. Return sid or Promise | Function(self) | — | — |
+| after-add | hook function after perform add. | Function(sid, self) | — | — |
 | before-del | hook function before perform delete. If false is returned or a Promise is returned and then is rejected, deletes will be prevented | Function(sid, self) | — | — |
 
 ### Filter

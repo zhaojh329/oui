@@ -35,6 +35,8 @@ export default {
     },
     /* Custom add function */
     add: Function,
+    /* hook after add */
+    afterAdd: Function,
     /* hook before del */
     beforeDel: Function,
     collabsible: {
@@ -133,7 +135,7 @@ export default {
       for (const name in this.children)
         this.children[name].destroyFormSid(sid);
     },
-    afterAdd(sid) {
+    loadAdded(sid) {
       this.activeCollapseItem = sid;
       this.load();
       this.buildForm(sid);

@@ -1,5 +1,5 @@
 <template>
-  <uci-section type="redirect" :title="$t('Port Forwards')" table addable sortable :filter="filterDnat" :add="addDnat">
+  <uci-section type="redirect" :title="$t('Port Forwards')" table addable sortable :filter="filterDnat" :after-add="afterAdd">
     <uci-option-input :label="$t('Name')" name="name"></uci-option-input>
     <uci-option-list :label="$t('Protocol')" name="proto" :options="protos" initial="tcp udp" allow-create></uci-option-list>
     <uci-option-list :label="$t('Source zone')" name="src" :options="zones" required></uci-option-list>
@@ -33,10 +33,8 @@ export default {
     filterDnat(s) {
       return s.target !== 'SNAT';
     },
-    addDnat() {
-      const sid = this.$uci.add('firewall', 'redirect');
+    afterAdd(sid) {
       this.$uci.set('firewall', sid, 'target', 'DNAT');
-      return sid;
     }
   },
   created() {

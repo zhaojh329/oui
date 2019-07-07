@@ -18,7 +18,7 @@ export default {
         if (window.oui.isPromise(sid)) {
           sid.then(sid => {
             if (sid)
-              this.sestion.afterAdd(sid);
+              this.sestion.loadAdded(sid);
           }, () => {
             /* ignore promise rejection */
           });
@@ -28,8 +28,11 @@ export default {
         sid = this.$uci.add(this.sestion.config, this.sestion.type, name);
       }
 
-      if (sid)
-        this.sestion.afterAdd(sid);
+      if (sid) {
+        if (this.sestion.afterAdd)
+          this.sestion.afterAdd(sid, this.sestion);
+        this.sestion.loadAdded(sid);
+      }
     },
     handleAdd() {
       if (this.sestion.anonymous) {

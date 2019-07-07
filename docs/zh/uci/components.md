@@ -39,6 +39,7 @@
 | collabsible | 是否可折叠 | boolean | — | true |
 | teasers | 折叠时需要显示的选项名称(默认显示所有选项) | array | — | — |
 | add | 自定义添加函数。返回sid或者Promise | Function(self) | — | — |
+| after-add | 执行添加后的钩子 | Function(sid, self) | — | — |
 | before-del | 执行删除前的钩子,若返回 false 或者返回 Promise 且被 reject，则阻止删除 | Function(sid, self) | — | — |
 
 ### 过滤

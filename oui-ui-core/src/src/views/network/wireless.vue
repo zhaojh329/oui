@@ -15,7 +15,7 @@
             <uci-option-input :label="$t('Distance Optimization')" name="distance" rules="uinteger"></uci-option-input>
           </uci-tab>
         </uci-section>
-        <uci-section :title="$t('Interface')" type="wifi-iface" :options="{radio: radio.name}" :filter="filterInterface" addable :add="addIface">
+        <uci-section :title="$t('Interface')" type="wifi-iface" :options="{radio: radio.name}" :filter="filterInterface" addable :after-add="afterAddIface">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option-switch :label="$t('Disabled')" name="disabled"></uci-option-switch>
             <uci-option-list :label="$t('Mode')" name="mode" required :options="modes"></uci-option-list>
@@ -65,10 +65,8 @@ export default {
     filterInterface(s, self) {
       return self.options.radio === s.device;
     },
-    addIface(self) {
-      const sid = this.$uci.add('wireless', 'wifi-iface');
+    afterAddIface(sid, self) {
       this.$uci.set('wireless', sid, 'device', self.options.radio);
-      return sid;
     }
   },
   created() {
