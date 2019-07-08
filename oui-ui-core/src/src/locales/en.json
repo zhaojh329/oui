@@ -448,5 +448,9 @@
   "Disconnect": "Disconnect",
   "Noise": "Noise",
   "RX Rate": "RX Rate",
-  "TX Rate": "TX Rate"
+  "TX Rate": "TX Rate",
+  "Online devices": "Online devices",
+  "Bandwidth Monitor": "Bandwidth Monitor",
+  "Local network": "Local network",
+  "192.168.1.1/24 or a logical interface name": "192.168.1.1/24 or a logical interface name"
 }
