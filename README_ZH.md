@@ -27,6 +27,11 @@ OpenWrt后台管理界面，使用[vue.js]和[element-ui]实现，灵感来自�
 
 oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
+# TODO
+
+* 动态切换主题
+* 插件
+
 # [捐赠](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
 * 深圳市云联芯科技有限公司 - 400¥
