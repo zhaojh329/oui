@@ -34,6 +34,8 @@ ubus._call = function(reqs) {
       let data = [];
 
       for (let i = 0; i < resp.length; i++) {
+        const req = reqs[i];
+
         if (typeof(resp[i]) !== 'object' || resp[i].jsonrpc !== '2.0')
           throw 'ubus call error: Invalid msg';
 
@@ -41,7 +43,7 @@ ubus._call = function(reqs) {
           throw 'No related request for JSON response';
 
         if (typeof(resp[i].error) === 'object') {
-          reject(resp[i].error);
+          reject({req: req.params.slice(1), error: resp[i].error});
           return;
         }
 
@@ -58,7 +60,7 @@ ubus._call = function(reqs) {
           const code = result[0];
           if (code !== 0) {
             const message = ubusErrorInfo[code] || '';
-            reject({code, message});
+            reject({req: req.params.slice(1), error: {code, message}});
             return;
           }
           result = result[1];
