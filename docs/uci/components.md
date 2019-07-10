@@ -14,6 +14,7 @@ Represents a uci configuration file. Other components must be wrapped by this co
 | config    | uci configuration file  | string   | — | — |
 | tabbed    | Render each uci-section into a tab page | boolean | — | false |
 | after-loaded | hook function after uci loading is completed | Function() | — | — |
+| apply-timeout | timeout for apply(second) | number |  — | 10 |
 
 ### Events
 | Name   | Description         | Parameters   |
