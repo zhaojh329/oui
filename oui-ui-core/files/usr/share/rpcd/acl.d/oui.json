@@ -62,7 +62,8 @@
 					"arp_table",
 					"eap_support",
 					"routes",
-					"routes6"
+					"routes6",
+					"bwm"
 				],
 				"oui.system": [
 					"diskfree",
@@ -92,7 +93,8 @@
 		"description": "General system settings",
 		"read": {
 			"uci": [
-				"system"
+				"system",
+				"oui-bwm"
 			],
 			"ubus": {
 				"system": [
@@ -111,7 +113,8 @@
 				]
 			},
 			"uci": [
-				"system"
+				"system",
+				"oui-bwm"
 			]
 		}
 	},

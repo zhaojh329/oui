@@ -125,12 +125,42 @@ static int l_statvfs(lua_State *L)
     return 3;
 }
 
+static int l_parse_flow(lua_State *L)
+{
+    const char *str = lua_tostring(L, 1);
+    static uint64_t G = 1000 * 1000 * 1000;
+    static uint64_t M = 1000 * 1000;
+    static uint64_t K = 1000;
+    uint64_t val = 0;
+    int g, m, k;
+
+    if (str)
+        val = strtoull(str, NULL, 10);
+
+    g = val / G;
+    val %= G;
+
+    m = val / M;
+    val %= M;
+
+    k = val / K;
+    val %= K;
+
+    lua_pushinteger(L, g);
+    lua_pushinteger(L, m);
+    lua_pushinteger(L, k);
+    lua_pushinteger(L, val);
+
+    return 4;
+}
+
 static const struct luaL_Reg func[] =
 {
     {"crypt", l_crypt},
     {"parse_route_addr", l_parse_route_addr},
     {"parse_route6_addr", l_parse_route6_addr},
     {"statvfs", l_statvfs},
+    {"parse_flow", l_parse_flow},
     {NULL, NULL}
 };
 

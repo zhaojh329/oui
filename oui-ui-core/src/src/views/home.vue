@@ -9,7 +9,16 @@
     </el-row>
     <el-tabs v-model="tab" stretch>
       <el-tab-pane name="devices">
-        <span slot="label">{{ $t('Terminal devices') }}</span>
+        <span slot="label">{{ $t('Terminal devices') + `(${devices.length})` }}</span>
+        <el-card :header="$t('Online devices')" style="margin-bottom: 15px;">
+          <el-table :data="devices">
+            <el-table-column :label="$t('Hostname')" prop="hostname"></el-table-column>
+            <el-table-column :label="$t('IPv4-Address')" prop="ipaddr"></el-table-column>
+            <el-table-column :label="$t('MAC-Address')" prop="macaddr"></el-table-column>
+            <el-table-column :label="$t('RX Rate')" prop="rxrate"></el-table-column>
+            <el-table-column :label="$t('TX Rate')" prop="txrate"></el-table-column>
+          </el-table>
+        </el-card>
         <el-card :header="$t('Active DHCP Leases')" style="margin-bottom: 15px;">
           <el-table :data="leases">
             <el-table-column :label="$t('Hostname')" prop="hostname"></el-table-column>
@@ -79,6 +88,8 @@ export default {
       statusLineLength: '27%',
       sysinfo: [],
       waninfo: [],
+      devices: [],
+      devicesMap: {},
       leases: [],
       leases6: [],
       assoclist: [],
@@ -142,6 +153,9 @@ export default {
     formatWifiTxRate(row) {
       return this.wifirate(row, false);
     },
+    calcDevFlow(flow) {
+      return flow[0] * 1000000000 + flow[1] * 1000000 + flow[2] * 1000 + flow[3];
+    },
     update() {
       this.$ubus.call('oui.system', 'cpu_time').then(({times}) => {
         if (!this.lastCPUTime) {
@@ -192,23 +206,49 @@ export default {
       });
 
       this.$ubus.call('oui.network', 'dhcp_leases').then(r => {
+        const leasesMap = {};
+
         this.leases = r.leases;
+
+        this.leases.forEach(l => {
+          leasesMap[l.macaddr] = {hostname: l.hostname, ipaddr: l.ipaddr};
+        });
+
+        this.$ubus.call('oui.network', 'bwm').then(r => {
+          this.devices = r.entries.map(dev => {
+            const lease = leasesMap[dev.macaddr];
+
+            dev = {...dev, txrate: 0, rxrate: 0};
+            dev.tx = this.calcDevFlow(dev.tx);
+            dev.rx = this.calcDevFlow(dev.rx);
+
+            const ldev = this.devicesMap[dev.macaddr];
+            if (ldev) {
+              dev.txrate = '%mB/s'.format((dev.tx - ldev.tx) / 2);
+              dev.rxrate = '%mB/s'.format((dev.rx - ldev.rx) / 2);
+            }
+
+            this.devicesMap[dev.macaddr] = {tx: dev.tx, rx: dev.rx};
+
+            if (lease)
+              dev.hostname = lease.hostname;
+
+            return dev;
+          });
+        });
+
+        this.$wireless.getAssoclist().then(assoclist => {
+          this.assoclist = assoclist.map(sta => {
+            const lease = leasesMap[sta.mac.toLowerCase()];
+            if (lease)
+              sta.host = `${lease.hostname} (${lease.ipaddr})`
+            return sta;
+          });
+        });
       });
 
       this.$ubus.call('oui.network', 'dhcp6_leases').then(r => {
         this.leases6 = r.leases;
-      });
-
-      this.$wireless.getAssoclist().then(assoclist => {
-        const leases = {};
-        this.leases.forEach(l => {
-          leases[l.macaddr] = `${l.hostname}(${l.ipaddr})`;
-        });
-
-        this.assoclist = assoclist.map(sta => {
-          sta.host = leases[sta.mac.toLowerCase()]
-          return sta;
-        });
       });
     }
   }
