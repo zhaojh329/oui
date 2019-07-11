@@ -73,6 +73,72 @@ oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方
 
 具体用法请参考源码：`oui/oui-ui-core/src/src/plugins/ubus.js`
 
+## String.format
+
+%t
+``` js
+'%t'.format(13124) === '3h 38m 44s'
+```
+
+%m
+``` js
+'%m'.format(1000) === '1.00 K'
+'%M'.format(1024) === '1.00 K'
+'%.3m'.format(1100) === '1.100 K'
+'%mB'.format(1100) === '1.10 KB'
+```
+
+%d
+``` js
+'%d'.format(10) === '10'
+'%d, %d'.format(5, 10) === '5, 10'
+'%5d'.format(123) === '  123'
+'%-5d'.format(123) === '123  '
+'%05d'.format(123) === '00123'
+```
+
+%s
+``` js
+'This is a %s'.format('pen') === 'This is a pen'
+'This is %s %s'.format('a', 'pen') === 'This is a pen'
+'%5s'.format('abc') === '  abc'
+'%-5s'.format('abc') === 'abc  '
+```
+
+%o
+``` js
+'123 => %o'.format(123) === '123 => 173'
+'0x7b => %o'.format(0x7b) === '0x7b => 173'
+```
+
+%b
+``` js
+'123 => %b'.format(123) === '123 => 1111011'
+'0x7b => %b'.format(0x7b) === '0x7b => 1111011'
+```
+
+%x
+``` js
+'123 => %x'.format(123) === '123 => 7b'
+```
+
+%X
+``` js
+'123 => %X'.format(123) === '123 => 7B'
+```
+
+%c
+``` js
+'%c'.format(97) === 'a'
+'%c'.format(0x61) === 'a'
+```
+
+%f
+``` js
+'%f'.format(1.12345) === '1.12345'
+'%.2f'.format(1.12345) === '1.12'
+```
+
 ## 如何添加一个页面
 
 ### 首先添加导航菜单
