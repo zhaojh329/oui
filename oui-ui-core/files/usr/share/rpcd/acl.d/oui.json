@@ -373,6 +373,20 @@
 		}
 	},
 
+	"routes": {
+		"description": "Routes configuration",
+		"read": {
+			"uci": [
+				"network"
+			]
+		},
+		"write": {
+			"uci": [
+				"network"
+			]
+		}
+	},
+
 	"firewall": {
 		"description": "Firewall configuration",
 		"read": {
