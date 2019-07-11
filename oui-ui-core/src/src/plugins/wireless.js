@@ -20,6 +20,12 @@ wireless.getAssoclist = function() {
   return new Promise(resolve => {
     this.getDevices().then(devices => {
       const batch = [];
+
+      if (devices.length < 1) {
+        resolve([]);
+        return;
+      }
+
       devices.forEach(dev => {
         batch.push(['iwinfo', 'assoclist', {device: dev}]);
       });
