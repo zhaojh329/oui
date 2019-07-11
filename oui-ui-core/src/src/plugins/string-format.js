@@ -12,7 +12,7 @@ function formatUnit(param, pMinLength, pPrecision) {
   let val = parseFloat(param || 0);
   let units = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
 
-  for (i = 0; (i < units.length) && (val > mf); i++)
+  for (i = 0; (i < units.length) && (val >= mf); i++)
     val /= mf;
 
   return val.toFixed(pr) + ' ' + units[i];
