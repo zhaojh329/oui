@@ -1,9 +1,3 @@
-function esc(s, r) {
-  for (let i = 0; i < r.length; i += 2)
-    s = s.replace(r[i], r[i + 1]);
-  return s;
-}
-
 function formatUnit(param, pMinLength, pPrecision) {
   let mf = pMinLength ? parseInt(pMinLength) : 1000;
   let pr = pPrecision ? Math.floor(10 * parseFloat('0' + pPrecision)) : 2;
@@ -43,12 +37,9 @@ function formatTime(param) {
 }
 
 String.prototype.format = function() {
-  const html_esc = [/&/g, '&#38;', /"/g, '&#34;', /'/g, '&#39;', /</g, '&#60;', />/g, '&#62;'];
-  const quot_esc = [/"/g, '&#34;', /'/g, '&#39;'];
-
   let str = this;
   let out = '';
-  let re = /^(([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X|q|h|j|t|m))/;
+  let re = /^(([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X|t|m))/;
   let a = [];
   let numSubstitutions = 0;
 
@@ -118,18 +109,6 @@ String.prototype.format = function() {
 
         case 'X':
           subst = ('' + (parseInt(param) || 0).toString(16)).toUpperCase();
-          break;
-
-        case 'h':
-          subst = esc(param, html_esc);
-          break;
-
-        case 'q':
-          subst = esc(param, quot_esc);
-          break;
-
-        case 'j':
-          subst = String.serialize(param);
           break;
 
         case 't':
