@@ -1,13 +1,11 @@
-function formatUnit(param, pMinLength, pPrecision) {
-  let mf = pMinLength ? parseInt(pMinLength) : 1000;
+function formatUnit(param, base, pPrecision) {
   let pr = pPrecision ? Math.floor(10 * parseFloat('0' + pPrecision)) : 2;
-
-  let i = 0;
-  let val = parseFloat(param || 0);
   let units = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
+  let val = parseFloat(param || 0);
+  let i = 0;
 
-  for (i = 0; (i < units.length) && (val >= mf); i++)
-    val /= mf;
+  for (i = 0; (i < units.length) && (val >= base); i++)
+    val /= base;
 
   return val.toFixed(pr) + ' ' + units[i];
 }
@@ -39,14 +37,15 @@ function formatTime(param) {
 String.prototype.format = function() {
   let str = this;
   let out = '';
-  let re = /^(([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X|t|m))/;
+  let re = /^(([^%]*)%('.|0|\x20)?(-)?(\d+)?(\.\d+)?(%|b|c|d|u|f|o|s|x|X|t|m|M|))/;
   let a = [];
   let numSubstitutions = 0;
+  let subst = '';
 
   while ((a = re.exec(str)) !== null) {
     let m = a[1];
     let leftpart = a[2], pPad = a[3], pJustify = a[4], pMinLength = a[5];
-    let pPrecision = a[6], pType = a[7], subst;
+    let pPrecision = a[6], pType = a[7];
 
     if (pType === '%') {
       subst = '%';
@@ -116,7 +115,11 @@ String.prototype.format = function() {
           break;
 
         case 'm':
-          subst = formatUnit(param, pMinLength, pPrecision);
+          subst = formatUnit(param, 1000, pPrecision);
+          break;
+
+        case 'M':
+          subst = formatUnit(param, 1024, pPrecision);
           break;
         }
 
