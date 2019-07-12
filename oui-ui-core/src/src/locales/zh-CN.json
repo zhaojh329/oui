@@ -453,5 +453,6 @@
   "Bandwidth Monitor": "带宽监控",
   "Local network": "本地网络",
   "192.168.1.1/24 or a logical interface name": "192.168.1.1/24 或者是一个逻辑接口名称",
-  "Routes configuration": "路由配置"
+  "Routes configuration": "路由配置",
+  "Services": "服务"
 }
