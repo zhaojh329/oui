@@ -33,3 +33,6 @@ prepare: .tmp/.npm_stamp
 
 build: prepare
 	@$(NPM) run build
+
+plugin:
+	@$(NPM) run plugin
