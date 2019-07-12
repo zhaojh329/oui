@@ -1,4 +1,5 @@
 import {ubus} from './ubus'
+import axios from 'axios'
 
 const menu = {}
 
@@ -40,6 +41,16 @@ function parseMenus(raw) {
   return menus;
 }
 
+function getComponent(resolve, menu) {
+  if (menu.plugin) {
+    axios.get(`/views/${menu.view}.js`).then(r => {
+      resolve(eval(r.data));
+    });
+  } else {
+    return import(`@/views/${menu.view}`)
+  }
+}
+
 function buildRoutes(menus) {
   const routes = [];
 
@@ -57,7 +68,7 @@ function buildRoutes(menus) {
       route.redirect = menu.path;
       route.children.push({
         path: menu.path,
-        component: () => import(`@/views/${menu.view}`),
+        component: resolve => getComponent(resolve, menu),
         meta: {
           title: menu.title
         }
@@ -66,7 +77,7 @@ function buildRoutes(menus) {
       menu.children.forEach(sm => {
         route.children.push({
           path: sm.path,
-          component: () => import(`@/views/${sm.view}`),
+          component: resolve => getComponent(resolve, sm),
           meta: {
             title: sm.title
           }
