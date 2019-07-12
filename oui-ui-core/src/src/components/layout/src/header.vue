@@ -92,10 +92,11 @@ export default {
       return list;
     },
     onLangCommand(cmd) {
-      this.$ubus.call('uci', 'set', {config: 'oui', section: 'main', values: {lang: cmd}}).then(() => {
-        this.$ubus.call('uci', 'commit', {config: 'oui'}).then(() => {
-          this.$getLang();
-        });
+      this.$ubus.call('oui.ui', 'lang', {lang: cmd}).then(({lang}) => {
+        this.$store.commit('setLang', lang);
+        if (lang === 'auto')
+          lang = navigator.language;
+        this.$i18n.locale = lang;
       });
     },
     onUserCommand(cmd) {
@@ -121,8 +122,6 @@ export default {
     this.$session.get(r => {
       this.username = r.username;
     });
-
-    this.$getLang();
   }
 }
 </script>

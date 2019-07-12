@@ -41,18 +41,6 @@ export default {
       window.setTimeout(check, 5000);
     }
 
-    Vue.prototype.$getLang = function() {
-      this.$ubus.call('oui.ui', 'lang').then(r => {
-        let lang = r.lang;
-
-        this.$store.commit('setLang', lang);
-
-        if (lang === 'auto')
-          lang = navigator.language;
-        this.$i18n.locale = lang;
-      });
-    }
-
     Vue.prototype.$getLoading = function(text) {
       return this.$loading({
         text: text || this.$t('Loading...'),

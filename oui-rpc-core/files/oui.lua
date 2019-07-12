@@ -169,13 +169,20 @@ local function network_ifupdown(name, up)
 end
 
 local methods = {
-	["oui.ui"] = {
-		lang = {
+    ["oui.ui"] = {
+        lang = {
             function(req, msg)
                 local c = uci.cursor()
+
+                if msg.lang then
+                    c:set("oui", "main", "lang", msg.lang)
+                    c:commit("oui")
+                end
+
                 local lang = c:get("oui", "main", "lang")
-				ubus.reply(req, {lang = lang})
-            end, {}
+
+                ubus.reply(req, {lang = lang})
+            end, {lang = libubus.STRING}
         },
         menu = {
             function(req, msg)
@@ -228,7 +235,7 @@ local methods = {
                     f:close()
                 end
 
-				ubus.reply(req, {acls = acls})
+                ubus.reply(req, {acls = acls})
             end, {}
         },
         crypt = {

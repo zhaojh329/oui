@@ -56,7 +56,6 @@ export default {
   },
   created() {
     this.$session.logout();
-    this.$getLang();
   }
 }
 </script>
