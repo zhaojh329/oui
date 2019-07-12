@@ -1,0 +1,11 @@
+{
+	"rtty": {
+		"description": "rtty configuration",
+		"read": {
+			"uci": ["rtty"]
+		},
+		"write": {
+			"uci": ["rtty"]
+		}
+	}
+}

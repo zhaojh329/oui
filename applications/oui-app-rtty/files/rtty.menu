@@ -1,0 +1,9 @@
+{
+	"services/rtty": {
+		"title": "rtty",
+		"index": 10,
+		"view": "services/rtty",
+		"files": [ "/etc/config/rtty" ],
+		"plugin": true
+	}
+}
