@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import {session} from './plugins/session'
+import {ubus} from './plugins/ubus'
+import store from './store'
+import i18n from './i18n'
 
 Vue.use(Router)
 
@@ -31,7 +34,7 @@ const router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+function beforeEach(to, next) {
   if (to.path !== '/login') {
     session.isAlive().then(alive => {
       if (alive) {
@@ -50,6 +53,21 @@ router.beforeEach((to, from, next) => {
     });
   } else {
     next();
+  }
+}
+
+router.beforeEach((to, from, next) => {
+  if (!store.state.lang) {
+    ubus.call('oui.ui', 'lang').then(({lang}) => {
+      store.commit('setLang', lang);
+      if (lang === 'auto')
+        lang = navigator.language;
+      i18n.locale = lang;
+
+      beforeEach(to, next);
+    });
+  } else {
+    beforeEach(to, next);
   }
 });
 
