@@ -1,9 +1,17 @@
 {
 	"services/rtty": {
-		"title": "rtty",
+		"title": "Rtty configure",
 		"index": 10,
 		"view": "services/rtty",
 		"files": [ "/etc/config/rtty" ],
-		"plugin": true
+		"plugin": true,
+		"i18n": {
+			"en": {
+				"Rtty configure": "Rtty configure"
+			},
+			"zh-CN": {
+				"Rtty configure": "Rtty配置"
+			}
+		}
 	}
 }

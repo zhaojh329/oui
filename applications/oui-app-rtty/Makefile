@@ -29,10 +29,11 @@ define Build/Prepare
 endef
 
 define Package/oui-app-rtty/install
-	$(INSTALL_DIR) $(1)/www/views/services $(1)/usr/share/rpcd/acl.d \
-		$(1)/usr/share/oui/menu.d/
+	$(INSTALL_DIR) $(1)/www/views/services $(1)/www/i18n/services \
+		$(1)/usr/share/rpcd/acl.d $(1)/usr/share/oui/menu.d
 	$(CP) ./files/rtty.menu $(1)/usr/share/oui/menu.d/rtty.json
 	$(CP) ./files/rtty.acl $(1)/usr/share/rpcd/acl.d/rtty.json
+	$(CP) ./files/rtty.i18n $(1)/www/i18n/services/rtty.json
 	$(CP) $(PKG_BUILD_DIR)/dist/plugin.common.js $(1)/www/views/services/rtty.js
 endef
 

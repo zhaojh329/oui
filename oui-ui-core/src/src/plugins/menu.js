@@ -1,5 +1,6 @@
 import {ubus} from './ubus'
 import axios from 'axios'
+import i18n from '@/i18n'
 
 const menu = {}
 
@@ -42,6 +43,12 @@ function parseMenus(raw) {
 }
 
 function buildRoute(menu) {
+  if (menu.i18n) {
+    const msgs = menu.i18n;
+    for (const locale in msgs)
+      i18n.mergeLocaleMessage(locale, msgs[locale]);
+  }
+
   return {
     path: menu.path,
     component: resolve => {
@@ -55,6 +62,23 @@ function buildRoute(menu) {
     },
     meta: {
       title: menu.title
+    },
+    beforeEnter: (to, from, next) => {
+      if (to.meta.i18n) {
+        next();
+        return;
+      }
+
+      to.meta.i18n = true;
+
+      axios.get(`/i18n${to.path}.json`).then(r => {
+        const msgs = r.data;
+        for (const locale in msgs)
+          i18n.mergeLocaleMessage(locale, msgs[locale]);
+        next();
+      }).catch(() => {
+        next();
+      });
     }
   };
 }

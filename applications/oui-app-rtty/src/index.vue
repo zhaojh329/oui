@@ -7,7 +7,7 @@
       <uci-option-input :label="$t('Host')" name="host" required></uci-option-input>
       <uci-option-input :label="$t('Port')" name="port" placeholder="5912" rules="port"></uci-option-input>
       <uci-option-switch label="SSL" name="ssl"></uci-option-switch>
-      <uci-option-input :label="$t('Keepalive')" name="keepalive" placeholder="5" rules="uninteger" append="s"></uci-option-input>
+      <uci-option-input :label="$t('Keepalive Time')" name="keepalive" placeholder="5" rules="uinteger" append="s"></uci-option-input>
       <uci-option-input :label="$t('Token')" name="token"></uci-option-input>
     </uci-section>
   </uci-form>

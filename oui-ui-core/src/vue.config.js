@@ -11,6 +11,9 @@ module.exports = {
       },
       '/views/': {
         target: 'http://openwrt.lan'
+      },
+      '/i18n/': {
+        target: 'http://openwrt.lan'
       }
     }
   },
