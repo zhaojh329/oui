@@ -41,14 +41,22 @@ function parseMenus(raw) {
   return menus;
 }
 
-function getComponent(resolve, menu) {
-  if (menu.plugin) {
-    axios.get(`/views/${menu.view}.js`).then(r => {
-      resolve(eval(r.data));
-    });
-  } else {
-    return import(`@/views/${menu.view}`)
-  }
+function buildRoute(menu) {
+  return {
+    path: menu.path,
+    component: resolve => {
+      if (menu.plugin) {
+        axios.get(`/views/${menu.view}.js`).then(r => {
+          resolve(eval(r.data));
+        });
+      } else {
+        return import(`@/views/${menu.view}`)
+      }
+    },
+    meta: {
+      title: menu.title
+    }
+  };
 }
 
 function buildRoutes(menus) {
@@ -66,22 +74,10 @@ function buildRoutes(menus) {
 
     if (menu.view) {
       route.redirect = menu.path;
-      route.children.push({
-        path: menu.path,
-        component: resolve => getComponent(resolve, menu),
-        meta: {
-          title: menu.title
-        }
-      });
+      route.children.push(buildRoute(menu));
     } else if (menu.children) {
       menu.children.forEach(sm => {
-        route.children.push({
-          path: sm.path,
-          component: resolve => getComponent(resolve, sm),
-          meta: {
-            title: sm.title
-          }
-        });
+        route.children.push(buildRoute(sm));
       });
     }
 
