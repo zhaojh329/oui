@@ -50,7 +50,7 @@ function buildRoute(menu) {
           resolve(eval(r.data));
         });
       } else {
-        return import(`@/views/${menu.view}`)
+        return import(`@/views/${menu.view}`);
       }
     },
     meta: {
