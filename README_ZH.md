@@ -30,7 +30,6 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 # TODO
 
 * 动态切换主题
-* 插件
 
 # [捐赠](https://gitee.com/zhaojh329/oui#project-donate-overview)
 

@@ -31,7 +31,6 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 # TODO
 
 * Dynamic switching theme
-* Plugin
 
 # [Donate](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
