@@ -353,9 +353,9 @@ local methods = {
                 local r, lines = pcall(io.lines, "/proc/net/arp")
                 if r then
                     for line in lines do
-                        local ipaddr, macaddr, device = line:match("^[^IP](%S+) +%S+ +%S+ +(%S+) +%S+ +(%S+)")
+                        local ipaddr, macaddr, device = line:match("(%S+) +%S+ +%S+ +(%S+) +%S+ +(%S+)")
 
-                        if ipaddr then
+                        if ipaddr ~= "IP" then
                             entries[#entries + 1] = {
                                 ipaddr = ipaddr,
                                 macaddr = macaddr,
