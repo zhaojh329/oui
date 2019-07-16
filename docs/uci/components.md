@@ -267,3 +267,4 @@ Dynamic list. Corresponds to the list in the uci configuration.
 | Name        | Description        | Type      | Accepted Values       | Default  |
 |------------ |------------ |---------- |-------------|-------- |
 | initial | initial value | array | — | — |
+| suggestions | recommended tips | array | — | — |
