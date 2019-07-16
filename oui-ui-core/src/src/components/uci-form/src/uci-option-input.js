@@ -11,8 +11,8 @@ export default {
   },
   methods: {
     fetchSuggestions(queryString, cb) {
-      var suggestions = this.suggestions;
-      var results = queryString ? suggestions.filter(suggestion => {
+      const suggestions = this.suggestions;
+      const results = queryString ? suggestions.filter(suggestion => {
         return (suggestion.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
       }) : suggestions;
       cb(results.map(r => {
