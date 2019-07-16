@@ -1,7 +1,10 @@
 <template>
   <div class="oui-uci-dlist">
     <el-tag :closable="!readonly" v-for="tag in value" :key="tag" :disable-transitions="false" @close="handleDelDlist(tag)">{{ tag }}</el-tag>
-    <el-input v-if="inputVisible" size="small" ref="input" v-model="inputValue" @keyup.enter.native="handleinputConfirm" @blur="handleinputConfirm"></el-input>
+    <template v-if="inputVisible">
+      <el-autocomplete v-if="hasSuggestions" size="small" ref="input" v-model="inputValue" @keyup.enter.native="handleinputConfirm" :fetch-suggestions="fetchSuggestions" @blur="handleinputConfirm"></el-autocomplete>
+      <el-input v-else size="small" ref="input" v-model="inputValue" @keyup.enter.native="handleinputConfirm" @blur="handleinputConfirm"></el-input>
+    </template>
     <el-button v-else size="mini" type="primary" plain @click="showInput">+ {{ $t('Add') }}</el-button>
   </div>
 </template>
@@ -20,7 +23,8 @@ export default {
     prop: {
       type: String,
       required: true
-    }
+    },
+    suggestions: Array
   },
   data() {
     return {
@@ -34,9 +38,21 @@ export default {
     },
     form() {
       return this.uciForm.form;
+    },
+    hasSuggestions() {
+      return this.suggestions && this.suggestions.length > 0;
     }
   },
   methods: {
+    fetchSuggestions(queryString, cb) {
+      const suggestions = this.suggestions;
+      const results = queryString ? suggestions.filter(suggestion => {
+        return (suggestion.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      }) : suggestions;
+      cb(results.map(r => {
+        return {value: r};
+      }));
+    },
     handleDelDlist(tag) {
       let tags = [...this.value];
       tags.splice(tags.indexOf(tag), 1);
@@ -53,6 +69,11 @@ export default {
       this.inputValue = '';
     },
     handleinputConfirm() {
+      setTimeout(() => {
+        this.__handleinputConfirm();
+      }, 100);
+    },
+    __handleinputConfirm() {
       if (this.inputValue) {
         const tags = [...this.value];
 

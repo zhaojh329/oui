@@ -13,6 +13,7 @@ import {
   Submenu,
   MenuItem,
   Input,
+  Autocomplete,
   Radio,
   Checkbox,
   Switch,
@@ -67,6 +68,7 @@ Vue.use(Menu);
 Vue.use(Submenu);
 Vue.use(MenuItem);
 Vue.use(Input);
+Vue.use(Autocomplete);
 Vue.use(Radio);
 Vue.use(Checkbox);
 Vue.use(Switch);

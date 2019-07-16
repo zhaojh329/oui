@@ -225,6 +225,7 @@ Used for editable uci options.
 | placeholder | placeholder | string | — | — |
 | password | toggleable password input | boolean | — | false |
 | append | content to append after Input | string | — | — |
+| suggestions | recommended tips | array | — | — |
 
 ### content to append after Input
 

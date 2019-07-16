@@ -6,15 +6,32 @@ export default {
   props: {
     placeholder: String,
     password: Boolean,
-    append: String
+    append: String,
+    suggestions: Array
   },
   methods: {
+    fetchSuggestions(queryString, cb) {
+      var suggestions = this.suggestions;
+      var results = queryString ? suggestions.filter(suggestion => {
+        return (suggestion.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      }) : suggestions;
+      cb(results.map(r => {
+        return {value: r};
+      }));
+    },
     view(prop) {
-      return (
-        <el-input placeholder={this.placeholder} show-password={this.password} v-model={this.form[prop]}>
-          { this.append && <span slot="append">{ this.append }</span> }
-        </el-input>
-      );
+      if (this.suggestions && this.suggestions.length > 0)
+        return (
+          <el-autocomplete fetch-suggestions={this.fetchSuggestions} placeholder={this.placeholder} v-model={this.form[prop]}>
+            { this.append && <span slot="append">{ this.append }</span> }
+          </el-autocomplete>
+        );
+      else
+        return (
+          <el-input placeholder={this.placeholder} show-password={this.password} v-model={this.form[prop]}>
+            { this.append && <span slot="append">{ this.append }</span> }
+          </el-input>
+        );
     }
   }
 }

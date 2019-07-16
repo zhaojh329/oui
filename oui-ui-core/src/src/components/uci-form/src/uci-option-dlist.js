@@ -6,7 +6,8 @@ export default {
   mixins: [mixin],
   props: {
     /* If load from uci fails, the value of the property is used as the form value. */
-    initial: Array
+    initial: Array,
+    suggestions: Array
   },
   components: {
     UciDlist
@@ -18,7 +19,7 @@ export default {
       return value;
     },
     view(prop) {
-      return <uci-dlist prop={prop} v-model={this.form[prop]} />;
+      return <uci-dlist prop={prop} v-model={this.form[prop]} suggestions={this.suggestions}/>;
     }
   }
 }

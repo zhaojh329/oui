@@ -225,6 +225,7 @@ export default {
 | placeholder | 占位符 | string | — | — |
 | password | 密码框 | boolean | — | false |
 | append | 输入框后置内容 | string | — | — |
+| suggestions | 输入建议选项 | array | — | — |
 
 ### 输入框后置内容
 
