@@ -1,6 +1,6 @@
 all:
-	mkdir -p ../oui-ui-core/.plugin
-	cp index.vue ../oui-ui-core/.plugin
-	make -C ../oui-ui-core plugin
-	cp -r ../oui-ui-core/.plugin/dist .
+	mkdir -p ../.oui-build-plugin/.plugin
+	cp index.vue ../.oui-build-plugin/.plugin
+	make -C ../.oui-build-plugin plugin
+	cp -r ../.oui-build-plugin/.plugin/dist .
 	

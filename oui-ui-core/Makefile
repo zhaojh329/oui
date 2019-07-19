@@ -41,6 +41,7 @@ endef
 define Build/Prepare
 	$(INSTALL_DIR) $(PKG_BUILD_DIR)
 	$(CP) ./src/. $(PKG_BUILD_DIR)/
+	ln -sf $(PKG_BUILD_DIR) $(BUILD_DIR)/.oui-build-plugin
 endef
 
 ifneq ($(CONFIG_OUI_BUILD_DEV),)
