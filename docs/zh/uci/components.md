@@ -207,6 +207,18 @@ export default {
 <uci-option-dummy label="名称" name="name"></uci-option-dummy>
 ```
 
+``` vue
+<uci-option label="名称" name="name">
+  <template v-slot="props">
+    <el-input v-model="props.self.form[props.prop]"></el-input>
+  </template>
+</uci-option>
+```
+等价于
+``` vue
+<uci-option-input label="名称" name="name"></uci-option-input>
+```
+
 ## uci-option-dummy
 
 仅用于显示值，不能编辑。

@@ -207,6 +207,18 @@ Equivalent to
 <uci-option-dummy label="名称" name="name"></uci-option-dummy>
 ```
 
+``` vue
+<uci-option label="名称" name="name">
+  <template v-slot="props">
+    <el-input v-model="props.self.form[props.prop]"></el-input>
+  </template>
+</uci-option>
+```
+Equivalent to
+``` vue
+<uci-option-input label="名称" name="name"></uci-option-input>
+```
+
 ## uci-option-dummy
 
 Used only to display values, not for editing.
