@@ -25,7 +25,8 @@
             <uci-option-switch :label="$t('WMM Mode')" name="wmm" depend="mode == 'ap'" initial="1"></uci-option-switch>
           </uci-tab>
           <uci-tab :title="$t('Wireless Security')" name="security">
-            <uci-option-list :label="$t('Encryption')" name="encryption" :options="encryptions" initial="none"></uci-option-list>
+            <uci-option-list :label="$t('Encryption')" name="encryption" :options="encryptions" initial="none" :load="loadEncr" :save="saveEncr"></uci-option-list>
+            <uci-option-list :label="$t('Cipher')" name="cipher" depend="encryption != 'none'" :options="ciphers" initial="auto" :load="loadCipher" :save="saveCipher"></uci-option-list>
             <uci-option-input :label="$t('Passphrase')" name="key" depend="encryption != 'none'" password></uci-option-input>
           </uci-tab>
           <uci-tab :title="$t('MAC-Filter')" name="macfilter">
@@ -55,6 +56,12 @@ export default {
         ['psk2', 'WPA2-PSK'],
         ['psk-mixed', 'WPA/WPA2-PSK ' + this.$t('mixed')]
       ],
+      ciphers: [
+        ['auto', this.$t('auto')],
+        ['ccmp', this.$t('Force CCMP (AES)')],
+        ['tkip', this.$t('Force TKIP')],
+        ['tkip+ccmp', this.$t('Force TKIP and CCMP (AES)')]
+      ],
       macfilters: [
         ['allow', this.$t('Allow listed only')],
         ['deny', this.$t('Allow all except listed')]
@@ -67,6 +74,41 @@ export default {
     },
     afterAddIface(sid, self) {
       this.$uci.set('wireless', sid, 'device', self.options.radio);
+    },
+    loadEncr(sid) {
+      const [v] = (this.$uci.get('wireless', sid, 'encryption') || '').split('+');
+      return v;
+    },
+    loadCipher(sid) {
+      let v = (this.$uci.get('wireless', sid, 'encryption') || '').split('+');
+
+      if (v.length < 2)
+        return 'auto';
+
+      v = v.slice(1).join('+');
+
+      if (v === 'aes')
+        v = 'ccmp';
+      else if (v === 'tkip+aes' || v === 'aes+tkip' || v === 'ccmp+tkip')
+        v = 'tkip+ccmp';
+
+      return v;
+    },
+    saveEncr(sid, value, self) {
+      let cipher = self.uciSection.formValue('cipher', sid);
+
+      if (cipher === 'tkip' || cipher === 'ccmp' || cipher === 'tkip+ccmp')
+        value = `${value}+${cipher}`;
+
+      this.$uci.set('wireless', sid, 'encryption', value);
+    },
+    saveCipher(sid, value, self) {
+      let encr = self.uciSection.formValue('encryption', sid);
+
+      if (value === 'tkip' || value === 'ccmp' || value === 'tkip+ccmp')
+        encr = `${encr}+${value}`;
+
+      this.$uci.set('wireless', sid, 'encryption', encr);
     }
   },
   created() {

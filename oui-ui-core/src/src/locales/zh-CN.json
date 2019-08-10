@@ -454,5 +454,9 @@
   "Local network": "本地网络",
   "192.168.1.1/24 or a logical interface name": "192.168.1.1/24 或者是一个逻辑接口名称",
   "Routes configuration": "路由配置",
-  "Services": "服务"
+  "Services": "服务",
+  "Cipher": "算法",
+  "Force CCMP (AES)": "强制 CCMP（AES）",
+  "Force TKIP": "强制 TKIP",
+  "Force TKIP and CCMP (AES)": "强制 TKIP 和 CCMP（AES）"
 }

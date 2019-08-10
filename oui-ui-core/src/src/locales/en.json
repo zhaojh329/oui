@@ -454,5 +454,9 @@
   "Local network": "Local network",
   "192.168.1.1/24 or a logical interface name": "192.168.1.1/24 or a logical interface name",
   "Routes configuration": "Routes configuration",
-  "Services": "Services"
+  "Services": "Services",
+  "Cipher": "Cipher",
+  "Force CCMP (AES)": "Force CCMP (AES)",
+  "Force TKIP": "Force TKIP",
+  "Force TKIP and CCMP (AES)": "Force TKIP and CCMP (AES)"
 }
