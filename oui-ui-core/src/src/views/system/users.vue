@@ -145,14 +145,6 @@ export default {
         this.mergeACLPermission(aclPerm, group.write);
       }
     },
-    loadAclsFromUCI(resolve, sid) {
-      const s = this.$uci.get('rpcd', sid);
-
-      resolve({
-        read: s.read || [],
-        write: s.write || []
-      });
-    },
     aclMatch(list, group) {
       if (list.indexOf('!' + group) > -1)
         return false;
