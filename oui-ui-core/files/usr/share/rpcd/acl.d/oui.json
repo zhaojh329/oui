@@ -294,6 +294,16 @@
 		}
 	},
 
+	"oui-bwm": {
+		"description": "Bandwidth Monitor",
+		"read": {
+			"uci": ["oui-bwm"]
+		},
+		"write": {
+			"uci": ["oui-bwm"]
+		}
+	},
+
 	"diagnostics": {
 		"description": "Network diagnostic tools",
 		"read": {

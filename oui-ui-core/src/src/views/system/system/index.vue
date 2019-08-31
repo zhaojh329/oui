@@ -1,24 +1,18 @@
 <template>
-  <uci-form config="system">
-    <uci-section :title="$t('System Properties')" type="system">
-      <uci-tab :title="$t('General Settings')" name="general">
+  <uci-form config="system" tabbed>
+    <uci-section :title="$t('General Settings')" type="system">
         <uci-option-dummy :label="$t('Local Time')" :load="localTime" name="__time"></uci-option-dummy>
         <uci-option-input type="input" :label="$t('Hostname')" name="hostname" required rules="hostname" :apply="updateHostname"></uci-option-input>
         <uci-option-list :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option-list>
-      </uci-tab>
-      <uci-tab :title="$t('Logging')" name="logging">
-        <uci-option-input :label="$t('System log buffer size')" name="log_size" placeholder="16" append="kiB" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option-input>
-        <uci-option-input :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option-input>
-        <uci-option-input :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option-input>
-        <uci-option-list :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos" required></uci-option-list>
-        <uci-option-input :label="$t('Write system log to file')" name="log_file"></uci-option-input>
-        <uci-option-list :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels" required></uci-option-list>
-        <uci-option-list :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option-list>
-      </uci-tab>
-      <uci-tab :title="$t('Bandwidth Monitor')" name="bwm">
-        <uci-option-input type="input" label="TTL" name="ttl" :load="loadBwmTTL" :save="saveBwmTTL" placeholder="30" rules="uinteger" append="s"></uci-option-input>
-        <uci-option-dlist :label="$t('Local network')" name="local_network" :load="loadBwmSubnet" :save="saveBwmSubnet" :description="$t('192.168.1.1/24 or a logical interface name')"></uci-option-dlist>
-      </uci-tab>
+    </uci-section>
+    <uci-section :title="$t('Logging')" type="system">
+      <uci-option-input :label="$t('System log buffer size')" name="log_size" placeholder="16" append="kiB" :rules="{type: 'uinteger', min: 0, max: 128}"></uci-option-input>
+      <uci-option-input :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option-input>
+      <uci-option-input :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option-input>
+      <uci-option-list :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos" required></uci-option-list>
+      <uci-option-input :label="$t('Write system log to file')" name="log_file"></uci-option-input>
+      <uci-option-list :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels" required></uci-option-list>
+      <uci-option-list :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option-list>
     </uci-section>
     <uci-section :title="$t('Time Synchronization')" name="ntp">
       <uci-option-switch :label="$t('Enable NTP client')" name="enable" save="" :load="ntpCliEnabled" :apply="ntpCliEnableApply"></uci-option-switch>
@@ -105,30 +99,6 @@ export default {
     },
     updateHostname(value) {
       this.$store.commit('setHostname', value);
-    },
-    loadBwmTTL() {
-      return new Promise(resolve => {
-        this.$uci.load('oui-bwm').then(() => {
-          const s = this.$uci.sections('oui-bwm', 'bwm')[0];
-          resolve(s.ttl);
-        });
-      });
-    },
-    loadBwmSubnet() {
-      return new Promise(resolve => {
-        this.$uci.load('oui-bwm').then(() => {
-          const s = this.$uci.sections('oui-bwm', 'bwm')[0];
-          resolve(s.local_network);
-        });
-      });
-    },
-    saveBwmTTL(_, value) {
-      const s = this.$uci.sections('oui-bwm', 'bwm')[0];
-      this.$uci.set('oui-bwm', s['.name'], 'ttl', value);
-    },
-    saveBwmSubnet(_, value) {
-      const s = this.$uci.sections('oui-bwm', 'bwm')[0];
-      this.$uci.set('oui-bwm', s['.name'], 'local_network', value);
     }
   }
 }
