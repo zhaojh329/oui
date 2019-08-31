@@ -16,7 +16,7 @@
         <uci-option-list :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option-list>
       </uci-tab>
       <uci-tab :title="$t('Bandwidth Monitor')" name="bwm">
-        <uci-option-input type="input" label="TTL" name="ttl" :load="loadBwmTTL" :save="saveBwmTTL" placeholder="30" rules="uninteger" append="s"></uci-option-input>
+        <uci-option-input type="input" label="TTL" name="ttl" :load="loadBwmTTL" :save="saveBwmTTL" placeholder="30" rules="uinteger" append="s"></uci-option-input>
         <uci-option-dlist :label="$t('Local network')" name="local_network" :load="loadBwmSubnet" :save="saveBwmSubnet" :description="$t('192.168.1.1/24 or a logical interface name')"></uci-option-dlist>
       </uci-tab>
     </uci-section>
