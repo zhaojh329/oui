@@ -61,15 +61,16 @@ function buildRoute(menu) {
       }
     },
     meta: {
-      title: menu.title
+      title: menu.title,
+      i18nfile: menu.i18nfile
     },
     beforeEnter: (to, from, next) => {
-      if (to.meta.i18n) {
+      if (!to.meta.i18nfile) {
         next();
         return;
       }
 
-      to.meta.i18n = true;
+      to.meta.i18nfile = false;
 
       axios.get(`/i18n${to.path}.json`).then(r => {
         const msgs = r.data;

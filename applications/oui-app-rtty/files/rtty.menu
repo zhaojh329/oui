@@ -12,6 +12,7 @@
 			"zh-CN": {
 				"Rtty configure": "Rtty配置"
 			}
-		}
+		},
+		"i18nfile": true
 	}
 }
