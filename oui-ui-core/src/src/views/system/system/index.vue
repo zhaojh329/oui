@@ -10,7 +10,7 @@
       <uci-option-input :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"></uci-option-input>
       <uci-option-input :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"></uci-option-input>
       <uci-option-list :label="$t('External system log server protocol')" name="log_proto" initial="udp" :options="logProtos" required></uci-option-list>
-      <uci-option-input :label="$t('Write system log to file')" name="log_file"></uci-option-input>
+      <uci-option-file :label="$t('Write system log to file')" name="log_file"></uci-option-file>
       <uci-option-list :label="$t('Log output level')" name="conloglevel" initial="7" :options="conlogLevels" required></uci-option-list>
       <uci-option-list :label="$t('Cron Log Level')" name="cronloglevel" initial="5" :options="cronlogLevels" required></uci-option-list>
     </uci-section>

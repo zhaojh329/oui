@@ -458,5 +458,10 @@
   "Cipher": "算法",
   "Force CCMP (AES)": "强制 CCMP（AES）",
   "Force TKIP": "强制 TKIP",
-  "Force TKIP and CCMP (AES)": "强制 TKIP 和 CCMP（AES）"
+  "Force TKIP and CCMP (AES)": "强制 TKIP 和 CCMP（AES）",
+  "Select...": "选择...",
+  "New": "新建",
+  "File": "文件",
+  "Folder": "文件夹",
+  "Already exists": "已存在"
 }

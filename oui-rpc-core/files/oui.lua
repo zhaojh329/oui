@@ -9,6 +9,7 @@ local statvfs = require "oui.c".statvfs
 local parse_route_addr = require "oui.c".parse_route_addr
 local parse_route6_addr = require "oui.c".parse_route6_addr
 local parse_flow = require "oui.c".parse_flow
+local readdir = require "oui.c".readdir
 
 local RPC_OUI_MENU_FILES = "/usr/share/oui/menu.d/*.json"
 
@@ -839,6 +840,33 @@ local methods = {
                 end
                 ubus.reply(req, {times = times})
             end, {}
+        },
+        read_dir = {
+            function(req, msg)
+                local path = msg.path or "/"
+                local files = readdir(path)
+
+                path = path:gsub("/$", "")
+
+                for _, file in ipairs(files) do
+                    file.path = path .. "/" .. file.name
+                end
+
+                ubus.reply(req, {files = files})
+            end, {path = libubus.STRING}
+        },
+        new_file = {
+            function(req, msg)
+                local path = msg.path
+                local dir = msg.dir
+                local cmd = "touch"
+
+                if dir then cmd = "mkdir" end
+
+                local r = os.execute(cmd .. " " .. path)
+
+                ubus.reply(req, {r = r})
+            end, {path = libubus.STRING, dir = libubus.BOOLEAN}
         }
     }
 }

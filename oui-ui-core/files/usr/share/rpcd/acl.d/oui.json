@@ -102,7 +102,9 @@
 					"board"
 				],
 				"oui.system": [
-					"init_list"
+					"init_list",
+					"read_dir",
+					"new_file"
 				]
 			}
 		},

@@ -458,5 +458,10 @@
   "Cipher": "Cipher",
   "Force CCMP (AES)": "Force CCMP (AES)",
   "Force TKIP": "Force TKIP",
-  "Force TKIP and CCMP (AES)": "Force TKIP and CCMP (AES)"
+  "Force TKIP and CCMP (AES)": "Force TKIP and CCMP (AES)",
+  "Select...": "Select...",
+  "New": "New",
+  "File": "File",
+  "Folder": "Folder",
+  "Already exists": "Already exists"
 }

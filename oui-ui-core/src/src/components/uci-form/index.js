@@ -9,6 +9,7 @@ import UciOptionInput from './src/uci-option-input'
 import UciOptionSwitch from './src/uci-option-switch'
 import UciOptionList from './src/uci-option-list'
 import UciOptionDlist from './src/uci-option-dlist'
+import UciOptionFile from './src/uci-option-file'
 
 Vue.component('UciForm', UciForm)
 Vue.component('UciTab', UciTab)
@@ -20,3 +21,4 @@ Vue.component('UciOptionInput', UciOptionInput)
 Vue.component('UciOptionSwitch', UciOptionSwitch)
 Vue.component('UciOptionList', UciOptionList)
 Vue.component('UciOptionDlist', UciOptionDlist)
+Vue.component('UciOptionFile', UciOptionFile)

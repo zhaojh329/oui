@@ -280,3 +280,7 @@ Dynamic list. Corresponds to the list in the uci configuration.
 |------------ |------------ |---------- |-------------|-------- |
 | initial | initial value | array | — | — |
 | suggestions | recommended tips | array | — | — |
+
+## uci-option-file
+
+Similar to the input box, but support for select file.

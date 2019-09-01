@@ -3,6 +3,7 @@
 #include <lauxlib.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include <arpa/inet.h>
 #include <sys/statvfs.h>
 
@@ -154,6 +155,47 @@ static int l_parse_flow(lua_State *L)
     return 4;
 }
 
+static int l_readdir(lua_State *L)
+{
+    const char *path = lua_tostring(L, 1);
+    struct dirent *dirp;
+    DIR *dir;
+    int i = 1;
+
+    lua_newtable(L);
+
+    if (!path)
+        return 1;
+
+    dir = opendir(path);
+    if (!dir)
+        return 1;
+
+    while ((dirp = readdir(dir))) {
+        int type = dirp->d_type;
+
+        if (dirp->d_name[0] == '.')
+            continue;
+
+        if (type !=  DT_REG && type != DT_DIR)
+            continue;
+
+        lua_newtable(L);
+
+        lua_pushstring(L, dirp->d_name);
+        lua_setfield(L, -2, "name");
+
+        if (dirp->d_type == DT_DIR) {
+            lua_pushboolean(L, 1);
+            lua_setfield(L, -2, "dir");
+        }
+
+        lua_rawseti(L, -2, i++);
+    }
+
+    return 1;
+}
+
 static const struct luaL_Reg func[] =
 {
     {"crypt", l_crypt},
@@ -161,6 +203,7 @@ static const struct luaL_Reg func[] =
     {"parse_route6_addr", l_parse_route6_addr},
     {"statvfs", l_statvfs},
     {"parse_flow", l_parse_flow},
+    {"readdir", l_readdir},
     {NULL, NULL}
 };
 
