@@ -10,8 +10,8 @@ html, body, #app {
 }
 
 body {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,  SimSun, sans-serif;
 	font-size: 14px;
 	-webkit-font-smoothing: antialiased;
@@ -21,8 +21,8 @@ body {
 
 #app {
 	position: absolute;
-	top: 0px;
-	bottom: 0px;
+	top: 0;
+	bottom: 0;
 	width: 100%;
 }
 
