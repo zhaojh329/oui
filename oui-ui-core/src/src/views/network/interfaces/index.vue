@@ -27,7 +27,7 @@
     </el-table>
     <el-button type="primary" size="small" style="margin-top: 10px" @click="handleAdd">+ {{ $t('Add interface') }}</el-button>
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" custom-class="interface-edit-dialog">
-      <uci-form config="network" v-if="dialogVisible">
+      <uci-form config="network" v-if="dialogVisible" :apply-timeout="15">
         <uci-section :name="editorIface">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option-switch :label="$t('Start on boot')" name="auto" initial="1"></uci-option-switch>

@@ -1,7 +1,7 @@
 <template>
   <el-tabs v-if="switchs.length > 0" :value="switchs[0].name">
     <el-tab-pane v-for="s in switchs" :key="s.name" :name="s.name" :label="switchTitle(s)">
-      <uci-form config="network">
+      <uci-form config="network" :apply-timeout="15">
         <uci-section :name="s.sid">
           <uci-option-switch v-if="s.attrs['enable_vlan']" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option-switch>
           <uci-option-switch v-if="s.attrs['enable_learning']" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option-switch>

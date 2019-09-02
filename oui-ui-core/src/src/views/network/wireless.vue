@@ -1,7 +1,7 @@
 <template>
   <el-tabs v-if="radios.length > 0" :value="radios[0].name">
     <el-tab-pane v-for="radio in radios" :key="radio.name" :name="radio.name" :label="radio.name + ` (${radio.hardware})`">
-      <uci-form config="wireless">
+      <uci-form config="wireless" :apply-timeout="15">
         <uci-section :name="radio.name">
           <uci-tab :title="$t('General Settings')" name="general">
             <uci-option-switch :label="$t('Disabled')" name="disabled"></uci-option-switch>
