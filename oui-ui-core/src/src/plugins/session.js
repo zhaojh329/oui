@@ -1,6 +1,6 @@
 import {ubus} from './ubus'
 
-const DEFAULT_SESSION_ID	= '00000000000000000000000000000000'
+const DEFAULT_SESSION_ID = '00000000000000000000000000000000'
 
 export const session = {
   aclCache: null
