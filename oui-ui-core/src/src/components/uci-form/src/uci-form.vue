@@ -28,7 +28,7 @@ export default {
     },
     tabbed: Boolean,
     afterLoaded: Function,
-    applyTimeout: Number
+    applyTimeout: Number /* timeout for apply(second) */
   },
   components: {
     UciFormBody
