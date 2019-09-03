@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2019 jianhui zhao <jianhuizhao329@gmail.com>
+ *  Copyright (C) 2019 jianhui zhao <zhaojh329@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License version 2 as
@@ -170,5 +170,5 @@ static void __exit oui_bwm_exit(void)
 module_init(oui_bwm_init);
 module_exit(oui_bwm_exit);
 
-MODULE_AUTHOR("jianhui zhao <jianhuizhao329@gmail.com>");
+MODULE_AUTHOR("jianhui zhao <zhaojh329@gmail.com>");
 MODULE_LICENSE("GPL");

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 Jianhui Zhao <jianhuizhao329@gmail.com>
+# Copyright (C) 2017 Jianhui Zhao <zhaojh329@gmail.com>
 #
 # This is free software, licensed under the MIT.
 #
@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=oui-ui-core
 PKG_VERSION:=$(shell git --git-dir=$(CURDIR)/../.git log -1 --pretty="%ci %h" | awk '{ print $$1 "-" $$4 }')
 PKG_RELEASE:=1
-PKG_MAINTAINER:=Jianhui Zhao <jianhuizhao329@gmail.com>
+PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 
 PKG_LICENSE:=MIT
 
