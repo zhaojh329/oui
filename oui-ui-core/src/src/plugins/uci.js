@@ -3,6 +3,7 @@ import {ubus} from './ubus'
 
 export const uci = {
   state: {
+    applying: false,
     newidx: 0,
     changed: 0,
     values: {},
@@ -314,30 +315,41 @@ uci.save = function() {
 }
 
 uci.apply = function(timeout) {
+  const state = this.state;
   const date = new Date();
 
   if (typeof(timeout) !== 'number' || timeout < 1)
     timeout = 10;
+
+  state.applying = true;
 
   return new Promise((resolve, reject) => {
     ubus.call('uci', 'apply', {rollback: true, timeout: timeout}).then(() => {
       const try_deadline = date.getTime() + 1000 * timeout;
       const try_confirm = function() {
         ubus.call('uci', 'confirm').then(() => {
+          state.applying = false;
           resolve();
         }).catch(e => {
-          if (date.getTime() < try_deadline)
+          if (date.getTime() < try_deadline) {
             window.setTimeout(try_confirm, 250);
-          else
-            reject(e);
+            return;
+          }
+          state.applying = false;
+          reject(e);
         });
       };
 
       window.setTimeout(try_confirm, 1000);
     }).catch(e => {
+      state.applying = false;
       reject(e);
     });
   });
+}
+
+uci.applying = function() {
+  return this.state.applying;
 }
 
 uci.readable = function(conf) {
