@@ -25,6 +25,9 @@
 				],
 				"uci": [
 					"*"
+				],
+				"system": [
+					"reboot"
 				]
 			}
 		},
@@ -235,9 +238,7 @@
 			"ubus": {
 				"oui.system": [
 					"backup_clean",
-					"backup_config_set",
-					"backup_restore",
-					"reboot"
+					"backup_restore"
 				]
 			}
 		}
