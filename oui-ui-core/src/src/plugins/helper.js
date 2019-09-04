@@ -30,11 +30,11 @@ export default {
       const vm = this;
 
       function check() {
-        vm.axios.get('/favicon.ico').then(() => {
+        vm.$ubus.call('oui.ui', 'lang', {}, 1).then(() => {
           loading.close();
           vm.$router.push('/login');
         }).catch(() => {
-          window.setTimeout(check, 5000);
+          window.setTimeout(check, 1000);
         });
       }
 
