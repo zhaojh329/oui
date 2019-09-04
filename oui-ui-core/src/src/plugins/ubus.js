@@ -19,9 +19,14 @@ const ubusErrorInfo = {
   10: 'Connection failed'
 }
 
-ubus._call = function(reqs) {
+ubus._call = function(reqs, timeout) {
+  if (typeof(timeout) !== 'number' || timeout < 1)
+    timeout = 10;
+
   return new Promise((resolve, reject) => {
-    axios.post('/ubus', reqs).then(response => {
+    axios.post('/ubus', reqs, {
+      timeout: timeout * 1000
+    }).then(response => {
       let resp = response.data;
 
       if (!Array.isArray(reqs)) {
@@ -93,12 +98,12 @@ ubus._buildRequest = function(object, method, params) {
   return req;
 }
 
-ubus.call = function(object, method, params) {
+ubus.call = function(object, method, params, timeout) {
   const req = this._buildRequest(object, method, params);
-  return this._call(req);
+  return this._call(req, timeout);
 }
 
-ubus.callBatch = function(batchs) {
+ubus.callBatch = function(batchs, timeout) {
   const reqs = [];
 
   batchs.forEach(item => {
@@ -106,7 +111,7 @@ ubus.callBatch = function(batchs) {
     reqs.push(req);
   });
 
-  return this._call(reqs);
+  return this._call(reqs, timeout);
 }
 
 ubus.list = function() {
