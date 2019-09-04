@@ -21,9 +21,7 @@ const ubusErrorInfo = {
 
 ubus._call = function(reqs) {
   return new Promise((resolve, reject) => {
-    axios.post('/ubus', reqs, {
-      responseType: 'text'
-    }).then(response => {
+    axios.post('/ubus', reqs).then(response => {
       let resp = response.data;
 
       if (!Array.isArray(reqs)) {
