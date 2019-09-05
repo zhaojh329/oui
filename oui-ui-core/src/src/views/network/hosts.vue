@@ -1,5 +1,5 @@
 <template>
-  <uci-form config="dhcp" @apply="onApply">
+  <uci-form config="dhcp" @applied="onApplied">
     <uci-section type="domain" addable table>
       <uci-option-input :label="$t('Hostname')" name="name" required rules="hostname"></uci-option-input>
       <uci-option-input :label="$t('IP address')" name="ip" required rules="ipaddr"></uci-option-input>
@@ -10,7 +10,7 @@
 <script>
 export default {
   methods: {
-    onApply() {
+    onApplied() {
       this.$system.initRestart('dnsmasq');
     }
   }

@@ -19,7 +19,7 @@ Represents a uci configuration file. Other components must be wrapped by this co
 ### Events
 | Name   | Description         | Parameters   |
 |---------- |------------- |---------- |
-| apply     | triggers when applying configuration | — |
+| applied   | triggers when apply configuration complete | — |
 
 ## uci-section
 

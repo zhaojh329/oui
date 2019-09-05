@@ -1,5 +1,5 @@
 <template>
-  <uci-form config="dhcp" @apply="onApply">
+  <uci-form config="dhcp" @applied="onApplied">
     <uci-section :title="$t('Server Settings')" type="dnsmasq">
       <uci-tab :title="$t('General Settings')" name="general">
         <uci-option-switch :label="$t('Domain required')" name="domainneeded" initial="1"></uci-option-switch>
@@ -85,7 +85,7 @@ export default {
     getARPTable() {
       return this.$ubus.call('oui.network', 'arp_table');
     },
-    onApply() {
+    onApplied() {
       this.$system.initRestart('dnsmasq');
     }
   },
