@@ -1,0 +1,19 @@
+{
+	"services/upnp": {
+		"title": "UPnP",
+		"index": 11,
+		"view": "services/upnp",
+		"acls": [ "upnp" ],
+		"files": [ "/etc/config/upnpd" ],
+		"plugin": true,
+		"i18n": {
+			"en": {
+				"UPnP": "UPnP"
+			},
+			"zh-CN": {
+				"UPnP": "UPnP"
+			}
+		},
+		"i18nfile": true
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"upnp": {
+		"description": "upnp configuration",
+		"read": {
+			"uci": ["upnpd"],
+			"ubus": {
+			    "upnp": ["status"]
+			}
+		},
+		"write": {
+			"uci": ["upnpd"]
+		}
+	}
+}

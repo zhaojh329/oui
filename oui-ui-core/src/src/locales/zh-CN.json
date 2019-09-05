@@ -463,5 +463,8 @@
   "New": "新建",
   "File": "文件",
   "Folder": "文件夹",
-  "Already exists": "已存在"
+  "Already exists": "已存在",
+  "Comment": "注释",
+  "Allow": "允许",
+  "Deny": "拒绝"
 }

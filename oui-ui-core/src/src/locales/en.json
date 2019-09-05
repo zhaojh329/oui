@@ -463,5 +463,8 @@
   "New": "New",
   "File": "File",
   "Folder": "Folder",
-  "Already exists": "Already exists"
+  "Already exists": "Already exists",
+  "Comment": "Comment",
+  "Allow": "Allow",
+  "Deny": "Deny"
 }
