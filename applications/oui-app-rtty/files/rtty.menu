@@ -3,6 +3,7 @@
 		"title": "Rtty configure",
 		"index": 10,
 		"view": "services/rtty",
+		"acls": [ "rtty" ],
 		"files": [ "/etc/config/rtty" ],
 		"plugin": true,
 		"i18n": {
