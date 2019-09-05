@@ -182,7 +182,8 @@ export default {
         }
       }
 
-      teasers[teasers.length - 1].push('end');
+      if (teasers.length > 0)
+        teasers[teasers.length - 1].push('end');
 
       return teasers;
     },
