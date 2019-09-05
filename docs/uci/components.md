@@ -162,7 +162,7 @@ All properties of the `uci-option` component are inherited by other `uci-option-
 ### Events
 | Name   | Description         | Parameters   |
 |---------- |------------- |---------- |
-| applied   | triggers when apply configuration complete | — |
+| applied   | triggers when apply configuration complete | The current value of this option |
 
 ### Scoped Slots
 | Name | Description     |
