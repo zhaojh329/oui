@@ -14,7 +14,7 @@
       <uci-form config="upnpd">
         <uci-section name="config">
           <uci-tab name="general" :title="$t('General Settings')">
-            <uci-option-switch name="enabled" :label="$t('Start UPnP and NAT-PMP service')" initial="1" :apply="setEnable"></uci-option-switch>
+            <uci-option-switch name="enabled" :label="$t('Start UPnP and NAT-PMP service')" initial="1" @applied="applyEnable"></uci-option-switch>
             <uci-option-switch name="enable_upnp" :label="$t('Enable UPnP functionality')" initial="1"></uci-option-switch>
             <uci-option-switch name="enable_natpmp" :label="$t('Enable NAT-PMP functionality')" initial="1"></uci-option-switch>
             <uci-option-switch name="secure_mode" :label="$t('Enable secure mode')" initial="1" :description="$t('Allow adding forwards only to requesting ip addresses')"></uci-option-switch>
@@ -60,14 +60,12 @@
       }
     },
     methods: {
-      setEnable(value) {
-        setTimeout(() => {
-          if (value) {
-            this.$system.initStart('miniupnpd');
-          } else {
-            this.$system.initStop('miniupnpd');
-          }
-        }, 1000);
+      applyEnable(value) {
+        if (value) {
+          this.$system.initStart('miniupnpd');
+        } else {
+          this.$system.initStop('miniupnpd');
+        }
       }
     },
     created() {

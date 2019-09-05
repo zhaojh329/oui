@@ -222,6 +222,13 @@ export default {
 
       return promises;
     },
+    applied() {
+      this.sids.forEach(sid => {
+        for (const name in this.children) {
+          this.children[name].applied(sid);
+        }
+      });
+    },
     handleSort(sid, up) {
       const sids = this.sids;
       let index = sids.indexOf(sid);

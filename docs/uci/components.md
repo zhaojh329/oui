@@ -159,6 +159,11 @@ All properties of the `uci-option` component are inherited by other `uci-option-
 | header      | Custom table column header | string | — | — |
 | width       | Column width of the table | string/number | — | — |
 
+### Events
+| Name   | Description         | Parameters   |
+|---------- |------------- |---------- |
+| applied   | triggers when apply configuration complete | — |
+
 ### Scoped Slots
 | Name | Description     |
 |------|----------|

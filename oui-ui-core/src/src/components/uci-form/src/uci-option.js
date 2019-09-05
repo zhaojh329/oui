@@ -351,6 +351,9 @@ export default {
       if (typeof(this.apply) !== 'undefined')
         return this.apply(value, this);
     },
+    applied(sid) {
+      this.$emit('applied', this.formValue(sid));
+    },
     view(prop, sid) {
       if (this.$scopedSlots.default)
         return this.$scopedSlots.default({sid, prop, value: this.formValue(sid), self: this});

@@ -133,9 +133,14 @@ export default {
           Promise.all(promises).then(() => {
             this.load().then(() => {
               this.reset();
-              this.$emit('applied');
               loading.close();
               this.$message.success(this.$t('Configuration has been applied'));
+
+              this.$emit('applied');
+
+              this.sections.forEach(s => {
+                s.applied();
+              });
             });
           });
         });
