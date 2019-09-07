@@ -56,7 +56,8 @@ export default {
             {this.label}
             {
               this.option.description &&
-              <el-tooltip content={this.option.description} placement="top">
+              <el-tooltip placement="top">
+                <div slot="content" domPropsInnerHTML={this.option.description} />
                 <i class="iconfont iconhelp" style="color: #3980DE" />
               </el-tooltip>
             }

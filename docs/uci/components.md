@@ -147,7 +147,7 @@ All properties of the `uci-option` component are inherited by other `uci-option-
 | label       | label | string | — | — |
 | name        | option name (under the same section, must be unique) | string | — | — |
 | uci-option  | Uci option name (if this attribute is provided, the name attribute is no longer used as the uci option name) | string | — | — |
-| description | a short description of the option | string | — | — |
+| description | a short description of the option(Support for HTML rendering) | string | — | — |
 | required    | Required or not | boolean | — | false |
 | initial     | initial value | string/number | — | — |
 | depend      | depend | string | — | — |

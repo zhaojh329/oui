@@ -149,7 +149,7 @@ export default {
 | label       | 标签 | string | — | — |
 | name        | 名称 | string | — | — |
 | uci-option  | uci选项名称(如果提供该属性，则不再以name属性作为uci选项名称) | string | — | — |
-| description | 对该选项的一个简短描述 | string | — | — |
+| description | 对该选项的一个简短描述(支持渲染HTML) | string | — | — |
 | required    | 是否必填 | boolean | — | false |
 | initial     | 初始值 | string/number | — | — |
 | depend      | 依赖 | string | — | — |
