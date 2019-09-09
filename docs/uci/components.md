@@ -153,7 +153,7 @@ All properties of the `uci-option` component are inherited by other `uci-option-
 | depend      | depend | string | — | — |
 | rules       | form validation rule | string/object/Function(value) | — | — |
 | load        | Custom loading method | string/array/Function(sid, self) | — | — |
-| save        | Custom save function | string/Function(sid, value, self) | — | — |
+| save        | Custom save function or value(If an empty string provided, indicates don't save uci) | string/array/Function(sid, value, self) | — | — |
 | apply       | hook function when submitting a form | Function(value, self) | — | — |
 | tab         | Specify the tab panel to which this option belongs | string | — | — |
 | header      | Custom table column header | string | — | — |

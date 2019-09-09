@@ -155,7 +155,7 @@ export default {
 | depend      | 依赖 | string | — | — |
 | rules       | 表单验证规则 | string/object/Function(value) | — | — |
 | load        | 自定义加载方式 | string/array/Function(sid, self) | — | — |
-| save        | 自定义保存函数 | string/Function(sid, value, self) | — | — |
+| save        | 自定义保存函数或者值(如果提供一个空字符串，表示不保存) | string/array/Function(sid, value, self) | — | — |
 | apply       | 表单提交时的钩子函数 | Function(value, self) | — | — |
 | tab         | 明确指定该选项所属的Tab面板 | string | — | — |
 | header      | 自定义表格的列标题 | string | — | — |
