@@ -356,7 +356,7 @@ export default {
         value = this.save;
 
       if (!this.visible(sid))
-        value = this.convertFromUCI();
+        value = this.convertFromUCI(this.initial);
 
       if (window.oui.isEqual(value, this.original[sid]))
         return;
