@@ -241,6 +241,23 @@ export default {
       const v = this.formValue(sid);
       return `'${v}'`;
     },
+    visible(sid) {
+      const depend = this.parsedDepend;
+      if (!depend)
+        return true;
+
+      let expr = depend.expr;
+
+      depend.names.forEach(name => {
+        const o = this.uciSection.children[name];
+        if (!o)
+          return false;
+        let v = o.dependExprValue(sid);
+        expr = expr.replace(new RegExp(name, 'gm'), v);
+      });
+
+      return eval(expr);
+    },
     buildFormRule() {
       const rules = [];
 
@@ -330,6 +347,11 @@ export default {
       return value;
     },
     _save(sid) {
+      if (!this.visible(sid)) {
+        this.$uci.set(this.config, sid, this.uciopt, this.convertToUCI(undefined));
+        return;
+      }
+
       if (this.save === '')
         return;
 
