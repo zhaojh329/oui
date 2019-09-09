@@ -348,17 +348,15 @@ export default {
       return value;
     },
     _save(sid) {
-      if (!this.visible(sid)) {
-        this.$uci.set(this.config, sid, this.uciopt, this.convertToUCI(undefined));
-        return;
-      }
-
       if (this.save === '')
         return;
 
       let value = this.formValue(sid);
       if (typeof(this.save) !== 'undefined' && typeof(this.save) !== 'function')
         value = this.save;
+
+      if (!this.visible(sid))
+        value = this.convertFromUCI();
 
       if (window.oui.isEqual(value, this.original[sid]))
         return;
