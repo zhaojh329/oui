@@ -16,7 +16,7 @@ export default {
       return this.option.formProp(this.sid);
     },
     visible() {
-      return this.option.visible(this.sid);
+      return !this.option.hide && this.option.visible(this.sid);
     }
   },
   watch: {

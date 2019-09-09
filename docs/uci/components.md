@@ -158,6 +158,7 @@ All properties of the `uci-option` component are inherited by other `uci-option-
 | tab         | Specify the tab panel to which this option belongs | string | — | — |
 | header      | Custom table column header | string | — | — |
 | width       | Column width of the table | string/number | — | — |
+| hide        | Do not show | boolean | — | — |
 
 ### Events
 | Name   | Description         | Parameters   |

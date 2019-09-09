@@ -160,6 +160,7 @@ export default {
 | tab         | 明确指定该选项所属的Tab面板 | string | — | — |
 | header      | 自定义表格的列标题 | string | — | — |
 | width       | 表格的列宽度 | string/number | — | — |
+| hide        | 不显示 | boolean | — | — |
 
 ### 事件
 | 事件名称   | 说明         | 回调参数   |
