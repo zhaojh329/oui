@@ -2,7 +2,7 @@
   <uci-form config="system" tabbed>
     <uci-section :title="$t('General Settings')" type="system">
         <uci-option-dummy :label="$t('Local Time')" :load="localTime" name="__time"></uci-option-dummy>
-        <uci-option-input type="input" :label="$t('Hostname')" name="hostname" required rules="hostname" :apply="updateHostname"></uci-option-input>
+        <uci-option-input type="input" :label="$t('Hostname')" name="hostname" required rules="hostname" @applied="updateHostname"></uci-option-input>
         <uci-option-list :label="$t('Timezone')" name="zonename" required initial="UTC" :options="zoneinfo" :save="saveTimezone"></uci-option-list>
     </uci-section>
     <uci-section :title="$t('Logging')" type="system">
