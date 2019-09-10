@@ -164,6 +164,7 @@ All properties of the `uci-option` component are inherited by other `uci-option-
 | Name   | Description         | Parameters   |
 |---------- |------------- |---------- |
 | applied   | triggers when apply configuration complete | The current value of this option |
+| change    | triggers when the option's value changed | value, sid, self |
 
 ### Scoped Slots
 | Name | Description     |
