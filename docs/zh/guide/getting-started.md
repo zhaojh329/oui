@@ -44,7 +44,7 @@ module.exports = {
 
 5.安装依赖包
 ``` bash
-npm insstall
+npm install
 ```
 
 6.启动调试服务器
