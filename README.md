@@ -28,6 +28,8 @@ OpenWrt web user interface implemented in [vue.js] and [element-ui], inspired by
 oui uses [json-rpc] to communicate with OpenWrt subsystems. Call [ubus] via [json-rpc].
 To access any kind of system data through [ubus] with [json-rpc](with the help of [uhttpd-mod-ubus] to provide HTTP based API).
 
+<div align=center><img width="300" src="docs/zh/guide/architecture.png"/></div>
+
 # TODO
 
 * Dynamic switching theme
