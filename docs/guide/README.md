@@ -12,6 +12,8 @@ oui implemented in [vue.js] and [element-ui], inspired by [LuCI2].
 oui uses [json-rpc] to communicate with OpenWrt subsystems. Call [ubus] via [json-rpc].
 To access any kind of system data through [ubus] with [json-rpc](with the help of [uhttpd-mod-ubus] to provide HTTP based API).
 
+![](/oui/architecture.png)
+
 ## Features
 
 * Fast: Use static pages; access any kind of system data via ubus

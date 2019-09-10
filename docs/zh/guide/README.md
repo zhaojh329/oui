@@ -11,7 +11,7 @@ oui使用[vue.js]和[element-ui]实现，灵感来自于[LuCI2]。
 
 oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。通过[ubus]存取各种系统数据(通过[uhttpd-mod-ubus]提供基于HTTP的接口API)。
 
-<div align=center><img width="300" src="architecture.png"/></div>
+![](/oui/architecture.png)
 
 ## 特性
 
