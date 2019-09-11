@@ -148,7 +148,8 @@ md5sum(const char *file)
 
 	default:
 		memset(chksum, 0, sizeof(chksum));
-		read(fds[0], chksum, 32);
+		if (read(fds[0], chksum, 32) < 0)
+			return NULL;
 		waitpid(pid, NULL, 0);
 		close(fds[0]);
 		close(fds[1]);
@@ -610,7 +611,8 @@ main_backup(int argc, char **argv)
 		close(fds[0]);
 		close(fds[1]);
 
-		chdir("/");
+		if (chdir("/") < 0)
+			return failure(errno, "Failed to change dir");
 
 		execl("/sbin/sysupgrade", "/sbin/sysupgrade",
 		      "--create-backup", "-", NULL);
