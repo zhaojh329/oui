@@ -111,6 +111,8 @@ export default {
           content += `<input id="upgrade-firmware-keep" type="checkbox" checked> ${this.$t('Keep configuration when reflashing')}`;
 
           this.$confirm(content, title, {
+            showClose: false,
+            closeOnClickModal: false,
             dangerouslyUseHTMLString: true
           }).then(() => {
             const keep = document.getElementById('upgrade-firmware-keep').checked;
