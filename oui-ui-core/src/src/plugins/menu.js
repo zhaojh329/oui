@@ -39,7 +39,7 @@ function parseMenus(raw) {
 
   menus.sort((a, b) => a.index - b.index);
 
-  return menus;
+  return menus.filter(m => m.children);
 }
 
 function buildRoute(menu) {
