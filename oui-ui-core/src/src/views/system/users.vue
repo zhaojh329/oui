@@ -8,17 +8,17 @@
         <template v-slot="{value}">
           <el-table :data="value || []" class="oui-acls-table">
             <el-table-column :label="$t('ACL Group')" prop="description"></el-table-column>
-            <el-table-column label="N" width="30">
+            <el-table-column :label="$t('N')" width="30">
               <template v-slot="{row}">
                 <el-radio v-model="row.acl" label="n"></el-radio>
               </template>
             </el-table-column>
-            <el-table-column label="R" width="30">
+            <el-table-column :label="$t('R')" width="30">
               <template v-slot="{row}">
                 <el-radio v-model="row.acl" label="r"></el-radio>
               </template>
             </el-table-column>
-            <el-table-column label="F" width="30">
+            <el-table-column :label="$t('F')" width="30">
               <template v-slot="{row}">
                 <el-radio v-model="row.acl" label="f"></el-radio>
               </template>
