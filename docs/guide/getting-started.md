@@ -386,7 +386,7 @@ conn:add(methods)
 uloop.run()
 ```
 
-Mode 2: Write [rpcd](https://openwrt.org/start?Id=docs/techref/rpcd)plugin
+### Mode 2: Write [rpcd](https://openwrt.org/start?Id=docs/techref/rpcd)plugin
 
 Many times, we don't need to open a resident daemon for every UBUS service, so we can register our own UBUS service by adding plugins to rpcd.
 
