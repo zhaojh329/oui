@@ -381,7 +381,7 @@ conn:add(methods)
 uloop.run()
 ```
 
-方式2: 编写[rpcd](https://openwrt.org/start?id=docs/techref/rpcd)插件
+### 方式2: 编写[rpcd](https://openwrt.org/start?id=docs/techref/rpcd)插件
 
 很多时候，我们没必要为每一个ubus服务开启一个常驻的daemon，这时我们可以通过给rpcd添加插件的方式来注册我们自己的ubus服务。
 
