@@ -102,14 +102,20 @@ export default {
         series: [
           {
             type: 'gauge',
+            radius: '60%',
             center: ['25%', '50%'],
-            detail: {formatter: '{value}%'},
+            splitLine: {length: 20},
+            axisLine: {lineStyle: {width: 8}},
+            detail: {formatter: '{value}%', fontSize: 15},
             data: [{value: 0, name: this.$t('CPU usage')}]
           },
           {
             type: 'gauge',
+            radius: '60%',
             center: ['75%', '50%'],
-            detail: {formatter: '{value}%'},
+            splitLine: {length: 20},
+            axisLine: {lineStyle: {width: 8}},
+            detail: {formatter: '{value}%', fontSize: 15},
             data: [{value: 0, name: this.$t('Memory usage')}]
           }
         ]
