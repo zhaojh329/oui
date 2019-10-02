@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-input v-model="host" style="width:240px"></el-input>
-    <el-select v-model="tool" style="width:140px">
+    <el-select v-model="tool" style="width:160px">
       <el-option v-for="tool in tools" :key="tool[0]" :value="tool[0]" :label="tool[1]"></el-option>
     </el-select>
     <el-button type="primary" @click="test">>></el-button>
