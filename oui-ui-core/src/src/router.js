@@ -34,41 +34,44 @@ const router = new Router({
   ]
 })
 
-function beforeEach(to, next) {
+function beforeEach(to, next, alive) {
   if (to.path !== '/login') {
-    session.isAlive().then(alive => {
-      if (alive) {
-        session.startHeartbeat();
-
-        if (!session.aclCache) {
-          session.updateACLs().then(() => {
-            next();
-          });
-        } else {
+    if (alive) {
+      if (!session.aclCache) {
+        session.updateACLs().then(() => {
           next();
-        }
+        });
       } else {
-        next('/login');
+        next();
       }
-    });
+    } else {
+      next('/login');
+    }
   } else {
     next();
   }
 }
 
 router.beforeEach((to, from, next) => {
-  if (!store.state.lang) {
-    ubus.call('oui.ui', 'lang').then(({lang}) => {
-      store.commit('setLang', lang);
-      if (lang === 'auto')
-        lang = navigator.language;
-      i18n.locale = lang;
+  session.isAlive().then(alive => {
+    if (alive)
+      session.startHeartbeat();
+    else
+      session.logout();
 
-      beforeEach(to, next);
-    });
-  } else {
-    beforeEach(to, next);
-  }
+    if (!store.state.lang) {
+      ubus.call('oui.ui', 'lang').then(({lang}) => {
+        store.commit('setLang', lang);
+        if (lang === 'auto')
+          lang = navigator.language;
+        i18n.locale = lang;
+
+        beforeEach(to, next, alive);
+      });
+    } else {
+      beforeEach(to, next, alive);
+    }
+  });
 });
 
 router.onError(err => {
