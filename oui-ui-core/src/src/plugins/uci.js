@@ -314,7 +314,7 @@ uci.save = function() {
   });
 }
 
-uci.apply = function(timeout) {
+uci.apply = function(timeout, rollback) {
   const state = this.state;
   const date = new Date();
 
@@ -324,7 +324,13 @@ uci.apply = function(timeout) {
   state.applying = true;
 
   return new Promise((resolve, reject) => {
-    ubus.call('uci', 'apply', {rollback: true, timeout: timeout}).then(() => {
+    ubus.call('uci', 'apply', {rollback: rollback, timeout: timeout}).then(() => {
+      if (!rollback) {
+        state.applying = false;
+        resolve();
+        return;
+      }
+
       const try_deadline = date.getTime() + 1000 * timeout;
       const try_confirm = function() {
         ubus.call('uci', 'confirm').then(() => {

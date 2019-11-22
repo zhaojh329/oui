@@ -28,7 +28,11 @@ export default {
     },
     tabbed: Boolean,
     afterLoaded: Function,
-    applyTimeout: Number /* timeout for apply(second) */
+    applyTimeout: Number, /* timeout for apply(second) */
+    rollback: {
+      type: Boolean,
+      default: true
+    }
   },
   components: {
     UciFormBody
@@ -115,7 +119,7 @@ export default {
           if (this.$uci.changed() > 0) {
             const p = new Promise(resolve => {
               this.$uci.save().then(() => {
-                this.$uci.apply(this.applyTimeout).then(() => {
+                this.$uci.apply(this.applyTimeout, this.rollback).then(() => {
                   resolve();
                 });
               });

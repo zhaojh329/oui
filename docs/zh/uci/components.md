@@ -15,6 +15,7 @@
 | tabbed    | 将每个uci-section渲染成Tab标签页 | boolean | — | false |
 | after-loaded | uci配置加载完成后的钩子 | Function() | — | — |
 | apply-timeout | 应用超时时间(秒) | number |  — | 10 |
+| rollback | 是否开启uci配置回滚 | boolean |  — | true |
 
 ### 事件
 | 事件名称   | 说明         | 回调参数   |
