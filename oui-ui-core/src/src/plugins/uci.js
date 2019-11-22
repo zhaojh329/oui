@@ -324,7 +324,7 @@ uci.apply = function(timeout, rollback) {
   state.applying = true;
 
   return new Promise((resolve, reject) => {
-    ubus.call('uci', 'apply', {rollback: rollback, timeout: timeout}).then(() => {
+    ubus.call('uci', 'apply', {rollback, timeout}).then(() => {
       if (!rollback) {
         state.applying = false;
         resolve();
