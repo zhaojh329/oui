@@ -8,11 +8,14 @@
 [6]: https://github.com/zhaojh329/oui/issues/new
 [7]: https://travis-ci.org/zhaojh329/oui.svg?branch=master
 [8]: https://travis-ci.org/zhaojh329/oui
+[11]: https://img.shields.io/badge/Support%20oui-Donate-blueviolet.svg
+[12]: https://gitee.com/zhaojh329/oui#project-donate-overview
 
 [![license][1]][2]
 [![PRs Welcome][3]][4]
 [![Issue Welcome][5]][6]
 [![Build Status][7]][8]
+[![Support oui][11]][12]
 
 [vue.js]: https://github.com/vuejs/vue
 [element-ui]: https://github.com/ElemeFE/element
@@ -33,8 +36,6 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 # TODO
 
 * Dynamic switching theme
-
-# [Donate](https://gitee.com/zhaojh329/oui#project-donate-overview)
 
 # Contributing
 If you would like to help making [oui](https://github.com/zhaojh329/oui) better,
