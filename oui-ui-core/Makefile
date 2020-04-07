@@ -71,7 +71,7 @@ uci batch <<-EOF
 	set uhttpd.main.index_page='oui.html'
 	commit uhttpd
 EOF
-/etc/init.d/uhttpd restart &
+/etc/init.d/uhttpd restart
 exit 0
 endef
 
