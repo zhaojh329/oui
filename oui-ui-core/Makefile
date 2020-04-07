@@ -64,6 +64,8 @@ endef
 
 define Package/oui-ui-core/postinst
 #!/bin/sh
+[ -z "$${IPKG_INSTROOT}" ]; && exit 0
+
 uci batch <<-EOF
 	set uhttpd.main.ubus_prefix="/ubus"
 	set uhttpd.main.index_page='oui.html'
