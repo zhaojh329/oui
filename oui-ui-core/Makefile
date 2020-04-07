@@ -52,8 +52,8 @@ ifneq ($(CONFIG_OUI_USE_HOST_NODE),)
   MAKE_VARS += NODE=$(shell PATH=/usr/bin:/usr/local/bin which node)
   MAKE_VARS += NPM=$(shell PATH=/usr/bin:/usr/local/bin which npm)
 else
-  MAKE_VARS += NODE=$(STAGING_DIR_HOST)/bin/node
-  MAKE_VARS += NPM=$(STAGING_DIR_HOST)/bin/npm
+  MAKE_VARS += NODE=$(STAGING_DIR_HOSTPKG)/bin/node
+  MAKE_VARS += NPM=$(STAGING_DIR_HOSTPKG)/bin/npm
 endif
 
 define Package/oui-ui-core/install
@@ -64,12 +64,15 @@ endef
 
 define Package/oui-ui-core/postinst
 #!/bin/sh
+[ -z "$${IPKG_INSTROOT}" ]; && exit 0
+
 uci batch <<-EOF
 	set uhttpd.main.ubus_prefix="/ubus"
 	set uhttpd.main.index_page='oui.html'
 	commit uhttpd
 EOF
-/etc/init.d/uhttpd restart &
+/etc/init.d/uhttpd restart
+/etc/init.d/rpcd restart
 exit 0
 endef
 
