@@ -72,6 +72,7 @@ uci batch <<-EOF
 	commit uhttpd
 EOF
 /etc/init.d/uhttpd restart
+/etc/init.d/rpcd restart
 exit 0
 endef
 
