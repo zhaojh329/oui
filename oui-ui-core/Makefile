@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oui-ui-core
 PKG_VERSION:=$(shell git --git-dir=$(CURDIR)/../.git log -1 --pretty="%ci %h" | awk '{ print $$1 "-" $$4 }')
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 
 PKG_LICENSE:=MIT
@@ -25,7 +25,7 @@ define Package/oui-ui-core
   SECTION:=oui
   CATEGORY:=OUI
   TITLE:=oui ui core
-  DEPENDS:=+oui-rpc-core +oui-io-util
+  DEPENDS:=+oui-rpc-core +cgi-io
   URL:=https://github.com/zhaojh329/oui
 endef
 

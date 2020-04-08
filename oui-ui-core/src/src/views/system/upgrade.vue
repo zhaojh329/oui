@@ -1,21 +1,21 @@
 <template>
   <div>
     <el-card :header="$t('Backup / Restore')" style="margin-bottom: 15px">
-      <form ref="backup" method="POST" action="/cgi-bin/oui-backup">
+      <form ref="backup" method="POST" action="/cgi-bin/cgi-backup">
         <input v-show="false" type="text" :value="sid" name="sessionid" />
       </form>
       <p>{{ $t('Backup-Restore-desc') }}</p>
       <el-button type="primary" size="small" @click="generateArchive">{{ $t('Generate archive') }}</el-button>
       <el-button type="danger" size="small" @click="performReset">{{ $t('Perform reset') }}</el-button>
       <p>{{ $t('To restore configuration files, you can upload a previously generated backup archive here.') }}</p>
-      <el-upload ref="archive" action="/cgi-bin/oui-upload" :on-success="onUploadArchiveSuccess" :file-list="fileListArchive" :auto-upload="false" :limit="1" :data="{filename: '/tmp/backup.tar.gz', sessionid: sid}" style="width: 600px">
+      <el-upload ref="archive" action="/cgi-bin/cgi-upload" :on-success="onUploadArchiveSuccess" :file-list="fileListArchive" :auto-upload="false" :limit="1" :data="{filename: '/tmp/backup.tar.gz', sessionid: sid}" style="width: 600px">
         <el-button slot="trigger" size="small" type="primary">{{ $t('Select File') }}</el-button>
         <el-button style="margin-left: 10px;" size="small" type="success" @click="uploadFile('archive')">{{ $t('Upload archive...') }}</el-button>
       </el-upload>
     </el-card>
     <el-card :header="$t('Flash new firmware image')">
       <p>{{ $t('Upgrade-Firmware-desc') }}</p>
-      <el-upload ref="firmware" action="/cgi-bin/oui-upload" :on-success="onUploadFirmwareSuccess" :file-list="fileListFirmware" :auto-upload="false" :limit="1" :data="{filename: '/tmp/firmware.bin', sessionid: sid}" style="width: 600px">
+      <el-upload ref="firmware" action="/cgi-bin/cgi-upload" :on-success="onUploadFirmwareSuccess" :file-list="fileListFirmware" :auto-upload="false" :limit="1" :data="{filename: '/tmp/firmware.bin', sessionid: sid}" style="width: 600px">
         <el-button slot="trigger" size="small" type="primary">{{ $t('Select File') }}</el-button>
         <el-button style="margin-left: 10px;" size="small" type="success" @click="uploadFile('firmware')">{{ $t('Upload Firmware...') }}</el-button>
       </el-upload>
