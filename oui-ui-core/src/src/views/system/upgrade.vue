@@ -119,6 +119,8 @@ export default {
             this.startUpgrade(keep).then(() => {
               this.$reconnect(this.$t('Upgrading...'));
             });
+          }).catch(()=>{
+            this.cleanUpgrade();
           });
         } else {
           const content = this.$t('The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform.');
