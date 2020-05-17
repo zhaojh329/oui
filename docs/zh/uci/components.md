@@ -246,6 +246,8 @@ export default {
 | password | 密码框 | boolean | — | false |
 | append | 输入框后置内容 | string | — | — |
 | suggestions | 输入建议选项 | array | — | — |
+| maxlength | 原生属性，最大输入长度 | number | — | — |
+| minlength | 原生属性，最小输入长度 | number | — | — |
 
 ### 输入框后置内容
 

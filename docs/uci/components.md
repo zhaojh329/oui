@@ -246,6 +246,8 @@ Used for editable uci options.
 | password | toggleable password input | boolean | — | false |
 | append | content to append after Input | string | — | — |
 | suggestions | recommended tips | array | — | — |
+| minlength | same as minlength in native input | number | — | — |
+| maxlength | same as maxlength in native input | number | — | — |
 
 ### content to append after Input
 

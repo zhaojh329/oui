@@ -7,7 +7,9 @@ export default {
     placeholder: String,
     password: Boolean,
     append: String,
-    suggestions: Array
+    suggestions: Array,
+    minlength: Number,
+    maxlength: Number
   },
   methods: {
     fetchSuggestions(queryString, cb) {
@@ -22,13 +24,13 @@ export default {
     view(prop) {
       if (this.suggestions && this.suggestions.length > 0)
         return (
-          <el-autocomplete fetch-suggestions={this.fetchSuggestions} placeholder={this.placeholder} v-model={this.form[prop]}>
+          <el-autocomplete fetch-suggestions={this.fetchSuggestions} placeholder={this.placeholder} minlength={this.minlength} maxlength={this.maxlength} v-model={this.form[prop]}>
             { this.append && <span slot="append">{ this.append }</span> }
           </el-autocomplete>
         );
       else
         return (
-          <el-input placeholder={this.placeholder} show-password={this.password} v-model={this.form[prop]}>
+          <el-input placeholder={this.placeholder} show-password={this.password} minlength={this.minlength} maxlength={this.maxlength} v-model={this.form[prop]}>
             { this.append && <span slot="append">{ this.append }</span> }
           </el-input>
         );
