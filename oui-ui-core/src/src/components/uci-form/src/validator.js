@@ -137,11 +137,11 @@ function performCallback(types, rule, value, cb, msg, arg) {
 const types = {
   url: {
     validator: 'url',
-    message: i18n.t('Must be a valid url')
+    message: () => i18n.t('Must be a valid url')
   },
   email: {
     validator: 'email',
-    message: i18n.t('Must be a valid email')
+    message: () => i18n.t('Must be a valid email')
   },
   number: {
     verify: (value) => {
@@ -285,7 +285,11 @@ validator.compileString = function(rule, arg) {
 
   if (typeof(type.validator) === 'string') {
     r.type = type.validator;
-    r.message = type.message;
+
+    if (typeof(type.message) === 'string')
+      r.message = type.message;
+    else if (typeof(type.message) === 'function')
+      r.message = type.message();
   } else {
     r.type = rule;
     r.arg = arg;
