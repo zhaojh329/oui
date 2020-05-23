@@ -119,7 +119,7 @@ export default {
             this.startUpgrade(keep).then(() => {
               this.$reconnect(this.$t('Upgrading...'));
             });
-          }).catch(()=>{
+          }).catch(() => {
             this.cleanUpgrade();
           });
         } else {
