@@ -35,10 +35,6 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
 ![](/docs/.vuepress/public/architecture.png)
 
-# TODO
-
-* 动态切换主题
-
 # 贡献代码
 如果你想帮助[oui](https://github.com/zhaojh329/oui) 变得更好，请参考
 [CONTRIBUTING_ZH.md](/CONTRIBUTING_ZH.md)。

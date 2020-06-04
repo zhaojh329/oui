@@ -33,10 +33,6 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 
 ![](/docs/.vuepress/public/architecture.png)
 
-# TODO
-
-* Dynamic switching theme
-
 # Contributing
 If you would like to help making [oui](https://github.com/zhaojh329/oui) better,
 see the [CONTRIBUTING.md](/CONTRIBUTING.md) file.
