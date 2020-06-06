@@ -29,8 +29,8 @@ module.exports = {
   },
   configureWebpack: {
     output: { // 输出重构打包编译后的文件名，增加 Timestamp，从而防止新打包的文件被客户端缓存
-      filename: `js/[name].[chunkhash:8].${Timestamp}.js`,
-      chunkFilename: `js/[name].[chunkhash:8].${Timestamp}.js`
+      filename: `js/[name].[hash:8].${Timestamp}.js`,
+      chunkFilename: `js/[name].[hash:8].${Timestamp}.js`
     }
   }
 }
