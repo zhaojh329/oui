@@ -1,5 +1,3 @@
-const Timestamp = new Date().getTime();
-
 module.exports = {
   indexPath: 'oui.html',
   productionSourceMap: false,
@@ -25,12 +23,6 @@ module.exports = {
       fallbackLocale: 'en',
       localeDir: 'locales',
       enableInSFC: false
-    }
-  },
-  configureWebpack: {
-    output: {
-      filename: `js/[name].[hash:8].${Timestamp}.js`,
-      chunkFilename: `js/[name].[hash:8].${Timestamp}.js`
     }
   }
 }
