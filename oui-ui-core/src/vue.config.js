@@ -1,4 +1,4 @@
-const Timestamp = new Date().getTime()
+const Timestamp = new Date().getTime();
 
 module.exports = {
   indexPath: 'oui.html',
