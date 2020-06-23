@@ -204,7 +204,7 @@
 			}
 		},
 		"write": {
-			"oui-io": [
+			"cgi-io": [
 				"upload"
 			],
 			"ubus": {
@@ -221,7 +221,7 @@
 	"backup": {
 		"description": "Backup and Restore",
 		"read": {
-			"oui-io": [
+			"cgi-io": [
 				"backup"
 			],
 			"ubus": {
@@ -232,7 +232,7 @@
 			}
 		},
 		"write": {
-			"oui-io": [
+			"cgi-io": [
 				"upload"
 			],
 			"ubus": {
