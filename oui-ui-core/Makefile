@@ -34,7 +34,7 @@ define Package/oui-ui-core/description
 endef
 
 define Package/oui-ui-core/config
-	source $(SOURCE)/Config.in
+	source "$(SOURCE)/Config.in"
 endef
 
 
