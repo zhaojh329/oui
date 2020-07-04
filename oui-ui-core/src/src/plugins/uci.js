@@ -134,7 +134,7 @@ uci.createSID = function(conf) {
   } while ((n[conf] && n[conf][sid]) || (v[conf] && v[conf][sid]));
 
   return sid;
-},
+}
 
 uci.add = function(conf, type, name) {
   const n = this.state.creates;
@@ -188,7 +188,7 @@ uci.swap = function(conf, sid1, sid2) {
   this.state.changed++;
 
   return true;
-},
+}
 
 uci.changed = function() {
   let changed = this.state.changed;
