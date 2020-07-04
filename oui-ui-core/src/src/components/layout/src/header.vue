@@ -105,7 +105,7 @@ export default {
       } else if (cmd === 'reboot') {
         this.$confirm(this.$t('Really reboot now?'), this.$t('Reboot')).then(() => {
           this.$system.reboot().then(() => {
-            this.$reconnect('Rebooting...');
+            this.$reconnect(this.$t('Rebooting...'));
           });
         });
       }
