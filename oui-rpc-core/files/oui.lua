@@ -286,6 +286,16 @@ local methods = {
                 ubus.reply(req, r)
             end, {package = libubus.STRING}
         },
+        update = {
+            function(req)
+                local r = ubus.call("file", "exec", {command = "opkg", params = {"update"}})
+                if not r then
+                    os.remove('/var/lock/opkg.lock')
+                    return UBUS_STATUS_INVALID_ARGUMENT
+                end
+                ubus.reply(req, r)
+            end, {}
+        },
         upgrade = {
             function(req, msg)
                 if not msg.package or #msg.package == 0 then
