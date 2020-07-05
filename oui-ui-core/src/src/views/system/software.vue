@@ -134,7 +134,12 @@ export default {
       this.loading = true;
       this.packages = [];
 
-      this.doFetchPackageList(cmd, offset, this.limit, pattern).then(r => {
+      let limit = this.limit
+      if (this.total > 0 && offset + limit > this.total) {
+        limit = this.total - offset
+      }
+
+      this.doFetchPackageList(cmd, offset, limit, pattern).then(r => {
         this.total = r.total;
         this.packages = r.packages.map(pkg => {
           return {
