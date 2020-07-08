@@ -203,12 +203,14 @@ export default {
 
       this.$network.load().then(() => {
         const iface = this.$network.getInterface('wan');
-        this.waninfo = [
-          [this.$t('IP Address'), iface.getIPv4Addrs().join(', ')],
-          [this.$t('Gateway'), iface.getIPv4Gateway()],
-          ['DNS', iface.getDNSAddrs().join(', ')]
-        ];
-        this.wanIsUp = iface.isUp()
+        if (iface !== null) {
+          this.waninfo = [
+            [this.$t('IP Address'), iface.getIPv4Addrs().join(', ')],
+            [this.$t('Gateway'), iface.getIPv4Gateway()],
+            ['DNS', iface.getDNSAddrs().join(', ')]
+          ];
+          this.wanIsUp = iface.isUp();
+        }
       });
 
       this.$ubus.call('oui.network', 'dhcp_leases').then(r => {
