@@ -626,6 +626,14 @@ local methods = {
         }
     },
     ["oui.system"] = {
+        time = {
+            function(req, msg)
+                if msg.time then
+                    os.execute("date -s '" .. os.date("%Y-%m-%d %H:%M:%S'", msg.time))
+                end
+                ubus.reply(req, {time = os.time()})
+            end, {time = libubus.INT32}
+        },
         syslog = {
             function(req, msg)
                 local log = {}
