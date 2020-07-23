@@ -9,7 +9,7 @@
 [7]: https://travis-ci.org/zhaojh329/oui.svg?branch=master
 [8]: https://travis-ci.org/zhaojh329/oui
 [11]: https://img.shields.io/badge/Support%20oui-Donate-blueviolet.svg
-[12]: https://gitee.com/zhaojh329/oui#project-donate-overview
+[12]: https://paypal.me/zjh329
 
 [![license][1]][2]
 [![PRs Welcome][3]][4]
