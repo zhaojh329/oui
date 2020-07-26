@@ -47,7 +47,7 @@ module.exports = {
 
 5.Install dependency packages
 ``` bash
-npm insstall
+npm install
 ```
 
 6.Start the Debugging Server
