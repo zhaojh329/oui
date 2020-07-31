@@ -29,6 +29,11 @@ define Package/oui-rpc-core/description
  Provides the core RPC infrastructure to run OUI.
 endef
 
+define Build/Prepare
+	$(INSTALL_DIR) $(PKG_BUILD_DIR)
+	$(CP) ./src/. $(PKG_BUILD_DIR)
+endef
+
 define Package/oui-rpc-core/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/usr/lib/lua $(1)/etc/config
 	$(INSTALL_CONF) ./files/oui-bwm.config $(1)/etc/config/oui-bwm
