@@ -35,7 +35,7 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 
 # In Production
 
-<a href="https://www.perfectsignal-tech.com"><img src="/users/perfectsignal.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
+<a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
 
 # Contributing
 If you would like to help making [oui](https://github.com/zhaojh329/oui) better,
