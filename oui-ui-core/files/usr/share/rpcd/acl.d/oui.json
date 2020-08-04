@@ -107,14 +107,16 @@
 				"oui.system": [
 					"init_list",
 					"read_dir",
-					"new_file"
+					"new_file",
+					"time"
 				]
 			}
 		},
 		"write": {
 			"ubus": {
 				"oui.system": [
-					"init_action"
+					"init_action",
+					"time"
 				]
 			},
 			"uci": [

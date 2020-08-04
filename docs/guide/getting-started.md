@@ -22,9 +22,6 @@ git clone https://github.com/zhaojh329/oui.git
 ``` bash
 cd oui/oui-ui-core/src/
 ```
-
-4.修改代理配置, 将`vue.config.js`里面的`openwrt.lan`更改为你的设备的IP地址
-
 4.Modify the proxy configuration: replace `openwrt.lan` in `vue.config.js` with the IP address of your device.
 
 ``` js
@@ -47,7 +44,7 @@ module.exports = {
 
 5.Install dependency packages
 ``` bash
-npm insstall
+npm install
 ```
 
 6.Start the Debugging Server

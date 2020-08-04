@@ -9,7 +9,7 @@
 [7]: https://travis-ci.org/zhaojh329/oui.svg?branch=master
 [8]: https://travis-ci.org/zhaojh329/oui
 [11]: https://img.shields.io/badge/Support%20oui-Donate-blueviolet.svg
-[12]: https://gitee.com/zhaojh329/oui#project-donate-overview
+[12]: https://paypal.me/zjh329
 
 [![license][1]][2]
 [![PRs Welcome][3]][4]
@@ -33,9 +33,14 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 
 ![](/docs/.vuepress/public/architecture.png)
 
+Here's an animation of oui in action
+
+![Animated gif](/animation.gif "Animation of oui in action")
+
 # In Production
 
-<a href="https://www.perfectsignal-tech.com"><img src="/users/perfectsignal.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
+<a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
+<a href="http://m.iyunlink.com/"><img src="http://m.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
 
 # Contributing
 If you would like to help making [oui](https://github.com/zhaojh329/oui) better,
