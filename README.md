@@ -24,7 +24,7 @@
 [ubus]: https://wiki.openwrt.org/doc/techref/ubus
 [uhttpd-mod-ubus]: https://wiki.openwrt.org/doc/techref/ubus#access_to_ubus_over_http
 
-![](/screenshots.png)
+![](/demo.gif)
 
 OpenWrt web user interface implemented in [vue.js] and [element-ui], inspired by [LuCI2].
 
