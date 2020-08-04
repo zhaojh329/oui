@@ -12,11 +12,9 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^2.6.11",
-    "echarts": "^4.2.1",
     "element-ui": "^2.13.2",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.4",
-    "vue-echarts": "^4.0.3",
     "vue-i18n": "^8.20.0",
     "vue-router": "^3.3.4",
     "vue-timers": "^2.0.4",

@@ -58,7 +58,16 @@
           </el-col>
           <el-col :span="12">
             <el-card :header="$t('Resource usage')">
-              <e-charts style="width: 100%" :options="resourceChart"></e-charts>
+              <el-row>
+                <el-col :span="12">
+                  <el-progress type="dashboard" :percentage="cpuPercentage" :color="colors"></el-progress>
+                  <div style="margin-left: 25px">{{ $t('CPU usage') }}</div>
+                </el-col>
+                <el-col :span="12">
+                  <el-progress type="dashboard" :percentage="memPercentage" :color="colors"></el-progress>
+                  <div style="margin-left: 25px">{{ $t('Memory usage') }}</div>
+                </el-col>
+              </el-row>
             </el-card>
           </el-col>
         </el-row>
@@ -74,13 +83,6 @@
 </template>
 
 <script>
-import 'echarts/lib/chart/line'
-import 'echarts/lib/chart/gauge'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/polar'
-import 'echarts/lib/component/tooltip'
-import 'echarts/lib/component/legendScroll'
-
 export default {
   data() {
     return {
@@ -95,31 +97,15 @@ export default {
       assoclist: [],
       wanIsUp: false,
       lastCPUTime: null,
-      resourceChart: {
-        tooltip: {
-          formatter: '{b}: {c}%'
-        },
-        series: [
-          {
-            type: 'gauge',
-            radius: '60%',
-            center: ['25%', '50%'],
-            splitLine: {length: 20},
-            axisLine: {lineStyle: {width: 8}},
-            detail: {formatter: '{value}%', fontSize: 15},
-            data: [{value: 0, name: this.$t('CPU usage')}]
-          },
-          {
-            type: 'gauge',
-            radius: '60%',
-            center: ['75%', '50%'],
-            splitLine: {length: 20},
-            axisLine: {lineStyle: {width: 8}},
-            detail: {formatter: '{value}%', fontSize: 15},
-            data: [{value: 0, name: this.$t('Memory usage')}]
-          }
-        ]
-      }
+      cpuPercentage: 100,
+      memPercentage: 100,
+      colors: [
+        {color: '#6f7ad3', percentage: 20},
+        {color: '#1989fa', percentage: 40},
+        {color: '#5cb87a', percentage: 60},
+        {color: '#e6a23c', percentage: 80},
+        {color: '#f56c6c', percentage: 100}
+      ]
     }
   },
   timers: {
@@ -166,6 +152,7 @@ export default {
       this.$ubus.call('oui.system', 'cpu_time').then(({times}) => {
         if (!this.lastCPUTime) {
           this.lastCPUTime = times;
+          this.cpuPercentage = 0.1;
           return;
         }
 
@@ -183,7 +170,7 @@ export default {
           total2 += t;
         });
 
-        this.resourceChart.series[0].data[0].value = (((total2 - total1) - (idle2 - idle1)) / (total2 - total1) * 100).toFixed(2)
+        this.cpuPercentage = Number((((total2 - total1) - (idle2 - idle1)) / (total2 - total1) * 100).toFixed(2));
         this.lastCPUTime = times;
       });
 
@@ -198,7 +185,7 @@ export default {
           [this.$t('Uptime'), '%t'.format(uptime)]
         ];
 
-        this.resourceChart.series[1].data[0].value = ((memory.total - memory.free) / memory.total * 100).toFixed(2);
+        this.memPercentage = Number(((memory.total - memory.free) / memory.total * 100).toFixed(2));
       });
 
       this.$network.load().then(() => {
