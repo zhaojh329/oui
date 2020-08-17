@@ -1,18 +1,19 @@
 import Vue from 'vue'
+import VueTimers from 'vue-timers'
+import fullscreen from 'vue-fullscreen'
+import Antd from 'ant-design-vue'
 import App from './App.vue'
-import './plugins/oui.js'
+import 'ant-design-vue/dist/antd.css'
+import './plugins/oui'
 import router from './router'
 import store from './store'
 import i18n from './i18n'
-import './plugins/debug.js'
-import './plugins/string-format.js'
-import './plugins/element.js'
-import './assets/iconfont/iconfont.css'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-import VueTimers from 'vue-timers'
-import helper from './plugins/helper'
+import './plugins/debug'
+import './plugins/string-format'
+
+import prompt from './plugins/prompt'
 import ubus from './plugins/ubus'
+import helper from './plugins/helper'
 import menu from './plugins/menu'
 import uci from './plugins/uci'
 import system from './plugins/system'
@@ -21,18 +22,22 @@ import network from './plugins/network'
 import firewall from './plugins/firewall'
 import wireless from './plugins/wireless'
 
-import CardList from './components/card-list.vue'
-import CardTable from './components/card-table.vue'
-import OuiLine from './components/oui-line.vue'
+import OuiLine from '@/components/OuiLine.vue'
+import OuiDashboard from '@/components/OuiDashboard.vue'
 
-import './components/uci-form'
+import '@/components/OuiForm'
 
 Vue.config.productionTip = false
 
-Vue.use(VueAxios, axios)
 Vue.use(VueTimers)
 
+Vue.use(fullscreen)
+
+Vue.use(Antd)
+
+Vue.use(prompt)
 Vue.use(ubus)
+Vue.use(session)
 Vue.use(menu)
 Vue.use(uci)
 Vue.use(system)
@@ -42,13 +47,12 @@ Vue.use(network)
 Vue.use(firewall)
 Vue.use(wireless)
 
-Vue.component('CardList', CardList)
-Vue.component('CardTable', CardTable)
 Vue.component('OuiLine', OuiLine)
+Vue.component('OuiDashboard', OuiDashboard)
 
 new Vue({
   router,
   store,
   i18n,
-  render: h => h(App)
+  render: (h) => h(App)
 }).$mount('#app')

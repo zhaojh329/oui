@@ -1,23 +1,40 @@
 <template>
-  <el-tabs v-if="switchs.length > 0" :value="switchs[0].name">
-    <el-tab-pane v-for="s in switchs" :key="s.name" :name="s.name" :label="switchTitle(s)">
-      <uci-form config="network" :apply-timeout="15">
-        <uci-section :name="s.sid">
-          <uci-option-switch v-if="s.attrs['enable_vlan']" :label="$t('Enable VLAN functionality')" name="enable_vlan"></uci-option-switch>
-          <uci-option-switch v-if="s.attrs['enable_learning']" :label="$t('Enable learning and aging')" name="enable_learning"></uci-option-switch>
-        </uci-section>
-        <uci-section title="VLAN" type="switch_vlan" :filter="filterVlanSection" table addable :add="addVlanSection" :options="{swname: s.name, num_vlans: s.num_vlans, max_vid: s.max_vid}">
-          <uci-option-input label="VLAN ID" name="vlan" :rules="vidValidator" required></uci-option-input>
-          <uci-option-list v-for="(port, i) in s.ports" :key="i" :header="portLabel(i, port)" :name="'port' + i" :options="switchPortState" initial="n" required :load="loadPort" :save="savePort"></uci-option-list>
-        </uci-section>
-      </uci-form>
-    </el-tab-pane>
-  </el-tabs>
+  <oui-form uci-config="network">
+    <a-tabs v-if="switchs.length > 0" :value="switchs[0].name" :animated="false">
+      <a-tab-pane v-for="sw in switchs" :key="sw.name" :name="sw.name" :tab="switchTitle(sw)">
+        <oui-named-section :name="sw.sid" v-slot="{ s }">
+          <oui-form-item-switch v-if="sw.attrs['enable_vlan']" :uci-section="s" :label="$t('Enable VLAN functionality')" name="enable_vlan"/>
+          <oui-form-item-switch v-if="sw.attrs['enable_learning']" :uci-section="s" :label="$t('Enable learning and aging')" name="enable_learning"/>
+        </oui-named-section>
+        <oui-typed-section title="VLAN" type="switch_vlan" :filter="s => s.device === sw.name" :columns="columns(sw.ports)" addremove :add="self => add(sw.name, self)">
+          <template v-for="(p, i) in sw.ports" v-slot:[columnTitleSlot(i)]>
+            <div :key="i" style="text-align: center">
+              <div>{{ $t('Port') + i }}</div>
+              <template v-if="p.link">
+                <img src="/icons/port_up.png"/>
+                <div>{{ p.speed + 'baseT ' + (p.full_duplex ? $t('Full-duplex') : $t('Half-duplex')) }}</div>
+              </template>
+              <template v-else>
+                <img src="/icons/port_down.png"/>
+                <div>{{ $t('No link') }}</div>
+              </template>
+            </div>
+          </template>
+          <template #vlan="{ s }">
+            <oui-form-item-input :uci-section="s" name="vlan" rules="uinteger" required/>
+          </template>
+          <template v-for="i in sw.ports.length" v-slot:[columnSlot(i)]="{ s }">
+            <oui-form-item-select :key="i" :uci-section="s" :name="'port' + (i - 1)" :options="switchPortState" initial="n" required :load="loadPort" :save="savePort"/>
+          </template>
+        </oui-typed-section>
+      </a-tab-pane>
+    </a-tabs>
+  </oui-form>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       switchs: [],
       switchPortState: [
@@ -28,140 +45,86 @@ export default {
     }
   },
   methods: {
-    switchTitle(info) {
-      return this.$t('Switch') + `"${info.name}"(${info.model})`;
+    columns (ports) {
+      return [{ name: 'vlan', label: 'VLAN ID', width: 300 }, ...ports.map((p, i) => {
+        return {
+          name: `port${i}`,
+          width: 300,
+          titleSlot: 'title' + i
+        }
+      })]
     },
-    vlanTitle(info) {
-      return this.$t('VLANs on-', {name: `"${info.name}"(${info.model})`});
+    columnTitleSlot (i) {
+      return 'title' + i
     },
-    portLabel(n, info) {
-      let label = `<span>Port ${n}</span><br/>`;
-
-      if (info.link) {
-        label += '<img src="/icons/port_up.png"/><br/>'
-        label += '<span>' + info.speed + 'baseT ';
-        if (info.full_duplex)
-          label += this.$t('Full-duplex');
-        else
-          label += this.$t('Half-duplex');
-      } else {
-        label += '<img src="/icons/port_down.png"/><br/>'
-        label += '<span>' + this.$t('No link');
-      }
-      label += '</span>'
-      return label;
+    columnSlot (i) {
+      return 'port' + (i - 1)
     },
-    filterVlanSection(s, self) {
-      return self.options.swname === s.device;
+    switchTitle (info) {
+      return this.$t('Switch') + `"${info.name}"(${info.model})`
     },
-    addVlanSection(self) {
-      const usedVID = {};
+    loadPort (self) {
+      let ports = this.$uci.get('network', self.sid, 'ports') || ''
+      ports = ports.split(' ')
+      const id = self.name.substr(4)
+      let v = 'n'
 
-      self.uciSections.forEach(s => {
-        if (s.vlan)
-          usedVID[s.vlan] = true;
-      });
+      if (ports.indexOf(id + 't') > -1) { v = 't' }
 
-      for (let i = 1; i < self.options.num_vlans; i++) {
-        if (usedVID[i.toString()])
-          continue;
-        const sid = this.$uci.add('network', 'switch_vlan');
-        this.$uci.set('network', sid, 'device', self.options.swname);
-        this.$uci.set('network', sid, 'vlan', i.toString());
-        return sid;
-      }
+      if (ports.indexOf(id) > -1) { v = 'u' }
+
+      return v
     },
-    vidValidator(val, self) {
-      const sections = self.uciSection.uciSections;
-      const usedVID = {};
+    savePort (self) {
+      const ports = this.$uci.get('network', self.sid, 'ports').split(' ')
+      const id = self.name.substr(4)
 
-      if (!val)
-        return;
+      let i = ports.indexOf(id)
+      if (i === -1) { i = ports.indexOf(id + 't') }
 
-      for (let i = 0; i < sections.length; i++) {
-        const sid = sections[i]['.name'];
-        const v = self.formValue(sid);
-        if (!v)
-          continue;
-        if (usedVID[v])
-          return this.$t('VLAN ID must be unique');
-        usedVID[v] = true;
-      }
+      if (i !== -1) { ports.splice(i, 1) }
 
-      const max = self.uciSection.options.max_vid;
-      if (!val.match(/[^0-9]/)) {
-        val = parseInt(val);
-        if (val >= 1 && val <= max)
-          return;
-      }
+      if (self.model === 'u') { ports.push(id) } else if (self.model === 't') { ports.push(id + 't') }
 
-      return this.$t('VID-ERR-MSG', {max: max});
+      this.$uci.set('network', self.sid, 'ports', ports.join(' '))
     },
-    loadPort(sid, self) {
-      let ports = this.$uci.get('network', sid, 'ports') || '';
-      ports = ports.split(' ');
-      const id = self.name.substr(4);
-      let v = 'n';
-
-      if (ports.indexOf(id + 't') > -1)
-        v = 't';
-
-      if (ports.indexOf(id) > -1)
-        v = 'u';
-
-      return v;
-    },
-    savePort(sid, val, self) {
-      const ports = this.$uci.get('network', sid, 'ports').split(' ');
-      const id = self.name.substr(4);
-
-      let i = ports.indexOf(id);
-      if (i === -1)
-        i = ports.indexOf(id + 't');
-
-      if (i !== -1)
-        ports.splice(i, 1);
-
-      if (val === 'u')
-        ports.push(id);
-      else if (val === 't')
-        ports.push(id + 't');
-
-      this.$uci.set('network', sid, 'ports', ports.join(' '));
+    add (device, self) {
+      const sid = self.addSection()
+      this.$uci.set('network', sid, 'device', device)
+      return sid
     }
   },
-  created() {
+  created () {
     this.$uci.load('network').then(() => {
-      const sections = this.$uci.sections('network', 'switch');
+      const sections = this.$uci.sections('network', 'switch')
       sections.forEach(s => {
-        let batch = [];
-        batch.push(['oui.network', 'switch_info', {switch: s.name}]);
-        batch.push(['oui.network', 'switch_status', {switch: s.name}]);
+        const batch = []
+        batch.push(['oui.network', 'switch_info', { switch: s.name }])
+        batch.push(['oui.network', 'switch_status', { switch: s.name }])
 
         this.$ubus.callBatch(batch).then(rs => {
-          const info = rs[0].info;
-          const ports = rs[1].ports;
-          const attrs = {};
+          const info = rs[0].info
+          const ports = rs[1].ports
+          const attrs = {}
 
           info.switch.forEach(attr => {
-            attrs[attr.name] = true;
-          });
+            attrs[attr.name] = true
+          })
 
-          let max_vid = info.num_vlans - 1;
-          const vlanAttrs = info.vlan.map(v => v.name);
-          if (vlanAttrs.indexOf('tag') > -1 || vlanAttrs.indexOf('vid') > -1 || vlanAttrs.indexOf('pvid') > -1)
-            max_vid = 4094;
+          let maxVid = info.num_vlans - 1
+          const vlanAttrs = info.vlan.map(v => v.name)
+          if (vlanAttrs.indexOf('tag') > -1 || vlanAttrs.indexOf('vid') > -1 || vlanAttrs.indexOf('pvid') > -1) { maxVid = 4094 }
 
           this.switchs.push(Object.assign({
             name: s.name,
             sid: s['.name'],
-            max_vid: max_vid,
+            max_vid: maxVid,
             attrs: attrs,
             ports: ports
-          }, info));
-        });
-      });
-    });
+          }, info))
+        })
+      })
+    })
   }
 }
 </script>

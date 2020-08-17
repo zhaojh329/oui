@@ -1,58 +1,61 @@
 <template>
   <div>
-    <el-button type="primary" size="mini" style="margin-bottom: 10px" @click="showAdd">{{ $t('Add') }}</el-button>
-    <el-table :data="data">
-      <el-table-column prop="min" :label="$t('Minute')" width="140"></el-table-column>
-      <el-table-column prop="hour" :label="$t('Hour')" width="140"></el-table-column>
-      <el-table-column prop="day" :label="$t('Day')" width="140"></el-table-column>
-      <el-table-column prop="month" :label="$t('Month')" width="140"></el-table-column>
-      <el-table-column prop="week" :label="$t('Week')" width="140"></el-table-column>
-      <el-table-column prop="command" :label="$t('Command')"></el-table-column>
-      <el-table-column label="#" width="200">
-        <template v-slot="{$index}">
-          <el-button type="primary" size="mini" @click="showEdit($index)">{{ $t('Edit') }}</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete($index)">{{ $t('Delete') }}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-dialog :visible.sync="dialogVisible" :title="add ? $t('Add') : $t('Edit')">
-      <el-form label-width="100px" label-position="left" :model="edit" ref="edit" :rules="rules">
-        <el-form-item :label="$t('Minute')" prop="min">
-          <el-input v-model="edit.min"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('Hour')" prop="hour">
-          <el-input v-model="edit.hour"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('Day')" prop="day">
-          <el-input v-model="edit.day"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('Month')" prop="month">
-          <el-input v-model="edit.month"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('Week')" prop="week">
-          <el-input v-model="edit.week"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('Command')" prop="command">
-          <el-input v-model="edit.command"></el-input>
-        </el-form-item>
-      </el-form>
+    <a-button type="primary" style="margin-bottom: 10px" @click="showAdd">{{ $t('Add') }}</a-button>
+    <a-table :columns="columns" :data-source="dataSource">
+      <template #edit="text, record, index">
+        <a-button type="primary" size="small" @click="showEdit(index)" style="margin-right: 10px">{{ $t('Edit') }}</a-button>
+        <a-button type="danger" size="small" @click="handleDelete(index)">{{ $t('Delete') }}</a-button>
+      </template>
+    </a-table>
+    <a-modal v-model="dialogVisible" :title="add ? $t('Add') : $t('Edit')">
+      <a-form-model :model="edit" ref="edit" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-model-item :label="$t('Minute')" prop="min">
+          <a-input v-model="edit.min"/>
+        </a-form-model-item>
+        <a-form-model-item :label="$t('Hour')" prop="hour">
+          <a-input v-model="edit.hour"/>
+        </a-form-model-item>
+        <a-form-model-item :label="$t('Day')" prop="day">
+          <a-input v-model="edit.day"/>
+        </a-form-model-item>
+        <a-form-model-item :label="$t('Month')" prop="month">
+          <a-input v-model="edit.month"/>
+        </a-form-model-item>
+        <a-form-model-item :label="$t('Week')" prop="week">
+          <a-input v-model="edit.week"/>
+        </a-form-model-item>
+        <a-form-model-item :label="$t('Command')" prop="command">
+          <a-input v-model="edit.command"/>
+        </a-form-model-item>
+      </a-form-model>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('Cancel') }}</el-button>
-        <el-button type="primary" @click="handleEdit">{{ $t('OK') }}</el-button>
+        <a-button @click="dialogVisible = false">{{ $t('Cancel') }}</a-button>
+        <a-button type="primary" @click="handleEdit">{{ $t('OK') }}</a-button>
       </div>
-    </el-dialog>
+    </a-modal>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      columns: [
+        { dataIndex: 'min', title: this.$t('Minute'), width: 140 },
+        { dataIndex: 'hour', title: this.$t('Hour'), width: 140 },
+        { dataIndex: 'day', title: this.$t('Day'), width: 140 },
+        { dataIndex: 'month', title: this.$t('Month'), width: 140 },
+        { dataIndex: 'week', title: this.$t('Week'), width: 140 },
+        { dataIndex: 'command', title: this.$t('Command') },
+        { key: 'edit', width: 140, scopedSlots: { customRender: 'edit' } }
+      ],
       data: [],
       dialogVisible: false,
       add: false,
+      editindex: 0,
       edit: {
-        index: 0,
         min: '',
         hour: '',
         day: '',
@@ -62,109 +65,111 @@ export default {
       },
       rules: {
         min: [
-          {required: true, message: this.$t('This field is required')}
+          { required: true, message: () => this.$t('validator.required') }
         ],
         hour: [
-          {required: true, message: this.$t('This field is required')}
+          { required: true, message: () => this.$t('validator.required') }
         ],
         day: [
-          {required: true, message: this.$t('This field is required')}
+          { required: true, message: () => this.$t('validator.required') }
         ],
         month: [
-          {required: true, message: this.$t('This field is required')}
+          { required: true, message: () => this.$t('validator.required') }
         ],
         week: [
-          {required: true, message: this.$t('This field is required')}
+          { required: true, message: () => this.$t('validator.required') }
         ],
         command: [
-          {required: true, message: this.$t('This field is required')}
+          { required: true, message: () => this.$t('validator.required') }
         ]
       }
     }
   },
+  computed: {
+    dataSource () {
+      return this.data.map((v, i) => {
+        v.key = i
+        return v
+      })
+    }
+  },
   methods: {
-    getCrontab() {
+    getCrontab () {
       return new Promise(resolve => {
-        this.$ubus.call('oui.system', 'crontab_get').then(r => {
-          let index = 0;
-          const data = []
+        this.$ubus.call('oui.system', 'crontab_get').then(({ entries }) => {
+          this.data = entries
+          resolve()
+        })
+      })
+    },
+    setCrontab (data) {
+      return this.$ubus.call('oui.system', 'crontab_set', { data })
+    },
+    showEdit (index) {
+      Object.assign(this.edit, this.data[index])
+      this.editindex = index
+      this.dialogVisible = true
+      this.add = false
+    },
+    showAdd () {
+      this.dialogVisible = true
+      this.add = true
+      this.edit.min = '*'
+      this.edit.hour = '*'
+      this.edit.day = '*'
+      this.edit.month = '*'
+      this.edit.week = '*'
+      this.edit.command = ''
+    },
+    handleDelete (index) {
+      const cron = this.data[index]
+      const content = this.$t('cron-del-confirm', { cron: `${cron.min} ${cron.hour} ${cron.day} ${cron.month} ${cron.week} ${cron.command}` })
+      this.$confirm({
+        title: this.$t('Delete'),
+        content,
+        onOk: () => {
+          this.data.splice(index, 1)
+          this.apply().then(() => {
+            this.$message.success(this.$t('success'))
+          })
+        }
+      })
+    },
+    handleEdit () {
+      this.$refs.edit.validate(valid => {
+        if (!valid) { return }
 
-          r.entries.forEach(item => {
-            data.push({
-              index: index++,
-              ...item
-            });
-          });
-          this.data = data;
-          resolve();
-        });
-      });
-    },
-    setCrontab(data) {
-      return this.$ubus.call('oui.system', 'crontab_set', {data});
-    },
-    showEdit(index) {
-      Object.assign(this.edit, this.data[index]);
-      this.dialogVisible = true;
-      this.add = false;
-      this.dialogTitle = 'Edit';
-    },
-    showAdd() {
-      this.dialogVisible = true;
-      this.add = true;
-      this.edit.min = '*';
-      this.edit.hour = '*';
-      this.edit.day = '*';
-      this.edit.month = '*';
-      this.edit.week = '*';
-      this.edit.command = '';
-      this.index = this.data.length;
-    },
-    handleDelete(index) {
-      const cron = this.data[index];
-      const content = this.$t('cron-del-confirm', {cron: `${cron.min} ${cron.hour} ${cron.day} ${cron.month} ${cron.week} ${cron.command}`});
-      this.$confirm(content, this.$t('Delete')).then(() => {
-        this.data.splice(index, 1);
+        if (this.add) {
+          this.data.push(this.edit)
+        } else {
+          Object.assign(this.data[this.editindex], this.edit)
+        }
+
+        this.dialogVisible = false
         this.apply().then(() => {
-          this.$message.success(this.$t('success'));
-        });
-      });
+          this.$message.success(this.$t('success'))
+        })
+      })
     },
-    handleEdit() {
-      this.$refs['edit'].validate(valid => {
-        if (!valid)
-          return;
-
-        if (this.add)
-          this.data.push(this.edit);
-        else
-          Object.assign(this.data[this.edit.index], this.edit);
-
-        this.dialogVisible = false;
-        this.apply().then(() => {
-          this.$message.success(this.$t('success'));
-        });
-      });
-    },
-    apply() {
+    apply () {
       return new Promise(resolve => {
-        const crons = [];
+        const crons = []
 
         this.data.forEach(item => {
-          const expr = `${item.min} ${item.hour} ${item.day} ${item.month} ${item.week} ${item.command}\n`;
-          crons.push(expr);
-        });
+          const expr = `${item.min} ${item.hour} ${item.day} ${item.month} ${item.week} ${item.command}\n`
+          crons.push(expr)
+        })
 
         this.setCrontab(crons.join('')).then(() => {
           this.getCrontab().then(() => {
-            resolve();
-          });
-        });
-      });
+            resolve()
+          })
+        })
+      })
     }
   },
-  created() {
-    this.getCrontab();
+  created () {
+    this.getCrontab()
   }
 }
 </script>

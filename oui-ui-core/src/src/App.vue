@@ -1,34 +1,28 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <a-config-provider id="app" :locale="locale">
+    <fullscreen ref="fullscreen">
+      <a-spin :spinning="spinning > 0" :tip="spintip || $t('Loading...')" size="large">
+        <router-view></router-view>
+      </a-spin>
+    </fullscreen>
+  </a-config-provider>
 </template>
 
-<style lang="scss">
-html, body, #app {
-  height: 100%;
-}
+<script>
+import zhCN from 'ant-design-vue/es/locale-provider/zh_CN'
+import { mapState } from 'vuex'
 
-body {
-	margin: 0;
-	padding: 0;
-	font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,  SimSun, sans-serif;
-	font-size: 14px;
-	-webkit-font-smoothing: antialiased;
-	background-color: #f2f2f2;
-  color: #333333;
+export default {
+  computed: {
+    locale () {
+      if (this.$i18n.locale === 'zh-CN') { return zhCN } else return undefined
+    },
+    ...mapState(['fullscreen', 'spinning', 'spintip'])
+  },
+  watch: {
+    fullscreen () {
+      this.$refs.fullscreen.toggle()
+    }
+  }
 }
-
-#app {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 100%;
-}
-
-a {
-	color: #56a9ff;
-	text-decoration: none;
-}
-
-</style>
+</script>

@@ -33,10 +33,6 @@ To access any kind of system data through [ubus] with [json-rpc](with the help o
 
 ![](/docs/.vuepress/public/architecture.png)
 
-Here's an animation of oui in action
-
-![Animated gif](/animation.gif "Animation of oui in action")
-
 # In Production
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;

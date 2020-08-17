@@ -1,35 +1,72 @@
 <template>
-  <uci-form config="network">
-    <uci-section :title="$t('Static IPv4 Routes')" type="route" addable table>
-      <uci-option-list :label="$t('Interface')" name="interface" :options="interfaces" required></uci-option-list>
-      <uci-option-input :label="$t('Target')" name="target" required rules="ip4addr"></uci-option-input>
-      <uci-option-input :label="$t('IPv4-Netmask')" name="netmask" placeholder="255.255.255.255" required rules="netmask4"></uci-option-input>
-      <uci-option-input :label="$t('IPv4-Gateway')" name="gateway" rules="ip4addr"></uci-option-input>
-      <uci-option-input :label="$t('Metric')" name="metric" placeholder="0" :rules="{type: 'uinteger', min: 0, max: 255}"></uci-option-input>
-      <uci-option-input label="MTU" name="mtu" placeholder="1500" :rules="{type: 'uinteger', min: 64, max: 9000}"></uci-option-input>
-    </uci-section>
-    <uci-section :title="$t('Static IPv6 Routes')" type="route6" addable table>
-      <uci-option-list :label="$t('Interface')" name="interface" :options="interfaces" required></uci-option-list>
-      <uci-option-input :label="$t('Target')" name="target" required rules="ip6addr"></uci-option-input>
-      <uci-option-input :label="$t('IPv6-Gateway')" name="gateway" rules="ip6addr"></uci-option-input>
-      <uci-option-input :label="$t('Metric')" name="metric" placeholder="0" :rules="{type: 'uinteger', min: 0, max: 255}"></uci-option-input>
-      <uci-option-input label="MTU" name="mtu" placeholder="1500" :rules="{type: 'uinteger', min: 64, max: 9000}"></uci-option-input>
-    </uci-section>
-  </uci-form>
+  <oui-form uci-config="network">
+    <oui-typed-section :title="$t('Static IPv4 Routes')" type="route" :columns="routeColumns" addremove>
+      <template #interface="{ s }">
+        <oui-form-item-select :uci-section="s" name="interface" :options="interfaces" required/>
+      </template>
+      <template #target="{ s }">
+        <oui-form-item-input :uci-section="s" name="target" required rules="ip4addr"/>
+      </template>
+      <template #netmask="{ s }">
+        <oui-form-item-input :uci-section="s" name="netmask" placeholder="255.255.255.255" required rules="netmask4"/>
+      </template>
+      <template #gateway="{ s }">
+        <oui-form-item-input :uci-section="s" name="gateway" rules="ip4addr"/>
+      </template>
+      <template #metric="{ s }">
+        <oui-form-item-input :uci-section="s" name="metric" placeholder="0" :rules="{type: 'uinteger', min: 0, max: 255}"/>
+      </template>
+      <template #mtu="{ s }">
+        <oui-form-item-input :uci-section="s" name="mtu" placeholder="1500" :rules="{type: 'uinteger', min: 64, max: 9000}"/>
+      </template>
+    </oui-typed-section>
+    <oui-typed-section :title="$t('Static IPv6 Routes')" type="route6" :columns="route6Columns" addremove>
+      <template #interface="{ s }">
+        <oui-form-item-select :uci-section="s" name="interface" :options="interfaces" required/>
+      </template>
+      <template #target="{ s }">
+        <oui-form-item-input :uci-section="s" name="target" required rules="ip6addr"/>
+      </template>
+      <template #gateway="{ s }">
+        <oui-form-item-input :uci-section="s" name="gateway" rules="ip6addr"/>
+      </template>
+      <template #metric="{ s }">
+        <oui-form-item-input :uci-section="s" name="metric" placeholder="0" :rules="{type: 'uinteger', min: 0, max: 255}"/>
+      </template>
+      <template #mtu="{ s }">
+        <oui-form-item-input :uci-section="s" name="mtu" placeholder="1500" :rules="{type: 'uinteger', min: 64, max: 9000}"/>
+      </template>
+    </oui-typed-section>
+  </oui-form>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
+      routeColumns: [
+        { name: 'interface', label: this.$t('Interface'), width: 160 },
+        { name: 'target', label: this.$t('Target') },
+        { name: 'netmask', label: this.$t('IPv4-Netmask') },
+        { name: 'gateway', label: this.$t('IPv4-Gateway') },
+        { name: 'metric', label: this.$t('Metric') },
+        { name: 'mtu', label: 'MTU' }
+      ],
+      route6Columns: [
+        { name: 'interface', label: this.$t('Interface'), width: 160 },
+        { name: 'target', label: this.$t('Target') },
+        { name: 'gateway', label: this.$t('IPv6-Gateway') },
+        { name: 'metric', label: this.$t('Metric') },
+        { name: 'mtu', label: 'MTU' }
+      ],
       interfaces: []
     }
   },
-  created() {
+  created () {
     this.$network.load().then(() => {
-      const interfaces = this.$network.getInterfaces();
-      this.interfaces = interfaces.map(item => item.name);
-    });
+      const interfaces = this.$network.getInterfaces()
+      this.interfaces = interfaces.map(item => item.name)
+    })
   }
 }
 </script>

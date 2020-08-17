@@ -1,4 +1,4 @@
-import {ubus} from './ubus'
+import { ubus } from './ubus'
 
 const network = {
   interfaces: [],
@@ -6,175 +6,170 @@ const network = {
 }
 
 class Interface {
-  constructor(iface) {
-    this.status = iface;
-    this.name = iface.interface;
+  constructor (iface) {
+    this.status = iface
+    this.name = iface.interface
   }
 
-  isUp() {
-    return this.status['up'];
+  isUp () {
+    return this.status.up
   }
 
-  getUptime() {
-    const uptime = this.status['uptime'];
-    return isNaN(uptime) ? 0 : uptime;
+  getUptime () {
+    const uptime = this.status.uptime
+    return isNaN(uptime) ? 0 : uptime
   }
 
-  getDevice() {
-    const l3dev = this.status['l3_device'];
-    if (l3dev)
-      return network.getDevice(l3dev);
+  getDevice () {
+    const l3dev = this.status.l3_device
+    if (l3dev) { return network.getDevice(l3dev) }
 
-    return undefined;
+    return undefined
   }
 
-  getAddrs(key, mask) {
-    const rv = [];
-    const addrs = this.status[key];
+  getAddrs (key, mask) {
+    const rv = []
+    const addrs = this.status[key]
 
     if (addrs) {
       addrs.forEach(addr => {
-        let address = addr.address;
-        if (mask)
-          address += `/${addr.mask}`;
-        rv.push(address);
-      });
+        let address = addr.address
+        if (mask) { address += `/${addr.mask}` }
+        rv.push(address)
+      })
     }
 
-    return rv;
+    return rv
   }
 
-  getIPv4Addrs(mask) {
-    return this.getAddrs('ipv4-address', mask);
+  getIPv4Addrs (mask) {
+    return this.getAddrs('ipv4-address', mask)
   }
 
-  getIPv6Addrs(mask) {
-    const rv = [];
+  getIPv6Addrs (mask) {
+    const rv = []
 
     rv.push(...this.getAddrs('ipv6-address', mask))
     rv.push(...this.getAddrs('ipv6-prefix-assignment', mask))
 
-    return rv;
+    return rv
   }
 
-  getIPv4Gateway() {
-    const rt = this.status['route'];
+  getIPv4Gateway () {
+    const rt = this.status.route
 
     if (rt) {
-      for (let i = 0; i < rt.length; i++)
-        if (rt[i].target === '0.0.0.0' && rt[i].mask === 0)
-          return rt[i].nexthop;
+      for (let i = 0; i < rt.length; i++) {
+        if (rt[i].target === '0.0.0.0' && rt[i].mask === 0) { return rt[i].nexthop }
+      }
     }
 
-    return undefined;
+    return undefined
   }
 
-  getIPv6Gateway() {
-    const rt = this.status['route'];
+  getIPv6Gateway () {
+    const rt = this.status.route
 
     if (rt) {
-      for (let i = 0; i < rt.length; i++)
-        if (rt[i].target === '::' && rt[i].mask === 0)
-          return rt[i].nexthop;
+      for (let i = 0; i < rt.length; i++) {
+        if (rt[i].target === '::' && rt[i].mask === 0) { return rt[i].nexthop }
+      }
     }
 
-    return undefined;
+    return undefined
   }
 
-  getDNSAddrs() {
-    const dns4 = this.getIPv4DNS();
-    const dns6 = this.getIPv6DNS();
+  getDNSAddrs () {
+    const dns4 = this.getIPv4DNS()
+    const dns6 = this.getIPv6DNS()
 
-    return [...dns4, ...dns6];
+    return [...dns4, ...dns6]
   }
 
-  getIPv4DNS() {
-    const rv = [ ];
-    const dns = this.status['dns-server'];
+  getIPv4DNS () {
+    const rv = []
+    const dns = this.status['dns-server']
 
     if (dns) {
-      for (let i = 0; i < dns.length; i++)
-        if (dns[i].indexOf(':') === -1)
-          rv.push(dns[i]);
+      for (let i = 0; i < dns.length; i++) {
+        if (dns[i].indexOf(':') === -1) { rv.push(dns[i]) }
+      }
     }
 
-    return rv;
+    return rv
   }
 
-  getIPv6DNS() {
-    const rv = [ ];
-    const dns = this.status['dns-server'];
+  getIPv6DNS () {
+    const rv = []
+    const dns = this.status['dns-server']
 
     if (dns) {
-      for (let i = 0; i < dns.length; i++)
-        if (dns[i].indexOf(':') > -1)
-          rv.push(dns[i]);
+      for (let i = 0; i < dns.length; i++) {
+        if (dns[i].indexOf(':') > -1) { rv.push(dns[i]) }
+      }
     }
 
-    return rv;
+    return rv
   }
 
-  getStatistics() {
-    const dev = this.getDevice();
-    if (dev)
-      return dev.statistics;
-    return {};
+  getStatistics () {
+    const dev = this.getDevice()
+    if (dev) { return dev.statistics }
+    return {}
   }
 }
 
-network.load = function() {
-  const promises = [];
+network.load = function () {
+  const promises = []
 
-  promises.push(ubus.call('network.device', 'status'));
-  promises.push(ubus.call('network.interface', 'dump'));
+  promises.push(ubus.call('network.device', 'status'))
+  promises.push(ubus.call('network.interface', 'dump'))
 
   return new Promise(resolve => {
     Promise.all(promises).then(r => {
-      const devices = r[0];
+      const devices = r[0]
 
       this.devices = Object.keys(devices).map(name => {
-        return {name: name, ...devices[name]};
-      }).filter(d => d.name !== 'lo');
+        return { name: name, ...devices[name] }
+      }).filter(d => d.name !== 'lo')
 
-      this.interfaces = r[1].interface.map(iface => new Interface(iface)).filter(i => i.name !== 'loopback');
+      this.interfaces = r[1].interface.map(iface => new Interface(iface)).filter(i => i.name !== 'loopback')
 
-      resolve();
-    });
-  });
+      resolve()
+    })
+  })
 }
 
-network.getInterface = function(name) {
-  const interfaces = this.interfaces;
+network.getInterface = function (name) {
+  const interfaces = this.interfaces
 
   for (let i = 0; i < interfaces.length; i++) {
-    if (interfaces[i].name === name)
-      return interfaces[i];
+    if (interfaces[i].name === name) { return interfaces[i] }
   }
 
-  return null;
+  return null
 }
 
-network.getInterfaces = function() {
-  return this.interfaces;
+network.getInterfaces = function () {
+  return this.interfaces
 }
 
-network.getDevice = function(name) {
-  const devices = this.devices;
+network.getDevice = function (name) {
+  const devices = this.devices
 
   for (let i = 0; i < devices.length; i++) {
-    if (devices[i].name === name)
-      return devices[i];
+    if (devices[i].name === name) { return devices[i] }
   }
 
-  return null;
+  return null
 }
 
-network.getDevices = function() {
-  return this.devices;
+network.getDevices = function () {
+  return this.devices
 }
 
 export default {
-  install(Vue) {
-    Vue.prototype.$network = network;
+  install (Vue) {
+    Vue.prototype.$network = network
   }
 }

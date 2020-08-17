@@ -35,10 +35,6 @@ oui使用[json-rpc]和OpenWrt子系统通信。通过[json-rpc]调用[ubus]。�
 
 ![](/docs/.vuepress/public/architecture.png)
 
-这是一个动画
-
-![](/animation.gif "这是一个动画")
-
 # 用户
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;

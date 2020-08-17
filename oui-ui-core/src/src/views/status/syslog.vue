@@ -1,29 +1,39 @@
 <template>
-  <div>
-    <el-input v-model="search" size="small" :placeholder="$t('Enter keywords to filter')" style="margin-bottom: 20px; width: 200px;" />
-    <el-table :data="syslog.filter(log => !search || log.time.includes(search) || log.msg.includes(search))" v-loading="loading" :element-loading-text="$t('Loading...')">
-      <el-table-column :label="$t('Datetime')" prop="datetime" width="220"></el-table-column>
-      <el-table-column :label="$t('Facility-syslog')" prop="facility" width="100"></el-table-column>
-      <el-table-column :label="$t('Level')" prop="level" width="100"></el-table-column>
-      <el-table-column :label="$t('Message')" prop="msg"></el-table-column>
-    </el-table>
-  </div>
+  <a-table :columns="columns" :data-source="dataSource" :loading="loading">
+    <template #msgTitle>
+      <a-input :addon-before="$t('Message')" :placeholder="$t('Enter keywords to filter')" v-model="search" allow-clear/>
+    </template>
+  </a-table>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
-      syslog: [],
+      columns: [
+        { dataIndex: 'datetime', title: this.$t('Datetime'), width: 220 },
+        { dataIndex: 'facility', title: this.$t('Facility-syslog'), width: 100 },
+        { dataIndex: 'level', title: this.$t('Level'), width: 100 },
+        { dataIndex: 'msg', slots: { title: 'msgTitle' } }
+      ],
       loading: true,
+      syslog: [],
       search: ''
     }
   },
-  created() {
-    this.$ubus.call('oui.system', 'syslog').then(r => {
-      this.syslog = r.log;
-      this.loading = false;
-    });
+  computed: {
+    dataSource () {
+      return this.syslog.filter(log => !this.search || log.msg.includes(this.search))
+    }
+  },
+  created () {
+    this.$ubus.call('oui.system', 'syslog').then(({ log }) => {
+      this.syslog = log.map((v, i) => {
+        v.key = i
+        return v
+      })
+      this.loading = false
+    })
   }
 }
 </script>
