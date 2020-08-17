@@ -2,7 +2,7 @@
   <oui-form uci-config="system" @applied="updateHostname">
     <a-tabs>
       <a-tab-pane key="system" :tab="$t('General Settings')">
-        <oui-typed-section type="system" :index="0" :collapsible="false" v-slot="{ s }" :card="false" @change-hostname="hostnameChanged">
+        <oui-typed-section type="system" :collapsible="false" v-slot="{ s }" :card="false" @change-hostname="hostnameChanged">
           <oui-form-item-dummy :uci-section="s" :label="$t('Local Time')" name="localtime" :load="localTime">
             <template #append>
               <a-button type="primary" size="small" @click="syncTime" style="margin-left: 10px">{{ $t('Synchronise from Local time') }}</a-button>
@@ -13,7 +13,7 @@
         </oui-typed-section>
       </a-tab-pane>
       <a-tab-pane key="logging" :tab="$t('Logging')">
-        <oui-typed-section type="system" :index="1" :collapsible="false" v-slot="{ s }" :card="false">
+        <oui-typed-section type="system" :collapsible="false" v-slot="{ s }" :card="false">
           <oui-form-item-input :uci-section="s" :label="$t('System log buffer size')" name="log_size" placeholder="16" append="kiB" :rules="{type: 'uinteger', max: 128}"/>
           <oui-form-item-input :uci-section="s" :label="$t('External system log server')" name="log_ip" placeholder="0.0.0.0" rules="ip4addr"/>
           <oui-form-item-input :uci-section="s" :label="$t('External system log server port')" name="log_port" placeholder="514" rules="port"/>
@@ -24,7 +24,7 @@
         </oui-typed-section>
       </a-tab-pane>
       <a-tab-pane key="time" :tab="$t('Time Synchronization')">
-        <oui-named-section name="ntp" :index="2" v-slot="{ s }" :card="false">
+        <oui-named-section name="ntp" v-slot="{ s }" :card="false">
           <oui-form-item-switch :uci-section="s" :label="$t('Enable NTP client')" name="enable" :load="ntpCliEnabled" :apply="ntpCliEnable"/>
           <oui-form-item-switch :uci-section="s" :label="$t('Provide NTP server')" name="enable_server" depend="enable"/>
           <oui-form-item-list :uci-section="s" :label="$t('NTP server candidates')" name="server" rules="host" depend="enable"/>
