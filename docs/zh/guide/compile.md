@@ -9,12 +9,12 @@
 ## 添加feed
 
 ``` bash
-echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
+echo "src-git oui https://gitee.com/zhaojh329/oui.git" >> feeds.conf.default
 ```
 
 如果存在feeds.conf
 ``` bash
-echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf
+echo "src-git oui https://gitee.com/zhaojh329/oui.git" >> feeds.conf
 ```
 
 ## 更新feed

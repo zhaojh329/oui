@@ -171,7 +171,7 @@ Create a very simple Vue component: `oui/oui-ui-core/src/src/views/test.vue`
 
 ``` vue
 <template>
-  <el-button type="primary">Hello，Oui</el-button>
+  <a-button type="primary">Hello，Oui</a-button>
 </template>
 ```
 
@@ -524,7 +524,7 @@ Chinese are supported. Add the content you need to translate to the correspondin
 
 Use in Vue template: `$t('content')`
 ``` vue
-<uci-option-input :label="$t('Name')" name="name" required></uci-option-input>
+<oui-form-item-input :label="$t('Name')" name="name" required/>
 ```
 
 Use in JS: `this.$t('content')`

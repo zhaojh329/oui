@@ -18,7 +18,7 @@
 [![Support oui][11]][12]
 
 [vue.js]: https://github.com/vuejs/vue
-[element-ui]: https://github.com/ElemeFE/element
+[Ant Design of Vue]: https://github.com/vueComponent/ant-design-vue
 [LuCI2]: https://git.openwrt.org/?p=project/luci2/ui.git
 [json-rpc]: https://www.jsonrpc.org/
 [ubus]: https://wiki.openwrt.org/doc/techref/ubus
@@ -26,7 +26,7 @@
 
 ![](/demo.gif)
 
-OpenWrt web user interface implemented in [vue.js] and [element-ui], inspired by [LuCI2].
+OpenWrt web user interface implemented in [vue.js] and [Ant Design of Vue], inspired by [LuCI2].
 
 oui uses [json-rpc] to communicate with OpenWrt subsystems. Call [ubus] via [json-rpc].
 To access any kind of system data through [ubus] with [json-rpc](with the help of [uhttpd-mod-ubus] to provide HTTP based API).

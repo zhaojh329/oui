@@ -10,8 +10,10 @@ features:
   details: Use static pages; access any kind of system data via ubus
 - title: Multi User
   details: Support for multi-user and access management
-- title: Vue + Element-UI
-  details: Enjoy the dev experience of Vue + Element-UI
+- title: Vue
+  details: Enjoy the dev experience of Vue
+- title: flexible
+  details: Flexible, easy to customize UI
 footer: MIT Licensed
 ---
 

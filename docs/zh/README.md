@@ -10,8 +10,10 @@ features:
   details: 使用静态页面；通过ubus存取各种系统数据
 - title: 多用户
   details: 支持多用户及权限管理
-- title: Vue + Element-UI 加持
-  details: 享受 Vue + Element-UI 的开发体验
+- title: Vue
+  details: 享受现代化的前端框架 Vue 所带来的开发体验
+- title: 灵活
+  details: 灵活的框架，方便自定义UI
 footer: MIT Licensed
 ---
 

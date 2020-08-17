@@ -170,7 +170,7 @@ oui给Vue实例添加了属性`$ubus`，该属性提供了用于调用ubus的方
 
 ```
 <template> vue
-  <el-button type="primary">你好，Oui</el-button>
+  <a-button type="primary">你好，Oui</a-button>
 </template>
 ```
 
@@ -522,7 +522,7 @@ export default {
 
 在vue模板中使用`$t('content')`
 ``` vue
-<uci-option-input :label="$t('Name')" name="name" required></uci-option-input>
+<oui-form-item-input :label="$t('Name')" name="name" required/>
 ```
 
 在js中使用`this.$t('content')`
