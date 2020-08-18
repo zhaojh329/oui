@@ -62,7 +62,7 @@ export default {
         if (typeof this.uciConfig === 'string') {
           this.$uci.load(this.uciConfig).then(() => {
             this.loaded = true
-            this.readonly = !this.$uci.writable(this.config)
+            this.readonly = !this.$uci.writable(this.uciConfig)
             resolve()
           })
         } else {
