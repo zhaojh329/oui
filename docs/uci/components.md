@@ -11,7 +11,7 @@ Represents a uci configuration file. Other components must be wrapped by this co
 ### Attributes
 | Name      | Description        | Type      | Accepted Values       | Default  |
 |---------- |------------ |---------- |-------------|-------- |
-| config    | uci configuration file  | string   | — | — |
+| uci-config    | uci configuration file  | string   | — | — |
 
 ### Events
 | Name   | Description         | Parameters   |
@@ -56,7 +56,7 @@ config item
 Require only showing items older than 30:
 ``` vue
 <template>
-  <oui-form config="test">
+  <oui-form uci-config="test">
     <oui-typed-section type="item" :filter="filter">
     ...
     </oui-typed-section>
@@ -87,8 +87,8 @@ config item
 The name option is required to be entered by the user when adding a section, and cannot be repeated, and cannot be modified once added.
 ``` vue
 <template>
-  <oui-form config="test" addable :add="addItem">
-    <oui-typed-section type="item" :filter="filter" v-slot="{ s }">
+  <oui-form uci-config="test">
+    <oui-typed-section type="item" :filter="filter" addremove :add="addItem" v-slot="{ s }">
       <oui-form-item-dummy label="Name" name="name":uci-section="s"/>
     </oui-typed-section>
   </oui-form>

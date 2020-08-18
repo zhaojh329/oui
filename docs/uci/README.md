@@ -4,7 +4,7 @@ Oui encapsulates some Vue components for uci, which is convenient for developers
 
 ``` vue
 <template>
-  <oui-form config="test">
+  <oui-form uci-config="test">
     <oui-named-section title="Test" name="main" v-slot="{ s }">
       <oui-form-item-input label="Name" name="name" :uci-section="s"/>
     </oui-named-section>
@@ -13,7 +13,7 @@ Oui encapsulates some Vue components for uci, which is convenient for developers
 ```
 This is the basic structure of the UCI configuration page.
 
-Once created, the `oui-form` component loads the UCI configuration file specified by the `config`
+Once created, the `oui-form` component loads the UCI configuration file specified by the `uci-config`
 property by calling ubus. The form is then generated from the subcomponent.
 
 ## Form Validation

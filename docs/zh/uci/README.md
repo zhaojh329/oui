@@ -4,7 +4,7 @@ oui针对uci封装了一些vue组件，方便开发人员调用。
 
 ``` vue
 <template>
-  <oui-form config="test">
+  <oui-form uci-config="test">
     <oui-named-section title="Test" name="main" v-slot="{ s }">
       <oui-form-item-input label="Name" name="name" :uci-section="s"/>
     </oui-named-section>
@@ -13,7 +13,7 @@ oui针对uci封装了一些vue组件，方便开发人员调用。
 ```
 这是一个uci配置页面的基本结构。
 
-`oui-form`组件在创建后，会通过调用ubus加载`config`属性指定的uci配置文件。然后根据子组件生成表单。
+`oui-form`组件在创建后，会通过调用ubus加载`uci-config`属性指定的uci配置文件。然后根据子组件生成表单。
 
 ## 表单验证
 

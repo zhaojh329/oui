@@ -11,7 +11,7 @@
 ### 属性
 | 名称      | 说明        | 类型      | 可选值       | 默认值  |
 |---------- |------------ |---------- |-------------|-------- |
-| config    | uci配置文件  | string   | — | — |
+| uci-config    | uci配置文件  | string   | — | — |
 
 ### 事件
 | 事件名称   | 说明         | 回调参数   |
@@ -59,7 +59,7 @@ config item
 要求只展示年龄大于30的item:
 ``` vue
 <template>
-  <oui-form config="test">
+  <oui-form uci-config="test">
     <oui-typed-section type="item" :filter="filter">
     ...
     </oui-typed-section>
@@ -90,8 +90,8 @@ config item
 要求其中的name选项在添加section时由用户输入，并且不能重复，而且一旦添加就不能修改。
 ``` vue
 <template>
-  <oui-form config="test" addremove :add="addItem">
-    <oui-typed-section type="item" :filter="filter" v-slot="{ s }">
+  <oui-form uci-config="test">
+    <oui-typed-section type="item" :filter="filter" addremove :add="addItem" v-slot="{ s }">
       <oui-form-item-dummy label="名称" name="name" :uci-section="s"/>
     </oui-typed-section>
   </oui-form>
