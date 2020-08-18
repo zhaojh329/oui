@@ -1,20 +1,22 @@
 export default {
   install (Vue) {
     Vue.prototype.$reconnect = function (title) {
-      const vm = this
-
       this.$spin(title)
 
-      function check () {
-        vm.$ubus.call('oui.ui', 'lang', {}, 1).then(() => {
-          this.$spin(false)
-          vm.$router.push('/login')
-        }).catch(() => {
-          window.setTimeout(check, 1000)
-        })
-      }
+      let interval
 
-      window.setTimeout(check, 5000)
+      const img = document.createElement('img')
+      img.addEventListener('load', () => {
+        window.clearInterval(interval)
+        this.$spin(false)
+        this.$router.push('/login')
+      })
+
+      window.setTimeout(() => {
+        interval = window.setInterval(() => {
+          img.src = '/favicon.ico?r=' + Math.random()
+        }, 1000)
+      }, 5000)
     }
 
     Vue.prototype.$spin = function (config) {
