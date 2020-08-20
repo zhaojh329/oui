@@ -50,7 +50,8 @@ function buildRoute (menu) {
     component: resolve => {
       if (menu.plugin) {
         axios.get(`/views/${menu.view}.js`).then(r => {
-          return resolve(JSON.parse(r.data))
+          // eslint-disable-next-line no-eval
+          return resolve(eval(r.data))
         })
       } else {
         return resolve(require(`@/views/${menu.view}`))
