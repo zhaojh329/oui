@@ -1,6 +1,0 @@
-#!/bin/sh
-uci batch <<-EOF
-	set uhttpd.main.ubus_prefix="/ubus"
-	set uhttpd.main.index_page='oui.html'
-	commit uhttpd
-EOF

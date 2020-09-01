@@ -19,7 +19,7 @@ define Package/oui-app-rtty
   CATEGORY:=OUI
   SUBMENU:=Applications
   TITLE:=oui support for rtty
-  DEPENDS:=+oui-ui-core
+  DEPENDS:=+oui-ui
   URL:=https://github.com/zhaojh329/rtty
 endef
 
