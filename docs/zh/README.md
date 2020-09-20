@@ -8,8 +8,6 @@ actionLink: /zh/guide/
 features:
 - title: 快
   details: 使用静态页面；通过ubus存取各种系统数据
-- title: 多用户
-  details: 支持多用户及权限管理
 - title: Vue
   details: 享受现代化的前端框架 Vue 所带来的开发体验
 - title: 灵活

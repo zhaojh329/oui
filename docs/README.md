@@ -8,8 +8,6 @@ actionLink: /guide/
 features:
 - title: Fast
   details: Use static pages; access any kind of system data via ubus
-- title: Multi User
-  details: Support for multi-user and access management
 - title: Vue
   details: Enjoy the dev experience of Vue
 - title: flexible
