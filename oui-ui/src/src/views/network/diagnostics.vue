@@ -53,24 +53,24 @@ export default {
     }
   },
   created () {
-    this.runPing('?').then(r => {
-      if (r.code !== -1) { this.tools.push(['runPing', 'IPv4 Ping']) }
+    this.runPing('?').then(() => {
+      this.tools.push(['runPing', 'IPv4 Ping'])
     })
 
-    this.runPing6('?').then(r => {
-      if (r.code !== -1) { this.tools.push(['runPing6', 'IPv6 Ping']) }
+    this.runPing6('?').then(() => {
+      this.tools.push(['runPing6', 'IPv6 Ping'])
     })
 
-    this.runTraceroute('?').then(r => {
-      if (r.code !== -1) { this.tools.push(['runTraceroute', 'IPv4 Traceroute']) }
+    this.runTraceroute('?').then(() => {
+      this.tools.push(['runTraceroute', 'IPv4 Traceroute'])
     })
 
-    this.runTraceroute6('?').then(r => {
-      if (r.code !== -1) { this.tools.push(['runTraceroute6', 'IPv6 Traceroute']) }
+    this.runTraceroute6('?').then(() => {
+      this.tools.push(['runTraceroute6', 'IPv6 Traceroute'])
     })
 
-    this.runNslookup('?').then(r => {
-      if (r.code !== -1) { this.tools.push(['runNslookup', 'DNS Lookup']) }
+    this.runNslookup('?').then(() => {
+      this.tools.push(['runNslookup', 'DNS Lookup'])
     })
   }
 }
