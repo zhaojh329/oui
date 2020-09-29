@@ -3,7 +3,7 @@
     <div class="logo-name">
       <router-link to="/">{{ hostname }}</router-link>
     </div>
-    <a-menu theme="dark" mode="inline" :open-keys="openKeys" @openChange="onOpenChange" @click="onClick">
+    <a-menu theme="dark" mode="inline" :open-keys="openKeys" @openChange="onOpenChange" @click="onClick" v-model="selectedKeys">
       <template v-for="menu in menus">
         <a-sub-menu v-if="menu.children" :key="menu.path">
           <template v-slot:title><span>{{ $t(menu.title) }}</span></template>
@@ -25,7 +25,8 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      openKeys: []
+      openKeys: [],
+      selectedKeys: []
     }
   },
   computed: {
@@ -35,11 +36,24 @@ export default {
     ...mapState(['menus', 'hostname'])
   },
   watch: {
-    '$route' (newRoute) {
-      if (newRoute.path === '/home') this.openKeys = []
+    '$route' () {
+      this.updateSelection()
     }
   },
   methods: {
+    updateSelection () {
+      const path = this.$route.path
+      if (path === '/home') {
+        this.openKeys = []
+        this.selectedKeys = []
+        return
+      }
+
+      const paths = path.split('/')
+      if (paths.length === 3) { this.openKeys = ['/' + paths[1]] } else { this.openKeys = [] }
+
+      this.selectedKeys = [path]
+    },
     onOpenChange (openKeys) {
       const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1)
       if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
@@ -58,6 +72,8 @@ export default {
       this.$store.commit('setMenus', menus)
       this.$router.addRoutes(routes)
     })
+
+    this.updateSelection()
   }
 }
 </script>
