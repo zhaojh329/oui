@@ -8,9 +8,6 @@ module.exports = {
       '/rpc': {
         target: 'http://openwrt.lan'
       },
-      '/cgi-bin/': {
-        target: 'http://openwrt.lan'
-      },
       '/views/': {
         target: 'http://openwrt.lan'
       },
