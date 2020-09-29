@@ -48,14 +48,12 @@ function buildRoute (menu) {
   return {
     path: menu.path,
     component: resolve => {
-      if (menu.plugin) {
-        axios.get(`/views/${menu.view}.js`).then(r => {
-          // eslint-disable-next-line no-eval
-          return resolve(eval(r.data))
-        })
-      } else {
+      axios.get(`/views/${menu.view}.js`).then(r => {
+        // eslint-disable-next-line no-eval
+        return resolve(eval(r.data))
+      }).catch(() => {
         return resolve(require(`@/views/${menu.view}`))
-      }
+      })
     },
     meta: {
       title: menu.title,
