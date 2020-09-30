@@ -1,0 +1,7 @@
+{
+    "status/syslog": {
+        "title": "System Log",
+        "view": "oui-app-syslog",
+        "index": 30
+    }
+}

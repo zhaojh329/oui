@@ -177,6 +177,18 @@ void rpc_logout(const char *sid)
         rpc_session_destroy(s);
 }
 
+static void  add_trusted(const char *object, const char *method)
+{
+    struct rpc_object *rpc = calloc(1, sizeof(struct rpc_object));
+
+    strncpy(rpc->object, object, sizeof(rpc->object) - 1);
+    strncpy(rpc->method, method, sizeof(rpc->method) - 1);
+
+    rpc->avl.key = rpc->object;
+
+    avl_insert(&trusted, &rpc->avl);
+}
+
 static void load_trusted(struct uci_context *uci)
 {
     struct uci_package *p = NULL;
@@ -190,7 +202,7 @@ static void load_trusted(struct uci_context *uci)
         return;
 
     uci_foreach_element(&p->sections, e) {
-        struct rpc_object *rpc;
+        const char *object;
 
         s = uci_to_section(e);
 
@@ -206,18 +218,22 @@ static void load_trusted(struct uci_context *uci)
         if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
             continue;
 
-        rpc = calloc(1, sizeof(struct rpc_object));
-        strncpy(rpc->object, ptr.o->v.string, sizeof(rpc->object) - 1);
+        object = ptr.o->v.string;
 
         ptr.option = "method";
         ptr.o = NULL;
 
-        if (!uci_lookup_ptr(uci, &ptr, NULL, true) && ptr.o && ptr.o->type == UCI_TYPE_STRING)
-            strncpy(rpc->method, ptr.o->v.string, sizeof(rpc->method) - 1);
+        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o)
+            continue;
 
-        rpc->avl.key = rpc->object;
-
-        avl_insert(&trusted, &rpc->avl);
+        if (ptr.o->type == UCI_TYPE_STRING) {
+            add_trusted(object, ptr.o->v.string);
+        } else {
+            struct uci_element *oe;
+            uci_foreach_element(&ptr.o->v.list, oe) {
+                add_trusted(object, oe->name);
+            }
+        }
     }
 }
 

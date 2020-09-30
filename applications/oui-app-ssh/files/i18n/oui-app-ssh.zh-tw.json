@@ -1,0 +1,17 @@
+{
+  "SSH": "SSH",
+  "ssh" : {
+    "SSH Server": "SSH 服務器",
+    "Interface": "接口",
+    "InterfaceHelp": "僅監聽指定的接口，未指定則監聽全部",
+    "Port": "端口",
+    "PortHelp": "指定此 Dropbear 實例的監聽端口",
+    "Password authentication": "密碼驗證",
+    "Allow SSH password authentication": "允許SSH密碼驗證",
+    "Allow root logins with password": "root權限登錄",
+    "Allow the root user to login with password": "允許root用戶憑密碼登錄",
+    "Gateway ports": "網關端口",
+    "GatewayPortsHelp": "允許遠程主機連接到本地SSH轉發端口",
+    "unspecified": "未指定"
+  }
+}

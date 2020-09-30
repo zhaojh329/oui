@@ -1,0 +1,12 @@
+{
+  "Active Routes": "活动的路由",
+  "active-routes" : {
+    "Active IPv4-Routes": "活动的 IPv4 路由",
+    "Active IPv6-Routes": "活动的 IPv6 路由",
+    "Target": "对象",
+    "Nexthop": "下一跳",
+    "Device": "设备",
+    "Metric": "跃点数",
+    "Source": "源"
+  }
+}

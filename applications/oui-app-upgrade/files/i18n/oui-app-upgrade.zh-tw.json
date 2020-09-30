@@ -1,0 +1,28 @@
+{
+  "Backup / Upgrade": "備份/升級",
+  "upgrade" : {
+    "BackupDesc": "備份/恢復當前系統配置文件或重置OpenWrt(僅squashfs固件有效)。",
+    "Generate archive": "生成備份",
+    "Perform reset": "執行復位",
+    "RestoreDesc": "上傳備份存檔以恢復配置。",
+    "Select File": "選擇文件",
+    "Flash new firmware image": "刷寫新的固件",
+    "UpgradeDesc": "上傳兼容的sysupgrade固件以刷新當前系統。",
+    "Really reset all changes?": "確定要放棄所有更改？",
+    "PerformResetContent": "該操作將把設備恢復到初始配置狀態，您的所有更改將被丟失!",
+    "Size": "大小",
+    "Keep configuration when reflashing": "保留配置文件",
+    "Backup restore": "備份恢復",
+    "backup archive was uploaded completely": "備份存檔已上傳，請註意核對文件大小和校驗值！單擊“{btn}”執行恢復操作",
+    "OK": "確定",
+    "RestoreConfirm": "備份已恢復，建議立即重啟系統以應用所有配置更改。",
+    "Reboot now": "立即重啟",
+    "RestoreFail": "備份恢復失敗，請確認您選擇的文件格式適合妳的平臺。",
+    "Close": "關閉",
+    "Verify firmware": "固件驗證",
+    "The firmware image was uploaded completely": "固件已上傳，請註意核對文件大小和校驗值！單擊“{btn}”執行刷寫操作，刷寫過程切勿斷電！",
+    "Upgrading...": "正在升級...",
+    "Invalid image": "無效固件",
+    "InvalidImageContent": "不支持所上傳的固件格式。請確認您選擇的固件無誤。"
+  }
+}

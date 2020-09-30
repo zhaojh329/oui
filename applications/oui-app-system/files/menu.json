@@ -1,0 +1,7 @@
+{
+    "system/system": {
+        "title": "System",
+        "view": "oui-app-system",
+        "index": 10
+    }
+}

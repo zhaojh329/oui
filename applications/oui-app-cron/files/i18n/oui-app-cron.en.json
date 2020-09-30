@@ -1,0 +1,12 @@
+{
+  "Scheduled Tasks": "Scheduled Tasks",
+  "cron" : {
+    "Minute": "Minute",
+    "Hour": "Hour",
+    "Day": "Day",
+    "Month": "Month",
+    "Week": "Week",
+    "Command": "Command",
+    "DelConfirm": "Are you sure you want to delete \"{cron}\" ?",
+  }
+}

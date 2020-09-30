@@ -1,0 +1,33 @@
+{
+  "Wireless": "Wireless",
+  "wireless" : {
+    "Disabled": "Disabled",
+    "Mode": "Mode",
+    "Band": "Band",
+    "Channel": "Channel",
+    "Transmit Power": "Transmit Power",
+    "Country Code": "Country Code",
+    "Distance Optimization": "Distance Optimization",
+    "Interface": "Interface",
+    "Hide ESSID": "Hide ESSID",
+    "WMM Mode": "WMM Mode",
+    "Wireless Security": "Wireless Security",
+    "Encryption": "Encryption",
+    "Cipher": "Cipher",
+    "Passphrase": "Passphrase",
+    "MAC-Filter": "MAC-Filter",
+    "MAC-List": "MAC-List",
+    "Access Point": "Access Point",
+    "Client": "Client",
+    "Ad-Hoc": "Ad-Hoc",
+    "No encryption": "No encryption",
+    "mixed": "mixed",
+    "auto": "auto",
+    "Automatic": "Automatic",
+    "Force CCMP (AES)": "Force CCMP (AES)",
+    "Force TKIP": "Force TKIP",
+    "Force TKIP and CCMP (AES)": "Force TKIP and CCMP (AES)",
+    "Allow listed only": "Allow listed only",
+    "Allow all except listed": "Allow all except listed"
+  }
+}

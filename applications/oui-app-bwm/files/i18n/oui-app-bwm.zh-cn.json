@@ -1,0 +1,7 @@
+{
+  "Bandwidth Monitor": "带宽监控",
+  "oui-bwm" : {
+    "Local network": "本地网络",
+    "local_network_help": "192.168.1.1/24 或者是一个逻辑接口名称"
+  }
+}

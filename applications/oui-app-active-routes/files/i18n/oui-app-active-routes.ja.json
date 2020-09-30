@@ -1,0 +1,12 @@
+{
+  "Active Routes": "アクティビティのルーティング",
+  "active-routes" : {
+    "Active IPv4-Routes": "アクティブなIPv4ルーティング",
+    "Active IPv6-Routes": "アクティブなIPv6ルーティング",
+    "Target": "対象",
+    "Nexthop": "次の一跳び",
+    "Device": "設備",
+    "Metric": "躍点数",
+    "Source": "源"
+  }
+}

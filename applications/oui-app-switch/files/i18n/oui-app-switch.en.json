@@ -1,0 +1,14 @@
+{
+  "Switch": "Switch",
+  "dmesg" : {
+    "Enable VLAN functionality": "Enable VLAN functionality",
+    "Enable learning and aging": "Enable learning and aging",
+    "Port": "Port",
+    "Full-duplex": "Full-duplex",
+    "Half-duplex": "Half-duplex",
+    "No link": "No link",
+    "Off": "Off",
+    "Untagged": "Untagged",
+    "Tagged": "Tagged"
+  }
+}

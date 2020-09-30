@@ -1,0 +1,12 @@
+{
+  "Active Routes": "活動的路由",
+  "active-routes" : {
+    "Active IPv4-Routes": "活動的 IPv4 路由",
+    "Active IPv6-Routes": "活動的 IPv6 路由",
+    "Target": "對象",
+    "Nexthop": "下壹跳",
+    "Device": "設備",
+    "Metric": "躍點數",
+    "Source": "源"
+  }
+}

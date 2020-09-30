@@ -1,0 +1,10 @@
+{
+  "Rtty": "Rtty",
+  "rtty" : {
+    "Interface": "Interface",
+    "Description": "Description",
+    "Host": "Host",
+    "Port": "Port",
+    "Token": "Token"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "LED Configuration": "LED配置",
+  "leds" : {
+    "No LEDs available": "無可用LED",
+    "Name": "名稱",
+    "Led Name": "Led 名稱",
+    "Default state": "默認狀態",
+    "Trigger": "觸發器",
+    "On-State Delay": "通電時間",
+    "Time in milliseconds the LED stays on": "LED保持通電時間（以毫秒為單位）",
+    "Off-State Delay": "關閉時間",
+    "Time in milliseconds the LED stays off": "LED保持關閉時間（以毫秒為單位）",
+    "Device": "設備",
+    "Trigger Mode": "觸發模式",
+    "Link On": "活動鏈接",
+    "Transmit": "傳送",
+    "Receive": "接收"
+  }
+}

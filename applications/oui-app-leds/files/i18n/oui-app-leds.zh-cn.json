@@ -1,0 +1,19 @@
+{
+  "LED Configuration": "LED配置",
+  "leds" : {
+    "No LEDs available": "无可用LED",
+    "Name": "名称",
+    "Led Name": "Led 名称",
+    "Default state": "默认状态",
+    "Trigger": "触发器",
+    "On-State Delay": "通电时间",
+    "Time in milliseconds the LED stays on": "LED保持通电时间（以毫秒为单位）",
+    "Off-State Delay": "关闭时间",
+    "Time in milliseconds the LED stays off": "LED保持关闭时间（以毫秒为单位）",
+    "Device": "设备",
+    "Trigger Mode": "触发模式",
+    "Link On": "活动链接",
+    "Transmit": "传送",
+    "Receive": "接收"
+  }
+}

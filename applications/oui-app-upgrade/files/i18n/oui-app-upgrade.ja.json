@@ -1,0 +1,28 @@
+{
+  "Backup / Upgrade": "バックアップ/アップグレード",
+  "upgrade" : {
+    "BackupDesc": "現在のシステム構成ファイルをバックアップ/復元またはリセットするOpenWrt(だけsquashfsファームウェアが有効)。",
+    "Generate archive": "バックアップを生成する",
+    "Perform reset": "リセットを実行する",
+    "RestoreDesc": "バックアップアーカイブをアップロードしてプロファイルを回復する。",
+    "Select File": "選択ファイル",
+    "Flash new firmware image": "新しいファームウェアを書き込む",
+    "UpgradeDesc": "sysupgradeファームウェアをアップロードし、現在のシステムを刷新する。",
+    "Really reset all changes?": "すべての変更を放棄することを確定しますか?",
+    "PerformResetContent": "この作業は装置を初期配置状態に戻し、あなたのすべての変更は失われる!",
+    "Size": "大きさ",
+    "Keep configuration when reflashing": "プロファイルを保留する",
+    "Backup restore": "バックアップ回復",
+    "backup archive was uploaded completely": "バックアップアーカイブがアップロードされていますので、ファイルサイズとチェック値をチェックしてください!「{btn}」をクリックして回復操作を行う",
+    "OK": "確定",
+    "RestoreConfirm": "バックアップが回復したので、すべての構成変更を適用するためにシステムを直ちに再開することを提案する。",
+    "Reboot now": "直ちに再開する",
+    "RestoreFail": "バックアップの回復に失敗した場合、あなたが選択したファイルフォーマットがあなたのプラットフォームに適していることを確認してください。",
+    "Close": "閉鎖",
+    "Verify firmware": "ファームウェア検証",
+    "The firmware image was uploaded completely": "ファームウェアがアップロードされていますので、ファイルサイズとチェック値をチェックしてください!「{btn}」をクリックすることで書き込み操作を行い、書き込み中は電源を切らないでください。",
+    "Upgrading...": "アップグレード中...",
+    "Invalid image": "無効ファームウェア",
+    "InvalidImageContent": "アップロードされたファームウェアフォーマットには対応していない。あなたが選択したファームウェアに誤りがないことを確認してください。"
+  }
+}

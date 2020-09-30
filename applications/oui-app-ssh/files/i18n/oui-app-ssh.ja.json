@@ -1,0 +1,17 @@
+{
+  "SSH": "SSH",
+  "ssh" : {
+    "SSH Server": "SSH サーバ",
+    "Interface": "インタフェース",
+    "InterfaceHelp": "指定されたインターフェースのみを傍受し,指定されていなければすべてを傍受する",
+    "Port": "ポート",
+    "PortHelp": "このDropbearインスタンスのリミテッドポートを指定する",
+    "Password authentication": "暗号検証",
+    "Allow SSH password authentication": "SSH暗号検証を許可する",
+    "Allow root logins with password": "root権限登録",
+    "Allow the root user to login with password": "rootユーザのパスワードによるログインを許可する",
+    "Gateway ports": "ゲートウェイ・ポート",
+    "GatewayPortsHelp": "リモートホストがローカルSSH転送ポートに接続できるようにする",
+    "unspecified": "未指定"
+  }
+}

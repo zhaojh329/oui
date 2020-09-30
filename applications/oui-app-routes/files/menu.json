@@ -1,0 +1,8 @@
+{
+    "network/routes": {
+        "title": "Routes",
+        "view": "oui-app-routes",
+        "files": [ "/etc/config/network" ],
+        "index": 70
+    }
+}

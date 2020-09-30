@@ -1,0 +1,10 @@
+{
+  "Routes": "路由",
+  "routes" : {
+    "Static IPv4 Routes": "静态IPv4路由",
+    "Static IPv6 Routes": "静态IPv6路由",
+    "Interface": "接口",
+    "Target": "目标",
+    "Metric": "跃点数"
+  }
+}

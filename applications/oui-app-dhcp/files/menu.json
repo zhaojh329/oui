@@ -1,0 +1,8 @@
+{
+    "network/dhcp": {
+        "title": "DHCP/DNS",
+        "view": "oui-app-dhcp",
+        "files": [ "/etc/config/dhcp" ],
+        "index": 40
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "Routes": "Routes",
+  "routes" : {
+    "Static IPv4 Routes": "Static IPv4 Routes",
+    "Static IPv6 Routes": "Static IPv6 Routes",
+    "Interface": "Interface",
+    "Target": "Target",
+    "Metric": "Metric"
+  }
+}

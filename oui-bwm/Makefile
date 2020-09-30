@@ -15,7 +15,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/oui-bwm
   SECTION:=oui
-  CATEGORY:=OUI
+  CATEGORY:=Oui
   TITLE:=Bandwidth Monitor for oui
   DEPENDS:=+kmod-oui-bwm
   URL:=https://github.com/zhaojh329/oui

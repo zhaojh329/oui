@@ -1,0 +1,17 @@
+{
+  "SSH": "SSH",
+  "ssh" : {
+    "SSH Server": "SSH Server",
+    "Interface": "Interface",
+    "InterfaceHelp": "Listen only on the given interface or, if unspecified, on all",
+    "Port": "Port",
+    "PortHelp": "Specifies the listening port of this Dropbear instance",
+    "Password authentication": "Password authentication",
+    "Allow SSH password authentication": "Allow SSH password authentication",
+    "Allow root logins with password": "Allow root logins with password",
+    "Allow the root user to login with password": "Allow the root user to login with password",
+    "Gateway ports": "Gateway ports",
+    "GatewayPortsHelp": "Allow remote hosts to connect to local SSH forwarded ports",
+    "unspecified": "unspecified"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "LED Configuration": "LED仕様",
+  "leds" : {
+    "No LEDs available": "LED非使用",
+    "Name": "名称",
+    "Led Name": "Led 名称",
+    "Default state": "デフォルト状態",
+    "Trigger": "トリガー",
+    "On-State Delay": "通電時間",
+    "Time in milliseconds the LED stays on": "LEDは通電時間を保持する(ミリ秒単位)。",
+    "Off-State Delay": "关闭时间",
+    "Time in milliseconds the LED stays off": "LLEDはオフ時間(ミリ秒単位)を保持する。",
+    "Device": "設備",
+    "Trigger Mode": "トリガーモード",
+    "Link On": "活動リンク",
+    "Transmit": "送信",
+    "Receive": "受信"
+  }
+}

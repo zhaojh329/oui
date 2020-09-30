@@ -1,0 +1,10 @@
+{
+  "System Log": "系統日誌",
+  "syslog" : {
+    "Message": "消息",
+    "Enter keywords to filter": "輸入關鍵字進行篩選",
+    "Datetime": "日期時間",
+    "Facility": "日誌類型",
+    "Level": "級別"
+  }
+}

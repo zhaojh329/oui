@@ -1,0 +1,12 @@
+{
+  "Active Routes": "Active Routes",
+  "active-routes" : {
+    "Active IPv4-Routes": "Active IPv4-Routes",
+    "Active IPv6-Routes": "Active IPv6-Routes",
+    "Target": "Target",
+    "Nexthop": "Nexthop",
+    "Device": "Device",
+    "Metric": "Metric",
+    "Source": "Source"
+  }
+}

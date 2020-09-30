@@ -1,0 +1,9 @@
+{
+  "Administration": "管理権",
+  "admin" : {
+    "Password": "パスワード",
+    "Confirmation": "确认",
+    "Please enter your password again": "パスワードを再入力してください",
+    "Inconsistent input password twice!":  "2回のパスワード入力が一致しなかった!"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "Wireless": "無線",
+  "wireless" : {
+    "Disabled": "禁止されている",
+    "Mode": "モデル",
+    "Band": "周波数帯域",
+    "Channel": "通路",
+    "Transmit Power": "無線電力",
+    "Country Code": "国コード",
+    "Distance Optimization": "距離最適化",
+    "Interface": "インタフェース",
+    "Hide ESSID": "SSIDを秘匿する",
+    "WMM Mode": "WMMモデル",
+    "Wireless Security": "無線セキュリティ",
+    "Encryption": "暗号化",
+    "Cipher": "アルゴリズム",
+    "Passphrase": "秘钥",
+    "MAC-Filter": "MACフィルタ",
+    "MAC-List": "MACリスト",
+    "Access Point": "アクセスポイントAP",
+    "Client": "クライアント",
+    "Ad-Hoc": "点对点Ad-Hoc",
+    "No encryption": "暗号化しない",
+    "mixed": "混合",
+    "auto": "自動",
+    "Automatic": "自動",
+    "Force CCMP (AES)": "强制 CCMP（AES）",
+    "Force TKIP": "强制 TKIP",
+    "Force TKIP and CCMP (AES)": "强制 TKIP と CCMP（AES）",
+    "Allow listed only": "リスト内のみ許す",
+    "Allow all except listed": "リスト外のみ許可する"
+  }
+}

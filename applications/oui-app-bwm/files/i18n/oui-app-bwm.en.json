@@ -1,0 +1,7 @@
+{
+  "Bandwidth Monitor": "Bandwidth Monitor",
+  "oui-bwm" : {
+    "Local network": "Local network",
+    "local_network_help": "192.168.1.1/24 or a logical interface name"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "Switch": "交換機",
+  "dmesg" : {
+    "Enable VLAN functionality": "VLAN設定",
+    "Enable learning and aging": "スマート交換学習を可能にする",
+    "Port": "ポート",
+    "Full-duplex": "全二重",
+    "Half-duplex": "半二重",
+    "No link": "未接続",
+    "Off": "閉鎖",
+    "Untagged": "未表記",
+    "Tagged": "マークした"
+  }
+}

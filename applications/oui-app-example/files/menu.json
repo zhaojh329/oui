@@ -1,0 +1,11 @@
+{
+	"examples": {
+		"title": "Examples",
+		"index": 90
+	},
+	"examples/example": {
+		"title": "Example",
+		"view": "oui-app-example",
+		"index": 10
+	}
+}

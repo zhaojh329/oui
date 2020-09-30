@@ -7,6 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=oui-httpd
+PKG_VERSION:=$(shell git --git-dir=$(CURDIR)/../.git log -1 --pretty="%ci %h" | awk '{ print $$1 "-" $$4 }')
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 
@@ -17,8 +18,8 @@ include $(INCLUDE_DIR)/cmake.mk
 
 define Package/oui-httpd
   SECTION:=oui
-  CATEGORY:=OUI
-  TITLE:=OUI rpc backend
+  CATEGORY:=Oui
+  TITLE:=Oui rpc backend
   DEPENDS:=+libuhttpd-nossl +lua +libubox-lua +libubus-lua +libuci-lua +jansson
   URL:=https://github.com/zhaojh329/oui
 endef

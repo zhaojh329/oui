@@ -1,0 +1,7 @@
+{
+    "status/dmesg": {
+        "title": "Kernel Log",
+        "view": "oui-app-dmesg",
+        "index": 40
+    }
+}

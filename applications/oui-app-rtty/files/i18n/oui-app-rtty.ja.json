@@ -1,0 +1,10 @@
+{
+  "Rtty": "Rtty",
+  "rtty" : {
+    "Interface": "インタフェース",
+    "Description": "描写",
+    "Host": "本体",
+    "Port": "ポート",
+    "Token": "令牌"
+  }
+}

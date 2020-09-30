@@ -1,0 +1,12 @@
+{
+  "Scheduled Tasks": "計画任務。",
+  "cron" : {
+	"Minute": "分",
+	"Hour": "時間",
+	"Day": "日",
+	"Month": "月",
+	"Week": "曜日",
+	"Command": "命令",
+    "DelConfirm": "削除を確定します \"{cron}\" ？"
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "system/leds": {
+        "title": "LED Configuration",
+        "view": "oui-app-leds",
+        "files": [ "/etc/init.d/led" ],
+        "index": 70
+    }
+}

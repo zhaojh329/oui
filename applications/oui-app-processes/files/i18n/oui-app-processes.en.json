@@ -1,0 +1,14 @@
+{
+  "Processes": "Processes",
+  "processes" : {
+    "Hang Up": "Hang Up",
+    "Terminate": "Terminate",
+    "Kill immediately": "Kill immediately",
+    "Owner": "Owner",
+    "Command": "Command",
+    "CPU usage": "CPU usage",
+    "Memory usage": "Memory usage",
+    "Signal": "Send Signal",
+    "Send signal to": "Send signal {signum} to {pid} successfully."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "Administration": "管理權",
+  "admin" : {
+    "Password": "密碼",
+    "Confirmation": "確認",
+    "Please enter your password again": "請再次輸入密碼",
+    "Inconsistent input password twice!":  "兩次密碼輸入不壹致!"
+  }
+}

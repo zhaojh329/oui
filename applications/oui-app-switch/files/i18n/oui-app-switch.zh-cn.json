@@ -1,0 +1,14 @@
+{
+  "Switch": "交换机",
+  "dmesg" : {
+    "Enable VLAN functionality": "启用VLAN",
+    "Enable learning and aging": "启用智能交换学习",
+    "Port": "端口",
+    "Full-duplex": "全双工",
+    "Half-duplex": "半双工",
+    "No link": "未连接",
+    "Off": "关闭",
+    "Untagged": "未标记",
+    "Tagged": "已标记"
+  }
+}

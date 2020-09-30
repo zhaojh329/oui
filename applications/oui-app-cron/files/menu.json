@@ -1,0 +1,7 @@
+{
+    "system/cron": {
+        "title": "Scheduled Tasks",
+        "view": "oui-app-cron",
+        "index": 60
+    }
+}

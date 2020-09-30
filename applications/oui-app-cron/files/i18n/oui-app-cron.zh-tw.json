@@ -1,0 +1,12 @@
+{
+  "Scheduled Tasks": "計劃任務",
+  "cron" : {
+	"Minute": "分鐘",
+	"Hour": "小時",
+	"Day": "天",
+	"Month": "月",
+	"Week": "星期",
+	"Command": "命令",
+    "DelConfirm": "您確定要刪除 \"{cron}\" ？"
+  }
+}

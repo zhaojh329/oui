@@ -1,0 +1,33 @@
+{
+  "Wireless": "無線",
+  "wireless" : {
+    "Disabled": "已禁用",
+    "Mode": "模式",
+    "Band": "頻寬",
+    "Channel": "信道",
+    "Transmit Power": "無線電功率",
+    "Country Code": "國家代碼",
+    "Distance Optimization": "距離優化",
+    "Interface": "接口",
+    "Hide ESSID": "隱藏SSID",
+    "WMM Mode": "WMM模式",
+    "Wireless Security": "無線安全",
+    "Encryption": "加密",
+    "Cipher": "算法",
+    "Passphrase": "秘鑰",
+    "MAC-Filter": "MAC過濾",
+    "MAC-List": "MAC列表",
+    "Access Point": "接入點AP",
+    "Client": "客戶端",
+    "Ad-Hoc": "點對點Ad-Hoc",
+    "No encryption": "不加密",
+    "mixed": "混合",
+    "auto": "自動",
+    "Automatic": "自動",
+    "Force CCMP (AES)": "强制 CCMP（AES）",
+    "Force TKIP": "强制 TKIP",
+    "Force TKIP and CCMP (AES)": "强制 TKIP 和 CCMP（AES）",
+    "Allow listed only": "僅允許列表內",
+    "Allow all except listed": "僅允許列表外"
+  }
+}

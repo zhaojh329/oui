@@ -1,0 +1,8 @@
+{
+    "network/interfaces": {
+        "title": "Interfaces",
+        "view": "oui-app-interfaces",
+        "files": [ "/etc/config/network" ],
+        "index": 10
+    }
+}

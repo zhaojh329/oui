@@ -1,0 +1,19 @@
+{
+  "LED Configuration": "LED Configuration",
+  "leds" : {
+    "No LEDs available": "No LEDs available",
+    "Name": "Name",
+    "Led Name": "Led Name",
+    "Default state": "Default state",
+    "Trigger": "Trigger",
+    "On-State Delay": "On-State Delay",
+    "Time in milliseconds the LED stays on": "Time in milliseconds the LED stays on",
+    "Off-State Delay": "Off-State Delay",
+    "Time in milliseconds the LED stays off": "Time in milliseconds the LED stays off",
+    "Device": "Device",
+    "Trigger Mode": "Trigger Mode",
+    "Link On": "Link On",
+    "Transmit": "Transmit",
+    "Receive": "Receive"
+  }
+}

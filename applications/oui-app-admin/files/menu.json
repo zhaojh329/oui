@@ -1,0 +1,7 @@
+{
+    "system/admin": {
+        "title": "Administration",
+        "view": "oui-app-admin",
+        "index": 20
+    }
+}

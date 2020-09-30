@@ -1,0 +1,10 @@
+{
+  "System Log": "System Log",
+  "syslog" : {
+    "Message": "Message",
+    "Enter keywords to filter": "Enter keywords to filter",
+    "Datetime": "Datetime",
+    "Facility": "Facility",
+    "Level": "Level"
+  }
+}

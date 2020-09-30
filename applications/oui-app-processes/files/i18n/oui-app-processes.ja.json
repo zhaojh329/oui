@@ -1,0 +1,14 @@
+{
+  "Processes": "システム・プロセス",
+  "processes" : {
+    "Hang Up": "てから",
+    "Terminate": "中止",
+    "Kill immediately": "直ちに中止する",
+    "Owner": "ユーザー名",
+    "Command": "命令",
+    "CPU usage": "CPU使用率",
+    "Memory usage": "メモリ使用率",
+    "Signal": "信号を送る",
+    "Send signal to": "成功送信信号 {signum} プロセスへ {pid}。"
+  }
+}

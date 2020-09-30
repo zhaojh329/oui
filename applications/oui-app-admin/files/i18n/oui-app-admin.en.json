@@ -1,0 +1,9 @@
+{
+  "Administration": "Administration",
+  "admin" : {
+    "Password": "Password",
+    "Confirmation": "Confirmation",
+    "Please enter your password again": "Please enter your password again",
+    "Inconsistent input password twice!": "Inconsistent input password twice!"
+  }
+}

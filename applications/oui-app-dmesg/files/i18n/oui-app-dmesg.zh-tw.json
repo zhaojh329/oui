@@ -1,0 +1,8 @@
+{
+  "Kernel Log": "內核日誌",
+  "dmesg" : {
+    "Message": "消息",
+    "Enter keywords to filter": "輸入關鍵字進行篩選",
+    "Time": "時間"
+  }
+}

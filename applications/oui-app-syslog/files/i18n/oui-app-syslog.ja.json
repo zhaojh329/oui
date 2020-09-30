@@ -1,0 +1,10 @@
+{
+  "System Log": "システムログ",
+  "syslog" : {
+    "Message": "ニュース",
+    "Enter keywords to filter": "キーワードを入力してスクリーニングを行う",
+    "Datetime": "日時",
+    "Facility": "ログ型",
+    "Level": "レベル"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "Routes": "共有",
+  "routes" : {
+    "Static IPv4 Routes": "静的IPv4ルーティング",
+    "Static IPv6 Routes": "静的IPv6ルーティング",
+    "Interface": "インタフェース",
+    "Target": "目標",
+    "Metric": "躍点数"
+  }
+}

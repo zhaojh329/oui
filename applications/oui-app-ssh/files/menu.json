@@ -1,0 +1,7 @@
+{
+    "system/ssh": {
+        "title": "SSH",
+        "view": "oui-app-ssh",
+        "index": 30
+    }
+}

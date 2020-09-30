@@ -1,0 +1,8 @@
+{
+    "network/firewall": {
+        "title": "Firewall",
+        "view": "oui-app-firewall",
+        "files": [ "/etc/config/firewall" ],
+        "index": 60
+    }
+}

@@ -1,0 +1,17 @@
+{
+  "SSH": "SSH",
+  "ssh" : {
+    "SSH Server": "SSH 服务器",
+    "Interface": "接口",
+    "InterfaceHelp": "仅监听指定的接口，未指定则监听全部",
+    "Port": "端口",
+    "PortHelp": "指定此 Dropbear 实例的监听端口",
+    "Password authentication": "密码验证",
+    "Allow SSH password authentication": "允许SSH密码验证",
+    "Allow root logins with password": "root权限登录",
+    "Allow the root user to login with password": "允许root用户凭密码登录",
+    "Gateway ports": "网关端口",
+    "GatewayPortsHelp": "允许远程主机连接到本地SSH转发端口",
+    "unspecified": "未指定"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "Backup / Upgrade": "Backup / Upgrade",
+  "upgrade" : {
+    "BackupDesc": "Click \"Generate archive\" to download a tar archive of the current configuration files. To reset the firmware to its initial state, click \"Perform reset\" (only possible with squashfs images).",
+    "Generate archive": "Generate archive",
+    "Perform reset": "Perform reset",
+    "RestoreDesc": "To restore configuration files, you can upload a previously generated backup archive here.",
+    "Select File": "Select File",
+    "Flash new firmware image": "Flash new firmware image",
+    "UpgradeDesc": "Upload a sysupgrade-compatible image here to replace the running firmware. Check \"Keep settings\" to retain the current configuration (requires an OpenWrt compatible firmware image).</p>",
+    "Really reset all changes?": "Really reset all changes?",
+    "PerformResetContent": "This will reset the system to its initial configuration, all changes made since the initial flash will be lost!",
+    "Size": "Size",
+    "Keep configuration when reflashing": "Keep configuration when reflashing",
+    "Backup restore": "Backup restore",
+    "backup archive was uploaded completely": "The backup archive was uploaded completely. Please verify the checksum and file size below, then click \"{btn}\" to restore the archive.",
+    "OK": "OK",
+    "RestoreConfirm": "The backup was successfully restored, it is advised to reboot the system now in order to apply all configuration changes.",
+    "Reboot now": "Reboot now",
+    "RestoreFail": "Backup restoration failed, Make sure that you choose the file format for your platform.",
+    "Close": "Close",
+    "Verify firmware": "Verify firmware",
+    "The firmware image was uploaded completely": "The firmware image was uploaded completely. Please verify the checksum and file size below, then click \"{btn}\" to start the flash procedure.",
+    "Upgrading...": "Upgrading...",
+    "Invalid image": "Invalid image",
+    "InvalidImageContent": "The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "Processes": "系统进程",
+  "processes" : {
+    "Hang Up": "挂起",
+    "Terminate": "终止",
+    "Kill immediately": "立即终止",
+    "Owner": "用户名",
+    "Command": "用户名",
+    "CPU usage": "CPU使用率",
+    "Memory usage": "内存使用率",
+    "Signal": "发信号",
+    "Send signal to": "成功发送信号 {signum} 到进程 {pid}。"
+  }
+}
