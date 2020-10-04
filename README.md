@@ -28,6 +28,46 @@ OpenWrt web user interface implemented in [vue.js] and [Ant Design of Vue], insp
 
 oui uses [json-rpc] to communicate with OpenWrt subsystems.
 
+# How to build
+## Add feeds
+
+	echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
+	/scripts/feeds update oui
+	./scripts/feeds install -a -p oui
+
+## Configure
+
+	Oui  --->
+		Applications  --->
+			<*> oui-app-active-routes...................................... Active Routes
+			<*> oui-app-admin............................................. Administration
+			<*> oui-app-bwm............................................ Bandwidth Monitor
+			<*> oui-app-cron............................................. Scheduled Tasks
+			<*> oui-app-dhcp.................................................... DHCP/DNS
+			<*> oui-app-diagnostics.......................................... Diagnostics
+			<*> oui-app-dmesg................................................. Kernel Log
+			<*> oui-app-example..................................... Oui Support for rtty
+			<*> oui-app-firewall................................................ Firewall
+			<*> oui-app-hosts.................................................. Hostnames
+			<*> oui-app-interfaces.................................... Network Interfaces
+			<*> oui-app-leds........................................... LED Configuration
+			<*> oui-app-processes.............................................. Processes
+			<*> oui-app-routes.................................................... Routes
+			<*> oui-app-rtty........................................ Oui Support for rtty
+			<*> oui-app-ssh.......................................................... SSH
+			<*> oui-app-switch.................................................... Switch
+			<*> oui-app-syslog.................................................... Syslog
+			<*> oui-app-system............................................ System Setting
+			<*> oui-app-upgrade......................................... Backup / Upgrade
+			<*> oui-app-wireless................................................ Wireless
+		-*- oui-bwm........................................ Bandwidth Monitor for oui
+		-*- oui-httpd................................................ Oui rpc backend
+		-*- oui-ui-core.................................................. Oui ui core
+	
+## Compile
+
+	make V=s
+
 # In Production
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
