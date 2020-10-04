@@ -122,9 +122,10 @@ static void encode(lua_State *L, json_t *ret)
             break;
         default:
             luaL_error(L, "type not supported");
+			return;
         }
 
-        json_object_set(ret, key, append_data(L));
+        json_object_set_new(ret, key, append_data(L));
 
         lua_pop(L, 1);
     }

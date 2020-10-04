@@ -83,12 +83,12 @@ static void rpc_set_id(json_t *req, json_t *ret)
 
     id = json_object_get(req, "id");
     if (json_is_string(id) || json_is_integer(id)) {
-        json_object_set(ret, "id", id);
+        json_object_set_new(ret, "id", id);
         return;
     }
 
 null_id:
-    json_object_set(ret, "id", json_null());
+    json_object_set_new(ret, "id", json_null());
 }
 
 static void rpc_error(struct uh_connection *conn, int type, json_t *req)
@@ -98,13 +98,13 @@ static void rpc_error(struct uh_connection *conn, int type, json_t *req)
     char buf[512];
     size_t size;
 
-    json_object_set(ret, "jsonrpc", json_string("2.0"));
+    json_object_set_new(ret, "jsonrpc", json_string("2.0"));
 
     rpc_set_id(req, ret);
 
-    json_object_set(err, "code", json_integer(rpc_errors[type].code));
-    json_object_set(err, "message", json_string(rpc_errors[type].msg));
-    json_object_set(ret, "error", err);
+    json_object_set_new(err, "code", json_integer(rpc_errors[type].code));
+    json_object_set_new(err, "message", json_string(rpc_errors[type].msg));
+    json_object_set_new(ret, "error", err);
 
     size = json_dumpb(ret, buf, sizeof(buf), 0);
 
@@ -112,9 +112,7 @@ static void rpc_error(struct uh_connection *conn, int type, json_t *req)
     conn->send(conn, buf, size);
 
     json_decref(ret);
-
-    if (ret)
-        json_decref(req);
+    json_decref(req);
 
     conn->done(conn);
 }
@@ -151,11 +149,11 @@ static void rpc_resp(struct uh_connection *conn, json_t *req, json_t *result)
     size_t size;
     char *s;
 
-    json_object_set(root, "jsonrpc", json_string("2.0"));
+    json_object_set_new(root, "jsonrpc", json_string("2.0"));
 
     rpc_set_id(req, root);
 
-    json_object_set(root, "result", result);
+    json_object_set_new(root, "result", result);
 
     s = json_dumps(root, 0);
     size = strlen(s);
@@ -165,6 +163,7 @@ static void rpc_resp(struct uh_connection *conn, json_t *req, json_t *result)
 
     free(s);
 
+    json_decref(req);
     json_decref(root);
 
     conn->done(conn);
@@ -256,7 +255,7 @@ static void rpc_exec_read(int fd, json_t *res, const char *name)
         buffer_put_data(&b, buf, nr);
     }
 
-    json_object_set(res, name, json_stringn(buffer_data(&b), buffer_length(&b)));
+    json_object_set_new(res, name, json_stringn(buffer_data(&b), buffer_length(&b)));
 
     buffer_free(&b);
 
@@ -270,7 +269,7 @@ static void rpc_exec_child_exit(struct ev_loop *loop, struct ev_child *w, int re
 
     ev_timer_stop(loop, &ctx->tmr);
 
-    json_object_set(res, "code", json_integer(WEXITSTATUS(w->rstatus)));
+    json_object_set_new(res, "code", json_integer(WEXITSTATUS(w->rstatus)));
 
     rpc_exec_read(ctx->stdout_fd, res, "stdout");
     rpc_exec_read(ctx->stderr_fd, res, "stderr");
@@ -387,7 +386,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
         }
 
         result = json_object();
-        json_object_set(result, "sid", json_string(sid));
+        json_object_set_new(result, "sid", json_string(sid));
         rpc_resp(conn, req, result);
     } else if (!strcmp(method, "logout")) {
         const char *sid;
@@ -422,38 +421,38 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
         size_t size;
 
         if (!params || json_typeof(params) != JSON_ARRAY) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
         size = json_array_size(params);
         if (size != 3 && size != 4) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
         sid = json_array_get_string(params, 0);
         if (!sid) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
         object = json_array_get_string(params, 1);
         if (!object) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
         method = json_array_get_string(params, 2);
         if (!method) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
         if (size == 4) {
             json = json_array_get(params, 3);
             if (!json_is_object(json)) {
-                rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+                rpc_error(conn, RPC_ERROR_PARAMS, req);
                 return;
             }
             args = json;
@@ -471,13 +470,13 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
 
         size = json_array_size(params);
         if (size < 2) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
         sid = json_array_get_string(params, 0);
         if (!sid) {
-            rpc_error(conn, RPC_ERROR_PARAMS, NULL);
+            rpc_error(conn, RPC_ERROR_PARAMS, req);
             return;
         }
 
@@ -524,7 +523,7 @@ void serve_rpc(struct uh_connection *conn)
         handle_rpc(conn, method, params, root);
         break;
     default:
-        rpc_error(conn, RPC_ERROR_PARSE, NULL);
+        rpc_error(conn, RPC_ERROR_PARSE, root);
         return;
     }
 }
