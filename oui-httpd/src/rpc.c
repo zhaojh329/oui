@@ -83,7 +83,7 @@ static void rpc_set_id(json_t *req, json_t *ret)
 
     id = json_object_get(req, "id");
     if (json_is_string(id) || json_is_integer(id)) {
-        json_object_set_new(ret, "id", id);
+        json_object_set(ret, "id", id);
         return;
     }
 
