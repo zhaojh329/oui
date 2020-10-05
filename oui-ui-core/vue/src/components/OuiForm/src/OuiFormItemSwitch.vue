@@ -36,9 +36,9 @@ export default {
         if (this.save) { return this.save(this) }
 
         if (this.model) {
-          this.$uci.set(this.uciConfig, this.sid, this.name, this.trueValue)
+          this.$uci.set(this.config, this.sid, this.name, this.trueValue)
         } else {
-          this.$uci.set(this.uciConfig, this.sid, this.name, this.falseValue)
+          this.$uci.set(this.config, this.sid, this.name, this.falseValue)
         }
       }
     }

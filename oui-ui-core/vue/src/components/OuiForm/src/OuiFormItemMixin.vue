@@ -67,8 +67,8 @@ export default {
         rules: this.convertedRules
       }
     },
-    uciConfig () {
-      return this.ouiForm.uciConfig
+    config () {
+      return this.ouiSection.config
     },
     form () {
       return this.ouiForm.form
@@ -290,7 +290,7 @@ export default {
 
       if (this.changed()) {
         if (this.save) { return this.save(this) }
-        this.$uci.set(this.uciConfig, this.sid, this.name, this.model)
+        this.$uci.set(this.config, this.sid, this.name, this.model)
       }
     },
     __apply () {

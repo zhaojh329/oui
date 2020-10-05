@@ -16,10 +16,24 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      sections: []
+    }
+  },
   computed: {
     section () {
-      const sections = this.$uci.sections(this.uciConfig).filter(s => s['.name'] === this.name)
-      return sections.length > 0 ? sections[0] : null
+      return this.sections.length > 0 ? this.sections[0] : null
+    }
+  },
+  methods: {
+    load () {
+      this.sections = this.$uci.sections(this.config).filter(s => s['.name'] === this.name)
+    }
+  },
+  watch: {
+    loaded () {
+      this.load()
     }
   }
 }

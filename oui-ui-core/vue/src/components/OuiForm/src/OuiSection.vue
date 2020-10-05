@@ -8,9 +8,15 @@ export default {
   },
   props: {
     title: String,
+    uciConfig: String,
     card: {
       type: Boolean,
       default: true
+    }
+  },
+  data () {
+    return {
+      loaded: false
     }
   },
   components: {
@@ -25,8 +31,8 @@ export default {
       if (this.card && !this.columns) return 'a-card'
       return 'oui-section-container-div'
     },
-    uciConfig () {
-      return this.ouiForm.uciConfig
+    config () {
+      return this.uciConfig || this.ouiForm.uciConfig
     },
     form () {
       return this.ouiForm.form
@@ -38,6 +44,15 @@ export default {
     },
     set (sid, name, value) {
       this.form[`${sid}_${name}`] = value
+    }
+  },
+  created () {
+    if (this.uciConfig) {
+      this.$uci.load(this.uciConfig).then(() => {
+        this.loaded = true
+      })
+    } else {
+      this.loaded = true
     }
   }
 }

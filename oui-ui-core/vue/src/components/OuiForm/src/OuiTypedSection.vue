@@ -144,11 +144,11 @@ export default {
 
       const nsid = sids[index]
 
-      this.$uci.swap(this.uciConfig, sid, nsid)
+      this.$uci.swap(this.config, sid, nsid)
       this.load()
     },
     delSection (sid) {
-      this.$uci.del(this.uciConfig, sid)
+      this.$uci.del(this.config, sid)
       this.load()
       if (this.collapsible && this.sections.length > 0) {
         this.collapse = this.sections[0]['.name']
@@ -161,7 +161,7 @@ export default {
       this.updateCollapse(sid)
     },
     addSection (name) {
-      const sid = this.$uci.add(this.uciConfig, this.type, name)
+      const sid = this.$uci.add(this.config, this.type, name)
       return sid
     },
     handleAdd () {
@@ -192,11 +192,13 @@ export default {
       }).catch(() => {})
     },
     load () {
-      this.sections = this.$uci.sections(this.uciConfig, this.type).filter(s => this.filter ? this.filter(s) : true)
+      this.sections = this.$uci.sections(this.config, this.type).filter(s => this.filter ? this.filter(s) : true)
     }
   },
-  created () {
-    this.load()
+  watch: {
+    loaded () {
+      this.load()
+    }
   },
   mounted () {
     if (this.collapsible && this.sections.length > 0) {
