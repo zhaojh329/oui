@@ -8,6 +8,6 @@ include $(TOPDIR)/rules.mk
 
 APP_TITLE:=Network Interfaces
 
-include ../../oui.mk
+include ../../oui-app.mk
 
 # call BuildPackage - OpenWrt buildroot signature

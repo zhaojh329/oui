@@ -8,6 +8,6 @@ include $(TOPDIR)/rules.mk
 
 APP_TITLE:=Oui Support for rtty
 
-include ../../oui.mk
+include ../../oui-app.mk
 
 # call BuildPackage - OpenWrt buildroot signature

@@ -5,9 +5,10 @@
 #
 
 include $(TOPDIR)/rules.mk
+include ../oui.mk
 
 PKG_NAME:=oui-ui-core
-PKG_VERSION:=$(shell git --git-dir=$(CURDIR)/../.git log -1 --pretty="%ci %h" | awk '{ print $$1 "-" $$4 }')
+PKG_VERSION:=$(strip $(call findrev))
 PKG_RELEASE:=1
 PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 

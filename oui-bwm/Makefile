@@ -6,8 +6,10 @@
 
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
+include ../oui.mk
 
 PKG_NAME:=oui-bwm
+PKG_VERSION:=$(strip $(call findrev))
 PKG_RELEASE:=1
 PKG_LICENSE:=MIT
 
