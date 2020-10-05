@@ -1,9 +1,3 @@
-<template>
-  <component :is="container" :title="title">
-    <slot v-if="section"  :s="section"/>
-  </component>
-</template>
-
 <script>
 export default {
   inject: ['ouiForm'],
