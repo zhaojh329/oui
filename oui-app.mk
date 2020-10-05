@@ -11,6 +11,7 @@ include $(TOPDIR)/oui.mk
 APP_NAME?=$(notdir ${CURDIR})
 APP_SECTION?=oui
 APP_CATEGORY?=Oui
+APP_VIEW?=$(APP_NAME)
 
 PKG_NAME?=$(APP_NAME)
 PKG_RELEASE?=1
@@ -55,9 +56,12 @@ endef
 Build/Compile=
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/www/views $(1)/usr/share/oui/menu.d
-	$(INSTALL_DATA) ./files/menu.json $(1)/usr/share/oui/menu.d/$(APP_NAME).json
-	$(INSTALL_DATA) ./vue/dist/app.js $(1)/www/views/$(APP_NAME).js
+	$(INSTALL_DIR) $(1)/www/views
+	$(INSTALL_DATA) ./vue/dist/app.js $(1)/www/views/$(APP_VIEW).js
+	if [ -f ./files/menu.json ];then \
+	  $(INSTALL_DIR) $(1)/usr/share/oui/menu.d; \
+	  $(INSTALL_DATA) ./files/menu.json $(1)/usr/share/oui/menu.d/$(APP_NAME).json; \
+	fi
 	if [ -d ./files/i18n ];then \
 	  $(CP) ./files/i18n $(1)/www/i18n; \
 	fi

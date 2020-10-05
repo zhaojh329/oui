@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { session } from '@/plugins/session'
+import axios from 'axios'
 
 Vue.use(Router)
 
@@ -17,7 +18,14 @@ const router = new Router({
       children: [
         {
           path: 'home',
-          component: () => import('@/views/Home.vue'),
+          component: resolve => {
+            axios.get(`/views/oui-app-home.js?_t=${new Date().getTime()}`).then(r => {
+              // eslint-disable-next-line no-eval
+              return resolve(eval(r.data))
+            }).catch(() => {
+              return resolve(require('@/views/Home.vue'))
+            })
+          },
           meta: {
             title: 'Home'
           }
