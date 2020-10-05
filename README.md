@@ -24,9 +24,13 @@
 
 ![](/demo.gif)
 
+![](/diagram.png)
+
 OpenWrt web user interface implemented in [vue.js] and [Ant Design of Vue], inspired by [LuCI2].
 
-oui uses [json-rpc] to communicate with OpenWrt subsystems.
+Oui uses [json-rpc] to communicate with OpenWrt subsystems.
+
+Oui is especially suitable for enterprise custom development.
 
 # How to build
 ## Add feeds
@@ -39,24 +43,11 @@ oui uses [json-rpc] to communicate with OpenWrt subsystems.
 
 	Oui  --->
 		Applications  --->
-			<*> oui-app-active-routes...................................... Active Routes
 			<*> oui-app-admin............................................. Administration
-			<*> oui-app-bwm............................................ Bandwidth Monitor
-			<*> oui-app-cron............................................. Scheduled Tasks
-			<*> oui-app-dhcp.................................................... DHCP/DNS
 			<*> oui-app-diagnostics.......................................... Diagnostics
-			<*> oui-app-dmesg................................................. Kernel Log
-			<*> oui-app-example..................................... Oui Support for rtty
 			<*> oui-app-firewall................................................ Firewall
-			<*> oui-app-hosts.................................................. Hostnames
+			<*> oui-app-home.......................................... Built-in home page
 			<*> oui-app-interfaces.................................... Network Interfaces
-			<*> oui-app-leds........................................... LED Configuration
-			<*> oui-app-processes.............................................. Processes
-			<*> oui-app-routes.................................................... Routes
-			<*> oui-app-rtty........................................ Oui Support for rtty
-			<*> oui-app-ssh.......................................................... SSH
-			<*> oui-app-switch.................................................... Switch
-			<*> oui-app-syslog.................................................... Syslog
 			<*> oui-app-system............................................ System Setting
 			<*> oui-app-upgrade......................................... Backup / Upgrade
 			<*> oui-app-wireless................................................ Wireless
@@ -67,6 +58,25 @@ oui uses [json-rpc] to communicate with OpenWrt subsystems.
 ## Compile
 
 	make V=s
+
+# Jsonrpc example
+## General
+
+	{
+		"jsonrpc": "2.0",
+		"id": 27,
+		"method": "call",
+		"params": ["sid", "network", "dhcp_leases", {}]
+	}
+
+## Ubus
+
+	{
+		"jsonrpc": "2.0",
+		"id": 7,
+		"method": "call",
+		"params": ["sid", "ubus", "call", { "object": "system", "method": "board" }]
+	}
 
 # In Production
 

@@ -27,9 +27,13 @@
 
 ![](/demo-zh.gif)
 
+![](/diagram.png)
+
 OpenWrt后台管理界面，使用[vue.js]和[Ant Design of Vue]实现，灵感来自于[LuCI2]。
 
-oui使用[json-rpc]和OpenWrt子系统通信。
+Oui使用[json-rpc]和OpenWrt子系统通信。
+
+Oui特别适合用于企业定制开发。
 
 # 如何编译
 ## 添加 feeds
@@ -42,24 +46,11 @@ oui使用[json-rpc]和OpenWrt子系统通信。
 
 	Oui  --->
 		Applications  --->
-			<*> oui-app-active-routes...................................... Active Routes
 			<*> oui-app-admin............................................. Administration
-			<*> oui-app-bwm............................................ Bandwidth Monitor
-			<*> oui-app-cron............................................. Scheduled Tasks
-			<*> oui-app-dhcp.................................................... DHCP/DNS
 			<*> oui-app-diagnostics.......................................... Diagnostics
-			<*> oui-app-dmesg................................................. Kernel Log
-			<*> oui-app-example..................................... Oui Support for rtty
 			<*> oui-app-firewall................................................ Firewall
-			<*> oui-app-hosts.................................................. Hostnames
+			<*> oui-app-home.......................................... Built-in home page
 			<*> oui-app-interfaces.................................... Network Interfaces
-			<*> oui-app-leds........................................... LED Configuration
-			<*> oui-app-processes.............................................. Processes
-			<*> oui-app-routes.................................................... Routes
-			<*> oui-app-rtty........................................ Oui Support for rtty
-			<*> oui-app-ssh.......................................................... SSH
-			<*> oui-app-switch.................................................... Switch
-			<*> oui-app-syslog.................................................... Syslog
 			<*> oui-app-system............................................ System Setting
 			<*> oui-app-upgrade......................................... Backup / Upgrade
 			<*> oui-app-wireless................................................ Wireless
@@ -70,6 +61,26 @@ oui使用[json-rpc]和OpenWrt子系统通信。
 ## 编译
 
 	make V=s
+
+
+# Jsonrpc 示例
+## 通用
+
+	{
+		"jsonrpc": "2.0",
+		"id": 27,
+		"method": "call",
+		"params": ["sid", "network", "dhcp_leases", {}]
+	}
+
+## Ubus
+
+	{
+		"jsonrpc": "2.0",
+		"id": 7,
+		"method": "call",
+		"params": ["sid", "ubus", "call", { "object": "system", "method": "board" }]
+	}
 
 # 用户
 
