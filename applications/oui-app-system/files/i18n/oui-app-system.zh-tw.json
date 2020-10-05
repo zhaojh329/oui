@@ -24,6 +24,9 @@
     "Critical": "致命錯誤",
     "Alert": "警戒",
     "Emergency": "緊急",
-    "Normal": "正常"
+    "Normal": "正常",
+    "Bandwidth Monitor": "帶寬監控",
+    "Local network": "本地網絡",
+    "local_network_help": "192.168.1.1/24 或者是壹個邏輯接口名稱"
   }
 }

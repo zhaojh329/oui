@@ -30,6 +30,12 @@
           <oui-form-item-list :uci-section="s" :label="$t('system.NTP server candidates')" name="server" rules="host" depend="enable"/>
         </oui-named-section>
       </a-tab-pane>
+      <a-tab-pane key="bwm" :tab="$t('system.Bandwidth Monitor')">
+        <oui-typed-section uci-config="oui-bwm" type="bwm" :collapsible="false" v-slot="{ s }">
+          <oui-form-item-input :uci-section="s" label="TTL" name="ttl" placeholder="30" rules="uinteger" append="s"/>
+          <oui-form-item-list :uci-section="s" :label="$t('system.Local network')" name="local_network" :help="$t('system.local_network_help')"/>
+        </oui-typed-section>
+      </a-tab-pane>
     </a-tabs>
   </oui-form>
 </template>

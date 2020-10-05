@@ -1,8 +1,0 @@
-{
-    "system/oui-bwm": {
-        "title": "Bandwidth Monitor",
-        "view": "oui-app-bwm",
-        "files": [ "/etc/config/oui-bwm" ],
-        "index": 80
-    }
-}

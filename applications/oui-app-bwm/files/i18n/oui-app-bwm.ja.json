@@ -1,7 +1,0 @@
-{
-  "Bandwidth Monitor": "帯域監視",
-  "oui-bwm" : {
-    "Local network": "ローカルネットワーク",
-    "local_network_help": "192.168.1.1/24 または論理インタフェースの名前です"
-  }
-}
