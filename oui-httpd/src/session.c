@@ -34,10 +34,15 @@
 
 #include "session.h"
 
-struct rpc_object {
+struct rpc_trusted_object {
     struct avl_node avl;
-    char object[128];
-    char method[128];
+    struct avl_tree methods;
+    char value[0];
+};
+
+struct rpc_trusted_method {
+    struct avl_node avl;
+    char value[0];
 };
 
 static struct avl_tree sessions;
@@ -177,19 +182,48 @@ void rpc_logout(const char *sid)
         rpc_session_destroy(s);
 }
 
-static void  add_trusted(const char *object, const char *method)
+static struct rpc_trusted_object *add_trusted_object(const char *value)
 {
-    struct rpc_object *rpc = calloc(1, sizeof(struct rpc_object));
+    struct rpc_trusted_object *obj;
 
-    strncpy(rpc->object, object, sizeof(rpc->object) - 1);
-    strncpy(rpc->method, method, sizeof(rpc->method) - 1);
+    obj = avl_find_element(&trusted, value, obj, avl);
+    if (obj)
+        return obj;
 
-    rpc->avl.key = rpc->object;
+    obj = calloc(1, sizeof(struct rpc_trusted_object) + strlen(value) + 1);
+    if (!obj) {
+        uh_log_err("calloc: %s\n", strerror(errno));
+        return NULL;
+    }
 
-    avl_insert(&trusted, &rpc->avl);
+    strcpy(obj->value, value);
+    obj->avl.key = obj->value;
+
+    avl_init(&obj->methods, avl_strcmp, false, NULL);
+
+    avl_insert(&trusted, &obj->avl);
+
+    return obj;
 }
 
-static void load_trusted(struct uci_context *uci)
+static int add_trusted_method(struct rpc_trusted_object *obj, const char *value)
+{
+    struct rpc_trusted_method *m = calloc(1, sizeof(struct rpc_trusted_method) + strlen(value) + 1);
+
+    if (!m) {
+        uh_log_err("calloc: %s\n", strerror(errno));
+        return -1;
+    }
+
+    strcpy(m->value, value);
+    m->avl.key = m->value;
+
+    avl_insert(&obj->methods, &m->avl);
+
+    return 0;
+}
+
+static int load_trusted(struct uci_context *uci)
 {
     struct uci_package *p = NULL;
     struct uci_section *s;
@@ -198,11 +232,13 @@ static void load_trusted(struct uci_context *uci)
 
     uci_load(uci, ptr.package, &p);
 
-    if (!p)
-        return;
+    if (!p) {
+        uh_log_err("Load config 'oui-httpd' fail\n");
+        return -1;
+    }
 
     uci_foreach_element(&p->sections, e) {
-        const char *object;
+        struct rpc_trusted_object *obj;
 
         s = uci_to_section(e);
 
@@ -218,7 +254,9 @@ static void load_trusted(struct uci_context *uci)
         if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
             continue;
 
-        object = ptr.o->v.string;
+        obj = add_trusted_object(ptr.o->v.string);
+        if (!obj)
+            return -1;
 
         ptr.option = "method";
         ptr.o = NULL;
@@ -227,39 +265,88 @@ static void load_trusted(struct uci_context *uci)
             continue;
 
         if (ptr.o->type == UCI_TYPE_STRING) {
-            add_trusted(object, ptr.o->v.string);
+            if (add_trusted_method(obj, ptr.o->v.string))
+                return -1;
         } else {
             struct uci_element *oe;
             uci_foreach_element(&ptr.o->v.list, oe) {
-                add_trusted(object, oe->name);
+                if (add_trusted_method(obj, oe->name))
+                    return -1;
             }
         }
     }
+
+    return 0;
 }
 
-void rpc_session_init()
+int rpc_session_init()
 {
     struct uci_context *uci = uci_alloc_context();
+    int ret = 0;
+
+    if (!uci) {
+        uh_log_err("uci_alloc_context fail\n");
+        return -1;
+    }
 
     avl_init(&sessions, avl_strcmp, false, NULL);
 
-    avl_init(&trusted, avl_strcmp, true, NULL);
+    avl_init(&trusted, avl_strcmp, false, NULL);
 
-    load_trusted(uci);
+    ret = load_trusted(uci);
 
     uci_free_context(uci);
+
+    return ret;
+}
+
+static void free_all_session()
+{
+    struct rpc_session *s, *temp;
+
+    avl_for_each_element_safe(&sessions, s, avl, temp) {
+        rpc_session_destroy(s);
+    }
+}
+
+static void free_all_trusted_methods(struct rpc_trusted_object *obj)
+{
+    struct rpc_trusted_method *m, *temp;
+
+    avl_for_each_element_safe(&obj->methods, m, avl, temp) {
+        avl_delete(&obj->methods, &m->avl);
+        free(m);
+    }
+}
+
+static void free_all_trusted()
+{
+    struct rpc_trusted_object *obj, *temp;
+
+    avl_for_each_element_safe(&trusted, obj, avl, temp) {
+        free_all_trusted_methods(obj);
+        avl_delete(&trusted, &obj->avl);
+        free(obj);
+    }
+}
+
+void rpc_session_deinit()
+{
+    free_all_session();
+    free_all_trusted();
 }
 
 bool rpc_session_allowed(const char *sid, const char *object, const char *method)
 {
-    struct rpc_object *rpc;
+    struct rpc_trusted_object *obj;
+    struct rpc_trusted_method *m;
 
-    avl_for_each_element(&trusted, rpc, avl) {
-        if (!strcmp(rpc->object, object)) {
-            if (rpc->method[0] == '\0' || !strcmp(rpc->method, method))
-                return true;
-        }
+    obj = avl_find_element(&trusted, object, obj, avl);
+    if (obj) {
+        if (avl_find_element(&obj->methods, method, m, avl))
+            return true;
     }
 
     return rpc_session_get(sid) != NULL;
 }
+

@@ -43,7 +43,8 @@ struct rpc_session {
     int timeout;
 };
 
-void rpc_session_init();
+int rpc_session_init();
+void rpc_session_deinit();
 
 const char *rpc_login(const char *password);
 

@@ -111,12 +111,12 @@ int main(int argc, char **argv)
         case LONG_OPT_RPC:
             rpc_dir = optarg;
             break;
-		case LONG_OPT_HOME:
-			home_dir = optarg;
-			break;
-		case LONG_OPT_INDEX:
-			index_page = optarg;
-			break;
+        case LONG_OPT_HOME:
+            home_dir = optarg;
+            break;
+        case LONG_OPT_INDEX:
+            index_page = optarg;
+            break;
         default: /* '?' */
             usage(argv[0]);
         }
@@ -129,6 +129,9 @@ int main(int argc, char **argv)
 
     signal(SIGPIPE, SIG_IGN);
 
+    if (rpc_session_init())
+        return 1;
+
     srv = uh_server_new(loop, "0.0.0.0", port);
     if (!srv)
         return -1;
@@ -140,12 +143,14 @@ int main(int argc, char **argv)
     ev_signal_init(&signal_watcher, signal_cb, SIGINT);
     ev_signal_start(loop, &signal_watcher);
 
-    rpc_session_init();
-
     ev_run(loop, 0);
 
     srv->free(srv);
     free(srv);
+
+    rpc_session_deinit();
+
+    ev_loop_destroy(loop);
 
     return 0;
 }
