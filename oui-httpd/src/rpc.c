@@ -22,8 +22,10 @@
  * SOFTWARE.
  */
 
-#include <uhttpd/uhttpd.h>
+#include <libubox/avl.h>
+#include <libubox/avl-cmp.h>
 #include <lauxlib.h>
+#include <dirent.h>
 #include <lualib.h>
 #include <errno.h>
 #include <time.h>
@@ -32,6 +34,7 @@
 #include "lua_utils.h"
 #include "session.h"
 #include "utils.h"
+#include "rpc.h"
 
 enum {
     RPC_ERROR_PARSE,
@@ -72,7 +75,13 @@ struct rpc_exec_context {
     pid_t pid;
 };
 
-const char *rpc_dir = ".";
+struct rpc_object {
+    struct avl_node avl;
+    lua_State *L;
+    char value[0];
+};
+
+static struct avl_tree rpc_objects;
 
 static void rpc_set_id(json_t *req, json_t *ret)
 {
@@ -172,42 +181,32 @@ static void rpc_resp(struct uh_connection *conn, json_t *req, json_t *result)
 static void handle_rpc_call(struct uh_connection *conn, const char *sid, const char *object, const char *method,
                             json_t *args, json_t *req)
 {
-    char rpc_path[128];
+    struct rpc_object *obj;
     lua_State *L;
 
-    snprintf(rpc_path, sizeof(rpc_path), "%s/%s", rpc_dir, object);
-
-    if (access(rpc_path, R_OK)) {
+    obj = avl_find_element(&rpc_objects, object, obj, avl);
+    if (!obj) {
         rpc_error(conn, RPC_ERROR_CALL_OBJECT, req);
         return;
     }
 
-    L = luaL_newstate();
-
-    luaL_openlibs(L);
-    luaopen_json(L);
-    luaopen_utils(L);
-
-    if (luaL_dofile(L, rpc_path)) {
-        uh_log_err("%s\n", lua_tostring(L, -1));
-        rpc_error(conn, RPC_ERROR_INTERNAL, req);
-        goto err;
-    }
+    L = obj->L;
 
     if (!lua_istable(L, -1)) {
+        uh_log_err("lua state is broken. No table on stack!\n");
         rpc_error(conn, RPC_ERROR_INTERNAL, req);
-        goto err;
+        return;
     }
 
     lua_getfield(L, -1, method);
     if (!lua_isfunction(L, -1)) {
         rpc_error(conn, RPC_ERROR_CALL_METHOD, req);
-        goto err;
+        return;
     }
 
     if (!rpc_session_allowed(sid, object, method)) {
         rpc_error(conn, RPC_ERROR_ACCESS, req);
-        goto err;
+        return;
     }
 
     if (args)
@@ -218,13 +217,12 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     if (lua_pcall(L, 1, 1, 0)) {
         uh_log_err("%s\n", lua_tostring(L, -1));
         rpc_error(conn, RPC_ERROR_INTERNAL, req);
-        goto err;
+        return;
     }
 
     rpc_resp(conn, req, lua_to_json(L));
 
-err:
-    lua_close(L);
+    lua_pop(L, 1);
 }
 
 static void rpc_exec_timeout_cb(struct ev_loop *loop, struct ev_timer *w, int revents)
@@ -527,3 +525,66 @@ void serve_rpc(struct uh_connection *conn)
         return;
     }
 }
+
+void load_rpc(const char *path)
+{
+    DIR *dir;
+    struct dirent *e;
+
+    avl_init(&rpc_objects, avl_strcmp, false, NULL);
+
+    dir = opendir(path);
+    if (!dir) {
+        uh_log_err("opendir fail: %s\n", strerror(errno));
+        return;
+    }
+
+    while ((e = readdir(dir))) {
+        char object_path[512] = "";
+        struct rpc_object *obj;
+        lua_State *L;
+
+        if (e->d_type != DT_REG || e->d_name[0] == '.')
+            continue;
+
+        L = luaL_newstate();
+
+        luaL_openlibs(L);
+        luaopen_json(L);
+        luaopen_utils(L);
+
+        snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
+
+        if (luaL_dofile(L, object_path)) {
+            uh_log_err("load rpc: %s\n", lua_tostring(L, -1));
+            lua_close(L);
+            continue;
+        }
+
+        if (!lua_istable(L, -1)) {
+            uh_log_err("invalid rpc script, need return a table: %s\n", object_path);
+            lua_close(L);
+            continue;
+        }
+
+        obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
+        obj->L = L;
+        strcpy(obj->value, e->d_name);
+        obj->avl.key = obj->value;
+        avl_insert(&rpc_objects, &obj->avl);
+    }
+
+    closedir(dir);
+}
+
+void unload_rpc()
+{
+    struct rpc_object *obj, *temp;
+
+    avl_for_each_element_safe(&rpc_objects, obj, avl, temp) {
+        avl_delete(&rpc_objects, &obj->avl);
+        lua_close(obj->L);
+        free(obj);
+    }
+}
+
