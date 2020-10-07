@@ -39,7 +39,7 @@ Oui特别适合用于企业定制开发。
 ## 添加 feeds
 
 	echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
-	/scripts/feeds update oui
+	./scripts/feeds update oui
 	./scripts/feeds install -a -p oui
 
 ## 配置
