@@ -36,7 +36,7 @@ Oui is especially suitable for enterprise custom development.
 ## Add feeds
 
 	echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
-	/scripts/feeds update oui
+	./scripts/feeds update oui
 	./scripts/feeds install -a -p oui
 
 ## Configure
