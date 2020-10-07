@@ -2,6 +2,6 @@ language: node_js
 node_js: stable
 
 script:
-  - cd oui-ui-core/src
+  - cd oui-ui-core/vue
   - npm install
   - npm run build
