@@ -78,6 +78,34 @@ Oui is especially suitable for enterprise custom development.
 		"params": ["sid", "ubus", "call", { "object": "system", "method": "board" }]
 	}
 
+#  How to modify vue
+## oui-ui-core
+1. Modify
+2. Enter directory 'oui/oui-ui-core/vue' and run the follow commands
+```
+	npm install
+	npm run build
+	../../scripts/clean-dist.sh dist
+```
+## application
+1. Modify
+2. Enter your application directory(e.g. 'oui-app-example') and run the follow commands
+```
+	cp vue/app.vue ../../build-app/src/
+```
+3. Enter directory oui/build-app and run the follow commands
+```
+	npm install
+	npm run build
+	cp dist/app.common.js.gz ../applications/oui-app-example/vue/dist/app.js
+```
+# How to debug vue for application(e.g. oui-app-example)
+1. Copy oui-app-example/vue/app.vue to oui-ui-core/vue/src/views/oui-app-example.vue
+2. Enter directory 'oui/oui-ui-core/vue' and run the follow commands
+```
+	npm install
+	npm run serve
+```
 # In Production
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;

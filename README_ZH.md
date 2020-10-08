@@ -82,6 +82,34 @@ Oui特别适合用于企业定制开发。
 		"params": ["sid", "ubus", "call", { "object": "system", "method": "board" }]
 	}
 
+# 如何修改 Vue
+## oui-ui-core
+1. 修改
+2. 进入目录 'oui/oui-ui-core/vue' 然后执行如下命令
+```
+	npm install
+	npm run build
+	../../scripts/clean-dist.sh dist
+```
+## Application
+1. 修改
+2. 进入你的Application目录（例如 oui-app-example）然后执行如下命令
+```
+	cp vue/app.vue ../../build-app/src/
+```
+3. 进入目录 oui/build-app 然后执行如下命令
+```
+	npm install
+	npm run build
+	cp dist/app.common.js.gz ../applications/oui-app-example/vue/dist/app.js
+```
+# 如何调试 Application(例如 oui-app-example)
+1. 拷贝 oui-app-example/vue/app.vue 到 oui-ui-core/vue/src/views/oui-app-example.vue
+2. 进入目录 'oui/oui-ui-core/vue' 然后执行如下命令
+```
+	npm install
+	npm run serve
+```
 # 用户
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
