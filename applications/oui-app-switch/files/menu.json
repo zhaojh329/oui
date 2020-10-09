@@ -1,8 +1,0 @@
-{
-    "network/switch": {
-        "title": "Switch",
-        "view": "oui-app-switch",
-        "files": [ "/sbin/swconfig" ],
-        "index": 30
-    }
-}
