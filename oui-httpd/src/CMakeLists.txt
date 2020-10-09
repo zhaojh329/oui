@@ -8,7 +8,7 @@ include(FindPkgConfig)
 
 find_package(Libev REQUIRED)
 find_package(Libuhttpd REQUIRED)
-find_package(Lua REQUIRED)
+find_package(Lua51 REQUIRED)
 
 pkg_search_module(JANSSON REQUIRED jansson)
 
