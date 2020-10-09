@@ -28,6 +28,10 @@ endef
 define Package/oui-httpd/description
 endef
 
+define Package/oui-httpd/conffiles
+/etc/oui/shadow
+endef
+
 define Build/Prepare
 	$(INSTALL_DIR) $(PKG_BUILD_DIR)
 	$(CP) ./src/. $(PKG_BUILD_DIR)
