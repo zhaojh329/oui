@@ -9,7 +9,14 @@ const router = new Router({
   routes: [
     {
       path: '/login',
-      component: () => import('@/views/Login.vue')
+      component: resolve => {
+        axios.get(`/views/oui-app-login.js?_t=${new Date().getTime()}`).then(r => {
+          // eslint-disable-next-line no-eval
+          return resolve(eval(r.data))
+        }).catch(() => {
+          return resolve(require('@/views/Login.vue'))
+        })
+      }
     },
     {
       path: '/',

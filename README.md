@@ -48,6 +48,7 @@ Oui is especially suitable for enterprise custom development.
 			<*> oui-app-firewall................................................ Firewall
 			<*> oui-app-home.......................................... Built-in home page
 			<*> oui-app-interfaces.................................... Network Interfaces
+			<*> oui-app-login........................................ Built-in login page
 			<*> oui-app-system............................................ System Setting
 			<*> oui-app-upgrade......................................... Backup / Upgrade
 			<*> oui-app-wireless................................................ Wireless

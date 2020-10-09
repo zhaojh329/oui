@@ -1,0 +1,8 @@
+{
+  "login": {
+    "Authorization Required": "許可が必要だ",
+    "Please input password": "暗証番号を入力してください",
+    "Login": "ログイン",
+    "Wrong password given!": "暗号誤り"
+  }
+}

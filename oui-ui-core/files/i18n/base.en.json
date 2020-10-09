@@ -1,9 +1,5 @@
 {
   "Loading...": "Loading...",
-  "Authorization Required": "Authorization Required",
-  "Please input password": "Please input password",
-  "Login": "Login",
-  "Wrong password given!": "Wrong password given!",
   "Full Screen": "Full Screen",
   "Exit Full Screen": "Exit Full Screen",
   "Language": "Language",
@@ -45,6 +41,7 @@
   "Uptime": "Uptime",
   "Sorry, the page you visited does not exist!": "Sorry, the page you visited does not exist!",
   "NotInstallHomePage": "You have not installed the home page for OUI, you can either install the OUI built-in home page app(oui-app-home), or create your own home page app.",
+  "NotInstallLoginPage": "You have not installed the login page for OUI, you can either install the OUI built-in login page app(oui-app-login), or create your own login page app.",
   "validator": {
     "required": "This field is required",
     "number": "Must be a number",

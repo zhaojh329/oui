@@ -1,9 +1,5 @@
 {
   "Loading...": "ローディング中...",
-  "Authorization Required": "許可が必要だ",
-  "Please input password": "暗証番号を入力してください",
-  "Login": "ログイン",
-  "Wrong password given!": "暗号誤り",
   "Full Screen": "全般",
   "Exit Full Screen": "全スクリーンから退出する",
   "Language": "言語",
@@ -45,6 +41,7 @@
   "Uptime": "ランタイム",
   "Sorry, the page you visited does not exist!": "失礼ですが、訪問したページは存在しません!",
   "NotInstallHomePage": "なお、ホームページをOUIにインストールしていない場合は、OUI内蔵のホームページアプリ(oui-app-home)をインストールするか、自分でホームページアプリを作成するかを選択することができます。",
+  "NotInstallLoginPage": "OUIのためのログインページをインストールしていない場合は、OUI内蔵のログインページアプリ(oui-app-login)をインストールするか、自分でログインページアプリを作成するかを選択することができます。",
   "validator": {
     "required": "フィールドは空ではない",
     "number": "有効な数字でなければならない",

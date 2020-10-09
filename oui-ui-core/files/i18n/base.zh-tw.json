@@ -1,9 +1,5 @@
 {
   "Loading...": "加載中...",
-  "Authorization Required": "需要授權",
-  "Please input password": "請輸入密碼",
-  "Login": "登錄",
-  "Wrong password given!": "密碼錯誤",
   "Full Screen": "全屏",
   "Exit Full Screen": "退出全屏",
   "Language": "語言",
@@ -45,6 +41,7 @@
   "Uptime": "運行時間",
   "Sorry, the page you visited does not exist!": "對不起，您訪問的頁面不存在！",
   "NotInstallHomePage": "您還沒有為OUI安裝主頁，您可以選擇安裝OUI內置主頁APP(oui-app-home)，或者自己創建壹個主頁APP。",
+  "NotInstallLoginPage": "您還沒有為OUI安裝登錄頁面，您可以選擇安裝OUI內置登錄頁面APP(oui-app-login)，或者自己創建壹個登錄頁面APP。",
   "validator": {
     "required": "字段不能為空",
     "number": "必須是壹個有效的數字",
