@@ -104,7 +104,7 @@ export default {
           password: this.$md5(this.form.password)
         }).then(() => {
           sessionStorage.setItem('__oui_first_login', 'false')
-          this.$router.push('/')
+          this.$router.push('/login')
         })
       })
     }
