@@ -18,7 +18,7 @@ export default {
   data () {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error(this.$t('Please enter your password')))
+        callback(new Error(this.$t('admin.Please enter your password')))
       } else {
         if (this.form.confirm !== '') { this.$refs.form.validateField('confirm') }
         callback()
