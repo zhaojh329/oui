@@ -267,29 +267,33 @@ export default {
 }
 </script>
 
-<style>
-  .tab-tilte {
-    float: left;
-    width: calc(100% / 3);
-    padding: 10px 0;
-    text-align: center;
-    cursor: pointer;
-  }
+<style lang="stylus">
+.tab-tilte {
+  float: left;
+  width: calc(100% / 3);
+  padding: 10px 0;
+  text-align: center;
+  cursor: pointer;
 
-  .tab-tilte div {
+  div {
     background-color: #e8e8e8;
   }
 
-  .tab-tilte:first-child div {
-    border-radius: 20px 0 0 0;
+  &:first-child {
+    div {
+      border-radius: 20px 0 0 0;
+    }
   }
 
-  .tab-tilte:last-child div {
-    border-radius: 0 20px 0 0;
+  &:last-child {
+    div {
+      border-radius: 0 20px 0 0;
+    }
   }
 
-  .tab-tilte .active {
+  .active {
     background-color: #09f;
     color: #fff;
   }
+}
 </style>
