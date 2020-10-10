@@ -42,6 +42,7 @@
   "Sorry, the page you visited does not exist!": "對不起，您訪問的頁面不存在！",
   "NotInstallHomePage": "您還沒有為OUI安裝主頁，您可以選擇安裝OUI內置主頁APP(oui-app-home)，或者自己創建壹個主頁APP。",
   "NotInstallLoginPage": "您還沒有為OUI安裝登錄頁面，您可以選擇安裝OUI內置登錄頁面APP(oui-app-login)，或者自己創建壹個登錄頁面APP。",
+  "NotInstallWizardPage": "您還沒有為OUI安裝向導頁面，您可以選擇安裝OUI內置向導頁面APP(oui-app-wizard)，或者自己創建壹個向導頁面APP。",
   "validator": {
     "required": "字段不能為空",
     "number": "必須是壹個有效的數字",

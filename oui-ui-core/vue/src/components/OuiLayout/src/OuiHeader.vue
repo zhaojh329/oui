@@ -59,7 +59,7 @@ export default {
       this.$store.commit('toggleFullscreen')
     },
     getBreadCrumbList (route) {
-      const homeRoute = this.$router.options.routes[1].children[0]
+      const homeRoute = this.$router.options.routes.find(r => r.path === '/').children[0]
       const homeItem = { title: homeRoute.meta.title }
       const matched = route.matched
 

@@ -90,4 +90,20 @@ function M.set_password(params)
     utils.writefile("/etc/oui/shadow", params.password)
 end
 
+function M.first_login()
+	return {
+		first = not utils.exists("/etc/oui/shadow")
+	}
+end
+
+function M.first_set(params)
+    local c = uci.cursor()
+
+    c:set("oui", "main", "lang", params.lang)
+    c:commit("oui")
+
+    os.execute("mkdir /etc/oui")
+    utils.writefile("/etc/oui/shadow", params.password)
+end
+
 return M

@@ -42,6 +42,7 @@
   "Sorry, the page you visited does not exist!": "失礼ですが、訪問したページは存在しません!",
   "NotInstallHomePage": "なお、ホームページをOUIにインストールしていない場合は、OUI内蔵のホームページアプリ(oui-app-home)をインストールするか、自分でホームページアプリを作成するかを選択することができます。",
   "NotInstallLoginPage": "OUIのためのログインページをインストールしていない場合は、OUI内蔵のログインページアプリ(oui-app-login)をインストールするか、自分でログインページアプリを作成するかを選択することができます。",
+  "NotInstallWizardPage": "なお、OUIのガイドページをインストールしていない場合は、OUI内蔵のガイドページアプリ(oui-app-wizard)をインストールするか、自分でガイドページアプリを作成するかを選択することができます。",
   "validator": {
     "required": "フィールドは空ではない",
     "number": "有効な数字でなければならない",

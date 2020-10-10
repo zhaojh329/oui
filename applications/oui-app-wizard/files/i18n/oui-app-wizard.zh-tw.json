@@ -1,0 +1,14 @@
+{
+  "wizard": {
+    "OK": "確定",
+    "Prev": "後退",
+    "Next": "前進",
+    "Select Language": "選擇語言",
+    "Set admin password": "設置管理密碼",
+    "Password": "密碼",
+    "Confirmation": "確認",
+    "Please enter your password": "请输入密码",
+    "Please enter your password again": "請再次輸入密碼",
+    "Inconsistent input password twice!":  "兩次密碼輸入不壹致!"
+  }
+}
