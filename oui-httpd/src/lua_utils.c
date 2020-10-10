@@ -26,6 +26,8 @@
 #include <libubox/md5.h>
 #include <uhttpd/log.h>
 #include <arpa/inet.h>
+#include <stdbool.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -133,11 +135,24 @@ static int lua_parse_route6_addr(lua_State *L)
     return 1;
 }
 
+static int lua_exists(lua_State *L)
+{
+    const char *file = luaL_checkstring(L, 1);
+
+    if (access(file, F_OK))
+        lua_pushboolean(L, false);
+    else
+        lua_pushboolean(L, true);
+
+    return 1;
+}
+
 static const luaL_Reg regs[] = {
     {"md5sum",            lua_md5sum},
     {"statvfs",           lua_statvfs},
     {"parse_route_addr",  lua_parse_route_addr},
     {"parse_route6_addr", lua_parse_route6_addr},
+    {"exists", lua_exists},
     {NULL, NULL}
 };
 
