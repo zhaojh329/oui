@@ -217,11 +217,12 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     if (lua_pcall(L, 1, 1, 0)) {
         uh_log_err("%s\n", lua_tostring(L, -1));
         rpc_error(conn, RPC_ERROR_INTERNAL, req);
-        return;
+        goto done;
     }
 
     rpc_resp(conn, req, lua_to_json(L));
 
+done:
     lua_pop(L, 1);
 }
 
