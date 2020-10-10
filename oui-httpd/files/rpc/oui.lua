@@ -96,7 +96,11 @@ function M.first_login()
 	}
 end
 
-function M.first_set(params)
+function M.first_set(params, authed)
+	if not M.first_login() then
+		error("forbidden")
+	end
+
     local c = uci.cursor()
 
     c:set("oui", "main", "lang", params.lang)

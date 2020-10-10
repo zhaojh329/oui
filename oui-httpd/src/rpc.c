@@ -214,7 +214,10 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     else
         lua_newtable(L);
 
-    if (lua_pcall(L, 1, 1, 0)) {
+    /* The second parameter indicates whether it is certified */
+    lua_pushboolean(L, rpc_session_get(sid) != NULL);
+
+    if (lua_pcall(L, 2, 1, 0)) {
         uh_log_err("%s\n", lua_tostring(L, -1));
         rpc_error(conn, RPC_ERROR_INTERNAL, req);
         goto done;
