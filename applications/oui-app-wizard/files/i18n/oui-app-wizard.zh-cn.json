@@ -1,10 +1,10 @@
 {
   "wizard": {
-    "OK": "确定",
-    "Prev": "后退",
+    "Submit": "提交",
+    "Back": "后退",
     "Next": "前进",
-    "Select Language": "选择语言",
-    "Set admin password": "设置管理密码",
+    "Select Your Language": "选择语言",
+    "Set Your Admin Password": "设置管理密码",
     "Password": "密码",
     "Confirmation": "确认",
     "Please enter your password": "请输入密码",

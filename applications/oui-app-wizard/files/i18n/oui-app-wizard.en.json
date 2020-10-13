@@ -1,10 +1,10 @@
 {
   "wizard": {
-    "OK": "OK",
-    "Prev": "Prev",
+    "Submit": "Submit",
+    "Back": "Back",
     "Next": "Next",
-    "Select Language": "Select Language",
-    "Set admin password": "Set admin password",
+    "Select Your Language": "Select Your Language",
+    "Set Your Admin Password": "Set Your Admin Password",
     "Password": "Password",
     "Confirmation": "Confirmation",
     "Please enter your password": "Please enter your password",

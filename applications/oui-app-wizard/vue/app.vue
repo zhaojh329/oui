@@ -1,8 +1,7 @@
 <template>
   <div style="padding: 20px">
     <a-steps :current="current">
-      <a-step :title="$t('wizard.Select Language')"/>
-      <a-step :title="$t('wizard.Set admin password')"/>
+      <a-step v-for="(s, i) in steps" :key="i" :title="$t(s)"/>
     </a-steps>
     <div class="steps-content">
       <a-form-model style="width: 400px" ref="form" :model="form" :rules="rules">
@@ -22,18 +21,12 @@
           <a-form-model-item :label="$t('wizard.Confirmation')" prop="confirm">
             <a-input-password v-model="form.confirm"/>
           </a-form-model-item>
-          <a-form-model-item>
-            <a-button style="float: right" type="primary" @click="submit">{{ $t('wizard.OK') }}</a-button>
-          </a-form-model-item>
         </div>
       </a-form-model>
       <div class="steps-action">
-        <a-button-group>
-          <a-button type="primary" icon="left" :disabled="current === 0" @click="prev">{{ $t('wizard.Prev') }}</a-button>
-          <a-button type="primary" :disabled="current === 1" @click="next">
-            {{ $t('wizard.Next') }}<a-icon type="right"/>
-          </a-button>
-        </a-button-group>
+        <a-button type="primary" :disabled="current === 0" @click="prev">{{ $t('wizard.Back') }}</a-button>
+        <a-button type="primary" v-if="current < steps.length - 1" @click="next">{{ $t('wizard.Next') }}</a-button>
+        <a-button type="primary" v-if="current === steps.length - 1" @click="submit">{{ $t('wizard.Submit') }}</a-button>
       </div>
     </div>
   </div>
@@ -62,6 +55,10 @@ export default {
 
     return {
       current: 0,
+      steps: [
+        'wizard.Select Your Language',
+        'wizard.Set Your Admin Password'
+      ],
       form: {
         lang: 'auto',
         password: '',
@@ -111,7 +108,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scoped lang="stylus">
 .steps-content {
   padding-top: 100px;
   width: 500px;
@@ -123,5 +120,8 @@ export default {
 .steps-action {
   margin-top: 10px;
   text-align: center;
+  > * {
+    margin-right: 20px;
+  }
 }
 </style>

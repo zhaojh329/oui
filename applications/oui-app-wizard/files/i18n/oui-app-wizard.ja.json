@@ -1,10 +1,10 @@
 {
   "wizard": {
-    "OK": "さだま·る",
-    "Prev": "後退",
+    "Submit": "さしだ·す",
+    "Back": "後退",
     "Next": "歩行者用",
-    "Select Language": "言語を選択する",
-    "Set admin password": "管理パスワードを設定する",
+    "Select Your Language": "言語を選択する",
+    "Set Your Admin Password": "管理パスワードを設定する",
     "Password": "パスワード",
     "Confirmation": "确认",
     "Please enter your password": "暗証番号を入力してください",
