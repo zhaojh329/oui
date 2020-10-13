@@ -8,6 +8,8 @@
 [6]: https://github.com/zhaojh329/oui/issues/new
 [7]: https://travis-ci.org/zhaojh329/oui.svg?branch=master
 [8]: https://travis-ci.org/zhaojh329/oui
+[9]: https://hosted.weblate.org/widgets/oui/-/svg-badge.svg
+[10]: https://hosted.weblate.org/engage/oui/
 [11]: https://img.shields.io/badge/Support%20oui-Donate-blueviolet.svg
 [12]: https://paypal.me/zjh329
 
@@ -15,6 +17,7 @@
 [![PRs Welcome][3]][4]
 [![Issue Welcome][5]][6]
 [![Build Status][7]][8]
+[![][9]][10]
 [![Support oui][11]][12]
 
 [vue.js]: https://github.com/vuejs/vue
