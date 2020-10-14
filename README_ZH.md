@@ -119,6 +119,10 @@ Oui特别适合用于企业定制开发。
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
 <a href="http://m.iyunlink.com"><img src="http://m.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
 
+# 翻译状态
+
+[![Translation status](https://hosted.weblate.org/widgets/oui/-/multi-auto.svg)](https://hosted.weblate.org/engage/oui/)
+
 # 贡献代码
 如果你想帮助[oui](https://github.com/zhaojh329/oui) 变得更好，请参考
 [CONTRIBUTING_ZH.md](/CONTRIBUTING_ZH.md)。
