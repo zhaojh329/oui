@@ -181,6 +181,7 @@ static void rpc_resp(struct uh_connection *conn, json_t *req, json_t *result)
 static void handle_rpc_call(struct uh_connection *conn, const char *sid, const char *object, const char *method,
                             json_t *args, json_t *req)
 {
+    bool is_local = conn->get_addr(conn) == INADDR_LOOPBACK;
     struct rpc_object *obj;
     lua_State *L;
 
@@ -204,7 +205,7 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
         return;
     }
 
-    if (!rpc_session_allowed(sid, object, method)) {
+    if (!is_local && !rpc_session_allowed(sid, object, method)) {
         rpc_error(conn, RPC_ERROR_ACCESS, req);
         return;
     }
@@ -215,7 +216,7 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
         lua_newtable(L);
 
     /* The second parameter indicates whether it is certified */
-    lua_pushboolean(L, rpc_session_get(sid) != NULL);
+    lua_pushboolean(L, is_local || rpc_session_get(sid) != NULL);
 
     if (lua_pcall(L, 2, 1, 0)) {
         uh_log_err("%s\n", lua_tostring(L, -1));
