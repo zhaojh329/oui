@@ -28,6 +28,7 @@
     "Use builtin IPv6-management": "内蔵のIPv6で管理する",
     "Use broadcast flag": "放送タグを使う",
     "UbfHelp": "ISPによっては、ネットワークDOCSIS 3などが必要とされる",
+    "Use default gateway": "使用するデフォルトゲートウェイ",
     "UdgHelp": "選択されていない場合、デフォルトのルーティングは設定されない",
     "Use DNS servers advertised by peer": "エンドツーエンド広告のDNSサーバを使用する",
     "Use custom DNS servers": "カスタムDNSサーバを使用する",

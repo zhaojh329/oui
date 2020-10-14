@@ -28,6 +28,7 @@
     "Use builtin IPv6-management": "使用内置的IPv6管理",
     "Use broadcast flag": "使用广播标签",
     "UbfHelp": "某些ISP需要，例如：同轴线网络DOCSIS 3",
+    "Use default gateway": "使用默认网关",
     "UdgHelp": "如果未选中，则不配置默认路由",
     "Use DNS servers advertised by peer": "使用对端通告的DNS服务器",
     "Use custom DNS servers": "使用自定义的DNS服务器",
