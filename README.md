@@ -114,7 +114,7 @@ Oui is especially suitable for enterprise custom development.
 If your company is using OUI, please add your company name here, thanks.
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
-<a href="http://m.iyunlink.com/"><img src="http://m.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
+<a href="https://www.iyunlink.com"><img src="https://www.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
 
 # Translation status
 
