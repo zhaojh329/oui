@@ -41,7 +41,7 @@ enum {
 };
 
 static const char *home_dir = ".";
-static const char *index_page;
+static const char *index_page = "oui.html";
 
 void serve_upload(struct uh_connection *conn);
 
@@ -73,10 +73,11 @@ static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
 static void usage(const char *prog)
 {
     fprintf(stderr, "Usage: %s [option]\n"
-                    "          -p port           # Default port is 8080\n"
-                    "          --rpc dir         # rpc directory \n"
-                    "          --home dir        # document root \n"
-                    "          --index oui.html  # set index page \n"
+                    "          -a addr           # listen addr(default is 0.0.0.0)\n"
+                    "          -p port           # listen port(default is 8080)\n"
+                    "          --rpc dir         # rpc directory(default is .)\n"
+                    "          --home dir        # document root(default is .)\n"
+                    "          --index oui.html  # index page(default is oui.html)\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
@@ -92,6 +93,7 @@ int main(int argc, char **argv)
     struct ev_loop *loop;
     struct ev_signal signal_watcher;
     struct uh_server *srv = NULL;
+    const char *addr = "0.0.0.0";
     const char *rpc_dir = ".";
     bool verbose = false;
     int port = 8080;
@@ -99,8 +101,11 @@ int main(int argc, char **argv)
     int ret = 0;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "p:v", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:p:v", long_options, &option_index)) != -1) {
         switch (opt) {
+        case 'a':
+            addr = optarg;
+            break;
         case 'p':
             port = atoi(optarg);
             break;
@@ -135,7 +140,7 @@ int main(int argc, char **argv)
 
     load_rpc(rpc_dir);
 
-    srv = uh_server_new(loop, "0.0.0.0", port);
+    srv = uh_server_new(loop, addr, port);
     if (!srv) {
         ret = 1;
         goto err;
@@ -143,7 +148,7 @@ int main(int argc, char **argv)
 
     srv->on_request = on_request;
 
-    uh_log_info("Listen on: *:%d\n", port);
+    uh_log_info("Listen on: %s:%d\n", addr, port);
 
     ev_signal_init(&signal_watcher, signal_cb, SIGINT);
     ev_signal_start(loop, &signal_watcher);
@@ -158,7 +163,7 @@ err:
 
     rpc_session_deinit();
 
-	unload_rpc();
+    unload_rpc();
 
     ev_loop_destroy(loop);
 
