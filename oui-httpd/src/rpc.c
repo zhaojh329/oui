@@ -372,7 +372,7 @@ err:
 static void handle_rpc(struct uh_connection *conn, const char *method, json_t *params, json_t *req)
 {
     if (!strcmp(method, "login")) {
-        const char *password, *sid;
+        const char *username, *password, *sid;
         json_t *result;
 
         if (!params || json_typeof(params) != JSON_OBJECT) {
@@ -380,9 +380,10 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
             return;
         }
 
+        username = json_object_get_string(params, "username");
         password = json_object_get_string(params, "password");
 
-        sid = rpc_login(password);
+        sid = rpc_login(username, password);
         if (!sid) {
             rpc_error(conn, RPC_ERROR_ACCESS, req);
             return;
@@ -390,6 +391,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
 
         result = json_object();
         json_object_set_new(result, "sid", json_string(sid));
+        json_object_set_new(result, "username", json_string(username));
         rpc_resp(conn, req, result);
     } else if (!strcmp(method, "logout")) {
         const char *sid;

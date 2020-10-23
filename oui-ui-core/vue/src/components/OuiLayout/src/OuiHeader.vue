@@ -27,7 +27,7 @@
       </a-dropdown>
       <a-dropdown>
         <a href="javascript:void(0)">
-          <a-icon type="menu"/>
+          <span>{{ username }}</span>
           <a-icon type="down"/>
         </a>
         <a-menu slot="overlay" @click="onUserClick">
@@ -45,7 +45,8 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      breadcrumbs: []
+      breadcrumbs: [],
+      username: ''
     }
   },
   computed: {
@@ -126,6 +127,8 @@ export default {
   },
   created () {
     this.breadcrumbs = this.getBreadCrumbList(this.$route)
+
+    this.username = this.$session.username
   }
 }
 </script>

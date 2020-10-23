@@ -46,7 +46,9 @@ struct rpc_session {
 int rpc_session_init();
 void rpc_session_deinit();
 
-const char *rpc_login(const char *password);
+void rpc_reload_users();
+
+const char *rpc_login(const char *username, const char *hash);
 
 void rpc_logout(const char *sid);
 

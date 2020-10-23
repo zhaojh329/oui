@@ -3,6 +3,11 @@
     <a-spin size="large" class="oui-login" :spinning="spinning">
       <a-card :title="$t('login.Authorization Required')">
         <a-form-model :model="form">
+          <a-form-model-item prop="username">
+            <a-input v-model="form.username" @pressEnter="handleLogin" :placeholder="$t('login.Please input username')">
+              <a-icon slot="prefix" type="user"/>
+            </a-input>
+          </a-form-model-item>
           <a-form-model-item prop="password">
             <a-input-password v-model="form.password" @pressEnter="handleLogin" type="password" :placeholder="$t('login.Please input password')">
               <a-icon slot="prefix" type="lock"/>
@@ -25,6 +30,7 @@ export default {
   data () {
     return {
       form: {
+        username: '',
         password: ''
       },
       spinning: false
@@ -33,7 +39,7 @@ export default {
   methods: {
     handleLogin () {
       this.spinning = true
-      this.$session.login(this.form.password).then((ok) => {
+      this.$session.login(this.form.username, this.form.password).then((ok) => {
         if (ok) {
           this.$router.push('/')
           return

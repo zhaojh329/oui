@@ -66,6 +66,8 @@ static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
     if (w->signum == SIGINT) {
         ev_break(loop, EVBREAK_ALL);
         uh_log_info("Normal quit\n");
+    } else if (w->signum == SIGUSR1) {
+        rpc_reload_users();
     }
 }
 
@@ -91,7 +93,8 @@ static struct option long_options[] = {
 int main(int argc, char **argv)
 {
     struct ev_loop *loop;
-    struct ev_signal signal_watcher;
+    struct ev_signal sigint_watcher;
+    struct ev_signal sigusr1_watcher;
     struct uh_server *srv = NULL;
     const char *addr = "0.0.0.0";
     const char *rpc_dir = ".";
@@ -150,8 +153,11 @@ int main(int argc, char **argv)
 
     uh_log_info("Listen on: %s:%d\n", addr, port);
 
-    ev_signal_init(&signal_watcher, signal_cb, SIGINT);
-    ev_signal_start(loop, &signal_watcher);
+    ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
+    ev_signal_start(loop, &sigint_watcher);
+
+    ev_signal_init(&sigusr1_watcher, signal_cb, SIGUSR1);
+    ev_signal_start(loop, &sigusr1_watcher);
 
     ev_run(loop, 0);
 

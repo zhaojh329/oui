@@ -28,10 +28,6 @@ endef
 define Package/oui-httpd/description
 endef
 
-define Package/oui-httpd/conffiles
-/etc/oui/shadow
-endef
-
 define Build/Prepare
 	$(INSTALL_DIR) $(PKG_BUILD_DIR)
 	$(CP) ./src/. $(PKG_BUILD_DIR)
@@ -39,7 +35,7 @@ endef
 
 define Package/oui-httpd/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config \
-		$(1)/usr/lib/oui-httpd/rpc $(1)/usr/lib/oui-httpd/lib
+		$(1)/usr/lib/oui-httpd/rpc $(1)/usr/lib/oui-httpd/lib 
 	$(INSTALL_CONF) ./files/oui-httpd.config $(1)/etc/config/oui-httpd
 	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/oui-httpd $(1)/usr/sbin

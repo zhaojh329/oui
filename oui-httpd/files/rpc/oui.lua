@@ -82,21 +82,34 @@ function M.load_locales(params)
 end
 
 function M.set_password(params)
-    if type(params.password) ~= "string" then
+    local c = uci.cursor()
+
+    if type(params.username) ~= "string" or  type(params.password) ~= "string" then
         error("invalid params")
     end
 
-    os.execute("mkdir /etc/oui")
-    utils.writefile("/etc/oui/shadow", params.password)
+	c:foreach("oui-httpd", "login", function(s)
+		if s.username == params.username then
+			c:set("oui-httpd", s[".name"], "password", params.password)
+			return false
+		end
+	end)
+
+	c:commit("oui-httpd")
+
+    -- reload users
+    os.execute("killall -USR1 oui-httpd")
 end
 
 function M.first_login()
+    local c = uci.cursor()
+
 	return {
-		first = not utils.exists("/etc/oui/shadow")
+		first = c:get("oui", "main", "first") == "1"
 	}
 end
 
-function M.first_set(params, authed)
+function M.first_set(params)
 	if not M.first_login() then
 		error("forbidden")
 	end
@@ -104,10 +117,17 @@ function M.first_set(params, authed)
     local c = uci.cursor()
 
     c:set("oui", "main", "lang", params.lang)
+    c:set("oui", "main", "first", "0")
     c:commit("oui")
 
-    os.execute("mkdir /etc/oui")
-    utils.writefile("/etc/oui/shadow", params.password)
+	c:foreach("oui-httpd", "login", function(s)
+		if s.username == params.username then
+			c:set("oui-httpd", s[".name"], "password", params.password)
+			return false
+		end
+	end)
+
+	c:commit("oui-httpd")
 end
 
 return M

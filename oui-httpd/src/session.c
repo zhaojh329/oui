@@ -34,6 +34,12 @@
 
 #include "session.h"
 
+struct oui_user {
+    struct avl_node avl;
+    char name[128];
+    char pwhash[128];
+};
+
 struct rpc_trusted_object {
     struct avl_node avl;
     struct avl_tree methods;
@@ -46,6 +52,7 @@ struct rpc_trusted_method {
 };
 
 static struct avl_tree sessions;
+static struct avl_tree users;
 static struct avl_tree trusted;
 
 static int rpc_random(char *dest)
@@ -137,39 +144,32 @@ struct rpc_session *rpc_session_get(const char *sid)
     return s;
 }
 
-static int load_shadow(char shadow[], int len)
+static struct oui_user *find_user(const char *username)
 {
-    FILE *f = fopen("/etc/oui/shadow", "r");
-    if (!f) {
-        uh_log_err("Load /etc/oui/shadow fail\n");
-        return -1;
-    }
+    struct oui_user *u;
 
-    memset(shadow, 0, len);
-
-    if (!fgets(shadow, len, f)) {
-        fclose(f);
-        return -1;
-    }
-
-    len = strlen(shadow);
-
-    if (shadow[len - 1] == '\n')
-        shadow[len - 1] = '\0';
-
-    fclose(f);
-
-    return 0;
-}
-
-const char *rpc_login(const char *password)
-{
-    struct rpc_session *s = NULL;
-    char shadow[128];
-
-    if (!load_shadow(shadow, sizeof(shadow)) && shadow[0] && strcmp(shadow, password))
+    if (!username)
         return NULL;
 
+    return avl_find_element(&users, username, u, avl);
+}
+
+const char *rpc_login(const char *username, const char *hash)
+{
+    struct rpc_session *s = NULL;
+    struct oui_user *u;
+
+    u = find_user(username);
+    if (!u)
+        return NULL;
+
+    if (!u->pwhash[0] || !strcmp(u->pwhash, "-"))
+        goto ok;
+
+    if (!hash || strcmp(u->pwhash, hash))
+        return NULL;
+
+ok:
     s = rpc_session_create(RPC_DEFAULT_SESSION_TIMEOUT);
 
     return s ? s->id : NULL;
@@ -229,6 +229,7 @@ static int load_trusted(struct uci_context *uci)
     struct uci_section *s;
     struct uci_element *e;
     struct uci_ptr ptr = {.package = "oui-httpd"};
+    int ret = -1;
 
     uci_load(uci, ptr.package, &p);
 
@@ -256,7 +257,7 @@ static int load_trusted(struct uci_context *uci)
 
         obj = add_trusted_object(ptr.o->v.string);
         if (!obj)
-            return -1;
+            goto err;
 
         ptr.option = "method";
         ptr.o = NULL;
@@ -266,17 +267,93 @@ static int load_trusted(struct uci_context *uci)
 
         if (ptr.o->type == UCI_TYPE_STRING) {
             if (add_trusted_method(obj, ptr.o->v.string))
-                return -1;
+                goto err;;
         } else {
             struct uci_element *oe;
             uci_foreach_element(&ptr.o->v.list, oe) {
                 if (add_trusted_method(obj, oe->name))
-                    return -1;
+                    goto err;;
             }
         }
     }
 
+    ret = 0;
+
+err:
+    uci_unload(uci, p);
+
+    return ret;
+}
+
+static int add_user(const char *name, const char *pwhash)
+{
+    struct oui_user *u = calloc(1, sizeof(struct oui_user));
+
+    if (!u) {
+        uh_log_err("calloc: %s\n", strerror(errno));
+        return -1;
+    }
+
+    strcpy(u->name, name);
+    strcpy(u->pwhash, pwhash);
+
+    u->avl.key = u->name;
+
+    avl_insert(&users, &u->avl);
+
     return 0;
+}
+
+static int load_users(struct uci_context *uci)
+{
+    struct uci_package *p = NULL;
+    struct uci_section *s;
+    struct uci_element *e;
+    struct uci_ptr ptr = {.package = "oui-httpd"};
+    int ret = -1;
+
+    uci_load(uci, ptr.package, &p);
+
+    if (!p) {
+        uh_log_err("Load config 'oui-httpd' fail\n");
+        return -1;
+    }
+
+    uci_foreach_element(&p->sections, e) {
+        const char *username, *password = "";
+
+        s = uci_to_section(e);
+
+        if (strcmp(s->type, "login"))
+            continue;
+
+        ptr.section = s->e.name;
+        ptr.s = NULL;
+
+        ptr.option = "username";
+        ptr.o = NULL;
+
+        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
+            continue;
+
+        username = ptr.o->v.string;
+
+        ptr.option = "password";
+        ptr.o = NULL;
+
+        if (!uci_lookup_ptr(uci, &ptr, NULL, true) && ptr.o && ptr.o->type == UCI_TYPE_STRING)
+            password = ptr.o->v.string;
+
+        if (add_user(username, password))
+            goto err;
+    }
+
+    ret = 0;
+
+err:
+    uci_unload(uci, p);
+
+    return ret;
 }
 
 int rpc_session_init()
@@ -290,10 +367,10 @@ int rpc_session_init()
     }
 
     avl_init(&sessions, avl_strcmp, false, NULL);
-
+    avl_init(&users, avl_strcmp, false, NULL);
     avl_init(&trusted, avl_strcmp, false, NULL);
 
-    ret = load_trusted(uci);
+    ret = load_trusted(uci) || load_users(uci);
 
     uci_free_context(uci);
 
@@ -306,6 +383,21 @@ static void free_all_session()
 
     avl_for_each_element_safe(&sessions, s, avl, temp) {
         rpc_session_destroy(s);
+    }
+}
+
+static void oui_user_destroy(struct oui_user *u)
+{
+    avl_delete(&users, &u->avl);
+    free(u);
+}
+
+static void free_all_users()
+{
+    struct oui_user *u, *temp;
+
+    avl_for_each_element_safe(&users, u, avl, temp) {
+        oui_user_destroy(u);
     }
 }
 
@@ -333,6 +425,7 @@ static void free_all_trusted()
 void rpc_session_deinit()
 {
     free_all_session();
+    free_all_users();
     free_all_trusted();
 }
 
@@ -348,5 +441,18 @@ bool rpc_session_allowed(const char *sid, const char *object, const char *method
     }
 
     return rpc_session_get(sid) != NULL;
+}
+
+void rpc_reload_users()
+{
+    struct uci_context *uci = uci_alloc_context();
+
+    uh_log_info("reload users...");
+
+    free_all_users();
+
+    load_users(uci);
+
+    uci_free_context(uci);
 }
 

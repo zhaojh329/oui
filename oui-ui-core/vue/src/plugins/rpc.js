@@ -51,8 +51,9 @@ rpc.exec = function (cmd, params, timeout) {
   return this.request('exec', [sid(), cmd, ...params], timeout)
 }
 
-rpc.login = function (password) {
+rpc.login = function (username, password) {
   return this.request('login', {
+    username,
     password
   })
 }
