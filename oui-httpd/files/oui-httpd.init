@@ -1,19 +1,44 @@
 #!/bin/sh /etc/rc.common
 
+USE_PROCD=1
 START=60
 
-USE_PROCD=1
+BIN=/usr/sbin/oui-httpd
+
+validate_oui_httpd_section() {
+	uci_load_validate oui-httpd oui-httpd "$1" "$2" \
+		'listen_addr:ip4addr' \
+		'listen_port:port' \
+		'home:directory' \
+		'index:string' \
+		'rpc_dir:directory' \
+		'verbose:bool:0'
+}
+
+start_instance() {
+	[ "$2" = 0 ] || {
+		echo "validation failed" >&2
+		return 1
+	}
+
+	procd_open_instance
+	procd_set_param command $BIN
+	[ -n "$listen_addr" ] && procd_append_param  command -a "$listen_addr"
+	[ -n "$listen_port" ] && procd_append_param  command -p "$listen_port"
+	[ -n "$home" ] && procd_append_param  command --home "$home"
+	[ -n "$index" ] && procd_append_param  command --index "$index"
+	[ -n "$rpc_dir" ] && procd_append_param  command --rpc "$rpc_dir"
+	[ "$verbose" = "1" ] && procd_append_param command -v
+	procd_set_param respawn
+	procd_close_instance
+}
 
 start_service() {
-    procd_open_instance
-    procd_set_param command /usr/sbin/oui-httpd
-    procd_append_param command -p 80
-    procd_append_param command --rpc /usr/lib/oui-httpd/rpc
-    procd_append_param command --home /www
-    procd_append_param command --index "oui.html"
-    procd_close_instance
+	config_load oui-httpd
+	config_foreach validate_oui_httpd_section oui-httpd start_instance
 }
 
 service_triggers() {
-    procd_add_reload_trigger "oui-httpd"
+	procd_add_reload_trigger "oui-httpd"
+	procd_add_validation validate_oui_httpd_section
 }
