@@ -8,20 +8,17 @@
 [6]: https://github.com/zhaojh329/oui/issues/new
 [7]: https://travis-ci.org/zhaojh329/oui.svg?branch=master
 [8]: https://travis-ci.org/zhaojh329/oui
-[9]: https://hosted.weblate.org/widgets/oui/-/svg-badge.svg
-[10]: https://hosted.weblate.org/engage/oui/
-[11]: https://img.shields.io/badge/支持oui-赞助作者-blueviolet.svg
-[12]: https://gitee.com/zhaojh329/oui#project-donate-overview
-[13]: https://img.shields.io/badge/技术交流群-点击加入：153530783-brightgreen.svg
-[14]: https://jq.qq.com/?_wv=1027&k=5PKxbTV
+[9]: https://img.shields.io/badge/支持oui-赞助作者-blueviolet.svg
+[10]: https://gitee.com/zhaojh329/oui#project-donate-overview
+[11]: https://img.shields.io/badge/技术交流群-点击加入：153530783-brightgreen.svg
+[12]: https://jq.qq.com/?_wv=1027&k=5PKxbTV
 
 [![license][1]][2]
 [![PRs Welcome][3]][4]
 [![Issue Welcome][5]][6]
 [![Build Status][7]][8]
-[![][9]][10]
-[![Support oui][11]][12]
-[![Chinese Chat][13]][14]
+[![Support oui][9]][10]
+[![Chinese Chat][11]][12]
 
 [vue.js]: https://github.com/vuejs/vue
 [Ant Design of Vue]: https://github.com/vueComponent/ant-design-vue
@@ -119,10 +116,6 @@ Oui特别适合用于企业定制开发。
 
 <a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
 <a href="https://www.iyunlink.com"><img src="https://www.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
-
-# 翻译状态
-
-[![Translation status](https://hosted.weblate.org/widgets/oui/-/multi-auto.svg)](https://hosted.weblate.org/engage/oui/)
 
 # 贡献代码
 如果你想帮助[oui](https://github.com/zhaojh329/oui) 变得更好，请参考
