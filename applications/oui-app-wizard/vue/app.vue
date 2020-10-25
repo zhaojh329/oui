@@ -104,7 +104,7 @@ export default {
         this.$rpc.call('oui', 'first_set', {
           lang: this.form.lang,
           username: 'admin',
-          password: this.$md5(this.form.password)
+          password: this.form.password
         }).then(() => {
           sessionStorage.setItem('__oui_first_login', 'false')
           this.$router.push('/login')

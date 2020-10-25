@@ -90,7 +90,8 @@ function M.set_password(params)
 
 	c:foreach("oui-httpd", "login", function(s)
 		if s.username == params.username then
-			c:set("oui-httpd", s[".name"], "password", params.password)
+			local password = utils.md5(s.username, params.password)
+			c:set("oui-httpd", s[".name"], "password", password)
 			return false
 		end
 	end)
@@ -120,14 +121,7 @@ function M.first_set(params)
     c:set("oui", "main", "first", "0")
     c:commit("oui")
 
-	c:foreach("oui-httpd", "login", function(s)
-		if s.username == params.username then
-			c:set("oui-httpd", s[".name"], "password", params.password)
-			return false
-		end
-	end)
-
-	c:commit("oui-httpd")
+	M.set_password(params)
 end
 
 return M

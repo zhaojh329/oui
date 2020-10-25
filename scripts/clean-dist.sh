@@ -14,3 +14,8 @@ for f in `find $1 -name *.gz`;do
 	echo "Rename $f to ${f%.*}"
 	mv $f ${f%.*}
 done
+
+for f in `find $1`;do
+	[ -f $f ] && chmod -x $f
+done
+

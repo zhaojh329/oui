@@ -1,5 +1,3 @@
-import md5 from 'js-md5'
-
 export default {
   install (Vue) {
     Vue.prototype.$reconnect = function (title) {
@@ -24,7 +22,5 @@ export default {
     Vue.prototype.$spin = function (config) {
       this.$store.commit('spin', config)
     }
-
-    Vue.prototype.$md5 = md5
   }
 }

@@ -53,6 +53,33 @@ static int lua_md5sum(lua_State *L)
     return 1;
 }
 
+static int lua_md5(lua_State *L)
+{
+    int n = lua_gettop(L);
+    md5_ctx_t ctx;
+    char md5[33] = "";
+    uint8_t buf[16];
+    const char *s;
+    size_t len;
+    int i;
+
+    md5_begin(&ctx);
+
+    for (i = 1; i <= n; i++) {
+        s = luaL_checklstring(L, i, &len);
+        md5_hash(s, len, &ctx);
+    }
+
+    md5_end(buf, &ctx);
+
+    for (i = 0; i < 16; i++)
+        sprintf(md5 + i * 2, "%02x", buf[i]);
+
+    lua_pushstring(L, md5);
+
+    return 1;
+}
+
 static int lua_statvfs(lua_State *L)
 {
     const char *path = lua_tostring(L, 1);
@@ -149,6 +176,7 @@ static int lua_exists(lua_State *L)
 
 static const luaL_Reg regs[] = {
     {"md5sum",            lua_md5sum},
+    {"md5",               lua_md5},
     {"statvfs",           lua_statvfs},
     {"parse_route_addr",  lua_parse_route_addr},
     {"parse_route6_addr", lua_parse_route6_addr},

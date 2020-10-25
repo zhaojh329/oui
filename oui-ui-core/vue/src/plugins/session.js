@@ -1,5 +1,4 @@
 import { rpc } from './rpc'
-import md5 from 'js-md5'
 
 export const session = {
   username: ''
@@ -14,8 +13,6 @@ session.login = function (username, password) {
     if (typeof (password) !== 'string') {
       password = ''
     }
-
-    if (password) password = md5(password)
 
     rpc.login(username, password).then(r => {
       sessionStorage.setItem('sid', r.sid)

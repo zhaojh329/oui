@@ -54,7 +54,7 @@ export default {
         if (!valid) return
         this.$rpc.call('oui', 'set_password', {
           username: this.$session.username,
-          password: this.$md5(this.form.password)
+          password: this.form.password
         }).then(() => {
           this.$router.push('/login')
         })

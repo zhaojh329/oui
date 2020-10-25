@@ -24,6 +24,7 @@
 
 #include <libubox/avl-cmp.h>
 #include <libubox/utils.h>
+#include <libubox/md5.h>
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -154,10 +155,25 @@ static struct oui_user *find_user(const char *username)
     return avl_find_element(&users, username, u, avl);
 }
 
-const char *rpc_login(const char *username, const char *hash)
+static inline int hex2num(int x)
 {
-    struct rpc_session *s = NULL;
+    if (x >= '0' && x <= '9')
+        return x - '0';
+    else if (x >= 'A' && x <= 'F')
+        return x - 'A' + 10;
+    else if (x >= 'a' && x <= 'f')
+        return x - 'a' + 10;
+    else
+        return 0;
+}
+
+const char *rpc_login(const char *username, const char *password)
+{
+    struct rpc_session *s;
     struct oui_user *u;
+    uint8_t md5[16];
+    md5_ctx_t ctx;
+    int i;
 
     u = find_user(username);
     if (!u)
@@ -166,8 +182,20 @@ const char *rpc_login(const char *username, const char *hash)
     if (!u->pwhash[0] || !strcmp(u->pwhash, "-"))
         goto ok;
 
-    if (!hash || strcmp(u->pwhash, hash))
+    if (!password)
         return NULL;
+
+    md5_begin(&ctx);
+
+    md5_hash(username, strlen(username), &ctx);
+    md5_hash(password, strlen(password), &ctx);
+
+    md5_end(md5, &ctx);
+
+    for (i = 0; i < 16; i++) {
+        if (((hex2num(u->pwhash[i * 2]) << 4) | hex2num(u->pwhash[i * 2 + 1])) != md5[i])
+            return NULL;
+    }
 
 ok:
     s = rpc_session_create(RPC_DEFAULT_SESSION_TIMEOUT);

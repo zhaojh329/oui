@@ -48,7 +48,7 @@ void rpc_session_deinit();
 
 void rpc_reload_users();
 
-const char *rpc_login(const char *username, const char *hash);
+const char *rpc_login(const char *username, const char *password);
 
 void rpc_logout(const char *sid);
 
