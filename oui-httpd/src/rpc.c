@@ -202,12 +202,12 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     lua_getfield(L, -1, method);
     if (!lua_isfunction(L, -1)) {
         rpc_error(conn, RPC_ERROR_CALL_METHOD, req);
-        return;
+        goto done;
     }
 
     if (!is_local && !rpc_session_allowed(sid, object, method)) {
         rpc_error(conn, RPC_ERROR_ACCESS, req);
-        return;
+        goto done;
     }
 
     if (args)
