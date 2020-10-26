@@ -194,7 +194,7 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     L = obj->L;
 
     if (!lua_istable(L, -1)) {
-        uh_log_err("lua state is broken. No table on stack!\n");
+        uh_log_err("%s.%s: lua state is broken. No table on stack!\n", object, method);
         rpc_error(conn, RPC_ERROR_INTERNAL, req);
         return;
     }
