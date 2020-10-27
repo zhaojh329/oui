@@ -20,7 +20,7 @@ define Package/oui-ui-core
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui ui core
-  DEPENDS:=+oui-httpd +oui-bwm
+  DEPENDS:=+oui-httpd
   URL:=https://github.com/zhaojh329/oui
 endef
 

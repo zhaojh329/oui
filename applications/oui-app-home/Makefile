@@ -7,6 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 APP_TITLE:=Built-in home page
+APP_DEPENDS:=+oui-bwm
 
 include ../../oui-app.mk
 
