@@ -138,7 +138,7 @@ static int __init oui_bwm_init(void)
         goto term_free;
     }
 
-    pr_info("kmod of oui-bwm is started\n");
+    pr_info("oui-bwm: (C) 2019 jianhui zhao <zhaojh329@gmail.com>\n");
 
     return 0;
 
@@ -163,8 +163,6 @@ static void __exit oui_bwm_exit(void)
     subnet_free();
 
     remove_proc_subtree("oui-bwm", NULL);
-
-    pr_info("kmod of oui-bwm is stop\n");
 }
 
 module_init(oui_bwm_init);
