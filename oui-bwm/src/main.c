@@ -79,13 +79,13 @@ static u32 oui_bwm_hook(void *priv, struct sk_buff *skb, const struct nf_hook_st
     daddr = iph->daddr;
 
     /* local -> remote */
-    if (match_subnet(saddr) && !match_subnet(daddr)) {
+    if (match_subnet(saddr)) {
         term = find_term(ehdr->h_source, true);
         tx = skb->len;
         addr = saddr;
     }
     /* remote -> local */
-    else if (match_subnet(daddr) && !match_subnet(saddr)) {
+    else if (match_subnet(daddr)) {
         struct neighbour *n = __ipv4_neigh_lookup_noref(state->out, daddr);
         if (n) {
             term = find_term(n->ha, true);
