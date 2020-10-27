@@ -10,12 +10,12 @@ add_subnet() {
 
     case "$network" in
         *.*|*:*)
-            echo "$network" > /proc/oui/subnet
+            echo "$network" > /proc/oui-bwm/subnet
         ;;
         *)
             if network_get_subnets ranges "$network"; then
                 for range in $ranges; do
-                    echo "$range" > /proc/oui/subnet
+                    echo "$range" > /proc/oui-bwm/subnet
                 done
             fi
         ;;
@@ -28,7 +28,7 @@ parse_bwm() {
     local cfg="$1"
 
     config_get ttl $cfg ttl
-    [ -n "$ttl" ] && echo "ttl=$ttl" > /proc/oui/config
+    [ -n "$ttl" ] && echo "ttl=$ttl" > /proc/oui-bwm/config
 
     config_list_foreach "$cfg" local_network add_subnet
 }

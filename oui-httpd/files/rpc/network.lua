@@ -4,7 +4,7 @@ local M = {}
 
 function M.bwm()
 	local entries = {}
-    local r, lines = pcall(io.lines, "/proc/oui/term")
+    local r, lines = pcall(io.lines, "/proc/oui-bwm/term")
     if r then
         for line in lines do
             local mac, ip, rx, tx = line:match("(%S+) +(%S+) +(%S+) +(%S+)")

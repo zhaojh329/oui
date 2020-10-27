@@ -114,9 +114,9 @@ static int __init oui_bwm_init(void)
     struct proc_dir_entry *proc;
     int ret = 0;
 
-    proc = proc_mkdir("oui", NULL);
+    proc = proc_mkdir("oui-bwm", NULL);
     if (!proc) {
-        pr_err("can't create dir /proc/oui/\n");
+        pr_err("can't create dir /proc/oui-bwm/\n");
         return -ENODEV;;
     }
 
@@ -147,7 +147,7 @@ term_free:
 subnet_free:
     subnet_free();
 
-    remove_proc_subtree("oui", NULL);
+    remove_proc_subtree("oui-bwm", NULL);
     return ret;
 }
 
@@ -162,7 +162,7 @@ static void __exit oui_bwm_exit(void)
     term_free();
     subnet_free();
 
-    remove_proc_subtree("oui", NULL);
+    remove_proc_subtree("oui-bwm", NULL);
 
     pr_info("kmod of oui-bwm is stop\n");
 }
