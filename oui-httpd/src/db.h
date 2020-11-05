@@ -22,41 +22,12 @@
  * SOFTWARE.
  */
 
-#ifndef __SESSION_H
-#define __SESSION_H
+#ifndef __DB_H
+#define __DB_H
 
-#include <libubox/avl.h>
-#include <ev.h>
-
-#include "stdbool.h"
-
-#define RPC_DEFAULT_SESSION_TIMEOUT 300
-
-#define RPC_SID_LEN    32
-#define MAX_USERNAME_LEN 32
-#define MAX_ACLNAME_LEN 32
-
-struct rpc_session {
-    struct avl_node avl;
-    char id[RPC_SID_LEN + 1];
-    char username[MAX_USERNAME_LEN + 1];
-    char aclname[MAX_ACLNAME_LEN + 1];
-
-    struct ev_timer tmr;
-
-    int timeout;
-};
-
-int rpc_session_init();
-void rpc_session_deinit();
-
-const char *rpc_login(const char *username, const char *password);
-
-void rpc_logout(const char *sid);
-
-struct rpc_session *rpc_session_get(const char *sid);
-
-bool rpc_session_trusted(const char *object, const char *method);
-bool rpc_session_allowed(struct rpc_session *s, const char *object, const char *method);
+void db_init(const char *path);
+int db_exec(const char *sql);
+int db_query(const char *sql, int (*cb)(void *data, int count, char **value, char **name), void *data);
 
 #endif
+

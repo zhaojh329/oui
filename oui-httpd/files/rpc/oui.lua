@@ -1,4 +1,5 @@
 local uci = require "uci"
+local sqlite3 = require "lsqlite3"
 
 local M = {}
 
@@ -31,6 +32,32 @@ function M.set_lang(params)
     return { lang = c:get("oui", "main", "lang") }
 end
 
+local function get_menu_perm(menu)
+    local db = sqlite3.open("/etc/oui-httpd/oh.db")
+    local s = __oui_session
+    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = 'menu' AND entry = '%s'", s.acl, menu)
+    local perm
+    local neg = false
+
+    db:exec(sql, function(udata, cols, values, names)
+        perm = values[1]
+        return 1
+    end)
+
+    db:close()
+
+    if perm then
+        neg = perm:sub(1, 1) == "!"
+        if neg then
+            perm = perm:sub(2)
+        end
+    end
+
+    if perm == "" then perm = nil end
+
+    return perm, neg
+end
+
 function M.menu(params)
 	local menus = {}
 
@@ -52,7 +79,17 @@ function M.menu(params)
                 end
 
                 if files then
-                    menus[path] = tmp
+                    local perm, neg = get_menu_perm("/" .. path)
+                    local allow = true
+                    if perm then
+                        allow = perm:find("s")
+                        if neg then
+                            allow = not allow
+                        end
+                    end
+                    if allow then
+                        menus[path] = tmp
+                    end
                 end
             end
         end
@@ -81,25 +118,34 @@ function M.load_locales(params)
 	return locales
 end
 
-function M.set_password(params)
-    local c = uci.cursor()
-
+local function set_password(params)
     if type(params.username) ~= "string" or  type(params.password) ~= "string" then
         error("invalid params")
     end
 
-	c:foreach("oui-httpd", "login", function(s)
-		if s.username == params.username then
-			local password = utils.md5(s.username, params.password)
-			c:set("oui-httpd", s[".name"], "password", password)
-			return false
-		end
-	end)
+    local db = sqlite3.open("/etc/oui-httpd/oh.db")
 
-	c:commit("oui-httpd")
+    local found = false
 
-    -- reload users
-    os.execute("killall -USR1 oui-httpd")
+    db:exec(string.format("SELECT password FROM account WHERE username = %s", params.username), function() found = true end)
+
+    if not found then
+        db:exec(string.format("INSERT INTO account VALUES('%s', '', '')", params.username))
+    end
+
+    local hash = utils.md5(params.username, params.password)
+    db:exec(string.format("UPDATE account SET password = '%s' WHERE username = '%s'", hash, params.username))
+
+    db:close()
+end
+
+function M.set_password(params)
+    local s = __oui_session
+
+    if s.acl ~= "admin" and params.username ~= s.username then
+        error("forbidden")
+    end
+    set_password(params)
 end
 
 function M.first_login()
@@ -121,7 +167,7 @@ function M.first_set(params)
     c:set("oui", "main", "first", "0")
     c:commit("oui")
 
-	M.set_password(params)
+	set_password(params)
 end
 
 return M

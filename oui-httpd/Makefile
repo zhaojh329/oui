@@ -21,11 +21,15 @@ define Package/oui-httpd
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui rpc backend
-  DEPENDS:=+libuhttpd-nossl +lua +libubox-lua +libubus-lua +libuci-lua +jansson
+  DEPENDS:=+libuhttpd-nossl +libubox-lua +libubus-lua +libuci-lua +jansson +lsqlite3
   URL:=https://github.com/zhaojh329/oui
 endef
 
 define Package/oui-httpd/description
+endef
+
+define Package/oui-httpd/conffiles
+/etc/oui-httpd/oh.db
 endef
 
 define Build/Prepare
@@ -35,7 +39,8 @@ endef
 
 define Package/oui-httpd/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config \
-		$(1)/usr/lib/oui-httpd/rpc $(1)/usr/lib/oui-httpd/lib 
+		$(1)/usr/lib/oui-httpd/rpc $(1)/usr/lib/oui-httpd/lib \
+		$(1)/etc/oui-httpd 
 	$(INSTALL_CONF) ./files/oui-httpd.config $(1)/etc/config/oui-httpd
 	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/oui-httpd $(1)/usr/sbin

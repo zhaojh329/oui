@@ -33,11 +33,13 @@
 
 #include "session.h"
 #include "rpc.h"
+#include "db.h"
 
 enum {
     LONG_OPT_RPC = 1,
     LONG_OPT_HOME = 2,
-    LONG_OPT_INDEX = 3
+    LONG_OPT_INDEX = 3,
+    LONG_OPT_DB = 4
 };
 
 static const char *home_dir = ".";
@@ -67,7 +69,6 @@ static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
         ev_break(loop, EVBREAK_ALL);
         uh_log_info("Normal quit\n");
     } else if (w->signum == SIGUSR1) {
-        rpc_reload_users();
     }
 }
 
@@ -80,6 +81,7 @@ static void usage(const char *prog)
                     "          --rpc dir         # rpc directory(default is .)\n"
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
+                    "          --db oh.db       # database file(default is ./oh.db)\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
@@ -88,6 +90,7 @@ static struct option long_options[] = {
     {"rpc", required_argument, NULL, LONG_OPT_RPC},
     {"home", required_argument, NULL, LONG_OPT_HOME},
     {"index", required_argument, NULL, LONG_OPT_INDEX},
+    {"db", required_argument, NULL, LONG_OPT_DB}
 };
 
 int main(int argc, char **argv)
@@ -98,6 +101,7 @@ int main(int argc, char **argv)
     struct uh_server *srv = NULL;
     const char *addr = "0.0.0.0";
     const char *rpc_dir = ".";
+    const char *db = "oh.db";
     bool verbose = false;
     int port = 8080;
     int option_index;
@@ -124,6 +128,9 @@ int main(int argc, char **argv)
         case LONG_OPT_INDEX:
             index_page = optarg;
             break;
+        case LONG_OPT_DB:
+            db = optarg;
+            break;
         default: /* '?' */
             usage(argv[0]);
         }
@@ -135,6 +142,8 @@ int main(int argc, char **argv)
     uh_log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
     signal(SIGPIPE, SIG_IGN);
+
+    db_init(db);
 
     if (rpc_session_init())
         return 1;

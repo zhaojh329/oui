@@ -25,6 +25,7 @@
 #include <libubox/avl-cmp.h>
 #include <libubox/utils.h>
 #include <libubox/md5.h>
+#include <sqlite3.h>
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -34,12 +35,7 @@
 #include <uhttpd/log.h>
 
 #include "session.h"
-
-struct oui_user {
-    struct avl_node avl;
-    char name[128];
-    char pwhash[128];
-};
+#include "db.h"
 
 struct rpc_trusted_object {
     struct avl_node avl;
@@ -52,8 +48,12 @@ struct rpc_trusted_method {
     char value[0];
 };
 
+struct rpc_login_param {
+    char aclname[MAX_ACLNAME_LEN + 1];
+    char pwhash[33];
+};
+
 static struct avl_tree sessions;
-static struct avl_tree users;
 static struct avl_tree trusted;
 
 static int rpc_random(char *dest)
@@ -107,9 +107,19 @@ static void rpc_session_timeout(struct ev_loop *loop, struct ev_timer *w, int re
     rpc_session_destroy(s);
 }
 
-static struct rpc_session *rpc_session_create(int timeout)
+static struct rpc_session *rpc_session_create(int timeout, const char *username, const char *aclname)
 {
     struct rpc_session *s;
+
+    if (strlen(username) > MAX_USERNAME_LEN) {
+        uh_log_err("username '%s' too long, more than %d characters\n", username, MAX_USERNAME_LEN);
+        return NULL;
+    }
+
+    if (strlen(aclname) > MAX_ACLNAME_LEN) {
+        uh_log_err("aclname '%s' too long, more than %d characters\n", aclname, MAX_ACLNAME_LEN);
+        return NULL;
+    }
 
     s = calloc(1, sizeof(struct rpc_session));
     if (!s)
@@ -122,6 +132,9 @@ static struct rpc_session *rpc_session_create(int timeout)
     s->timeout = timeout;
 
     ev_timer_init(&s->tmr, rpc_session_timeout, s->timeout, 0);
+
+    strncpy(s->username, username, sizeof(s->username) - 1);
+    strncpy(s->aclname, aclname, sizeof(s->aclname) - 1);
 
     avl_insert(&sessions, &s->avl);
 
@@ -145,16 +158,6 @@ struct rpc_session *rpc_session_get(const char *sid)
     return s;
 }
 
-static struct oui_user *find_user(const char *username)
-{
-    struct oui_user *u;
-
-    if (!username)
-        return NULL;
-
-    return avl_find_element(&users, username, u, avl);
-}
-
 static inline int hex2num(int x)
 {
     if (x >= '0' && x <= '9')
@@ -167,38 +170,48 @@ static inline int hex2num(int x)
         return 0;
 }
 
+static int rpc_login_cb(void *data, int count, char **value, char **name)
+{
+    struct rpc_login_param *param = data;
+
+    if (value[0])
+        strncpy(param->aclname, value[0], MAX_ACLNAME_LEN);
+
+    if (value[1])
+        strncpy(param->pwhash, value[1], 32);
+
+    return SQLITE_ABORT;
+}
+
 const char *rpc_login(const char *username, const char *password)
 {
+    struct rpc_login_param param = {};
     struct rpc_session *s;
-    struct oui_user *u;
     uint8_t md5[16];
     md5_ctx_t ctx;
+    char  sql[256];
     int i;
 
-    u = find_user(username);
-    if (!u)
+    sprintf(sql, "SELECT acl, password FROM account WHERE username = '%s'", username);
+
+    if (db_query(sql, rpc_login_cb, &param) < 0)
         return NULL;
 
-    if (!u->pwhash[0] || !strcmp(u->pwhash, "-"))
-        goto ok;
-
-    if (!password)
+    /* Not found or password is empty */
+    if (!param.pwhash[0])
         return NULL;
 
     md5_begin(&ctx);
-
     md5_hash(username, strlen(username), &ctx);
     md5_hash(password, strlen(password), &ctx);
-
     md5_end(md5, &ctx);
 
     for (i = 0; i < 16; i++) {
-        if (((hex2num(u->pwhash[i * 2]) << 4) | hex2num(u->pwhash[i * 2 + 1])) != md5[i])
+        if (((hex2num(param.pwhash[i * 2]) << 4) | hex2num(param.pwhash[i * 2 + 1])) != md5[i])
             return NULL;
     }
 
-ok:
-    s = rpc_session_create(RPC_DEFAULT_SESSION_TIMEOUT);
+    s = rpc_session_create(RPC_DEFAULT_SESSION_TIMEOUT, username, param.aclname);
 
     return s ? s->id : NULL;
 }
@@ -313,77 +326,6 @@ err:
     return ret;
 }
 
-static int add_user(const char *name, const char *pwhash)
-{
-    struct oui_user *u = calloc(1, sizeof(struct oui_user));
-
-    if (!u) {
-        uh_log_err("calloc: %s\n", strerror(errno));
-        return -1;
-    }
-
-    strcpy(u->name, name);
-    strcpy(u->pwhash, pwhash);
-
-    u->avl.key = u->name;
-
-    avl_insert(&users, &u->avl);
-
-    return 0;
-}
-
-static int load_users(struct uci_context *uci)
-{
-    struct uci_package *p = NULL;
-    struct uci_section *s;
-    struct uci_element *e;
-    struct uci_ptr ptr = {.package = "oui-httpd"};
-    int ret = -1;
-
-    uci_load(uci, ptr.package, &p);
-
-    if (!p) {
-        uh_log_err("Load config 'oui-httpd' fail\n");
-        return -1;
-    }
-
-    uci_foreach_element(&p->sections, e) {
-        const char *username, *password = "";
-
-        s = uci_to_section(e);
-
-        if (strcmp(s->type, "login"))
-            continue;
-
-        ptr.section = s->e.name;
-        ptr.s = NULL;
-
-        ptr.option = "username";
-        ptr.o = NULL;
-
-        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
-            continue;
-
-        username = ptr.o->v.string;
-
-        ptr.option = "password";
-        ptr.o = NULL;
-
-        if (!uci_lookup_ptr(uci, &ptr, NULL, true) && ptr.o && ptr.o->type == UCI_TYPE_STRING)
-            password = ptr.o->v.string;
-
-        if (add_user(username, password))
-            goto err;
-    }
-
-    ret = 0;
-
-err:
-    uci_unload(uci, p);
-
-    return ret;
-}
-
 int rpc_session_init()
 {
     struct uci_context *uci = uci_alloc_context();
@@ -395,10 +337,9 @@ int rpc_session_init()
     }
 
     avl_init(&sessions, avl_strcmp, false, NULL);
-    avl_init(&users, avl_strcmp, false, NULL);
     avl_init(&trusted, avl_strcmp, false, NULL);
 
-    ret = load_trusted(uci) || load_users(uci);
+    ret = load_trusted(uci);
 
     uci_free_context(uci);
 
@@ -411,21 +352,6 @@ static void free_all_session()
 
     avl_for_each_element_safe(&sessions, s, avl, temp) {
         rpc_session_destroy(s);
-    }
-}
-
-static void oui_user_destroy(struct oui_user *u)
-{
-    avl_delete(&users, &u->avl);
-    free(u);
-}
-
-static void free_all_users()
-{
-    struct oui_user *u, *temp;
-
-    avl_for_each_element_safe(&users, u, avl, temp) {
-        oui_user_destroy(u);
     }
 }
 
@@ -453,11 +379,17 @@ static void free_all_trusted()
 void rpc_session_deinit()
 {
     free_all_session();
-    free_all_users();
     free_all_trusted();
 }
 
-bool rpc_session_allowed(const char *sid, const char *object, const char *method)
+static int rpc_session_allowed_cb(void *data, int count, char **value, char **name)
+{
+    if (value[0])
+        strncpy(data, value[0], 4);
+    return SQLITE_ABORT;
+}
+
+bool rpc_session_trusted(const char *object, const char *method)
 {
     struct rpc_trusted_object *obj;
     struct rpc_trusted_method *m;
@@ -468,19 +400,25 @@ bool rpc_session_allowed(const char *sid, const char *object, const char *method
             return true;
     }
 
-    return rpc_session_get(sid) != NULL;
+    return false;
 }
 
-void rpc_reload_users()
+bool rpc_session_allowed(struct rpc_session *s, const char *object, const char *method)
 {
-    struct uci_context *uci = uci_alloc_context();
+    char permissions[5] = "";
+    char sql[128];
 
-    uh_log_info("reload users...");
+    sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'rpc' AND entry = '%s.%s'",
+        s->aclname, object, method);
 
-    free_all_users();
+    /* Unconfigured is considered trusted */
+    if (db_query(sql, rpc_session_allowed_cb, permissions) < 0 || !permissions[0])
+        return true;
 
-    load_users(uci);
+    /* revoke */
+    if (permissions[0] == '!')
+        return false;
 
-    uci_free_context(uci);
+    return strchr(permissions, 'x') != NULL;
 }
 
