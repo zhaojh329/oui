@@ -1,9 +1,9 @@
 /*
- *	Copyright (C) 2019 jianhui zhao <zhaojh329@gmail.com>
+ *  Copyright (C) 2019 jianhui zhao <zhaojh329@gmail.com>
  *
- *	This program is free software; you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License version 2 as
- *	published by the Free Software Foundation.
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License version 2 as
+ *  published by the Free Software Foundation.
  */
 
 #include <linux/inetdevice.h>
@@ -59,7 +59,7 @@ static int proc_show(struct seq_file *s, void *v)
         seq_printf(s, "%pI4/%d\n", &net->addr, inet_mask_len(net->mask));
     }
 
-	return 0;
+    return 0;
 }
 
 static ssize_t proc_write(struct file *file, const char __user *buf, size_t size, loff_t *ppos)
@@ -72,7 +72,7 @@ static ssize_t proc_write(struct file *file, const char __user *buf, size_t size
         return -EINVAL;
 
     if (copy_from_user(addr, buf, sizeof(addr) - 1))
-		return -EFAULT;
+        return -EFAULT;
 
     if (addr[0] == 'c') {
         clear_subnet();
@@ -101,16 +101,16 @@ static ssize_t proc_write(struct file *file, const char __user *buf, size_t size
 
 static int proc_open(struct inode *inode, struct file *file)
 {
-	return single_open(file, proc_show, NULL);
+    return single_open(file, proc_show, NULL);
 }
 
 const static struct file_operations proc_ops = {
-	.owner 		= THIS_MODULE,
-	.open  		= proc_open,
-	.read   	= seq_read,
-	.write		= proc_write,
-	.llseek 	= seq_lseek,
-	.release 	= single_release
+    .owner      = THIS_MODULE,
+    .open       = proc_open,
+    .read       = seq_read,
+    .write      = proc_write,
+    .llseek     = seq_lseek,
+    .release    = single_release
 };
 
 int subnet_init(struct proc_dir_entry *proc)

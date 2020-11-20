@@ -59,12 +59,12 @@ static int proc_open(struct inode *inode, struct file *file)
 }
 
 const static struct file_operations proc_ops = {
-    .owner 		= THIS_MODULE,
-    .open  		= proc_open,
-    .read   	= seq_read,
-    .write		= proc_write,
-    .llseek 	= seq_lseek,
-    .release 	= single_release
+    .owner      = THIS_MODULE,
+    .open       = proc_open,
+    .read       = seq_read,
+    .write      = proc_write,
+    .llseek     = seq_lseek,
+    .release    = single_release
 };
 
 static u32 oui_bwm_hook(void *priv, struct sk_buff *skb, const struct nf_hook_state *state)
