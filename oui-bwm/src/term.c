@@ -22,7 +22,7 @@ static struct hlist_head terms[TERM_HASH_SIZE];
 static u32 hash_rnd __read_mostly;
 struct delayed_work gc_work;
 static unsigned long ttl;
-static rwlock_t lock;
+static DEFINE_RWLOCK(lock);
 
 static inline int term_mac_hash(const u8 *mac)
 {
@@ -36,14 +36,14 @@ static struct terminal *___find_term(const u8 *mac)
     u32 hash = term_mac_hash(mac);
     struct terminal *term;
 
-    rcu_read_lock_bh();
-    hlist_for_each_entry_rcu(term, &terms[hash], hlist) {
+    read_lock(&lock);
+    hlist_for_each_entry(term, &terms[hash], hlist) {
         if (ether_addr_equal(term->mac, mac)) {
-            rcu_read_unlock_bh();
+            read_unlock(&lock);
             return term;
         }
     }
-    rcu_read_unlock_bh();
+    read_unlock(&lock);
     return NULL;
 }
 
@@ -59,39 +59,33 @@ static struct terminal *create_term(const u8 *mac)
     term->updated = jiffies;
     memcpy(term->mac, mac, ETH_ALEN);
 
-    write_lock_bh(&lock);
-    hlist_add_head_rcu(&term->hlist, &terms[hash]);
-    write_unlock_bh(&lock);
+    write_lock(&lock);
+    hlist_add_head(&term->hlist, &terms[hash]);
+    write_unlock(&lock);
 
     return term;
 }
 
-static void term_rcu_free(struct rcu_head *head)
-{
-    struct terminal *term = container_of(head, struct terminal, rcu);
-    kmem_cache_free(term_cache, term);
-}
-
 static void term_delete(struct terminal *term)
 {
-    hlist_del_init_rcu(&term->hlist);
-    call_rcu(&term->rcu, term_rcu_free);
+    hlist_del_init(&term->hlist);
+    kmem_cache_free(term_cache, term);
 }
 
 static void term_flush(void)
 {
     int i;
 
+    write_lock(&lock);
     for (i = 0; i < TERM_HASH_SIZE; i++) {
         struct terminal *term;
         struct hlist_node *n;
 
-        write_lock_bh(&lock);
         hlist_for_each_entry_safe(term, n, &terms[i], hlist) {
             term_delete(term);
         }
-        write_unlock_bh(&lock);
     }
+    write_unlock(&lock);
 }
 
 static int proc_show(struct seq_file *s, void *v)
@@ -100,8 +94,7 @@ static int proc_show(struct seq_file *s, void *v)
 
     seq_printf(s, "%-17s  %-16s  %-16s  %-16s\n", "MAC", "IP", "Rx", "Tx");
 
-    rcu_read_lock_bh();
-
+    read_lock(&lock);
     for (i = 0; i < TERM_HASH_SIZE; i++) {
         struct terminal *term;
 
@@ -110,8 +103,7 @@ static int proc_show(struct seq_file *s, void *v)
                 term->mac, &(term->ip), term->rx, term->tx);
         }
     }
-
-    rcu_read_unlock_bh();
+    read_unlock(&lock);
 
     return 0;
 }
@@ -159,11 +151,11 @@ static void term_cleanup(struct work_struct *work)
     unsigned long now = jiffies;
     int i;
 
+    write_lock(&lock);
     for (i = 0; i < TERM_HASH_SIZE; i++) {
         struct terminal *term;
         struct hlist_node *n;
 
-        write_lock_bh(&lock);
         hlist_for_each_entry_safe(term, n, &terms[i], hlist) {
             unsigned long this_timer = term->updated + ttl;
 
@@ -172,8 +164,8 @@ static void term_cleanup(struct work_struct *work)
             else
                 term_delete(term);
         }
-        write_unlock_bh(&lock);
     }
+    write_unlock(&lock);
 
     /* Cleanup minimum 10 milliseconds apart */
     work_delay = max_t(unsigned long, work_delay, msecs_to_jiffies(10));
@@ -192,12 +184,12 @@ struct terminal *find_term(const u8 *mac, bool creat)
 
 void update_term(struct terminal *term, __be32 ip, u32 rx, u32 tx)
 {
-    write_lock_bh(&lock);
+    write_lock(&lock);
     term->ip = ip;
     term->rx += rx;
     term->tx += tx;
     term->updated = jiffies;
-    write_unlock_bh(&lock);
+    write_unlock(&lock);
 }
 
 void set_term_ttl(unsigned long t)
@@ -223,8 +215,6 @@ int term_init(struct proc_dir_entry *proc)
 
     proc_create("term", 0644, proc, &proc_ops);
 
-    rwlock_init(&lock);
-
     for (i = 0; i < TERM_HASH_SIZE; i++) {
         INIT_HLIST_HEAD(&terms[i]);
     }
@@ -240,6 +230,8 @@ int term_init(struct proc_dir_entry *proc)
 
 void term_free(void)
 {
+    cancel_delayed_work_sync(&gc_work);
+
     term_flush();
 
     kmem_cache_destroy(term_cache);

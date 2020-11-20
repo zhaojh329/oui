@@ -13,22 +13,32 @@
 #include "subnet.h"
 
 static LIST_HEAD(subnets);
+static DEFINE_SPINLOCK(lock);
+
+static void subnet_rcu_free(struct rcu_head *head)
+{
+    struct subnet *n = container_of(head, struct subnet, rcu);
+
+    kfree(n);
+}
 
 static void clear_subnet(void)
 {
     struct subnet *pos, *n;
 
+    spin_lock(&lock);
     list_for_each_entry_safe(pos, n, &subnets, list) {
-        list_del(&pos->list);
-        kfree(pos);
+        list_del_rcu(&pos->list);
+        call_rcu(&pos->rcu, subnet_rcu_free);
     }
+    spin_unlock(&lock);
 }
 
 static bool subnet_exist(__be32 addr, __be32 mask)
 {
     struct subnet *net;
 
-    list_for_each_entry(net, &subnets, list) {
+    list_for_each_entry_rcu(net, &subnets, list) {
         if (net->addr == addr && net->mask == mask)
             return true;
     }
@@ -48,7 +58,9 @@ static void add_subnet(__be32 addr, __be32 mask)
     net->addr = addr;
     net->mask = mask;
 
-    list_add_tail(&net->list, &subnets);
+    spin_lock(&lock);
+    list_add_tail_rcu(&net->list, &subnets);
+    spin_unlock(&lock);
 }
 
 static int proc_show(struct seq_file *s, void *v)
@@ -129,7 +141,7 @@ bool match_subnet(__be32 addr)
 {
     struct subnet *net;
 
-    list_for_each_entry(net, &subnets, list) {
+    list_for_each_entry_rcu(net, &subnets, list) {
         if (!((addr ^ net->addr) & net->mask))
             return true;
     }

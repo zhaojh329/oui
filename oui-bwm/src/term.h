@@ -15,7 +15,6 @@ struct terminal {
     struct hlist_node hlist;
     /* write-heavy members should not affect lookups */
     unsigned long updated ____cacheline_aligned_in_smp;
-    struct rcu_head rcu;
     u8 mac[ETH_ALEN];
     __be32 ip;
     u64 tx;

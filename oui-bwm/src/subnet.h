@@ -14,6 +14,7 @@
 
 struct subnet {
     struct list_head list;
+    struct rcu_head rcu;
     __be32 addr;
     __be32 mask;
 };
