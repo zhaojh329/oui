@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-card :title="$t('Backup / Restore')" style="margin-bottom: 15px">
+    <a-card :title="$t('upgrade.Backup / Restore')" style="margin-bottom: 15px">
       <form ref="backup" method="POST" action="/download">
         <input v-show="false" type="text" value="/tmp/backup.tar.gz" name="path"/>
         <input v-show="false" type="text" value="backup.tar.gz" name="filename"/>
@@ -97,7 +97,7 @@ export default {
         return
       }
 
-      const title = this.$t('upgrade.Backup restore')
+      const title = this.$t('upgrade.Backup / Restore')
 
       this.$rpc.call('file', 'md5sum', { path: '/tmp/backup.tar.gz' }).then(res => {
         this.$confirm({

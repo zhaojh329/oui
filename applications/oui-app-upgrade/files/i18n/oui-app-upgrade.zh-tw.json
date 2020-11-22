@@ -12,7 +12,7 @@
     "PerformResetContent": "該操作將把設備恢復到初始配置狀態，您的所有更改將被丟失!",
     "Size": "大小",
     "Keep configuration when reflashing": "保留配置文件",
-    "Backup restore": "備份恢復",
+    "Backup / Restore": "備份/恢復",
     "backup archive was uploaded completely": "備份存檔已上傳，請註意核對文件大小和校驗值！單擊“{btn}”執行恢復操作",
     "OK": "確定",
     "RestoreConfirm": "備份已恢復，建議立即重啟系統以應用所有配置更改。",

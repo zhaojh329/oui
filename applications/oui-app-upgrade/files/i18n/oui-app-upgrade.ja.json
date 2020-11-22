@@ -12,7 +12,7 @@
     "PerformResetContent": "この作業は装置を初期配置状態に戻し、あなたのすべての変更は失われる!",
     "Size": "大きさ",
     "Keep configuration when reflashing": "プロファイルを保留する",
-    "Backup restore": "バックアップ回復",
+    "Backup / Restore": "バックアップ/回復",
     "backup archive was uploaded completely": "バックアップアーカイブがアップロードされていますので、ファイルサイズとチェック値をチェックしてください!「{btn}」をクリックして回復操作を行う",
     "OK": "確定",
     "RestoreConfirm": "バックアップが回復したので、すべての構成変更を適用するためにシステムを直ちに再開することを提案する。",
