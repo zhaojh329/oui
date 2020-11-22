@@ -4,7 +4,7 @@ local sqlite3 = require "lsqlite3"
 
 local M = {}
 
-local function uci_allowed(config, rw)
+local function uci_access(config, rw)
     local s = __oui_session
 
     -- The admin acl group is always allowed
@@ -32,7 +32,7 @@ end
 function M.load(params)
     local config = params.config
 
-    if not uci_allowed(config, "r") then error("forbidden") end
+    if not uci_access(config, "r") then error("forbidden") end
 
     local c = uci.cursor()
     return c:get_all(params.config)
@@ -43,7 +43,7 @@ function M.set(params)
     local config = params.config
     local section = params.section
 
-    if not uci_allowed(config, "w") then error("forbidden") end
+    if not uci_access(config, "w") then error("forbidden") end
 
     for option, value in pairs(params.values) do
         c:set(config, section, option, value)
@@ -58,7 +58,7 @@ function M.delete(params)
     local section = params.section
     local options = params.options
 
-    if not uci_allowed(config, "w") then error("forbidden") end
+    if not uci_access(config, "w") then error("forbidden") end
 
     if options then
         for _, option in ipairs(options) do
@@ -76,7 +76,7 @@ function M.add(params)
     local config = params.config
     local section = c:add(config, params.type)
 
-    if not uci_allowed(config, "w") then error("forbidden") end
+    if not uci_access(config, "w") then error("forbidden") end
 
     for option, value in pairs(params.values) do
         c:set(config, section, option, value)
@@ -89,7 +89,7 @@ function M.reorder(params)
     local c = uci.cursor()
     local config = params.config
 
-    if not uci_allowed(config, "w") then error("forbidden") end
+    if not uci_access(config, "w") then error("forbidden") end
 
     for i, section in ipairs(params.sections) do
         c:reorder(config, section, i - 1)

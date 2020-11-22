@@ -32,7 +32,7 @@ function M.set_lang(params)
     return { lang = c:get("oui", "main", "lang") }
 end
 
-local function menu_allowed(menu)
+local function menu_access(menu)
     local s = __oui_session
 
     -- The admin acl group is always allowed
@@ -72,7 +72,7 @@ function M.menu(params)
                     end
                 end
 
-                if files and menu_allowed("/" .. path) then
+                if files and menu_access("/" .. path) then
                     menus[path] = tmp
                 end
             end
