@@ -37,9 +37,9 @@
 
 enum {
     LONG_OPT_RPC = 1,
-    LONG_OPT_HOME = 2,
-    LONG_OPT_INDEX = 3,
-    LONG_OPT_DB = 4
+    LONG_OPT_HOME,
+    LONG_OPT_INDEX,
+    LONG_OPT_DB
 };
 
 static const char *home_dir = ".";
@@ -150,12 +150,11 @@ int main(int argc, char **argv)
 
     db_init(db);
 
-    if (rpc_session_init())
-        return 1;
+    session_init();
 
     loop = EV_DEFAULT;
 
-    load_rpc(rpc_dir);
+    rpc_init(rpc_dir);
 
     srv = uh_server_new(loop, addr, port);
     if (!srv) {
@@ -181,9 +180,9 @@ err:
         free(srv);
     }
 
-    rpc_session_deinit();
+    session_deinit();
 
-    unload_rpc();
+    rpc_deinit();
 
     ev_loop_destroy(loop);
 

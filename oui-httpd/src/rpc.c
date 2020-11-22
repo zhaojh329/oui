@@ -25,16 +25,19 @@
 #include <libubox/avl.h>
 #include <libubox/avl-cmp.h>
 #include <lauxlib.h>
+#include <sqlite3.h>
 #include <dirent.h>
 #include <lualib.h>
 #include <errno.h>
 #include <time.h>
+#include <uci.h>
 
 #include "lua_json.h"
 #include "lua_utils.h"
 #include "session.h"
 #include "utils.h"
 #include "rpc.h"
+#include "db.h"
 
 enum {
     RPC_ERROR_PARSE,
@@ -76,8 +79,14 @@ struct rpc_exec_context {
 };
 
 struct rpc_object {
+    struct avl_tree trusted_methods;
     struct avl_node avl;
     lua_State *L;
+    char value[0];
+};
+
+struct rpc_trusted_method {
+    struct avl_node avl;
     char value[0];
 };
 
@@ -180,11 +189,43 @@ static void rpc_resp(struct uh_connection *conn, json_t *req, json_t *result)
     conn->done(conn);
 }
 
+static bool rpc_is_trusted(struct rpc_object *obj, const char *method)
+{
+    struct rpc_trusted_method *m;
+
+    return avl_find_element(&obj->trusted_methods, method, m, avl);
+}
+
+static int rpc_access_cb(void *data, int count, char **value, char **name)
+{
+    if (value[0])
+        strncpy(data, value[0], 4);
+    return SQLITE_ABORT;
+}
+
+static bool rpc_access(struct session *s, const char *object, const char *method)
+{
+    char perm[5] = "";
+    char sql[128];
+
+    /* The admin acl group is always allowed */
+    if (!strcmp(s->aclgroup, "admin"))
+        return true;
+
+    sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'rpc' AND entry = '%s.%s'",
+            s->aclgroup, object, method);
+
+    if (db_query(sql, rpc_access_cb, perm) < 0 || !perm[0])
+        return false;
+
+    return strchr(perm, 'x');
+}
+
 static void handle_rpc_call(struct uh_connection *conn, const char *sid, const char *object, const char *method,
                             json_t *args, json_t *req)
 {
     bool is_local = conn->get_addr(conn) == INADDR_LOOPBACK;
-    struct rpc_session *s = rpc_session_get(sid);
+    struct session *s = session_get(sid);
     struct rpc_object *obj;
     lua_State *L;
 
@@ -208,7 +249,7 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
         goto done;
     }
 
-    if (!is_local && !rpc_session_trusted(object, method) && (!s || !rpc_session_allowed(s, object, method))) {
+    if (!is_local && !rpc_is_trusted(obj, method) && (!s || !rpc_access(s, object, method))) {
         rpc_error(conn, RPC_ERROR_ACCESS, req);
         goto done;
     }
@@ -392,7 +433,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
         username = json_object_get_string(params, "username");
         password = json_object_get_string(params, "password");
 
-        sid = rpc_login(username, password);
+        sid = session_login(username, password);
         if (!sid) {
             rpc_error(conn, RPC_ERROR_ACCESS, req);
             return;
@@ -411,7 +452,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
         }
 
         sid = json_object_get_string(params, "sid");
-        rpc_logout(sid);
+        session_logout(sid);
 
         rpc_resp(conn, req, json_object());
     } else if (!strcmp(method, "alive")) {
@@ -423,7 +464,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
         }
 
         sid = json_object_get_string(params, "sid");
-        if (!rpc_session_get(sid)) {
+        if (!session_get(sid)) {
             rpc_error(conn, RPC_ERROR_ACCESS, req);
             return;
         }
@@ -494,7 +535,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
             return;
         }
 
-        if (!rpc_session_get(sid)) {
+        if (!session_get(sid)) {
             rpc_error(conn, RPC_ERROR_ACCESS, req);
             return;
         }
@@ -542,12 +583,10 @@ void serve_rpc(struct uh_connection *conn, bool strict)
     }
 }
 
-void load_rpc(const char *path)
+static void load_rpc_scripts(const char *path)
 {
     DIR *dir;
     struct dirent *e;
-
-    avl_init(&rpc_objects, avl_strcmp, false, NULL);
 
     dir = opendir(path);
     if (!dir) {
@@ -584,23 +623,141 @@ void load_rpc(const char *path)
         }
 
         obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
+        if (!obj) {
+            uh_log_err("calloc: %s\n", strerror(errno));
+            break;
+        }
+
         obj->L = L;
         strcpy(obj->value, e->d_name);
         obj->avl.key = obj->value;
+        avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
         avl_insert(&rpc_objects, &obj->avl);
     }
 
     closedir(dir);
 }
 
-void unload_rpc()
+static void free_all_trusted_methods(struct rpc_object *obj)
+{
+    struct rpc_trusted_method *m, *temp;
+
+    avl_for_each_element_safe(&obj->trusted_methods, m, avl, temp) {
+        avl_delete(&obj->trusted_methods, &m->avl);
+        free(m);
+    }
+}
+
+static void unload_rpc_scripts()
 {
     struct rpc_object *obj, *temp;
 
     avl_for_each_element_safe(&rpc_objects, obj, avl, temp) {
         avl_delete(&rpc_objects, &obj->avl);
+        free_all_trusted_methods(obj);
         lua_close(obj->L);
         free(obj);
     }
 }
 
+static int add_trusted_method(struct rpc_object *obj, const char *value)
+{
+    struct rpc_trusted_method *m = calloc(1, sizeof(struct rpc_trusted_method) + strlen(value) + 1);
+
+    if (!m) {
+        uh_log_err("calloc: %s\n", strerror(errno));
+        return -1;
+    }
+
+    strcpy(m->value, value);
+    m->avl.key = m->value;
+
+    avl_insert(&obj->trusted_methods, &m->avl);
+
+    return 0;
+}
+
+static int load_trusted()
+{
+    struct uci_context *uci = uci_alloc_context();
+    struct uci_package *p = NULL;
+    struct uci_section *s;
+    struct uci_element *e;
+    struct uci_ptr ptr = {.package = "oui-httpd"};
+    int ret = -1;
+
+    if (!uci) {
+        uh_log_err("uci_alloc_context fail\n");
+        return -1;
+    }
+
+    uci_load(uci, ptr.package, &p);
+
+    if (!p) {
+        uh_log_err("Load config 'oui-httpd' fail\n");
+        goto err;
+    }
+
+    uci_foreach_element(&p->sections, e) {
+        struct rpc_object *obj;
+
+        s = uci_to_section(e);
+
+        if (strcmp(s->type, "trusted-object"))
+            continue;
+
+        ptr.section = s->e.name;
+        ptr.s = NULL;
+
+        ptr.option = "object";
+        ptr.o = NULL;
+
+        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
+            continue;
+
+        obj = avl_find_element(&rpc_objects, ptr.o->v.string, obj, avl);
+        if (!obj)
+            continue;
+
+        ptr.option = "method";
+        ptr.o = NULL;
+
+        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o)
+            continue;
+
+        if (ptr.o->type == UCI_TYPE_STRING) {
+            if (add_trusted_method(obj, ptr.o->v.string))
+                goto err;;
+        } else {
+            struct uci_element *oe;
+            uci_foreach_element(&ptr.o->v.list, oe) {
+                if (add_trusted_method(obj, oe->name))
+                    goto err;;
+            }
+        }
+    }
+
+    ret = 0;
+
+err:
+    if (p)
+        uci_unload(uci, p);
+
+    uci_free_context(uci);
+
+    return ret;
+}
+
+void rpc_init(const char *path)
+{
+    avl_init(&rpc_objects, avl_strcmp, false, NULL);
+
+    load_rpc_scripts(path);
+
+    load_trusted();
+}
+
+void rpc_deinit()
+{
+    unload_rpc_scripts();
+}

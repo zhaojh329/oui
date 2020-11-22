@@ -27,8 +27,8 @@
 
 #include <uhttpd/uhttpd.h>
 
-void load_rpc(const char *path);
-void unload_rpc();
+void rpc_init(const char *path);
+void rpc_deinit();
 
 void serve_rpc(struct uh_connection *conn, bool strict);
 
