@@ -40,7 +40,7 @@ static int lua_md5sum(lua_State *L)
     uint8_t buf[16];
     int i;
 
-    if (md5sum(file, buf)) {
+    if (md5sum(file, buf) < 0) {
         lua_pushnil(L);
         return 1;
     }
