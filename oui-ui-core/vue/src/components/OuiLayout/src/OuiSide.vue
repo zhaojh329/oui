@@ -74,6 +74,9 @@ export default {
     })
 
     this.updateSelection()
+  },
+  beforeDestroy () {
+    this.$store.commit('setMenus', {})
   }
 }
 </script>
