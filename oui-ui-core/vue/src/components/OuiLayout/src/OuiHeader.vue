@@ -128,7 +128,7 @@ export default {
   created () {
     this.breadcrumbs = this.getBreadCrumbList(this.$route)
 
-    this.username = this.$session.username
+    this.username = this.$session.username()
   }
 }
 </script>

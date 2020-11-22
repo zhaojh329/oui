@@ -1,11 +1,13 @@
 import { rpc } from './rpc'
 
-export const session = {
-  username: ''
-}
+export const session = {}
 
 session.sid = function () {
   return sessionStorage.getItem('sid') || ''
+}
+
+session.username = function () {
+  return sessionStorage.getItem('username') || ''
 }
 
 session.login = function (username, password) {
@@ -16,7 +18,7 @@ session.login = function (username, password) {
 
     rpc.login(username, password).then(r => {
       sessionStorage.setItem('sid', r.sid)
-      this.username = username
+      sessionStorage.setItem('username', username)
       this.startHeartbeat()
       resolve(true)
     }).catch(() => {
@@ -40,8 +42,8 @@ session.logout = function () {
     })
 
     this.stopHeartbeat()
-    this.username = ''
     sessionStorage.removeItem('sid')
+    sessionStorage.removeItem('username')
   })
 }
 
