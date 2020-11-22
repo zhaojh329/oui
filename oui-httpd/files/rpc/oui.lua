@@ -120,8 +120,8 @@ local function set_password(params)
     db:exec(string.format("SELECT password FROM account WHERE username = %s", username), function() found = true end)
 
     if not found then
-        local role = username == "admin" and "admin" or ""
-        db:exec(string.format("INSERT INTO account VALUES('%s', '', '%s')", username, role))
+        local aclgroup = username == "admin" and "admin" or ""
+        db:exec(string.format("INSERT INTO account VALUES('%s', '', '%s')", username, aclgroup))
     end
 
     local hash = utils.md5(username, password)
@@ -133,7 +133,7 @@ end
 function M.set_password(params)
     local s = __oui_session
 
-    if s.acl ~= "admin" and params.username ~= s.username then
+    if s.aclgroup ~= "admin" and params.username ~= s.username then
         return nil, __rpc.RPC_ERROR_ACCESS
     end
     return set_password(params)
