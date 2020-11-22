@@ -19,14 +19,13 @@
 
 [vue.js]: https://github.com/vuejs/vue
 [Ant Design of Vue]: https://github.com/vueComponent/ant-design-vue
-[LuCI2]: https://git.openwrt.org/?p=project/luci2/ui.git
 [json-rpc]: https://www.jsonrpc.org/
 
 ![](/demo.gif)
 
 ![](/diagram.png)
 
-OpenWrt web user interface implemented in [vue.js] and [Ant Design of Vue], inspired by [LuCI2].
+OpenWrt web user interface implemented in [vue.js] and [Ant Design of Vue].
 
 Oui uses [json-rpc] to communicate with OpenWrt subsystems.
 

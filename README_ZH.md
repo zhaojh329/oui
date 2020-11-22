@@ -22,14 +22,13 @@
 
 [vue.js]: https://github.com/vuejs/vue
 [Ant Design of Vue]: https://github.com/vueComponent/ant-design-vue
-[LuCI2]: https://git.openwrt.org/?p=project/luci2/ui.git
 [json-rpc]: https://www.jsonrpc.org/
 
 ![](/demo-zh.gif)
 
 ![](/diagram.png)
 
-OpenWrt后台管理界面，使用[vue.js]和[Ant Design of Vue]实现，灵感来自于[LuCI2]。
+OpenWrt后台管理界面，使用[vue.js]和[Ant Design of Vue]实现。
 
 Oui使用[json-rpc]和OpenWrt子系统通信。
 
