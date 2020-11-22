@@ -49,7 +49,8 @@ enum {
     RPC_ERROR_EXEC_TIMEOUT,
     RPC_ERROR_EXEC_NOTFOUND,
     RPC_ERROR_CALL_OBJECT,
-    RPC_ERROR_CALL_METHOD
+    RPC_ERROR_CALL_METHOD,
+    RPC_ERROR_MAX
 };
 
 static const struct {
@@ -228,6 +229,7 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     struct session *s = session_get(sid);
     struct rpc_object *obj;
     lua_State *L;
+    int err_code;
 
     obj = avl_find_element(&rpc_objects, object, obj, avl);
     if (!obj) {
@@ -268,11 +270,25 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     else
         lua_newtable(L);
 
-    if (lua_pcall(L, 1, 1, 0)) {
+    if (lua_pcall(L, 1, 2, 0)) {
         uh_log_err("%s\n", lua_tostring(L, -1));
         rpc_error(conn, RPC_ERROR_INTERNAL, req);
         goto done;
     }
+
+    if (lua_isnumber(L, -1)) {
+        err_code = lua_tointeger(L, -1);
+        if (err_code > -1 && err_code < RPC_ERROR_MAX) {
+            rpc_error(conn, err_code, req);
+        } else {
+            uh_log_err("Invalid error code: %d\n", err_code);
+            rpc_error(conn, RPC_ERROR_INTERNAL, req);
+        }
+        lua_pop(L, 1);
+        goto done;
+    }
+
+    lua_pop(L, 1);
 
     rpc_resp(conn, req, lua_to_json(L));
 
@@ -607,6 +623,16 @@ static void load_rpc_scripts(const char *path)
         luaL_openlibs(L);
         luaopen_json(L);
         luaopen_utils(L);
+
+        lua_newtable(L);
+
+        lua_pushinteger(L, RPC_ERROR_PARAMS);
+        lua_setfield(L, -2, "RPC_ERROR_PARAMS");
+
+        lua_pushinteger(L, RPC_ERROR_ACCESS);
+        lua_setfield(L, -2, "RPC_ERROR_ACCESS");
+
+        lua_setglobal(L, "__rpc");
 
         snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
 

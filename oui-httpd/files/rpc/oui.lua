@@ -24,7 +24,9 @@ end
 function M.set_lang(params)
     local c = uci.cursor()
 
-    if type(params.lang) ~= "string" then error("Invalid params") end
+    if type(params.lang) ~= "string" then
+        return nil, __rpc.RPC_ERROR_PARAMS
+    end
 
     c:set("oui", "main", "lang", params.lang)
     c:commit("oui")
@@ -86,7 +88,9 @@ end
 function M.load_locales(params)
 	local locales = {}
 
-	if type(params.locale) ~= "string" then error("Invalid params") end
+	if type(params.locale) ~= "string" then
+        return nil, __rpc.RPC_ERROR_PARAMS
+    end
 
 	local cmd = string.format("ls /www/i18n/*.%s.json 2>/dev/null", params.locale)
 
@@ -106,7 +110,7 @@ local function set_password(params)
     local username, password = params.username, params.password
 
     if type(username) ~= "string" or  type(password) ~= "string" then
-        error("invalid params")
+        return nil, __rpc.RPC_ERROR_PARAMS
     end
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
@@ -130,9 +134,9 @@ function M.set_password(params)
     local s = __oui_session
 
     if s.acl ~= "admin" and params.username ~= s.username then
-        error("forbidden")
+        return nil, __rpc.RPC_ERROR_ACCESS
     end
-    set_password(params)
+    return set_password(params)
 end
 
 function M.first_login()
@@ -145,7 +149,7 @@ end
 
 function M.first_set(params)
 	if not M.first_login() then
-		error("forbidden")
+		return nil, __rpc.RPC_ERROR_ACCESS
 	end
 
     local c = uci.cursor()
@@ -154,7 +158,7 @@ function M.first_set(params)
     c:set("oui", "main", "first", "0")
     c:commit("oui")
 
-	set_password(params)
+	return set_password(params)
 end
 
 return M

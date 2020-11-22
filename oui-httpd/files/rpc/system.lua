@@ -132,13 +132,13 @@ end
 
 function M.init_action(params)
     if type(params.name) ~= "string" then
-        error("invalid argument")
+        return nil, __rpc.RPC_ERROR_PARAMS
     end
 
     if params.action ~= "start" and params.action ~= "stop" and
             params.action ~= "reload" and params.action ~= "restart" and
             params.action ~= "enable" and params.action ~= "disable" then
-        error("invalid argument")
+        return nil, __rpc.RPC_ERROR_PARAMS
     end
 
     local cmd = string.format("/etc/init.d/%s %s &", params.name, params.action)

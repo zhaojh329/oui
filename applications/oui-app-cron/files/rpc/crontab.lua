@@ -20,7 +20,9 @@ function M.get()
 end
 
 function M.set(params)
-    if type(params.data) ~= "string" then error("invalid argument") end
+    if type(params.data) ~= "string" then
+		return nil, __rpc.RPC_ERROR_PARAMS
+	end
 
     os.execute("mkdir -p /etc/crontabs")
     utils.writefile("/etc/crontabs/root", params.data)

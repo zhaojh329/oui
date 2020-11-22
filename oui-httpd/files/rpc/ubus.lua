@@ -12,7 +12,7 @@ function M.call(params)
     local method = params.method
 
     if type(object) ~= "string" or type(method) ~= "string" then
-        error("Invalid argument")
+        return nil, __rpc.RPC_ERROR_PARAMS
     end
 
     local res = conn:call(object, method, params.params or {})
