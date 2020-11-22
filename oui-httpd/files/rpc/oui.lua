@@ -55,7 +55,7 @@ local function menu_access(menu)
 end
 
 function M.menu(params)
-	local menus = {}
+    local menus = {}
 
     local f = io.popen("ls " .. RPC_OUI_MENU_FILES .. " 2>/dev/null")
     if f then
@@ -86,24 +86,24 @@ function M.menu(params)
 end
 
 function M.load_locales(params)
-	local locales = {}
+    local locales = {}
 
-	if type(params.locale) ~= "string" then
+    if type(params.locale) ~= "string" then
         return nil, __rpc.RPC_ERROR_PARAMS
     end
 
-	local cmd = string.format("ls /www/i18n/*.%s.json 2>/dev/null", params.locale)
+    local cmd = string.format("ls /www/i18n/*.%s.json 2>/dev/null", params.locale)
 
-	local f = io.popen(cmd)
-		if f then
-		for file in f:lines() do
-			local locale = cjson.decode(utils.readfile(file))
-			locales[#locales + 1] = locale
-		end
-		f:close()
-	end
+    local f = io.popen(cmd)
+        if f then
+        for file in f:lines() do
+            local locale = cjson.decode(utils.readfile(file))
+            locales[#locales + 1] = locale
+        end
+        f:close()
+    end
 
-	return locales
+    return locales
 end
 
 local function set_password(params)
@@ -142,15 +142,15 @@ end
 function M.first_login()
     local c = uci.cursor()
 
-	return {
-		first = c:get("oui", "main", "first") == "1"
-	}
+    return {
+        first = c:get("oui", "main", "first") == "1"
+    }
 end
 
 function M.first_set(params)
-	if not M.first_login() then
-		return nil, __rpc.RPC_ERROR_ACCESS
-	end
+    if not M.first_login() then
+        return nil, __rpc.RPC_ERROR_ACCESS
+    end
 
     local c = uci.cursor()
 
@@ -158,7 +158,7 @@ function M.first_set(params)
     c:set("oui", "main", "first", "0")
     c:commit("oui")
 
-	return set_password(params)
+    return set_password(params)
 end
 
 return M
