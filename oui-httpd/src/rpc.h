@@ -30,7 +30,7 @@
 void load_rpc(const char *path);
 void unload_rpc();
 
-void serve_rpc(struct uh_connection *conn);
+void serve_rpc(struct uh_connection *conn, bool strict);
 
 #endif
 

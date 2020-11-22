@@ -126,21 +126,23 @@ static void rpc_error(struct uh_connection *conn, int type, json_t *req)
     conn->done(conn);
 }
 
-static bool parse_rpc(json_t *req, const char **method, json_t **params)
+static bool parse_rpc(json_t *req, const char **method, json_t **params, bool strict)
 {
-    const char *jsonrpc;
-    json_t *json;
+    if (strict) {
+        const char *jsonrpc;
+        const json_t *json;
 
-    jsonrpc = json_object_get_string(req, "jsonrpc");
-    if (!jsonrpc || strcmp(jsonrpc, "2.0"))
-        return false;
+        jsonrpc = json_object_get_string(req, "jsonrpc");
+        if (!jsonrpc || strcmp(jsonrpc, "2.0"))
+            return false;
+
+        json = json_object_get(req, "id");
+        if (!json_is_string(json) && !json_is_integer(json))
+            return false;
+    }
 
     *method = json_object_get_string(req, "method");
     if (!*method)
-        return false;
-
-    json = json_object_get(req, "id");
-    if (!json_is_string(json) && !json_is_integer(json))
         return false;
 
     *params = json_object_get(req, "params");
@@ -505,7 +507,7 @@ static void handle_rpc(struct uh_connection *conn, const char *method, json_t *p
     }
 }
 
-void serve_rpc(struct uh_connection *conn)
+void serve_rpc(struct uh_connection *conn, bool strict)
 {
     struct uh_str body;
     json_t *root;
@@ -528,7 +530,7 @@ void serve_rpc(struct uh_connection *conn)
 
     switch (json_typeof(root)) {
     case JSON_OBJECT:
-        if (!parse_rpc(root, &method, &params)) {
+        if (!parse_rpc(root, &method, &params, strict)) {
             rpc_error(conn, RPC_ERROR_PARSE, root);
             return;
         }

@@ -12,6 +12,7 @@ validate_oui_httpd_section() {
 		'home:directory' \
 		'index:string' \
 		'rpc_dir:directory' \
+		'strict:bool:0' \
 		'verbose:bool:0'
 }
 
@@ -28,6 +29,7 @@ start_instance() {
 	[ -n "$home" ] && procd_append_param  command --home "$home"
 	[ -n "$index" ] && procd_append_param  command --index "$index"
 	[ -n "$rpc_dir" ] && procd_append_param  command --rpc "$rpc_dir"
+	[ "$strict" = "1" ] && procd_append_param command -s
 	[ "$verbose" = "1" ] && procd_append_param command -v
 	procd_append_param command --db /etc/oui-httpd/oh.db
 	procd_set_param respawn
