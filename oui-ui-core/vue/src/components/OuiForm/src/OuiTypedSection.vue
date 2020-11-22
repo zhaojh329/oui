@@ -198,14 +198,12 @@ export default {
   watch: {
     loaded () {
       this.load()
-    }
-  },
-  mounted () {
-    if (this.collapsible && this.sections.length > 0) {
-      this.collapse = this.sections.map(s => s['.name'])
-      this.$nextTick(() => {
-        this.accordion = true
-      })
+      if (this.collapsible && this.sections.length > 0) {
+        this.collapse = this.sections.map(s => s['.name'])
+        this.$nextTick(() => {
+          this.accordion = true
+        })
+      }
     }
   }
 }
