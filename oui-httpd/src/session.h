@@ -34,13 +34,13 @@
 
 #define RPC_SID_LEN    32
 #define MAX_USERNAME_LEN 32
-#define MAX_ACLNAME_LEN 32
+#define MAX_ACLGROUP_LEN 32
 
 struct rpc_session {
     struct avl_node avl;
     char id[RPC_SID_LEN + 1];
     char username[MAX_USERNAME_LEN + 1];
-    char aclname[MAX_ACLNAME_LEN + 1];
+    char aclgroup[MAX_ACLGROUP_LEN + 1];
 
     struct ev_timer tmr;
 

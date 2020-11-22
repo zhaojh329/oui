@@ -49,7 +49,7 @@ struct rpc_trusted_method {
 };
 
 struct rpc_login_param {
-    char aclname[MAX_ACLNAME_LEN + 1];
+    char aclgroup[MAX_ACLGROUP_LEN + 1];
     char pwhash[33];
 };
 
@@ -107,7 +107,7 @@ static void rpc_session_timeout(struct ev_loop *loop, struct ev_timer *w, int re
     rpc_session_destroy(s);
 }
 
-static struct rpc_session *rpc_session_create(int timeout, const char *username, const char *aclname)
+static struct rpc_session *rpc_session_create(int timeout, const char *username, const char *aclgroup)
 {
     struct rpc_session *s;
 
@@ -116,8 +116,8 @@ static struct rpc_session *rpc_session_create(int timeout, const char *username,
         return NULL;
     }
 
-    if (strlen(aclname) > MAX_ACLNAME_LEN) {
-        uh_log_err("aclname '%s' too long, more than %d characters\n", aclname, MAX_ACLNAME_LEN);
+    if (strlen(aclgroup) > MAX_ACLGROUP_LEN) {
+        uh_log_err("aclgroup '%s' too long, more than %d characters\n", aclgroup, MAX_ACLGROUP_LEN);
         return NULL;
     }
 
@@ -134,7 +134,7 @@ static struct rpc_session *rpc_session_create(int timeout, const char *username,
     ev_timer_init(&s->tmr, rpc_session_timeout, s->timeout, 0);
 
     strncpy(s->username, username, sizeof(s->username) - 1);
-    strncpy(s->aclname, aclname, sizeof(s->aclname) - 1);
+    strncpy(s->aclgroup, aclgroup, sizeof(s->aclgroup) - 1);
 
     avl_insert(&sessions, &s->avl);
 
@@ -175,7 +175,7 @@ static int rpc_login_cb(void *data, int count, char **value, char **name)
     struct rpc_login_param *param = data;
 
     if (value[0])
-        strncpy(param->aclname, value[0], MAX_ACLNAME_LEN);
+        strncpy(param->aclgroup, value[0], MAX_ACLGROUP_LEN);
 
     if (value[1])
         strncpy(param->pwhash, value[1], 32);
@@ -211,7 +211,7 @@ const char *rpc_login(const char *username, const char *password)
             return NULL;
     }
 
-    s = rpc_session_create(RPC_DEFAULT_SESSION_TIMEOUT, username, param.aclname);
+    s = rpc_session_create(RPC_DEFAULT_SESSION_TIMEOUT, username, param.aclgroup);
 
     return s ? s->id : NULL;
 }
@@ -408,15 +408,14 @@ bool rpc_session_allowed(struct rpc_session *s, const char *object, const char *
     char permissions[5] = "";
     char sql[128];
 
-    sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'rpc' AND entry = '%s.%s'",
-        s->aclname, object, method);
-
-    /* Unconfigured is considered trusted */
-    if (db_query(sql, rpc_session_allowed_cb, permissions) < 0 || !permissions[0])
+    /* The admin acl group is always allowed */
+    if (!strcmp(s->aclgroup, "admin"))
         return true;
 
-    /* revoke */
-    if (permissions[0] == '!')
+    sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'rpc' AND entry = '%s.%s'",
+        s->aclgroup, object, method);
+
+    if (db_query(sql, rpc_session_allowed_cb, permissions) < 0 || !permissions[0])
         return false;
 
     return strchr(permissions, 'x') != NULL;

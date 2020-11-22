@@ -32,12 +32,15 @@ function M.set_lang(params)
     return { lang = c:get("oui", "main", "lang") }
 end
 
-local function get_menu_perm(menu)
-    local db = sqlite3.open("/etc/oui-httpd/oh.db")
+local function menu_allowed(menu)
     local s = __oui_session
-    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = 'menu' AND entry = '%s'", s.acl, menu)
-    local perm
-    local neg = false
+
+    -- The admin acl group is always allowed
+    if s.aclgroup == "admin" then return true end
+
+    local db = sqlite3.open("/etc/oui-httpd/oh.db")
+    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = 'menu' AND entry = '%s'", s.aclgroup, menu)
+    local perm = ""
 
     db:exec(sql, function(udata, cols, values, names)
         perm = values[1]
@@ -46,16 +49,7 @@ local function get_menu_perm(menu)
 
     db:close()
 
-    if perm then
-        neg = perm:sub(1, 1) == "!"
-        if neg then
-            perm = perm:sub(2)
-        end
-    end
-
-    if perm == "" then perm = nil end
-
-    return perm, neg
+    return perm:find("r") ~= nil
 end
 
 function M.menu(params)
@@ -78,18 +72,8 @@ function M.menu(params)
                     end
                 end
 
-                if files then
-                    local perm, neg = get_menu_perm("/" .. path)
-                    local allow = true
-                    if perm then
-                        allow = perm:find("s")
-                        if neg then
-                            allow = not allow
-                        end
-                    end
-                    if allow then
-                        menus[path] = tmp
-                    end
+                if files and menu_allowed("/" .. path) then
+                    menus[path] = tmp
                 end
             end
         end
@@ -119,7 +103,9 @@ function M.load_locales(params)
 end
 
 local function set_password(params)
-    if type(params.username) ~= "string" or  type(params.password) ~= "string" then
+    local username, password = params.username, params.password
+
+    if type(username) ~= "string" or  type(password) ~= "string" then
         error("invalid params")
     end
 
@@ -127,14 +113,15 @@ local function set_password(params)
 
     local found = false
 
-    db:exec(string.format("SELECT password FROM account WHERE username = %s", params.username), function() found = true end)
+    db:exec(string.format("SELECT password FROM account WHERE username = %s", username), function() found = true end)
 
     if not found then
-        db:exec(string.format("INSERT INTO account VALUES('%s', '', '')", params.username))
+        local role = username == "admin" and "admin" or ""
+        db:exec(string.format("INSERT INTO account VALUES('%s', '', '%s')", username, role))
     end
 
-    local hash = utils.md5(params.username, params.password)
-    db:exec(string.format("UPDATE account SET password = '%s' WHERE username = '%s'", hash, params.username))
+    local hash = utils.md5(username, password)
+    db:exec(string.format("UPDATE account SET password = '%s' WHERE username = '%s'", hash, username))
 
     db:close()
 end

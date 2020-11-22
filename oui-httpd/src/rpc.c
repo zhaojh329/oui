@@ -215,8 +215,8 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
         lua_newtable(L);
         lua_pushstring(L, s->username);
         lua_setfield(L, -2, "username");
-        lua_pushstring(L, s->aclname);
-        lua_setfield(L, -2, "acl");
+        lua_pushstring(L, s->aclgroup);
+        lua_setfield(L, -2, "aclgroup");
         lua_setglobal(L, "__oui_session");
     }
 
