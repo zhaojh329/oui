@@ -21,7 +21,7 @@
     "Close": "關閉",
     "Verify firmware": "固件驗證",
     "The firmware image was uploaded completely": "固件已上傳，請註意核對文件大小和校驗值！單擊“{btn}”執行刷寫操作，刷寫過程切勿斷電！",
-    "Upgrading...": "正在升級...",
+    "Upgrading": "正在升級...",
     "Invalid image": "無效固件",
     "InvalidImageContent": "不支持所上傳的固件格式。請確認您選擇的固件無誤。"
   }

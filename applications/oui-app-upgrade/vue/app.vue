@@ -155,7 +155,7 @@ export default {
             onOk: () => {
               const keep = document.getElementById('upgrade-firmware-keep').checked
               this.startUpgrade(keep).then(() => {
-                this.$reconnect(this.$t('upgrade.Upgrading...'))
+                this.$reconnect(this.$t('upgrade.Upgrading'))
               })
             },
             onCancel: () => this.cleanUpgrade()

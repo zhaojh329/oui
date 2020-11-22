@@ -21,7 +21,7 @@
     "Close": "Close",
     "Verify firmware": "Verify firmware",
     "The firmware image was uploaded completely": "The firmware image was uploaded completely. Please verify the checksum and file size below, then click \"{btn}\" to start the flash procedure.",
-    "Upgrading...": "Upgrading...",
+    "Upgrading": "Upgrading...",
     "Invalid image": "Invalid image",
     "InvalidImageContent": "The uploaded image file does not contain a supported format. Make sure that you choose the generic image format for your platform."
   }
