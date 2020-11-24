@@ -27,7 +27,7 @@
 
 OpenWrt web user interface implemented in [vue.js] and [Ant Design of Vue].
 
-Oui uses [json-rpc] to communicate with OpenWrt subsystems.
+Oui uses [json-rpc] to communicate with OpenWrt subsystems and support ACL.
 
 Oui is especially suitable for enterprise custom development.
 

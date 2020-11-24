@@ -30,7 +30,7 @@
 
 OpenWrt后台管理界面，使用[vue.js]和[Ant Design of Vue]实现。
 
-Oui使用[json-rpc]和OpenWrt子系统通信。
+Oui使用[json-rpc]和OpenWrt子系统通信, 支持 ACL。
 
 Oui特别适合用于企业定制开发。
 
