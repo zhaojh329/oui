@@ -113,7 +113,6 @@ Oui特别适合用于企业定制开发。
 # 用户
 如果您的公司在使用 oui，请将您的公司名字添加到这里，谢谢。
 
-<a href="https://www.perfectsignal-tech.com"><img src="https://nwzimg.wezhan.cn/contents/sitefiles2032/10164349/images/9482755.jpg" height="80" align="middle"/></a>&nbsp;&nbsp;
 <a href="https://www.iyunlink.com"><img src="https://www.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
 
 # 贡献代码
