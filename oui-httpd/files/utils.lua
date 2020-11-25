@@ -1,6 +1,6 @@
-local M = {}
+local utils = require "oui.utils.core"
 
-function M.readfile(name, n)
+function utils.readfile(name, n)
     local f = io.open(name, "r")
     if not f then return nil end
     local data = f:read(n or "*a")
@@ -8,7 +8,7 @@ function M.readfile(name, n)
     return data
 end
 
-function M.writefile(name, data)
+function utils.writefile(name, data)
     local f = io.open(name, "w")
     if not f then return nil end
     f:write(data)
@@ -16,4 +16,4 @@ function M.writefile(name, data)
     return true
 end
 
-return M
+return utils

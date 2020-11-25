@@ -1,3 +1,5 @@
+local utils = require "oui.utils"
+
 local M = {}
 
 function M.md5sum(params)

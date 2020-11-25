@@ -1,3 +1,4 @@
+local utils = require "oui.utils"
 local uci = require "uci"
 
 local M = {}

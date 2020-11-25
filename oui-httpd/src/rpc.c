@@ -32,8 +32,7 @@
 #include <time.h>
 #include <uci.h>
 
-#include "lua_json.h"
-#include "lua_utils.h"
+#include "lua2json.h"
 #include "session.h"
 #include "utils.h"
 #include "rpc.h"
@@ -621,8 +620,6 @@ static void load_rpc_scripts(const char *path)
         L = luaL_newstate();
 
         luaL_openlibs(L);
-        luaopen_json(L);
-        luaopen_utils(L);
 
         lua_newtable(L);
 

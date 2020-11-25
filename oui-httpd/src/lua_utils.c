@@ -27,11 +27,10 @@
 #include <uhttpd/log.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
+#include <lauxlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-
-#include "lua_utils.h"
 
 static int lua_md5sum(lua_State *L)
 {
@@ -184,7 +183,7 @@ static const luaL_Reg regs[] = {
     {NULL, NULL}
 };
 
-void luaopen_utils(lua_State *L)
+int luaopen_oui_utils_core(lua_State *L)
 {
 #if LUA_VERSION_NUM <= 501
     luaL_register(L, "utils", regs);
@@ -193,24 +192,5 @@ void luaopen_utils(lua_State *L)
     lua_pushvalue(L, -1);
     lua_setglobal(L, "utils");
 #endif
-
-    if (luaL_dofile(L, "/usr/lib/oui-httpd/lib/utils.lua")) {
-        uh_log_err("%s\n", lua_tostring(L, -1));
-        return;
-    }
-
-    if (!lua_istable(L, -1))
-        return;
-
-    lua_getglobal(L, "utils");
-
-    lua_pushvalue(L, -2);
-
-    lua_pushnil(L);
-
-    while (lua_next(L, -2) != 0) {
-        lua_pushvalue(L, -2);
-        lua_insert(L, -3);
-        lua_settable(L, -5);
-    }
+    return 1;
 }
