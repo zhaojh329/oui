@@ -106,10 +106,6 @@ Oui is especially suitable for enterprise custom development.
 	npm install
 	npm run serve
 ```
-# In Production
-If your company is using OUI, please add your company name here, thanks.
-
-<a href="https://www.iyunlink.com"><img src="https://www.iyunlink.com/upload/202007/1595823915.png" height="80" align="middle"/></a>&nbsp;&nbsp;
 
 # Contributing
 If you would like to help making [oui](https://github.com/zhaojh329/oui) better,
