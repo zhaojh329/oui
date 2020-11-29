@@ -7,6 +7,7 @@
 	"Month": "月",
 	"Week": "曜日",
 	"Command": "命令",
-    "DelConfirm": "削除を確定します \"{cron}\" ？"
+    "DelConfirm": "削除を確定します \"{cron}\" ？",
+    "success": "せいこうほう"
   }
 }

@@ -7,7 +7,7 @@
         <a-button type="danger" size="small" @click="handleDelete(index)">{{ $t('Delete') }}</a-button>
       </template>
     </a-table>
-    <a-modal v-model="dialogVisible" :title="add ? $t('Add') : $t('Edit')">
+    <a-modal v-model="dialogVisible" :title="add ? $t('Add') : $t('Edit')" @ok="handleEdit">
       <a-form-model :model="edit" ref="edit" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item :label="$t('cron.Minute')" prop="min">
           <a-input v-model="edit.min"/>
@@ -28,10 +28,6 @@
           <a-input v-model="edit.command"/>
         </a-form-model-item>
       </a-form-model>
-      <div slot="footer" class="dialog-footer">
-        <a-button @click="dialogVisible = false">{{ $t('Cancel') }}</a-button>
-        <a-button type="primary" @click="handleEdit">{{ $t('OK') }}</a-button>
-      </div>
     </a-modal>
   </div>
 </template>
@@ -130,7 +126,7 @@ export default {
         onOk: () => {
           this.data.splice(index, 1)
           this.apply().then(() => {
-            this.$message.success(this.$t('success'))
+            this.$message.success(this.$t('cron.success'))
           })
         }
       })
@@ -147,7 +143,7 @@ export default {
 
         this.dialogVisible = false
         this.apply().then(() => {
-          this.$message.success(this.$t('success'))
+          this.$message.success(this.$t('cron.success'))
         })
       })
     },
