@@ -52,9 +52,6 @@ void db_init(const char *path)
 
     sprintf(sql, "CREATE TABLE IF NOT EXISTS account(username TEXT PRIMARY KEY NOT NULL, password TEXT NOT NULL, acl TEXT NOT NULL)");
     db_exec(sql);
-
-	sprintf(sql, "CREATE TABLE IF NOT EXISTS acl_admin(scope TEXT NOT NULL, entry TEXT NOT NULL, permissions TEXT NOT NULL)");
-    db_exec(sql);
 }
 
 int db_exec(const char *sql)
