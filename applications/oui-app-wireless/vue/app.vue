@@ -8,7 +8,7 @@
               <oui-form-item-switch :uci-section="s" :label="$t('wireless.Disabled')" name="disabled"/>
               <oui-form-item-select :uci-section="s" :label="$t('wireless.Mode')" name="hwmode" :options="radio.hwmodes" required/>
               <oui-form-item-select :uci-section="s" :label="$t('wireless.Band')" name="htmode" :options="radio.htmodes"/>
-              <oui-form-item-select :uci-section="s" :label="$t('wireless.Channel')" name="channel" :options="radio.channels" :initial="radio.channel" required :placeholder="$t('auto')"/>
+              <oui-form-item-select :uci-section="s" :label="$t('wireless.Channel')" name="channel" :options="radio.channels" :initial="radio.channel" required :placeholder="$t('wireless.auto')"/>
               <oui-form-item-select :uci-section="s" :label="$t('wireless.Transmit Power')" name="txpower" :options="radio.txpowerlist" :initial="radio.txpower" required/>
             </a-tab-pane>
             <a-tab-pane :tab="$t('Advanced Settings')" key="advanced">
@@ -129,15 +129,15 @@ export default {
         const device = s['.name']
         const promises = []
 
-        promises.push(this.$rpc.ubus('iwinfo', 'info', { device }))
-        promises.push(this.$rpc.ubus('iwinfo', 'freqlist', { device }))
-        promises.push(this.$rpc.ubus('iwinfo', 'txpowerlist', { device }))
-        promises.push(this.$rpc.ubus('iwinfo', 'countrylist', { device }))
+        promises.push(this.$rpc.call('iwinfo', 'info', { device }))
+        promises.push(this.$rpc.call('iwinfo', 'freqlist', { device }))
+        promises.push(this.$rpc.call('iwinfo', 'txpowerlist', { device }))
+        promises.push(this.$rpc.call('iwinfo', 'countrylist', { device }))
 
         Promise.all(promises).then(rs => {
           const channels = [['auto', this.$t('wireless.Automatic')]]
           const info = rs[0]
-          const freqlist = rs[1].results
+          const freqlist = rs[1]
           const txpowerlist = []
           const countrylist = []
 
@@ -146,12 +146,12 @@ export default {
             channels.push([f.channel, `${f.channel} (${f.mhz} MHz)`])
           })
 
-          rs[2].results.forEach(tx => {
+          rs[2].forEach(tx => {
             txpowerlist.push([tx.dbm, `${tx.dbm} dBm (${tx.mw} mW)`])
           })
 
-          rs[3].results.forEach(c => {
-            countrylist.push([c.code, `${c.code} - ${c.country}`])
+          rs[3].forEach(c => {
+            countrylist.push([c.ccode, `${c.ccode} - ${c.name}`])
           })
 
           const hwmodes = ['11g']
