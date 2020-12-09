@@ -78,16 +78,33 @@ function M.delete(params)
 end
 
 function M.add(params)
-    local c = uci.cursor()
     local config = params.config
-    local section = c:add(config, params.type)
+    local typ = params.type
+    local name = params.name
+    local values = params.values
+
+    if type(config) ~= "string" or type(typ) ~= "string" then
+        return nil, __rpc.RPC_ERROR_PARAMS
+    end
+
+    if values and type(values) ~= "table" then
+       return nil, __rpc.RPC_ERROR_PARAMS
+    end
 
     if not uci_access(config, "w") then
         return nil, __rpc.RPC_ERROR_ACCESS
     end
 
-    for option, value in pairs(params.values) do
-        c:set(config, section, option, value)
+    local c = uci.cursor()
+
+    if name then
+        c:set(config, name, typ)
+    else
+        name = c:add(config, typ)
+    end
+
+    for option, value in pairs(values) do
+        c:set(config, name, option, value)
     end
 
     c:save(config)
