@@ -344,7 +344,7 @@ static void rpc_exec_child_exit(struct ev_loop *loop, struct ev_child *w, int re
 
     rpc_resp(ctx->conn, ctx->req, res);
 
-    /* Fix Segmentation fault */
+    /* Avoid conflicts caused by two same pid */
     ev_child_stop(loop, w);
 
     free(ctx);
