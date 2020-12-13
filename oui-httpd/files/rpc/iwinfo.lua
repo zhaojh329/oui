@@ -1,5 +1,6 @@
 local utils = require "oui.utils"
 local iwinfo = require 'iwinfo'
+local rpc = require 'oui.rpc'
 
 local M = {}
 
@@ -21,7 +22,7 @@ function M.info(params)
 	local device = params.device
 
 	if type(device) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local info = get_info(device)
@@ -70,7 +71,7 @@ function M.freqlist(params)
     local device = params.device
 
 	if type(device) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     return get_info(device)['freqlist']
@@ -80,7 +81,7 @@ function M.txpowerlist(params)
     local device = params.device
 
 	if type(device) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     return get_info(device)['txpwrlist']
@@ -90,7 +91,7 @@ function M.countrylist(params)
     local device = params.device
 
 	if type(device) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     return get_info(device)['countrylist']

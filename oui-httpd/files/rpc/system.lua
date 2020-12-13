@@ -1,4 +1,5 @@
 local utils = require "oui.utils"
+local rpc = require "oui.rpc"
 
 local M = {}
 
@@ -134,13 +135,13 @@ end
 
 function M.init_action(params)
     if type(params.name) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     if params.action ~= "start" and params.action ~= "stop" and
             params.action ~= "reload" and params.action ~= "restart" and
             params.action ~= "enable" and params.action ~= "disable" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local cmd = string.format("/etc/init.d/%s %s &", params.name, params.action)

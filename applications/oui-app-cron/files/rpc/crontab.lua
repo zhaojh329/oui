@@ -1,4 +1,5 @@
 local utils = require "oui.utils"
+local rpc = require "oui.rpc"
 
 local M = {}
 
@@ -23,7 +24,7 @@ end
 
 function M.set(params)
     if type(params.data) ~= "string" then
-		return nil, __rpc.RPC_ERROR_PARAMS
+		return rpc.ERROR_CODE_INVALID_PARAMS
 	end
 
     os.execute("mkdir -p /etc/crontabs")

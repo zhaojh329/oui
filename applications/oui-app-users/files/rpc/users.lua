@@ -1,5 +1,6 @@
 local utils = require "oui.utils"
 local sqlite3 = require "lsqlite3"
+local rpc = require "oui.rpc"
 
 local M = {}
 
@@ -26,7 +27,7 @@ function M.add(params)
     local acl = params.acl
 
     if type(username) ~= "string" or type(password) ~= "string" or type(acl) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
@@ -40,7 +41,7 @@ function M.del(params)
     local username = params.username
 
     if type(username) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
@@ -55,7 +56,7 @@ function M.modify(params)
     local acl = params.acl
 
     if type(username) ~= "string" or type(password) ~= "string" or type(acl) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")

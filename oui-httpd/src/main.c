@@ -44,7 +44,6 @@ enum {
 
 static const char *home_dir = ".";
 static const char *index_page = "oui.html";
-static bool strict_rpc = false;
 
 void serve_upload(struct uh_connection *conn);
 
@@ -59,7 +58,7 @@ static void on_request(struct uh_connection *conn)
     else if (path.len == 9 && !strncmp(path.p, "/download", 9))
         serve_download(conn);
     else if (path.len == 4 && !strncmp(path.p, "/rpc", 4))
-        serve_rpc(conn, strict_rpc);
+        serve_rpc(conn);
     else
         conn->serve_file(conn, home_dir, index_page);
 }
@@ -83,16 +82,15 @@ static void usage(const char *prog)
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
                     "          --db oh.db        # database file(default is ./oh.db)\n"
-                    "          -s                # use strict mode for jsonrpc\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
 
 static struct option long_options[] = {
-    {"rpc", required_argument, NULL, LONG_OPT_RPC},
-    {"home", required_argument, NULL, LONG_OPT_HOME},
+    {"rpc",   required_argument, NULL, LONG_OPT_RPC},
+    {"home",  required_argument, NULL, LONG_OPT_HOME},
     {"index", required_argument, NULL, LONG_OPT_INDEX},
-    {"db", required_argument, NULL, LONG_OPT_DB}
+    {"db",    required_argument, NULL, LONG_OPT_DB}
 };
 
 int main(int argc, char **argv)
@@ -110,7 +108,7 @@ int main(int argc, char **argv)
     int ret = 0;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "a:p:sv", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:p:v", long_options, &option_index)) != -1) {
         switch (opt) {
         case 'a':
             addr = optarg;
@@ -120,9 +118,6 @@ int main(int argc, char **argv)
             break;
         case 'v':
             verbose = true;
-            break;
-        case 's':
-            strict_rpc = true;
             break;
         case LONG_OPT_RPC:
             rpc_dir = optarg;

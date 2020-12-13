@@ -22,11 +22,13 @@
  * SOFTWARE.
  */
 
+#include <uhttpd/uhttpd.h>
 #include <libubox/avl.h>
 #include <libubox/avl-cmp.h>
 #include <lauxlib.h>
 #include <sqlite3.h>
 #include <dirent.h>
+#include <assert.h>
 #include <lualib.h>
 #include <errno.h>
 #include <time.h>
@@ -38,34 +40,18 @@
 #include "rpc.h"
 #include "db.h"
 
-enum {
-    RPC_ERROR_PARSE,
-    RPC_ERROR_REQUEST,
-    RPC_ERROR_METHOD,
-    RPC_ERROR_PARAMS,
-    RPC_ERROR_INTERNAL,
-    RPC_ERROR_ACCESS,
-    RPC_ERROR_EXEC_TIMEOUT,
-    RPC_ERROR_EXEC_NOTFOUND,
-    RPC_ERROR_CALL_OBJECT,
-    RPC_ERROR_CALL_METHOD,
-    RPC_ERROR_MAX
-};
-
 static const struct {
     int code;
     const char *msg;
 } rpc_errors[] = {
-    [RPC_ERROR_PARSE] = {-32700, "Parse error"},
-    [RPC_ERROR_REQUEST] = {-32600, "Invalid request"},
-    [RPC_ERROR_METHOD] = {-32601, "Method not found"},
-    [RPC_ERROR_PARAMS] = {-32602, "Invalid parameters"},
-    [RPC_ERROR_INTERNAL] = {-32603, "Internal error"},
-    [RPC_ERROR_ACCESS] = {-32000, "Access denied"},
-    [RPC_ERROR_EXEC_TIMEOUT] = {-32001, "exec: timed out"},
-    [RPC_ERROR_EXEC_NOTFOUND] = {-32002, "exec: not found"},
-    [RPC_ERROR_CALL_OBJECT] = {-32003, "call: Object not found"},
-    [RPC_ERROR_CALL_METHOD] = {-32004, "call: Method not found"}
+    [ERROR_CODE_PARSE_ERROR] = {-32700, "Parse error"},
+    [ERROR_CODE_INVALID_REQUEST] = {-32600, "Invalid Request"},
+    [ERROR_CODE_METHOD_NOT_FOUND] = {-32601, "Method not found"},
+    [ERROR_CODE_INVALID_PARAMS] = {-32602, "Invalid params"},
+    [ERROR_CODE_INTERNAL_ERROR] = {-32603, "Internal error"},
+    [ERROR_CODE_ACCESS] = {-32000, "Access denied"},
+    [ERROR_CODE_NOT_FOUND] = {-32002, "Not found"},
+    [ERROR_CODE_TIMEOUT] = {-32001, "Timeout"}
 };
 
 struct rpc_exec_context {
@@ -74,7 +60,7 @@ struct rpc_exec_context {
     struct ev_child child;
     int stdout_fd;
     int stderr_fd;
-    json_t *req;
+    json_t *id;
     pid_t pid;
 };
 
@@ -92,101 +78,130 @@ struct rpc_trusted_method {
 
 static struct avl_tree rpc_objects;
 
-static void rpc_set_id(json_t *req, json_t *ret)
+static json_t *rpc_error_object(int code, const char *message, json_t *data)
 {
-    json_t *id;
+    json_t *json = json_pack("{s:i,s:s}", "code", code, "message", message ? message : "");
 
-    if (!req)
-        goto null_id;
+    if (data)
+        json_object_set_new(json, "data", data);
 
-    id = json_object_get(req, "id");
-    if (json_is_string(id) || json_is_integer(id)) {
-        json_object_set(ret, "id", id);
-        return;
-    }
-
-null_id:
-    json_object_set_new(ret, "id", json_null());
+    return json;
 }
 
-static void rpc_error(struct uh_connection *conn, int type, json_t *req)
+static json_t *rpc_error_object_predefined(int code, json_t *data)
 {
-    json_t *ret = json_object();
-    json_t *err = json_object();
-    char buf[512];
-    size_t size;
+    assert(code > -1 && code < __ERROR_CODE_MAX);
 
-    json_object_set_new(ret, "jsonrpc", json_string("2.0"));
-
-    rpc_set_id(req, ret);
-
-    json_object_set_new(err, "code", json_integer(rpc_errors[type].code));
-    json_object_set_new(err, "message", json_string(rpc_errors[type].msg));
-    json_object_set_new(ret, "error", err);
-
-    size = json_dumpb(ret, buf, sizeof(buf), 0);
-
-    conn->send_head(conn, HTTP_STATUS_OK, size, "Content-Type: application/json\r\n");
-    conn->send(conn, buf, size);
-
-    json_decref(ret);
-    json_decref(req);
-
-    conn->done(conn);
+    return rpc_error_object(rpc_errors[code].code, rpc_errors[code].msg, data);
 }
 
-static bool parse_rpc(json_t *req, const char **method, json_t **params, bool strict)
+static json_t *rpc_error_response(json_t *id, json_t *error)
 {
-    if (strict) {
-        const char *jsonrpc;
-        const json_t *json;
+    if (id)
+        json_incref(id);
+    else
+        id = json_null();
 
-        jsonrpc = json_object_get_string(req, "jsonrpc");
-        if (!jsonrpc || strcmp(jsonrpc, "2.0"))
-            return false;
+    error = error ? error : json_null();
 
-        json = json_object_get(req, "id");
-        if (!json_is_string(json) && !json_is_integer(json))
-            return false;
+    return json_pack("{s:s,s:o,s:o}", "jsonrpc", "2.0", "id", id, "error", error);
+}
+
+static json_t *rpc_result_response(json_t *id, json_t *result)
+{
+    if (id)
+        json_incref(id);
+    else
+        id = json_null();
+
+    result = result ? result : json_null();
+
+    return json_pack("{s:s,s:o,s:o}", "jsonrpc", "2.0", "id", id, "result", result);
+}
+
+static json_t *rpc_validate_request(json_t *json_request, const char **method, json_t **params, json_t **id)
+{
+    const char *version = NULL;
+    json_t *data = NULL;
+    json_error_t error;
+    int rc;
+
+    *method = NULL;
+    *params = NULL;
+    *id = NULL;
+
+    rc = json_unpack_ex(json_request, &error, 0, "{s:s,s:o,s:s,s?o}",
+                        "jsonrpc", &version,
+                        "id", id,
+                        "method", method,
+                        "params", params);
+    if (rc < 0) {
+        data = json_string(error.text);
+        goto invalid;
     }
 
-    *method = json_object_get_string(req, "method");
-    if (!*method)
-        return false;
+    if (strcmp(version, "2.0")) {
+        data = json_string("\"jsonrpc\" MUST be exactly \"2.0\"");
+        goto invalid;
+    }
 
-    *params = json_object_get(req, "params");
+    if (!json_is_string(*id) && !json_is_number(*id) && !json_is_null(*id)) {
+        data = json_string("\"id\" MUST be a String, Number, or NULL value");
+        goto invalid;
+    }
+
     if (*params) {
-        if (!json_is_array(*params) && !json_is_object(*params))
-            return false;
+        if (!json_is_array(*params) && !json_is_object(*params)) {
+            data = json_string("\"params\" MUST be Array or Object if included");
+            goto invalid;
+        }
     }
 
-    return true;
+    return NULL;
+
+invalid:
+    return rpc_error_response(*id, rpc_error_object_predefined(ERROR_CODE_INVALID_REQUEST, data));
 }
 
-static void rpc_resp(struct uh_connection *conn, json_t *req, json_t *result)
+static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
 {
-    json_t *root = json_object();
     size_t size;
     char *s;
 
-    json_object_set_new(root, "jsonrpc", json_string("2.0"));
+    if (!resp) {
+        conn->error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
+        return;
+    }
 
-    rpc_set_id(req, root);
+    s = json_dumps(resp, 0);
+    if (!s) {
+        conn->error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
+        return;
+    }
 
-    json_object_set_new(root, "result", result);
+    json_decref(resp);
 
-    s = json_dumps(root, 0);
     size = strlen(s);
 
     conn->send_head(conn, HTTP_STATUS_OK, size, "Content-Type: application/json\r\n");
     conn->send(conn, s, size);
+    conn->done(conn);
 
     free(s);
+}
 
-    json_decref(req);
-    json_decref(root);
+static void rpc_handle_done_deferred(struct uh_connection *conn, json_t *id, json_t *result, bool is_error)
+{
+    json_t *resp;
 
-    conn->done(conn);
+    if (is_error)
+        resp = rpc_error_response(id, result);
+    else
+        resp = rpc_result_response(id, result);
+
+    json_decref(id);
+
+    rpc_handle_done_final(conn, resp);
 }
 
 static bool rpc_is_trusted(struct rpc_object *obj, const char *method)
@@ -221,37 +236,267 @@ static bool rpc_access(struct session *s, const char *object, const char *method
     return strchr(perm, 'x');
 }
 
-static void handle_rpc_call(struct uh_connection *conn, const char *sid, const char *object, const char *method,
-                            json_t *args, json_t *req)
+static int rpc_method_login(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
+{
+    const char *username, *password = "", *sid;
+    json_error_t error;
+
+    if (json_unpack_ex(params, &error, 0, "{s:s,s?s}", "username", &username, "password", &password) < 0) {
+        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    sid = session_login(username, password);
+    if (!sid) {
+        *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    *result = json_pack("{s:s, s:s}", "sid", sid, "username", username);
+
+    return RPC_METHOD_RETURN_SUCCESS;
+}
+
+static int rpc_method_logout(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
+{
+    json_error_t error;
+    const char *sid;
+
+    if (json_unpack_ex(params, &error, 0, "{s:s}", "sid", &sid) < 0) {
+        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    session_logout(sid);
+
+    return RPC_METHOD_RETURN_SUCCESS;
+}
+
+static int rpc_method_alive(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
+{
+    json_error_t error;
+    const char *sid;
+
+    if (json_unpack_ex(params, &error, 0, "{s:s}", "sid", &sid) < 0) {
+        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    if (!session_get(sid)) {
+        *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    return RPC_METHOD_RETURN_SUCCESS;
+}
+
+static void rpc_exec_timeout_cb(struct ev_loop *loop, struct ev_timer *w, int revents)
+{
+    struct rpc_exec_context *ctx = container_of(w, struct rpc_exec_context, tmr);
+    json_t *res;
+
+    ev_child_stop(loop, &ctx->child);
+
+    kill(ctx->pid, SIGKILL);
+
+    close(ctx->stdout_fd);
+    close(ctx->stderr_fd);
+
+    res = rpc_error_object_predefined(ERROR_CODE_TIMEOUT, NULL);
+    rpc_handle_done_deferred(ctx->conn, ctx->id, res, true);
+
+    free(ctx);
+}
+
+static void rpc_exec_read(int fd, json_t *res, const char *name)
+{
+    struct buffer b = {};
+    uint8_t buf[1024];
+
+    for (;;) {
+        ssize_t nr = read(fd, buf, sizeof(buf));
+        if (nr <= 0)
+            break;
+        buffer_put_data(&b, buf, nr);
+    }
+
+    if (buffer_length(&b) == 0)
+        json_object_set_new(res, name, json_string(""));
+    else
+        json_object_set_new(res, name, json_stringn(buffer_data(&b), buffer_length(&b)));
+
+    buffer_free(&b);
+
+    close(fd);
+}
+
+static void rpc_exec_child_exit(struct ev_loop *loop, struct ev_child *w, int revents)
+{
+    struct rpc_exec_context *ctx = container_of(w, struct rpc_exec_context, child);
+    json_t *res;
+
+    /* Avoid conflicts caused by two same pid */
+    ev_child_stop(loop, w);
+
+    ev_timer_stop(loop, &ctx->tmr);
+
+    res = json_pack("{s:i}", "code", WEXITSTATUS(w->rstatus));
+
+    rpc_exec_read(ctx->stdout_fd, res, "stdout");
+    rpc_exec_read(ctx->stderr_fd, res, "stderr");
+
+    rpc_handle_done_deferred(ctx->conn, ctx->id, res, false);
+
+    free(ctx);
+}
+
+static int rpc_method_exec(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
     bool is_local = conn->get_addr(conn) == INADDR_LOOPBACK;
-    struct session *s = session_get(sid);
+    const char *sid, *cmd;
+    json_error_t error;
+    int opipe[2] = {};
+    int epipe[2] = {};
+    pid_t pid;
+
+    if (json_unpack_ex(params, &error, 0, "[ss]", &sid, &cmd) < 0) {
+        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    if (!is_local && !session_get(sid)) {
+        *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    if (which(cmd)) {
+        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, NULL);
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    if (pipe(opipe) < 0 || pipe(epipe) < 0)
+        goto err;
+
+    pid = fork();
+    if (pid < 0) {
+        goto err;
+    } else if (pid == 0) {
+        const char **args;
+        json_t *p;
+        int i, j;
+
+        /* Close unused read end */
+        close(opipe[0]);
+        close(epipe[0]);
+
+        /* Redirect */
+        dup2(opipe[1], STDOUT_FILENO);
+        dup2(epipe[1], STDERR_FILENO);
+        close(opipe[1]);
+        close(epipe[1]);
+
+        args = malloc(sizeof(char *) * 2);
+
+        args[0] = cmd;
+        args[1] = NULL;
+
+        j = 1;
+
+        json_array_foreach(params, i, p) {
+            if (i < 2 || !json_is_string(p))
+                continue;
+            args = realloc(args, sizeof(char *) * (2 + j));
+            args[j++] = json_string_value(p);
+            args[j] = NULL;
+        }
+
+        execvp(cmd, (char *const *) args);
+    } else {
+        struct rpc_exec_context *ctx = calloc(1, sizeof(struct rpc_exec_context));
+        struct ev_loop *loop = conn->srv->loop;
+
+        /* Close unused write end */
+        close(opipe[1]);
+        close(epipe[1]);
+
+        ctx->conn = conn;
+        ctx->pid = pid;
+        ctx->id = id;
+
+        ctx->stdout_fd = opipe[0];
+        ctx->stderr_fd = epipe[0];
+
+        ev_timer_init(&ctx->tmr, rpc_exec_timeout_cb, 30, 0);
+        ev_timer_start(loop, &ctx->tmr);
+
+        ev_child_init(&ctx->child, rpc_exec_child_exit, pid, 0);
+        ev_child_start(loop, &ctx->child);
+    }
+
+    return RPC_METHOD_RETURN_DEFERRED;
+
+err:
+    if (opipe[0] > 0) {
+        close(opipe[0]);
+        close(opipe[1]);
+    }
+
+    if (epipe[0] > 0) {
+        close(epipe[0]);
+        close(epipe[1]);
+    }
+
+    *result = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, json_string(strerror(errno)));
+    return RPC_METHOD_RETURN_ERROR;
+}
+
+static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
+{
+    int rc = RPC_METHOD_RETURN_ERROR;
+    const char *sid, *object, *method;
     struct rpc_object *obj;
+    json_error_t error;
+    struct session *s;
+    bool is_local;
+    json_t *args;
     lua_State *L;
-    int err_code;
+
+    if (json_unpack_ex(params, &error, 0, "[ssso!]", &sid, &object, &method, &args) < 0) {
+        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    if (!json_is_object(args)) {
+        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS,
+                                              json_string("The argument must be an object"));
+        return RPC_METHOD_RETURN_ERROR;
+    }
 
     obj = avl_find_element(&rpc_objects, object, obj, avl);
     if (!obj) {
-        rpc_error(conn, RPC_ERROR_CALL_OBJECT, req);
-        return;
+        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, NULL);
+        return RPC_METHOD_RETURN_ERROR;
     }
 
     L = obj->L;
 
     if (!lua_istable(L, -1)) {
         uh_log_err("%s.%s: lua state is broken. No table on stack!\n", object, method);
-        rpc_error(conn, RPC_ERROR_INTERNAL, req);
-        return;
+        *result = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL);
+        return RPC_METHOD_RETURN_ERROR;
     }
 
     lua_getfield(L, -1, method);
     if (!lua_isfunction(L, -1)) {
-        rpc_error(conn, RPC_ERROR_CALL_METHOD, req);
+        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, NULL);
         goto done;
     }
 
+    is_local = conn->get_addr(conn) == INADDR_LOOPBACK;
+    s = session_get(sid);
+
     if (!is_local && !rpc_is_trusted(obj, method) && (!s || !rpc_access(s, object, method))) {
-        rpc_error(conn, RPC_ERROR_ACCESS, req);
+        *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
         goto done;
     }
 
@@ -269,307 +514,83 @@ static void handle_rpc_call(struct uh_connection *conn, const char *sid, const c
     else
         lua_newtable(L);
 
-    if (lua_pcall(L, 1, 2, 0)) {
+    if (lua_pcall(L, 1, 1, 0)) {
         uh_log_err("%s\n", lua_tostring(L, -1));
-        rpc_error(conn, RPC_ERROR_INTERNAL, req);
+        *result = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL);
         goto done;
     }
 
+    /*
+     * support both table response and an error code response.
+     * if lua method returns a number then it is always treated as an error code
+     */
     if (lua_isnumber(L, -1)) {
-        err_code = lua_tointeger(L, -1);
-        if (err_code > -1 && err_code < RPC_ERROR_MAX) {
-            rpc_error(conn, err_code, req);
-        } else {
-            uh_log_err("Invalid error code: %d\n", err_code);
-            rpc_error(conn, RPC_ERROR_INTERNAL, req);
-        }
-        lua_pop(L, 1);
-        goto done;
+        *result = rpc_error_object_predefined(lua_tointeger(L, -1), NULL);
+    } else {
+        rc = RPC_METHOD_RETURN_SUCCESS;
+
+        if (lua_istable(L, -1))
+            *result = lua_to_json(L);
     }
-
-    lua_pop(L, 1);
-
-    rpc_resp(conn, req, lua_to_json(L));
 
 done:
     lua_pop(L, 1);
+    return rc;
 }
 
-static void rpc_exec_timeout_cb(struct ev_loop *loop, struct ev_timer *w, int revents)
+static struct rpc_method_entry methods[] = {
+    {"login",  rpc_method_login},
+    {"logout", rpc_method_logout},
+    {"alive",  rpc_method_alive},
+    {"exec",   rpc_method_exec},
+    {"call",   rpc_method_call},
+    {}
+};
+
+static void rpc_handle_request(struct uh_connection *conn, json_t *req)
 {
-    struct rpc_exec_context *ctx = container_of(w, struct rpc_exec_context, tmr);
-
-    ev_child_stop(loop, &ctx->child);
-
-    kill(ctx->pid, SIGKILL);
-
-    close(ctx->stdout_fd);
-    close(ctx->stderr_fd);
-
-    rpc_error(ctx->conn, RPC_ERROR_EXEC_TIMEOUT, ctx->req);
-
-    free(ctx);
-}
-
-static void rpc_exec_read(int fd, json_t *res, const char *name)
-{
-    struct buffer b = {};
-    uint8_t buf[1024];
-
-    for (;;) {
-        ssize_t nr = read(fd, buf, sizeof(buf));
-        if (nr <= 0)
-            break;
-        buffer_put_data(&b, buf, nr);
-    }
-
-    json_object_set_new(res, name, json_stringn(buffer_data(&b), buffer_length(&b)));
-
-    buffer_free(&b);
-
-    close(fd);
-}
-
-static void rpc_exec_child_exit(struct ev_loop *loop, struct ev_child *w, int revents)
-{
-    struct rpc_exec_context *ctx = container_of(w, struct rpc_exec_context, child);
-    json_t *res = json_object();
-
-    ev_timer_stop(loop, &ctx->tmr);
-
-    json_object_set_new(res, "code", json_integer(WEXITSTATUS(w->rstatus)));
-
-    rpc_exec_read(ctx->stdout_fd, res, "stdout");
-    rpc_exec_read(ctx->stderr_fd, res, "stderr");
-
-    rpc_resp(ctx->conn, ctx->req, res);
-
-    /* Avoid conflicts caused by two same pid */
-    ev_child_stop(loop, w);
-
-    free(ctx);
-}
-
-static void handle_rpc_exec(struct uh_connection *conn, json_t *params, json_t *req)
-{
-    int opipe[2] = {};
-    int epipe[2] = {};
-    const char *cmd;
-    pid_t pid;
-
-    cmd = json_array_get_string(params, 0);
-    if (which(cmd)) {
-        rpc_error(conn, RPC_ERROR_EXEC_NOTFOUND, req);
-        return;
-    }
-
-    if (pipe(opipe) < 0 || pipe(epipe) < 0)
-        goto err;
-
-    pid = fork();
-    if (pid < 0) {
-        goto err;
-    } else if (pid == 0) {
-        size_t n = json_array_size(params) - 1;
-        const char **args;
-        int i;
-
-        /* Close unused read end */
-        close(opipe[0]);
-        close(epipe[0]);
-
-        /* Redirect */
-        dup2(opipe[1], STDOUT_FILENO);
-        dup2(epipe[1], STDERR_FILENO);
-        close(opipe[1]);
-        close(epipe[1]);
-
-        args = calloc(1, sizeof(char *) * (n + 2));
-        if (!args)
-            exit(1);
-
-        args[0] = cmd;
-
-        for (i = 0; i < n; i++)
-            args[i + 1] = json_array_get_string(params, i + 1);
-
-        execvp(cmd, (char *const *) args);
-    } else {
-        struct rpc_exec_context *ctx = calloc(1, sizeof(struct rpc_exec_context));
-        struct ev_loop *loop = conn->srv->loop;
-
-        /* Close unused write end */
-        close(opipe[1]);
-        close(epipe[1]);
-
-        ctx->conn = conn;
-        ctx->req = req;
-        ctx->pid = pid;
-
-        ctx->stdout_fd = opipe[0];
-        ctx->stderr_fd = epipe[0];
-
-        ev_timer_init(&ctx->tmr, rpc_exec_timeout_cb, 30, 0);
-        ev_timer_start(loop, &ctx->tmr);
-
-        ev_child_init(&ctx->child, rpc_exec_child_exit, pid, 0);
-        ev_child_start(loop, &ctx->child);
-    }
-
-    return;
-
-err:
-    if (opipe[0] > 0) {
-        close(opipe[0]);
-        close(opipe[1]);
-    }
-
-    if (epipe[0] > 0) {
-        close(epipe[0]);
-        close(epipe[1]);
-    }
-
-    uh_log_err("rpc exec: %s\n", strerror(errno));
-
-    rpc_error(conn, RPC_ERROR_INTERNAL, req);
-}
-
-static void handle_rpc(struct uh_connection *conn, const char *method, json_t *params, json_t *req)
-{
-    if (!strcmp(method, "login")) {
-        const char *username, *password, *sid;
-        json_t *result;
-
-        if (!params || json_typeof(params) != JSON_OBJECT) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        username = json_object_get_string(params, "username");
-        password = json_object_get_string(params, "password");
-
-        sid = session_login(username, password);
-        if (!sid) {
-            rpc_error(conn, RPC_ERROR_ACCESS, req);
-            return;
-        }
-
-        result = json_object();
-        json_object_set_new(result, "sid", json_string(sid));
-        json_object_set_new(result, "username", json_string(username));
-        rpc_resp(conn, req, result);
-    } else if (!strcmp(method, "logout")) {
-        const char *sid;
-
-        if (!params || json_typeof(params) != JSON_OBJECT) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        sid = json_object_get_string(params, "sid");
-        session_logout(sid);
-
-        rpc_resp(conn, req, json_object());
-    } else if (!strcmp(method, "alive")) {
-        const char *sid;
-
-        if (!params || json_typeof(params) != JSON_OBJECT) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        sid = json_object_get_string(params, "sid");
-        if (!session_get(sid)) {
-            rpc_error(conn, RPC_ERROR_ACCESS, req);
-            return;
-        }
-
-        rpc_resp(conn, req, json_object());
-    } else if (!strcmp(method, "call")) {
-        const char *sid, *object;
-        json_t *json, *args = NULL;
-        size_t size;
-
-        if (!params || json_typeof(params) != JSON_ARRAY) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        size = json_array_size(params);
-        if (size != 3 && size != 4) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        sid = json_array_get_string(params, 0);
-        if (!sid) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        object = json_array_get_string(params, 1);
-        if (!object) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        method = json_array_get_string(params, 2);
-        if (!method) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        if (size == 4) {
-            json = json_array_get(params, 3);
-            if (!json_is_object(json)) {
-                rpc_error(conn, RPC_ERROR_PARAMS, req);
-                return;
-            }
-            args = json;
-        }
-
-        handle_rpc_call(conn, sid, object, method, args, req);
-    } else if (!strcmp(method, "exec")) {
-        const char *sid;
-        size_t size;
-
-        if (!params || json_typeof(params) != JSON_ARRAY) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        size = json_array_size(params);
-        if (size < 2) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        sid = json_array_get_string(params, 0);
-        if (!sid) {
-            rpc_error(conn, RPC_ERROR_PARAMS, req);
-            return;
-        }
-
-        if (!session_get(sid)) {
-            rpc_error(conn, RPC_ERROR_ACCESS, req);
-            return;
-        }
-
-        json_array_remove(params, 0);
-
-        handle_rpc_exec(conn, params, req);
-    } else {
-        rpc_error(conn, RPC_ERROR_METHOD, req);
-    }
-}
-
-void serve_rpc(struct uh_connection *conn, bool strict)
-{
-    struct uh_str body;
-    json_t *root;
-    json_error_t error;
-    json_t *params;
+    json_t *params, *id, *resp, *result = NULL;
+    struct rpc_method_entry *entry;
     const char *method;
+
+    resp = rpc_validate_request(req, &method, &params, &id);
+    if (resp)
+        goto done;
+
+    for (entry = methods; entry->name != NULL; entry++) {
+        if (!strcmp(entry->name, method))
+            break;
+    }
+
+    if (!entry->name) {
+        resp = rpc_error_response(id, rpc_error_object_predefined(ERROR_CODE_METHOD_NOT_FOUND, NULL));
+        goto done;
+    }
+
+    switch (entry->handler(conn, id, params, &result)) {
+    case RPC_METHOD_RETURN_ERROR:
+        resp = rpc_error_response(id, result);
+        break;
+    case RPC_METHOD_RETURN_SUCCESS:
+        resp = rpc_result_response(id, result);
+        break;
+    case RPC_METHOD_RETURN_DEFERRED:
+        json_incref(id);
+        return;
+    default:
+        resp = rpc_error_response(id, rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL));
+        break;
+    }
+
+done:
+    rpc_handle_done_final(conn, resp);
+}
+
+void serve_rpc(struct uh_connection *conn)
+{
+    json_t *reqs, *resp = NULL;
+    struct uh_str body;
+    json_error_t error;
 
     if (conn->get_method(conn) != HTTP_POST) {
         conn->error(conn, HTTP_STATUS_METHOD_NOT_ALLOWED, NULL);
@@ -577,25 +598,24 @@ void serve_rpc(struct uh_connection *conn, bool strict)
     }
 
     body = conn->get_body(conn);
-    root = json_loadb(body.p, body.len, 0, &error);
-
-    if (!root) {
-        rpc_error(conn, RPC_ERROR_PARSE, NULL);
-        return;
+    reqs = json_loadb(body.p, body.len, 0, &error);
+    if (!reqs) {
+        resp = rpc_error_response(NULL, rpc_error_object_predefined(ERROR_CODE_PARSE_ERROR, NULL));
+        goto err;
     }
 
-    switch (json_typeof(root)) {
-    case JSON_OBJECT:
-        if (!parse_rpc(root, &method, &params, strict)) {
-            rpc_error(conn, RPC_ERROR_PARSE, root);
-            return;
-        }
-        handle_rpc(conn, method, params, root);
-        break;
-    default:
-        rpc_error(conn, RPC_ERROR_PARSE, root);
-        return;
+    if (json_is_array(reqs)) {
+        resp = rpc_error_response(NULL, rpc_error_object_predefined(ERROR_CODE_INVALID_REQUEST,
+                                                                    json_string("Not support batch")));
+        goto err;
     }
+
+    rpc_handle_request(conn, reqs);
+
+err:
+    if (resp)
+        rpc_handle_done_final(conn, resp);
+    json_decref(reqs);
 }
 
 static void load_rpc_scripts(const char *path)
@@ -620,16 +640,6 @@ static void load_rpc_scripts(const char *path)
         L = luaL_newstate();
 
         luaL_openlibs(L);
-
-        lua_newtable(L);
-
-        lua_pushinteger(L, RPC_ERROR_PARAMS);
-        lua_setfield(L, -2, "RPC_ERROR_PARAMS");
-
-        lua_pushinteger(L, RPC_ERROR_ACCESS);
-        lua_setfield(L, -2, "RPC_ERROR_ACCESS");
-
-        lua_setglobal(L, "__rpc");
 
         snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
 

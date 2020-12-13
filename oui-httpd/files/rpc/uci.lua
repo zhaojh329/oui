@@ -1,6 +1,7 @@
 local ubus = require "ubus"
 local uci = require "uci"
 local sqlite3 = require "lsqlite3"
+local rpc = require "oui.rpc"
 
 local M = {}
 
@@ -33,7 +34,7 @@ function M.load(params)
     local config = params.config
 
     if not uci_access(config, "r") then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
 
     local c = uci.cursor()
@@ -46,7 +47,7 @@ function M.set(params)
     local section = params.section
 
     if not uci_access(config, "w") then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
 
     for option, value in pairs(params.values) do
@@ -63,7 +64,7 @@ function M.delete(params)
     local options = params.options
 
     if not uci_access(config, "w") then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
 
     if options then
@@ -84,15 +85,15 @@ function M.add(params)
     local values = params.values
 
     if type(config) ~= "string" or type(typ) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     if values and type(values) ~= "table" then
-       return nil, __rpc.RPC_ERROR_PARAMS
+       return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     if not uci_access(config, "w") then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
 
     local c = uci.cursor()
@@ -115,7 +116,7 @@ function M.reorder(params)
     local config = params.config
 
     if not uci_access(config, "w") then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
 
     for i, section in ipairs(params.sections) do

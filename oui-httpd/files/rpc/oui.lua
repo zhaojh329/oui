@@ -2,6 +2,7 @@ local uci = require "uci"
 local sqlite3 = require "lsqlite3"
 local utils = require "oui.utils"
 local cjson = require "oui.json"
+local rpc = require "oui.rpc"
 
 local M = {}
 
@@ -27,7 +28,7 @@ function M.set_lang(params)
     local c = uci.cursor()
 
     if type(params.lang) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     c:set("oui", "main", "lang", params.lang)
@@ -91,7 +92,7 @@ function M.load_locales(params)
     local locales = {}
 
     if type(params.locale) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local cmd = string.format("ls /www/i18n/*.%s.json 2>/dev/null", params.locale)
@@ -112,7 +113,7 @@ local function set_password(params)
     local username, password = params.username, params.password
 
     if type(username) ~= "string" or  type(password) ~= "string" then
-        return nil, __rpc.RPC_ERROR_PARAMS
+        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
@@ -136,7 +137,7 @@ function M.set_password(params)
     local s = __oui_session
 
     if s.aclgroup ~= "admin" and params.username ~= s.username then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
     return set_password(params)
 end
@@ -151,7 +152,7 @@ end
 
 function M.first_set(params)
     if not M.first_login() then
-        return nil, __rpc.RPC_ERROR_ACCESS
+        return rpc.ERROR_CODE_ACCESS
     end
 
     local c = uci.cursor()
