@@ -119,7 +119,7 @@ static json_t *rpc_result_response(json_t *id, json_t *result)
     return json_pack("{s:s,s:o,s:o}", "jsonrpc", "2.0", "id", id, "result", result);
 }
 
-static json_t *rpc_validate_request(json_t *json_request, const char **method, json_t **params, json_t **id)
+static json_t *rpc_validate_request(json_t *req, const char **method, json_t **params, json_t **id)
 {
     const char *version = NULL;
     json_t *data = NULL;
@@ -130,7 +130,7 @@ static json_t *rpc_validate_request(json_t *json_request, const char **method, j
     *params = NULL;
     *id = NULL;
 
-    rc = json_unpack_ex(json_request, &error, 0, "{s:s,s:o,s:s,s?o}",
+    rc = json_unpack_ex(req, &error, 0, "{s:s,s:o,s:s,s?o}",
                         "jsonrpc", &version,
                         "id", id,
                         "method", method,
