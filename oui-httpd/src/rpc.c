@@ -50,8 +50,8 @@ static const struct {
     [ERROR_CODE_INVALID_PARAMS] = {-32602, "Invalid params"},
     [ERROR_CODE_INTERNAL_ERROR] = {-32603, "Internal error"},
     [ERROR_CODE_ACCESS] = {-32000, "Access denied"},
-    [ERROR_CODE_NOT_FOUND] = {-32002, "Not found"},
-    [ERROR_CODE_TIMEOUT] = {-32001, "Timeout"}
+    [ERROR_CODE_NOT_FOUND] = {-32001, "Not found"},
+    [ERROR_CODE_TIMEOUT] = {-32002, "Timeout"}
 };
 
 struct rpc_exec_context {
