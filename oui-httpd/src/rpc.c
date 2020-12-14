@@ -588,7 +588,7 @@ done:
 
 void serve_rpc(struct uh_connection *conn)
 {
-    json_t *reqs, *resp = NULL;
+    json_t *req, *resp = NULL;
     struct uh_str body;
     json_error_t error;
 
@@ -598,24 +598,24 @@ void serve_rpc(struct uh_connection *conn)
     }
 
     body = conn->get_body(conn);
-    reqs = json_loadb(body.p, body.len, 0, &error);
-    if (!reqs) {
+    req = json_loadb(body.p, body.len, 0, &error);
+    if (!req) {
         resp = rpc_error_response(NULL, rpc_error_object_predefined(ERROR_CODE_PARSE_ERROR, NULL));
         goto err;
     }
 
-    if (json_is_array(reqs)) {
+    if (json_is_array(req)) {
         resp = rpc_error_response(NULL, rpc_error_object_predefined(ERROR_CODE_INVALID_REQUEST,
                                                                     json_string("Not support batch")));
         goto err;
     }
 
-    rpc_handle_request(conn, reqs);
+    rpc_handle_request(conn, req);
 
 err:
     if (resp)
         rpc_handle_done_final(conn, resp);
-    json_decref(reqs);
+    json_decref(req);
 }
 
 static void load_rpc_scripts(const char *path)
