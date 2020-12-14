@@ -128,7 +128,7 @@ static void encode(lua_State *L, json_t *ret)
     }
 }
 
-json_t *lua_to_json(lua_State *L, int i)
+json_t *lua_to_json(lua_State *L, int i, bool encode_empty_table_as_array)
 {
     json_t *ret;
 
@@ -137,7 +137,7 @@ json_t *lua_to_json(lua_State *L, int i)
     if (lua_istable(L, -1)) {
         int array_size = lua_test_array(L);
 
-        if (array_size >= 0) {
+        if (array_size > 0 || (array_size == 0 && encode_empty_table_as_array)) {
             ret = json_array();
 
             for (i = 1; i <= array_size; i++) {

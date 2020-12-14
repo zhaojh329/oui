@@ -25,10 +25,11 @@
 #ifndef __LUA_2_JSON_H
 #define __LUA_2_JSON_H
 
+#include <stdbool.h>
 #include <lauxlib.h>
 #include <jansson.h>
 
-json_t *lua_to_json(lua_State *L, int i);
+json_t *lua_to_json(lua_State *L, int i, bool encode_empty_table_as_array);
 
 void json_to_lua(json_t *root, lua_State *L);
 

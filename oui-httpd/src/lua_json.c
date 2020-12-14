@@ -26,12 +26,15 @@
 
 static int json_encode(lua_State *L)
 {
+    bool encode_empty_table_as_array;
     json_t *ret;
     char *s;
 
     luaL_argcheck(L, lua_istable(L, 1), 1, "table expected");
 
-    ret = lua_to_json(L, 1);
+    encode_empty_table_as_array = lua_toboolean(L, 2);
+
+    ret = lua_to_json(L, 1, encode_empty_table_as_array);
 
     s = json_dumps(ret, 0);
 

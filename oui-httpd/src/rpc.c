@@ -536,7 +536,7 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         *result = rpc_error_object_predefined(lua_tointeger(L, -2), data);
     } else {
         if (lua_istable(L, -2))
-            *result = lua_to_json(L, -2);
+            *result = lua_to_json(L, -2, false);
     }
 
     lua_pop(L, 2);
