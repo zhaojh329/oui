@@ -47,7 +47,7 @@ static int lua_test_array(lua_State *L)
         lua_pop(L, 1);
         continue;
 
-        out:
+out:
         lua_pop(L, 2);
         return -1;
     }
@@ -119,7 +119,7 @@ static void encode(lua_State *L, json_t *ret)
             break;
         default:
             luaL_error(L, "type not supported");
-			return;
+            return;
         }
 
         json_object_set_new(ret, key, append_data(L));
@@ -128,16 +128,16 @@ static void encode(lua_State *L, json_t *ret)
     }
 }
 
-json_t *lua_to_json(lua_State *L)
+json_t *lua_to_json(lua_State *L, int i)
 {
     json_t *ret;
+
+    lua_pushvalue(L, i);
 
     if (lua_istable(L, -1)) {
         int array_size = lua_test_array(L);
 
         if (array_size >= 0) {
-            int i;
-
             ret = json_array();
 
             for (i = 1; i <= array_size; i++) {
@@ -152,6 +152,8 @@ json_t *lua_to_json(lua_State *L)
     } else {
         ret = json_object();
     }
+
+    lua_pop(L, 1);
 
     return ret;
 }

@@ -31,9 +31,7 @@ static int json_encode(lua_State *L)
 
     luaL_argcheck(L, lua_istable(L, 1), 1, "table expected");
 
-    lua_pushvalue(L, 1);
-
-    ret = lua_to_json(L);
+    ret = lua_to_json(L, 1);
 
     s = json_dumps(ret, 0);
 

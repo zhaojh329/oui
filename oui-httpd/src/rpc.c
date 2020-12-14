@@ -90,9 +90,10 @@ static json_t *rpc_error_object(int code, const char *message, json_t *data)
 
 static json_t *rpc_error_object_predefined(int code, json_t *data)
 {
-    assert(code > -1 && code < __ERROR_CODE_MAX);
-
-    return rpc_error_object(rpc_errors[code].code, rpc_errors[code].msg, data);
+    if (code > -1 && code < __ERROR_CODE_MAX)
+        return rpc_error_object(rpc_errors[code].code, rpc_errors[code].msg, data);
+    else
+        return rpc_error_object(code, NULL, data);
 }
 
 static json_t *rpc_error_response(json_t *id, json_t *error)
@@ -452,7 +453,6 @@ err:
 
 static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
-    int rc = RPC_METHOD_RETURN_ERROR;
     const char *sid, *object, *method;
     struct rpc_object *obj;
     json_error_t error;
@@ -514,28 +514,37 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
     else
         lua_newtable(L);
 
-    if (lua_pcall(L, 1, 1, 0)) {
-        uh_log_err("%s\n", lua_tostring(L, -1));
-        *result = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL);
+    if (lua_pcall(L, 1, 2, 0)) {
+        const char *err_msg = lua_tostring(L, -1);
+        json_t *data = json_string(err_msg);
+
+        uh_log_err("%s\n", err_msg);
+        *result = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, data);
         goto done;
     }
 
     /*
-     * support both table response and an error code response.
-     * if lua method returns a number then it is always treated as an error code
+     * Return a number on failure (plus an error message as a second result)
+     * Return a table on success
+     * Return other type also as success, but the result will be ignored
      */
-    if (lua_isnumber(L, -1)) {
-        *result = rpc_error_object_predefined(lua_tointeger(L, -1), NULL);
-    } else {
-        rc = RPC_METHOD_RETURN_SUCCESS;
+    if (lua_isnumber(L, -2)) {
+        json_t *data = NULL;
 
-        if (lua_istable(L, -1))
-            *result = lua_to_json(L);
+        if (lua_isstring(L, -1))
+            data = json_string(lua_tostring(L, -1));
+        *result = rpc_error_object_predefined(lua_tointeger(L, -2), data);
+    } else {
+        if (lua_istable(L, -2))
+            *result = lua_to_json(L, -2);
     }
+
+    lua_pop(L, 2);
+    return RPC_METHOD_RETURN_SUCCESS;
 
 done:
     lua_pop(L, 1);
-    return rc;
+    return RPC_METHOD_RETURN_ERROR;
 }
 
 static struct rpc_method_entry methods[] = {

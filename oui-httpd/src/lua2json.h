@@ -28,7 +28,7 @@
 #include <lauxlib.h>
 #include <jansson.h>
 
-json_t *lua_to_json(lua_State *L);
+json_t *lua_to_json(lua_State *L, int i);
 
 void json_to_lua(json_t *root, lua_State *L);
 
