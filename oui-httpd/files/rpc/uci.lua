@@ -1,39 +1,13 @@
+local rpc = require "oui.rpc"
 local ubus = require "ubus"
 local uci = require "uci"
-local sqlite3 = require "lsqlite3"
-local rpc = require "oui.rpc"
 
 local M = {}
-
-local function uci_access(config, rw)
-    local s = __oui_session
-
-    -- The admin acl group is always allowed
-    if s.aclgroup == "admin" then return true end
-
-    local db = sqlite3.open("/etc/oui-httpd/oh.db")
-
-    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = 'uci' AND entry = '%s'", s.aclgroup, config)
-    local perm = ""
-
-    db:exec(sql, function(udata, cols, values, names)
-        perm = values[1]
-        return 1
-    end)
-
-    db:close()
-
-    if rw == "r" then
-        return perm:find("[r,w]") ~= nil
-    else
-        return perm:find("w") ~= nil
-    end
-end
 
 function M.load(params)
     local config = params.config
 
-    if not uci_access(config, "r") then
+    if not rpc.access("uci", config, "r") then
         return rpc.ERROR_CODE_ACCESS
     end
 
@@ -46,7 +20,7 @@ function M.set(params)
     local config = params.config
     local section = params.section
 
-    if not uci_access(config, "w") then
+    if not rpc.access("uci", config, "w") then
         return rpc.ERROR_CODE_ACCESS
     end
 
@@ -63,7 +37,7 @@ function M.delete(params)
     local section = params.section
     local options = params.options
 
-    if not uci_access(config, "w") then
+    if not rpc.access("uci", config, "w") then
         return rpc.ERROR_CODE_ACCESS
     end
 
@@ -92,7 +66,7 @@ function M.add(params)
        return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    if not uci_access(config, "w") then
+    if not rpc.access("uci", config, "w") then
         return rpc.ERROR_CODE_ACCESS
     end
 
@@ -115,7 +89,7 @@ function M.reorder(params)
     local c = uci.cursor()
     local config = params.config
 
-    if not uci_access(config, "w") then
+    if not rpc.access("uci", config, "w") then
         return rpc.ERROR_CODE_ACCESS
     end
 

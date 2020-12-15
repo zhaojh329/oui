@@ -1,8 +1,8 @@
-local uci = require "uci"
 local sqlite3 = require "lsqlite3"
 local utils = require "oui.utils"
 local cjson = require "oui.json"
 local rpc = require "oui.rpc"
+local uci = require "uci"
 
 local M = {}
 
@@ -37,26 +37,6 @@ function M.set_lang(params)
     return { lang = c:get("oui", "main", "lang") }
 end
 
-local function menu_access(menu)
-    local s = __oui_session
-
-    -- The admin acl group is always allowed
-    if s.aclgroup == "admin" then return true end
-
-    local db = sqlite3.open("/etc/oui-httpd/oh.db")
-    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = 'menu' AND entry = '%s'", s.aclgroup, menu)
-    local perm = ""
-
-    db:exec(sql, function(udata, cols, values, names)
-        perm = values[1]
-        return 1
-    end)
-
-    db:close()
-
-    return perm:find("r") ~= nil
-end
-
 function M.menu(params)
     local menus = {}
 
@@ -77,7 +57,7 @@ function M.menu(params)
                     end
                 end
 
-                if files and menu_access("/" .. path) then
+                if files and rpc.access("menu", "/" .. path, "r") then
                     menus[path] = tmp
                 end
             end
@@ -134,7 +114,7 @@ local function set_password(params)
 end
 
 function M.set_password(params)
-    local s = __oui_session
+    local s = rpc.session()
 
     if s.aclgroup ~= "admin" and params.username ~= s.username then
         return rpc.ERROR_CODE_ACCESS
