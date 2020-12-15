@@ -371,7 +371,7 @@ static int rpc_method_exec(struct uh_connection *conn, json_t *id, json_t *param
     }
 
     if (which(cmd)) {
-        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, NULL);
+        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, json_string("Command not found"));
         return RPC_METHOD_RETURN_ERROR;
     }
 
@@ -474,7 +474,7 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
 
     obj = avl_find_element(&rpc_objects, object, obj, avl);
     if (!obj) {
-        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, NULL);
+        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, json_string("Object not found"));
         return RPC_METHOD_RETURN_ERROR;
     }
 
@@ -488,7 +488,7 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
 
     lua_getfield(L, -1, method);
     if (!lua_isfunction(L, -1)) {
-        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, NULL);
+        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, json_string("Method not found"));
         goto done;
     }
 
