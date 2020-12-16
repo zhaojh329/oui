@@ -509,6 +509,9 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         lua_pushstring(L, s->aclgroup);
         lua_setfield(L, -2, "aclgroup");
 
+        lua_pushboolean(L, is_local);
+        lua_setfield(L, -2, "is_local");
+
         lua_setglobal(L, "__oui_session");
     }
 
