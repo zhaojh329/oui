@@ -12,17 +12,17 @@ local M = {
 }
 
 M.session = function()
-	return __oui_session or {}
+    return __oui_session or {}
 end
 
 M.access = function(scope, entry, need)
-	local s = M.session()
-	local is_local = s.is_local
-	local aclgroup = s.aclgroup
+    local s = M.session()
+    local is_local = s.is_local
+    local aclgroup = s.aclgroup
 
-	if is_local then return true end
+    if is_local then return true end
 
-	-- The admin acl group is always allowed
+    -- The admin acl group is always allowed
     if aclgroup == "admin" then return true end
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
