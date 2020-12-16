@@ -502,10 +502,13 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
 
     if (s) {
         lua_newtable(L);
+
         lua_pushstring(L, s->username);
         lua_setfield(L, -2, "username");
+
         lua_pushstring(L, s->aclgroup);
         lua_setfield(L, -2, "aclgroup");
+
         lua_setglobal(L, "__oui_session");
     }
 
