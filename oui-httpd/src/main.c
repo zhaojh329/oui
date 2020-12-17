@@ -45,22 +45,16 @@ enum {
 static const char *home_dir = ".";
 static const char *index_page = "oui.html";
 
-void serve_upload(struct uh_connection *conn);
+void serve_upload(struct uh_connection *conn, int event);
 
-void serve_download(struct uh_connection *conn);
+void serve_download(struct uh_connection *conn, int event);
 
-static void on_request(struct uh_connection *conn)
+static void default_handler(struct uh_connection *conn, int event)
 {
-    const struct uh_str path = conn->get_path(conn);
+    if (event != UH_EV_COMPLETE)
+        return;
 
-    if (path.len == 7 && !strncmp(path.p, "/upload", 7))
-        serve_upload(conn);
-    else if (path.len == 9 && !strncmp(path.p, "/download", 9))
-        serve_download(conn);
-    else if (path.len == 4 && !strncmp(path.p, "/rpc", 4))
-        serve_rpc(conn);
-    else
-        conn->serve_file(conn, home_dir, index_page);
+    conn->serve_file(conn, home_dir, index_page);
 }
 
 static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
@@ -157,7 +151,11 @@ int main(int argc, char **argv)
         goto err;
     }
 
-    srv->on_request = on_request;
+    srv->default_handler = default_handler;
+
+    srv->add_path_handler(srv, "/rpc", serve_rpc);
+    srv->add_path_handler(srv, "/upload", serve_upload);
+    srv->add_path_handler(srv, "/download", serve_download);
 
     uh_log_info("Listen on: %s:%d\n", addr, port);
 

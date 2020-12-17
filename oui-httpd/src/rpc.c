@@ -601,11 +601,14 @@ done:
     rpc_handle_done_final(conn, resp);
 }
 
-void serve_rpc(struct uh_connection *conn)
+void serve_rpc(struct uh_connection *conn, int event)
 {
     json_t *req, *resp = NULL;
     struct uh_str body;
     json_error_t error;
+
+    if (event != UH_EV_COMPLETE)
+        return;
 
     if (conn->get_method(conn) != HTTP_POST) {
         conn->error(conn, HTTP_STATUS_METHOD_NOT_ALLOWED, NULL);

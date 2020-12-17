@@ -111,12 +111,15 @@ static void parse_data(const char *body, int body_len, struct download_params *p
     urldecode(params->filename);
 }
 
-void serve_download(struct uh_connection *conn)
+void serve_download(struct uh_connection *conn, int event)
 {
     struct uh_str var = conn->get_header(conn, "Content-Type");
     struct download_params params = {};
     struct uh_str body;
     struct stat st;
+
+    if (event != UH_EV_COMPLETE)
+        return;
 
     if (conn->get_method(conn) != HTTP_POST) {
         conn->error(conn, HTTP_STATUS_METHOD_NOT_ALLOWED, NULL);

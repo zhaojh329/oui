@@ -62,6 +62,6 @@ void rpc_init(const char *path);
 
 void rpc_deinit();
 
-void serve_rpc(struct uh_connection *conn);
+void serve_rpc(struct uh_connection *conn, int event);
 
 #endif
