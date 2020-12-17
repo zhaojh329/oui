@@ -6,7 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=Oui Support for rtty
+APP_TITLE:=Oui Support for example
 
 include ../../oui-app.mk
 
