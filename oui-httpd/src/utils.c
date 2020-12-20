@@ -122,7 +122,7 @@ bool is_loopback_addr(const struct sockaddr *addr)
 {
     if (addr->sa_family == AF_INET) {
         struct sockaddr_in *sin = (struct sockaddr_in *)addr;
-        return sin->sin_addr.s_addr == INADDR_LOOPBACK;
+        return sin->sin_addr.s_addr == htonl(INADDR_LOOPBACK);
     } else {
         struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)addr;
         return !memcmp(&sin6->sin6_addr, &in6addr_loopback, sizeof(in6addr_loopback));
