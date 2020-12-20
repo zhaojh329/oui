@@ -7,7 +7,7 @@ BIN=/usr/sbin/oui-httpd
 
 validate_oui_httpd_section() {
 	uci_load_validate oui-httpd oui-httpd "$1" "$2" \
-		'listen_addr:ip4addr' \
+		'listen_addr:string' \
 		'listen_port:port' \
 		'home:directory' \
 		'index:string' \
