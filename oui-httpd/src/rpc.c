@@ -353,7 +353,7 @@ static void rpc_exec_child_exit(struct ev_loop *loop, struct ev_child *w, int re
 
 static int rpc_method_exec(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
-    bool is_local = conn->get_addr(conn) == INADDR_LOOPBACK;
+    bool is_local = is_loopback_addr(conn->get_addr(conn));
     const char *sid, *cmd;
     json_error_t error;
     int opipe[2] = {};
@@ -453,11 +453,11 @@ err:
 
 static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
+    bool is_local = is_loopback_addr(conn->get_addr(conn));
     const char *sid, *object, *method;
     struct rpc_object *obj;
     json_error_t error;
     struct session *s;
-    bool is_local;
     json_t *args;
     lua_State *L;
 
@@ -492,7 +492,6 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         goto done;
     }
 
-    is_local = conn->get_addr(conn) == INADDR_LOOPBACK;
     s = session_get(sid);
 
     if (!is_local && !rpc_is_trusted(obj, method) && (!s || !rpc_access(s, object, method))) {

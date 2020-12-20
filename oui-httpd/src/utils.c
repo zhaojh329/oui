@@ -22,11 +22,14 @@
  * SOFTWARE.
  */
 
+#include <netinet/in.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#include "utils.h"
 
 static int file_is_executable(const char *name)
 {
@@ -113,4 +116,15 @@ int which(const char *prog)
         }
     }
     return missing;
+}
+
+bool is_loopback_addr(const struct sockaddr *addr)
+{
+    if (addr->sa_family == AF_INET) {
+        struct sockaddr_in *sin = (struct sockaddr_in *)addr;
+        return sin->sin_addr.s_addr == INADDR_LOOPBACK;
+    } else {
+        struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)addr;
+        return !memcmp(&sin6->sin6_addr, &in6addr_loopback, sizeof(in6addr_loopback));
+    }
 }

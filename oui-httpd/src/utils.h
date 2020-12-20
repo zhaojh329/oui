@@ -25,6 +25,11 @@
 #ifndef __UTILS_H
 #define __UTILS_H
 
+#include <sys/socket.h>
+#include <stdbool.h>
+
 int which(const char *prog);
+
+bool is_loopback_addr(const struct sockaddr *addr);
 
 #endif

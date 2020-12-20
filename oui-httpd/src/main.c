@@ -157,8 +157,6 @@ int main(int argc, char **argv)
     srv->add_path_handler(srv, "/upload", serve_upload);
     srv->add_path_handler(srv, "/download", serve_download);
 
-    uh_log_info("Listen on: %s:%d\n", addr, port);
-
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
     ev_signal_start(loop, &sigint_watcher);
 
@@ -181,4 +179,3 @@ err:
 
     return ret;
 }
-
