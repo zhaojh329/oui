@@ -1,0 +1,7 @@
+{
+    "system/acl": {
+        "title": "ACL",
+        "view": "oui-app-acl",
+        "index": 11
+    }
+}
