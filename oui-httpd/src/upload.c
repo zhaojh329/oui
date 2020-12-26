@@ -237,7 +237,7 @@ void serve_upload(struct uh_connection *conn, int event)
         }
 
         multipart_parser_execute(p, body.p, body.len);
-    } else {
+    } else if (event == UH_EV_COMPLETE) {
         multipart_parser_free(p);
         p = NULL;
         conn->done(conn);

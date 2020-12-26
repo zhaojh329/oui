@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 include(FindPkgConfig)
 
 find_package(Libev REQUIRED)
-find_package(Libuhttpd 3.6 REQUIRED)
+find_package(Libuhttpd 3.7 REQUIRED)
 find_package(Lua51 REQUIRED)
 find_package(SQLite3 REQUIRED)
 
