@@ -454,6 +454,7 @@ err:
 static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
     bool is_local = is_loopback_addr(conn->get_addr(conn));
+    int ret = RPC_METHOD_RETURN_ERROR;
     const char *sid, *object, *method;
     struct rpc_object *obj;
     json_error_t error;
@@ -542,14 +543,14 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
     } else {
         if (lua_istable(L, -2))
             *result = lua_to_json(L, -2, false);
+        ret = RPC_METHOD_RETURN_SUCCESS;
     }
 
-    lua_pop(L, 2);
-    return RPC_METHOD_RETURN_SUCCESS;
+    lua_pop(L, 1);
 
 done:
     lua_pop(L, 1);
-    return RPC_METHOD_RETURN_ERROR;
+    return ret;
 }
 
 static struct rpc_method_entry methods[] = {
