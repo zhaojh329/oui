@@ -25,6 +25,8 @@ M.access = function(scope, entry, need)
     -- The admin acl group is always allowed
     if aclgroup == "admin" then return true end
 
+    if not aclgroup or aclgroup == "" then return false end
+
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
 
     local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = '%s' AND entry = '%s'", scope, aclgroup, entry)

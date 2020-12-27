@@ -500,20 +500,20 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         goto done;
     }
 
-    if (s) {
-        lua_newtable(L);
+    lua_newtable(L);
 
+    if (s) {
         lua_pushstring(L, s->username);
         lua_setfield(L, -2, "username");
 
         lua_pushstring(L, s->aclgroup);
         lua_setfield(L, -2, "aclgroup");
-
-        lua_pushboolean(L, is_local);
-        lua_setfield(L, -2, "is_local");
-
-        lua_setglobal(L, "__oui_session");
     }
+
+    lua_pushboolean(L, is_local);
+    lua_setfield(L, -2, "is_local");
+
+    lua_setglobal(L, "__oui_session");
 
     if (args)
         json_to_lua(args, L);
