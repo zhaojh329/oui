@@ -16,6 +16,10 @@ function M.call(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
+    if not rpc.access("ubus", string.format("%s.%s", object, method), "x") then
+        return rpc.ERROR_CODE_ACCESS
+    end
+
     local res = conn:call(object, method, params.params or {})
     conn:close()
 
