@@ -3,6 +3,7 @@
   "system" : {
     "Local Time": "Local Time",
     "Synchronise from Local time": "Synchronise from Local time",
+    "Successfully synchronized from local time": "Successfully synchronized from local time",
     "Timezone": "Timezone",
     "Logging": "Logging",
     "System log buffer size": "System log buffer size",

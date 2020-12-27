@@ -3,6 +3,7 @@
   "system" : {
     "Local Time": "本地時間",
     "Synchronise from Local time": "同步本地時間",
+    "Successfully synchronized from local time": "成功同步本地時間",
     "Timezone": "時區",
     "Logging": "日誌",
     "System log buffer size": "系統日誌緩沖區大小",

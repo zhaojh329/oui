@@ -94,7 +94,7 @@ export default {
       const time = Math.floor(new Date().getTime() / 1000)
       this.$rpc.call('system', 'time', { time }).then(() => {
         this.loadLocalTime()
-        this.$message.success(this.$t('Successfully synchronized from local time'))
+        this.$message.success(this.$t('system.Successfully synchronized from local time'))
       })
     },
     saveTimezone (sid, value) {

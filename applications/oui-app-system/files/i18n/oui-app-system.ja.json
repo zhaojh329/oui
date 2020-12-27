@@ -3,6 +3,7 @@
   "system" : {
     "Local Time": "ローカル・タイム",
     "Synchronise from Local time": "同期ローカル時間",
+    "Successfully synchronized from local time": "ローカル時間の同期に成功しました。",
     "Timezone": "ワールドタイム",
     "Logging": "日誌",
     "System log buffer size": "ログバッファのサイズ",
