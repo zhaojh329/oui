@@ -237,6 +237,26 @@ static bool rpc_call_access(struct session *s, const char *object, const char *m
     return strchr(perm, 'x');
 }
 
+static bool rpc_exec_access(struct session *s, const char *cmd)
+{
+    char perm[5] = "";
+    char sql[128];
+
+    /* The admin acl group is always allowed */
+    if (!strcmp(s->aclgroup, "admin"))
+        return true;
+
+    sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'exec' AND entry = '*'", s->aclgroup);
+
+    if (db_query(sql, rpc_access_cb, perm) < 0) {
+        sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'exec' AND entry = '%s'", s->aclgroup, cmd);
+        if (db_query(sql, rpc_access_cb, perm) < 0)
+            return false;
+    }
+
+    return strchr(perm, 'x');
+}
+
 static int rpc_method_login(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
     const char *username, *password = "", *sid;
@@ -355,6 +375,7 @@ static int rpc_method_exec(struct uh_connection *conn, json_t *id, json_t *param
 {
     bool is_local = is_loopback_addr(conn->get_addr(conn));
     const char *sid, *cmd;
+    struct session *s;
     json_error_t error;
     int opipe[2] = {};
     int epipe[2] = {};
@@ -365,7 +386,9 @@ static int rpc_method_exec(struct uh_connection *conn, json_t *id, json_t *param
         return RPC_METHOD_RETURN_ERROR;
     }
 
-    if (!is_local && !session_get(sid)) {
+    s = session_get(sid);
+
+    if (!is_local && (!s || !rpc_exec_access(s, cmd))) {
         *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
         return RPC_METHOD_RETURN_ERROR;
     }
