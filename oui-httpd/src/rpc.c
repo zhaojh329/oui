@@ -219,7 +219,7 @@ static int rpc_access_cb(void *data, int count, char **value, char **name)
     return SQLITE_ABORT;
 }
 
-static bool rpc_access(struct session *s, const char *object, const char *method)
+static bool rpc_call_access(struct session *s, const char *object, const char *method)
 {
     char perm[5] = "";
     char sql[128];
@@ -231,7 +231,7 @@ static bool rpc_access(struct session *s, const char *object, const char *method
     sprintf(sql, "SELECT permissions FROM acl_%s WHERE scope = 'rpc' AND entry = '%s.%s'",
             s->aclgroup, object, method);
 
-    if (db_query(sql, rpc_access_cb, perm) < 0 || !perm[0])
+    if (db_query(sql, rpc_access_cb, perm) < 0)
         return false;
 
     return strchr(perm, 'x');
@@ -495,7 +495,7 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
 
     s = session_get(sid);
 
-    if (!is_local && !rpc_is_trusted(obj, method) && (!s || !rpc_access(s, object, method))) {
+    if (!is_local && !rpc_is_trusted(obj, method) && (!s || !rpc_call_access(s, object, method))) {
         *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
         goto done;
     }
