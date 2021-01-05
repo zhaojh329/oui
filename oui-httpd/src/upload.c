@@ -23,6 +23,7 @@
  */
 
 #include <uhttpd/uhttpd.h>
+#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 

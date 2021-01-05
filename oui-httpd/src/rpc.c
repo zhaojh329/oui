@@ -23,6 +23,7 @@
  */
 
 #include <uhttpd/uhttpd.h>
+#include <uhttpd/buffer.h>
 #include <libubox/avl.h>
 #include <libubox/avl-cmp.h>
 #include <lauxlib.h>
@@ -30,6 +31,7 @@
 #include <dirent.h>
 #include <assert.h>
 #include <lualib.h>
+#include <unistd.h>
 #include <errno.h>
 #include <time.h>
 #include <uci.h>
@@ -437,7 +439,7 @@ static int rpc_method_exec(struct uh_connection *conn, json_t *id, json_t *param
         execvp(cmd, (char *const *) args);
     } else {
         struct rpc_exec_context *ctx = calloc(1, sizeof(struct rpc_exec_context));
-        struct ev_loop *loop = conn->srv->loop;
+        struct ev_loop *loop = conn->get_loop(conn);
 
         /* Close unused write end */
         close(opipe[1]);
