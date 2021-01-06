@@ -72,6 +72,7 @@ static void usage(const char *prog)
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
                     "          --db oh.db        # database file(default is ./oh.db)\n"
+                    "          -w n              # worker process number (default automatically to available CPUs)\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
@@ -96,10 +97,11 @@ int main(int argc, char **argv)
     bool verbose = false;
     int port = 8080;
     int option_index;
+    int nworker = -1;
     int ret = 0;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "a:p:v", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:p:vw:", long_options, &option_index)) != -1) {
         switch (opt) {
         case 'a':
             addr = optarg;
@@ -109,6 +111,9 @@ int main(int argc, char **argv)
             break;
         case 'v':
             verbose = true;
+            break;
+        case 'w':
+            nworker = atoi(optarg);
             break;
         case LONG_OPT_RPC:
             rpc_dir = optarg;
@@ -156,7 +161,7 @@ int main(int argc, char **argv)
     srv->add_path_handler(srv, "/upload", serve_upload);
     srv->add_path_handler(srv, "/download", serve_download);
 
-    srv->start_worker(srv, -1);
+    srv->start_worker(srv, nworker);
 
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
     ev_signal_start(loop, &sigint_watcher);
