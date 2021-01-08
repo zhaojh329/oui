@@ -97,11 +97,10 @@ int main(int argc, char **argv)
     bool verbose = false;
     int port = 8080;
     int option_index;
-    int nworker = -1;
     int ret = 0;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "a:p:vw:", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:p:v", long_options, &option_index)) != -1) {
         switch (opt) {
         case 'a':
             addr = optarg;
@@ -111,9 +110,6 @@ int main(int argc, char **argv)
             break;
         case 'v':
             verbose = true;
-            break;
-        case 'w':
-            nworker = atoi(optarg);
             break;
         case LONG_OPT_RPC:
             rpc_dir = optarg;
@@ -160,8 +156,6 @@ int main(int argc, char **argv)
     srv->add_path_handler(srv, "/rpc", serve_rpc);
     srv->add_path_handler(srv, "/upload", serve_upload);
     srv->add_path_handler(srv, "/download", serve_download);
-
-    srv->start_worker(srv, nworker);
 
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
     ev_signal_start(loop, &sigint_watcher);
