@@ -164,7 +164,7 @@ void serve_download(struct uh_connection *conn, int event)
     }
 
     conn->send_status_line(conn, HTTP_STATUS_OK, "Content-Type: application/octet-stream\r\n");
-    conn->printf(conn, "Content-Length: %zu\r\n", st.st_size);
+    conn->printf(conn, "Content-Length: %"PRIx64"\r\n", (uint64_t)st.st_size);
     conn->printf(conn, "Content-Disposition: attachment; filename=\"%s\"\r\n", params.filename);
     conn->printf(conn, "\r\n");
     conn->send_file(conn, params.path, 0, -1);
