@@ -109,10 +109,10 @@ export default {
       })
     },
     ifup (name) {
-      this.$rpc.ubus(`network.interface.${name}`, 'ifup')
+      this.$rpc.ubus(`network.interface.${name}`, 'up')
     },
     ifdown (name) {
-      this.$rpc.ubus(`network.interface.${name}`, 'ifdown')
+      this.$rpc.ubus(`network.interface.${name}`, 'down')
     },
     del (name) {
       this.$spin()
