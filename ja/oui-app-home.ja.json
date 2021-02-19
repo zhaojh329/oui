@@ -1,0 +1,30 @@
+{
+  "home": {
+    "Terminal devices": "端末設備",
+    "CPU usage": "CPU使用率",
+    "Memory usage": "メモリ使用率",
+    "Storage": "メモリー",
+    "System information": "システム情報",
+    "Model": "ホスト・モデル",
+    "Architecture": "アーキテクチャ",
+    "Kernel Version": "カーネル版",
+    "Firmware Version": "ファームウェア・バージョン",
+    "Local Time": "ローカル・タイム",
+    "Online devices": "オンライン機器",
+    "Active DHCP Leases": "割り当てられたDHCPリース契約",
+    "Active DHCPv6 Leases": "割り当てられたDHCPv6リース契約書",
+    "Associated Stations": "接続されているWiFi機器",
+    "IPv4-Address": "IPv4アドレス",
+    "MAC-Address": "MACアドレス",
+    "RX Rate": "受信レート",
+    "TX Rate": "送信レート",
+    "Leasetime remaining": "残余リース期間",
+    "expired": "期限切れ",
+    "Host": "本体",
+    "IPv6-Address": "IPv6アドレス",
+    "Signal": "信号",
+    "Noise": "騒音",
+    "IP Address": "IPアドレス",
+    "Gateway": "ゲートウェイ"
+  }
+}
