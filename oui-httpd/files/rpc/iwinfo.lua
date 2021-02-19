@@ -67,6 +67,16 @@ function M.info(params)
     }
 end
 
+function M.scan(params)
+    local device = params.device
+
+    if type(device) ~= "string" then
+        return rpc.ERROR_CODE_INVALID_PARAMS
+    end
+
+    return get_info(device)['scanlist']
+end
+
 function M.freqlist(params)
     local device = params.device
 
