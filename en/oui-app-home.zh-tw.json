@@ -1,0 +1,30 @@
+{
+  "home": {
+    "Terminal devices": "終端設備",
+    "CPU usage": "CPU使用率",
+    "Memory usage": "內存使用率",
+    "Storage": "存儲",
+    "System information": "系統信息",
+    "Model": "主機型號",
+    "Architecture": "架構",
+    "Kernel Version": "內核版本",
+    "Firmware Version": "固件版本",
+    "Local Time": "本地時間",
+    "Online devices": "在線設備",
+    "Active DHCP Leases": "已分配的DHCP租約",
+    "Active DHCPv6 Leases": "已分配的DHCPv6租約",
+    "Associated Stations": "已連接的WiFi設備",
+    "IPv4-Address": "IPv4-地址",
+    "MAC-Address": "MAC-地址",
+    "RX Rate": "接收速率",
+    "TX Rate": "發送速率",
+    "Leasetime remaining": "剩余租期",
+    "expired": "已過期",
+    "Host": "主機",
+    "IPv6-Address": "IPv6-地址",
+    "Signal": "信號",
+    "Noise": "噪聲",
+    "IP Address": "IP地址",
+    "Gateway": "網關"
+  }
+}
