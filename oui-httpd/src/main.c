@@ -72,7 +72,6 @@ static void usage(const char *prog)
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
                     "          --db oh.db        # database file(default is ./oh.db)\n"
-                    "          -w n              # worker process number (default automatically to available CPUs)\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
