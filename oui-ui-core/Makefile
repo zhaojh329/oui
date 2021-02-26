@@ -24,8 +24,8 @@ define Package/oui-ui-core
   URL:=https://github.com/zhaojh329/oui
 endef
 
-define Package/oui-ui-core/description
- Provides core ui for oui
+define Package/oui-httpd/conffiles
+/etc/config/oui
 endef
 
 Build/Prepare=

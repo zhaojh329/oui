@@ -10,9 +10,14 @@ include ../oui.mk
 PKG_NAME:=oui-httpd
 PKG_VERSION:=$(strip $(call findrev))
 PKG_RELEASE:=1
-PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 
+PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 PKG_LICENSE:=MIT
+
+PKG_CONFIG_DEPENDS:=CONFIG_OUI_HTTPD_NOSSL \
+		CONFIG_OUI_HTTPD_MBEDTLS \
+		CONFIG_OUI_HTTPD_WOLFSSL \
+		CONFIG_OUI_HTTPD_OPENSSL
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -21,16 +26,40 @@ define Package/oui-httpd
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui rpc backend
-  DEPENDS:=+libuhttpd-nossl +libubox-lua +libubus-lua +libuci-lua +jansson +lsqlite3 \
-		+libiwinfo-lua
+  DEPENDS:=+libubox-lua +libubus-lua +libuci-lua +jansson +lsqlite3 \
+		+libiwinfo-lua +OUI_HTTPD_NOSSL:libuhttpd-nossl \
+		+OUI_HTTPD_MBEDTLS:libuhttpd-mbedtls \
+		+OUI_HTTPD_WOLFSSL:libuhttpd-wolfssl \
+		+OUI_HTTPD_OPENSSL:libuhttpd-openssl
   URL:=https://github.com/zhaojh329/oui
 endef
 
-define Package/oui-httpd/description
+define Package/oui-httpd/config
+if PACKAGE_oui-httpd
+choice
+prompt "Selected SSL library"
+	default OUI_HTTPD_NOSSL
+
+	config OUI_HTTPD_NOSSL
+		bool "No SSL support"
+
+	config OUI_HTTPD_MBEDTLS
+		bool "mbed TLS"
+
+	config OUI_HTTPD_WOLFSSL
+		bool "wolfSSL"
+
+	config OUI_HTTPD_OPENSSL
+		bool "OpenSSL"
+endchoice
+endif
 endef
 
 define Package/oui-httpd/conffiles
+/etc/config/oui-httpd
 /etc/oui-httpd/oh.db
+/etc/oui-httpd/ssl.crt
+/etc/oui-httpd/ssl.key
 endef
 
 define Build/Prepare

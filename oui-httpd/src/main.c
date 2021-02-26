@@ -66,8 +66,10 @@ static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
 static void usage(const char *prog)
 {
     fprintf(stderr, "Usage: %s [option]\n"
-                    "          -a addr           # listen addr(default is 0.0.0.0)\n"
-                    "          -p port           # listen port(default is 8080)\n"
+                    "          -a [addr:]port    # Bind to specified address and port, multiple allowed\n"
+                    "          -s [addr:]port    # Like -a but provide HTTPS on this port\n"
+                    "          -C file           # server certificate file\n"
+                    "          -K file           # server private key file\n"
                     "          --rpc dir         # rpc directory(default is .)\n"
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
@@ -85,27 +87,39 @@ static struct option long_options[] = {
 
 int main(int argc, char **argv)
 {
-    struct ev_loop *loop;
+    struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
     struct uh_server *srv = NULL;
-    const char *addr = "0.0.0.0";
     const char *rpc_dir = ".";
     const char *db = "oh.db";
     const char *home_dir = ".";
     const char *index_page = "oui.html";
     bool verbose = false;
-    int port = 8080;
+    const char *cert = NULL;
+    const char *key = NULL;
     int option_index;
     int ret = 0;
     int opt;
 
-    while ((opt = getopt_long(argc, argv, "a:p:v", long_options, &option_index)) != -1) {
+    srv = uh_server_new(loop);
+    if (!srv)
+        return -1;
+
+    while ((opt = getopt_long(argc, argv, "a:s:C:K:v", long_options, &option_index)) != -1) {
         switch (opt) {
         case 'a':
-            addr = optarg;
+            if (srv->listen(srv, optarg, false) < 1)
+                goto srv_err;
             break;
-        case 'p':
-            port = atoi(optarg);
+        case 's':
+            if (srv->listen(srv, optarg, true) < 1)
+                goto srv_err;
+            break;
+        case 'C':
+            cert = optarg;
+            break;
+        case 'K':
+            key = optarg;
             break;
         case 'v':
             verbose = true;
@@ -132,21 +146,20 @@ int main(int argc, char **argv)
 
     uh_log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
+    if (cert && key) {
+#if UHTTPD_SSL_SUPPORT
+        if (srv->ssl_init(srv, cert, key) < 0)
+            goto srv_err;
+#endif
+    }
+
     signal(SIGPIPE, SIG_IGN);
 
     db_init(db);
 
     session_init();
 
-    loop = EV_DEFAULT;
-
     rpc_init(rpc_dir);
-
-    srv = uh_server_new(loop, addr, port);
-    if (!srv) {
-        ret = 1;
-        goto err;
-    }
 
     srv->set_docroot(srv, home_dir);
     srv->set_index_page(srv, index_page);
@@ -161,15 +174,15 @@ int main(int argc, char **argv)
 
     ev_run(loop, 0);
 
-err:
+    session_deinit();
+
+    rpc_deinit();
+
+srv_err:
     if (srv) {
         srv->free(srv);
         free(srv);
     }
-
-    session_deinit();
-
-    rpc_deinit();
 
     ev_loop_destroy(loop);
 
