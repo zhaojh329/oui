@@ -36,7 +36,8 @@ module.exports = {
         plugins: [new CompressionPlugin({
           test: /\.js$|\.html$|\.css/,
           threshold: 4096,
-          deleteOriginalAssets: true
+          deleteOriginalAssets: true,
+          filename: '[path][base]?gz'
         })]
       }
     }

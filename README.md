@@ -86,7 +86,6 @@ Oui is especially suitable for enterprise custom development.
 ```
 	npm install
 	npm run build
-	../../scripts/clean-dist.sh dist
 ```
 ## application
 1. Modify
@@ -98,7 +97,7 @@ Oui is especially suitable for enterprise custom development.
 ```
 	npm install
 	npm run build
-	cp dist/app.common.js.gz ../applications/oui-app-example/vue/dist/app.js
+	cp dist/app.common.js ../applications/oui-app-example/vue/dist/app.js
 ```
 # How to debug vue for application(e.g. oui-app-example)
 1. Copy oui-app-example/vue/app.vue to oui-ui-core/vue/src/views/oui-app-example.vue

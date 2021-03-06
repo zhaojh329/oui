@@ -90,7 +90,6 @@ Oui特别适合用于企业定制开发。
 ```
 	npm install
 	npm run build
-	../../scripts/clean-dist.sh dist
 ```
 ## Application
 1. 修改
@@ -102,7 +101,7 @@ Oui特别适合用于企业定制开发。
 ```
 	npm install
 	npm run build
-	cp dist/app.common.js.gz ../applications/oui-app-example/vue/dist/app.js
+	cp dist/app.common.js ../applications/oui-app-example/vue/dist/app.js
 ```
 # 如何调试 Application(例如 oui-app-example)
 1. 拷贝 oui-app-example/vue/app.vue 到 oui-ui-core/vue/src/views/oui-app-example.vue
