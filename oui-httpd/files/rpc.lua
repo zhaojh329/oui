@@ -29,7 +29,7 @@ M.access = function(scope, entry, need)
 
     local db = sqlite3.open("/etc/oui-httpd/oh.db")
 
-    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = '%s' AND entry = '%s'", scope, aclgroup, entry)
+    local sql = string.format("SELECT permissions FROM acl_%s WHERE scope = '%s' AND entry = '%s'", aclgroup, scope, entry)
     local perm = ""
 
     db:exec(sql, function(udata, cols, values, names)
