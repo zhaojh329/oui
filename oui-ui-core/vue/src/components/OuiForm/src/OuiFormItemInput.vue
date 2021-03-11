@@ -1,6 +1,6 @@
 <template>
   <oui-form-item-template v-bind="OuiFormItemTemplateProps">
-    <component :is="is" v-model="model" :type="type" :placeholder="placeholder" :prefix="prefixIcon" :suffix="suffixIcon"
+    <component :is="is" v-model="model" :type="type" :placeholder="placeholder" :maxLength="maxLength" :prefix="prefixIcon" :suffix="suffixIcon"
     :addon-before="prepend" :addon-after="append"/>
   </oui-form-item-template>
 </template>
@@ -13,6 +13,7 @@ export default {
   mixins: [OuiFormItemMixin],
   props: {
     placeholder: String,
+    maxLength: Number,
     prepend: String,
     append: String,
     type: {
