@@ -58,9 +58,9 @@ struct rpc_method_entry {
     rpc_method_prototype handler;
 };
 
-void rpc_init(const char *path);
+void rpc_init(struct ev_loop *loop, const char *path);
 
-void rpc_deinit();
+void rpc_deinit(struct ev_loop *loop);
 
 void serve_rpc(struct uh_connection *conn, int event);
 

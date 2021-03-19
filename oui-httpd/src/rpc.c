@@ -69,6 +69,7 @@ struct rpc_exec_context {
 struct rpc_object {
     struct avl_tree trusted_methods;
     struct avl_node avl;
+    time_t mtime;
     lua_State *L;
     char value[0];
 };
@@ -79,6 +80,7 @@ struct rpc_trusted_method {
 };
 
 static struct avl_tree rpc_objects;
+static struct ev_stat rpc_stat;
 
 static json_t *rpc_error_object(int code, const char *message, json_t *data)
 {
@@ -675,40 +677,61 @@ static void load_rpc_scripts(const char *path)
     while ((e = readdir(dir))) {
         char object_path[512] = "";
         struct rpc_object *obj;
+        struct stat st;
         lua_State *L;
 
         if (e->d_type != DT_REG || e->d_name[0] == '.')
             continue;
 
+        snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
+
+        stat(object_path, &st);
+
+        obj = avl_find_element(&rpc_objects, e->d_name, obj, avl);
+        if (obj) {
+            if (obj->mtime == st.st_mtime)
+                continue;
+
+            lua_close(obj->L);
+        }
+
         L = luaL_newstate();
 
         luaL_openlibs(L);
 
-        snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
-
         if (luaL_dofile(L, object_path)) {
             uh_log_err("load rpc: %s\n", lua_tostring(L, -1));
-            lua_close(L);
-            continue;
+            goto err;
         }
 
         if (!lua_istable(L, -1)) {
             uh_log_err("invalid rpc script, need return a table: %s\n", object_path);
-            lua_close(L);
-            continue;
+            goto err;
         }
 
-        obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
         if (!obj) {
-            uh_log_err("calloc: %s\n", strerror(errno));
-            break;
+            obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
+            if (!obj) {
+                uh_log_err("calloc: %s\n", strerror(errno));
+                goto err;
+            }
+
+            strcpy(obj->value, e->d_name);
+            obj->avl.key = obj->value;
+            avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
+            avl_insert(&rpc_objects, &obj->avl);
         }
 
         obj->L = L;
-        strcpy(obj->value, e->d_name);
-        obj->avl.key = obj->value;
-        avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
-        avl_insert(&rpc_objects, &obj->avl);
+        obj->mtime = st.st_mtime;
+
+        continue;
+
+err:
+        lua_close(L);
+
+        if (obj)
+            avl_delete(&rpc_objects, &obj->avl);
     }
 
     closedir(dir);
@@ -824,16 +847,26 @@ err:
     return ret;
 }
 
-void rpc_init(const char *path)
+static void rpc_dir_changed(struct ev_loop *loop, struct ev_stat *w, int revents)
+{
+    load_rpc_scripts(w->path);
+}
+
+void rpc_init(struct ev_loop *loop, const char *path)
 {
     avl_init(&rpc_objects, avl_strcmp, false, NULL);
 
     load_rpc_scripts(path);
 
     load_trusted();
+
+    ev_stat_init(&rpc_stat, rpc_dir_changed, path, 0.);
+    ev_stat_start(loop, &rpc_stat);
 }
 
-void rpc_deinit()
+void rpc_deinit(struct ev_loop *loop)
 {
     unload_rpc_scripts();
+
+    ev_stat_stop(loop, &rpc_stat);
 }

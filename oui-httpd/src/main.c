@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 
     session_init();
 
-    rpc_init(rpc_dir);
+    rpc_init(loop, rpc_dir);
 
     srv->set_docroot(srv, home_dir);
     srv->set_index_page(srv, index_page);
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 
     session_deinit();
 
-    rpc_deinit();
+    rpc_deinit(loop);
 
 srv_err:
     if (srv) {
