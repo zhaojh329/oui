@@ -680,7 +680,7 @@ static void load_rpc_scripts(const char *path)
         struct stat st;
         lua_State *L;
 
-        if (e->d_type != DT_REG || e->d_name[0] == '.')
+        if (e->d_type != DT_REG || strchr(e->d_name, '.'))
             continue;
 
         snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
