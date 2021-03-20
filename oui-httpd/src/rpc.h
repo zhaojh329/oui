@@ -58,7 +58,7 @@ struct rpc_method_entry {
     rpc_method_prototype handler;
 };
 
-void rpc_init(struct ev_loop *loop, const char *path);
+void rpc_init(struct ev_loop *loop, const char *path, bool local_auth);
 
 void rpc_deinit(struct ev_loop *loop);
 

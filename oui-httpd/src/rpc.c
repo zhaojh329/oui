@@ -59,6 +59,7 @@ static const struct {
 struct rpc_context {
     struct avl_tree objects;
     struct ev_stat stat;
+    bool local_auth;
 };
 
 struct rpc_exec_context {
@@ -484,7 +485,7 @@ err:
 
 static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
-    bool is_local = is_loopback_addr(conn->get_addr(conn));
+    bool is_local = is_loopback_addr(conn->get_addr(conn)) && !rpc_context.local_auth;
     int ret = RPC_METHOD_RETURN_ERROR;
     const char *sid, *object, *method;
     struct rpc_object *obj;
@@ -856,7 +857,7 @@ static void rpc_dir_changed(struct ev_loop *loop, struct ev_stat *w, int revents
     load_rpc_scripts(w->path);
 }
 
-void rpc_init(struct ev_loop *loop, const char *path)
+void rpc_init(struct ev_loop *loop, const char *path, bool local_auth)
 {
     avl_init(&rpc_context.objects, avl_strcmp, false, NULL);
 
@@ -866,6 +867,8 @@ void rpc_init(struct ev_loop *loop, const char *path)
 
     ev_stat_init(&rpc_context.stat, rpc_dir_changed, path, 0.);
     ev_stat_start(loop, &rpc_context.stat);
+
+    rpc_context.local_auth = local_auth;
 }
 
 void rpc_deinit(struct ev_loop *loop)

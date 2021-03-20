@@ -39,7 +39,8 @@ enum {
     LONG_OPT_RPC = 1,
     LONG_OPT_HOME,
     LONG_OPT_INDEX,
-    LONG_OPT_DB
+    LONG_OPT_DB,
+    LONG_OPT_LOCAL_AUTH
 };
 
 void serve_upload(struct uh_connection *conn, int event);
@@ -74,6 +75,7 @@ static void usage(const char *prog)
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
                     "          --db oh.db        # database file(default is ./oh.db)\n"
+                    "          --local-auth      # local auth\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
@@ -82,7 +84,8 @@ static struct option long_options[] = {
     {"rpc",   required_argument, NULL, LONG_OPT_RPC},
     {"home",  required_argument, NULL, LONG_OPT_HOME},
     {"index", required_argument, NULL, LONG_OPT_INDEX},
-    {"db",    required_argument, NULL, LONG_OPT_DB}
+    {"db",    required_argument, NULL, LONG_OPT_DB},
+    {"local-auth", no_argument, NULL, LONG_OPT_LOCAL_AUTH}
 };
 
 int main(int argc, char **argv)
@@ -94,6 +97,7 @@ int main(int argc, char **argv)
     const char *db = "oh.db";
     const char *home_dir = ".";
     const char *index_page = "oui.html";
+    bool local_auth = false;
     bool verbose = false;
     const char *cert = NULL;
     const char *key = NULL;
@@ -136,6 +140,9 @@ int main(int argc, char **argv)
         case LONG_OPT_DB:
             db = optarg;
             break;
+        case LONG_OPT_LOCAL_AUTH:
+            local_auth = true;
+            break;
         default: /* '?' */
             usage(argv[0]);
         }
@@ -159,7 +166,7 @@ int main(int argc, char **argv)
 
     session_init();
 
-    rpc_init(loop, rpc_dir);
+    rpc_init(loop, rpc_dir, local_auth);
 
     srv->set_docroot(srv, home_dir);
     srv->set_index_page(srv, index_page);
