@@ -56,6 +56,11 @@ static const struct {
     [ERROR_CODE_TIMEOUT] = {-32002, "Timeout"}
 };
 
+struct rpc_context {
+    struct avl_tree objects;
+    struct ev_stat stat;
+};
+
 struct rpc_exec_context {
     struct uh_connection *conn;
     struct ev_timer tmr;
@@ -79,8 +84,7 @@ struct rpc_trusted_method {
     char value[0];
 };
 
-static struct avl_tree rpc_objects;
-static struct ev_stat rpc_stat;
+static struct rpc_context rpc_context;
 
 static json_t *rpc_error_object(int code, const char *message, json_t *data)
 {
@@ -500,7 +504,7 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         return RPC_METHOD_RETURN_ERROR;
     }
 
-    obj = avl_find_element(&rpc_objects, object, obj, avl);
+    obj = avl_find_element(&rpc_context.objects, object, obj, avl);
     if (!obj) {
         *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, json_string("Object not found"));
         return RPC_METHOD_RETURN_ERROR;
@@ -687,7 +691,7 @@ static void load_rpc_scripts(const char *path)
 
         stat(object_path, &st);
 
-        obj = avl_find_element(&rpc_objects, e->d_name, obj, avl);
+        obj = avl_find_element(&rpc_context.objects, e->d_name, obj, avl);
         if (obj) {
             if (obj->mtime == st.st_mtime)
                 continue;
@@ -719,7 +723,7 @@ static void load_rpc_scripts(const char *path)
             strcpy(obj->value, e->d_name);
             obj->avl.key = obj->value;
             avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
-            avl_insert(&rpc_objects, &obj->avl);
+            avl_insert(&rpc_context.objects, &obj->avl);
         }
 
         obj->L = L;
@@ -731,7 +735,7 @@ err:
         lua_close(L);
 
         if (obj)
-            avl_delete(&rpc_objects, &obj->avl);
+            avl_delete(&rpc_context.objects, &obj->avl);
     }
 
     closedir(dir);
@@ -751,8 +755,8 @@ static void unload_rpc_scripts()
 {
     struct rpc_object *obj, *temp;
 
-    avl_for_each_element_safe(&rpc_objects, obj, avl, temp) {
-        avl_delete(&rpc_objects, &obj->avl);
+    avl_for_each_element_safe(&rpc_context.objects, obj, avl, temp) {
+        avl_delete(&rpc_context.objects, &obj->avl);
         free_all_trusted_methods(obj);
         lua_close(obj->L);
         free(obj);
@@ -814,7 +818,7 @@ static int load_trusted()
         if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
             continue;
 
-        obj = avl_find_element(&rpc_objects, ptr.o->v.string, obj, avl);
+        obj = avl_find_element(&rpc_context.objects, ptr.o->v.string, obj, avl);
         if (!obj)
             continue;
 
@@ -854,19 +858,19 @@ static void rpc_dir_changed(struct ev_loop *loop, struct ev_stat *w, int revents
 
 void rpc_init(struct ev_loop *loop, const char *path)
 {
-    avl_init(&rpc_objects, avl_strcmp, false, NULL);
+    avl_init(&rpc_context.objects, avl_strcmp, false, NULL);
 
     load_rpc_scripts(path);
 
     load_trusted();
 
-    ev_stat_init(&rpc_stat, rpc_dir_changed, path, 0.);
-    ev_stat_start(loop, &rpc_stat);
+    ev_stat_init(&rpc_context.stat, rpc_dir_changed, path, 0.);
+    ev_stat_start(loop, &rpc_context.stat);
 }
 
 void rpc_deinit(struct ev_loop *loop)
 {
     unload_rpc_scripts();
 
-    ev_stat_stop(loop, &rpc_stat);
+    ev_stat_stop(loop, &rpc_context.stat);
 }
