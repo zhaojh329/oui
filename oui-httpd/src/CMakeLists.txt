@@ -18,7 +18,7 @@ add_definitions(-O -Wall -Werror --std=gnu99 -D_GNU_SOURCE)
 include_directories(${LIBUHTTPD_INCLUDE_DIR} ${LIBEV_INCLUDE_DIR} ${LUA_INCLUDE_DIR} ${JANSSON_INCLUDE_DIRS} ${SQLITE3_INCLUDE_DIRS})
 
 add_executable(oui-httpd main.c rpc.c lua2json.c multipart_parser.c upload.c download.c session.c utils.c db.c)
-target_link_libraries(oui-httpd ${LIBUHTTPD_LIBRARY} ${LIBEV_LIBRARY} ${LUA_LIBRARY} ${JANSSON_LIBRARIES} ${SQLITE3_LIBRARIES} ubox uci m)
+target_link_libraries(oui-httpd ${LIBUHTTPD_LIBRARY} ${LIBEV_LIBRARY} ${LUA_LIBRARY} ${JANSSON_LIBRARIES} ${SQLITE3_LIBRARIES} ubox uci m pthread)
 
 add_library(lua-json MODULE lua_json.c lua2json.c)
 target_link_libraries(lua-json ${JANSSON_LIBRARIES} m)

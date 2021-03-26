@@ -26,7 +26,7 @@ define Package/oui-httpd
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui rpc backend
-  DEPENDS:=+libuci-lua +jansson +lsqlite3 +libiwinfo-lua \
+  DEPENDS:=+libuci-lua +jansson +lsqlite3 +libiwinfo-lua +libpthread\
 		+OUI_HTTPD_API_UBUS:+libubus-lua \
 		+OUI_HTTPD_NOSSL:libuhttpd-nossl \
 		+OUI_HTTPD_MBEDTLS:libuhttpd-mbedtls \

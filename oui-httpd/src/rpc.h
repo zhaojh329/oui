@@ -48,6 +48,8 @@ enum {
     RPC_METHOD_RETURN_DEFERRED = 1
 };
 
+#define RPC_MAX_WORKER_NUM  10
+
 struct uh_connection;
 
 /* return value: reference RPC_METHOD_RETURN_xx */
@@ -58,7 +60,7 @@ struct rpc_method_entry {
     rpc_method_prototype handler;
 };
 
-void rpc_init(struct ev_loop *loop, const char *path, bool local_auth);
+int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworker);
 
 void rpc_deinit(struct ev_loop *loop);
 

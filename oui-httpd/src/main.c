@@ -76,6 +76,7 @@ static void usage(const char *prog)
                     "          --index oui.html  # index page(default is oui.html)\n"
                     "          --db oh.db        # database file(default is ./oh.db)\n"
                     "          --local-auth      # local auth\n"
+                    "          -w n              # rpc call workers number\n"
                     "          -v                # verbose\n", prog);
     exit(1);
 }
@@ -102,6 +103,7 @@ int main(int argc, char **argv)
     const char *cert = NULL;
     const char *key = NULL;
     int option_index;
+    int nworker = -1;
     int ret = 0;
     int opt;
 
@@ -109,7 +111,7 @@ int main(int argc, char **argv)
     if (!srv)
         return -1;
 
-    while ((opt = getopt_long(argc, argv, "a:s:C:K:v", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:s:C:K:w:v", long_options, &option_index)) != -1) {
         switch (opt) {
         case 'a':
             if (srv->listen(srv, optarg, false) < 1)
@@ -124,6 +126,9 @@ int main(int argc, char **argv)
             break;
         case 'K':
             key = optarg;
+            break;
+        case 'w':
+            nworker = atoi(optarg);
             break;
         case 'v':
             verbose = true;
@@ -166,7 +171,8 @@ int main(int argc, char **argv)
 
     session_init();
 
-    rpc_init(loop, rpc_dir, local_auth);
+    if (rpc_init(loop, rpc_dir, local_auth, nworker) < 0)
+        goto rpc_err;
 
     srv->set_docroot(srv, home_dir);
     srv->set_index_page(srv, index_page);
@@ -181,6 +187,7 @@ int main(int argc, char **argv)
 
     ev_run(loop, 0);
 
+rpc_err:
     session_deinit();
 
     rpc_deinit(loop);
