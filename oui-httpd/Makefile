@@ -26,8 +26,9 @@ define Package/oui-httpd
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui rpc backend
-  DEPENDS:=+libubox-lua +libubus-lua +libuci-lua +jansson +lsqlite3 \
-		+libiwinfo-lua +OUI_HTTPD_NOSSL:libuhttpd-nossl \
+  DEPENDS:=+libuci-lua +jansson +lsqlite3 +libiwinfo-lua \
+		+OUI_HTTPD_API_UBUS:+libubus-lua \
+		+OUI_HTTPD_NOSSL:libuhttpd-nossl \
 		+OUI_HTTPD_MBEDTLS:libuhttpd-mbedtls \
 		+OUI_HTTPD_WOLFSSL:libuhttpd-wolfssl \
 		+OUI_HTTPD_OPENSSL:libuhttpd-openssl
@@ -52,6 +53,11 @@ prompt "Selected SSL library"
 	config OUI_HTTPD_OPENSSL
 		bool "OpenSSL"
 endchoice
+
+config OUI_HTTPD_API_UBUS
+	bool
+	default y
+	prompt "Support call ubus"
 endif
 endef
 
@@ -80,6 +86,9 @@ define Package/oui-httpd/install
 	for f in `ls ./files/rpc`; do \
 		$(INSTALL_DATA) ./files/rpc/$$$$f $(1)/usr/lib/oui-httpd/rpc/$$$${f%.*}; \
 	done
+ifeq ($(CONFIG_OUI_HTTPD_API_UBUS),)
+	rm $(1)/usr/lib/oui-httpd/rpc/ubus
+endif
 endef
 
 $(eval $(call BuildPackage,oui-httpd))
