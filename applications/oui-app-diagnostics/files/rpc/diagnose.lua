@@ -3,7 +3,7 @@ local utils = require "oui.utils"
 local M = {}
 
 local function run_cmd(cmd, params)
-    local args = { "ping" }
+    local args = { cmd }
 
     if type(params.args) == "string" then
         for a in params.args:gmatch("%S+") do
