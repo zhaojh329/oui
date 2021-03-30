@@ -26,11 +26,102 @@
 #include <libubox/md5.h>
 #include <uhttpd/log.h>
 #include <arpa/inet.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
 #include <stdbool.h>
 #include <lauxlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <time.h>
+
+static int file_is_executable(const char *name)
+{
+    struct stat s;
+    return (!access(name, X_OK) && !stat(name, &s) && S_ISREG(s.st_mode));
+}
+
+static char *last_char_is(const char *s, int c)
+{
+    if (s && *s) {
+        size_t sz = strlen(s) - 1;
+        s += sz;
+        if ((unsigned char) *s == c)
+            return (char *) s;
+    }
+    return NULL;
+}
+
+static char *concat_path_file(const char *path, const char *filename)
+{
+    char *strp;
+    char *lc;
+
+    if (!path)
+        path = "";
+    lc = last_char_is(path, '/');
+    while (*filename == '/')
+        filename++;
+    if (asprintf(&strp, "%s%s%s", path, (lc == NULL ? "/" : ""), filename) < 0)
+        return NULL;
+    return strp;
+}
+
+static char *find_executable(const char *filename, char **path)
+{
+    char *p, *n;
+
+    p = *path;
+    while (p) {
+        int ex;
+
+        n = strchr(p, ':');
+        if (n) *n = '\0';
+        p = concat_path_file(p[0] ? p : ".", filename);
+        if (!p)
+            break;
+        ex = file_is_executable(p);
+        if (n) *n++ = ':';
+        if (ex) {
+            *path = n;
+            return p;
+        }
+        free(p);
+        p = n;
+    } /* on loop exit p == NULL */
+    return p;
+}
+
+int which(const char *prog)
+{
+    char buf[] = "/sbin:/usr/sbin:/bin:/usr/bin";
+    char *env_path;
+    int missing = 1;
+
+    env_path = getenv("PATH");
+    if (!env_path)
+        env_path = buf;
+
+    /* If file contains a slash don't use PATH */
+    if (strchr(prog, '/')) {
+        if (file_is_executable(prog))
+            missing = 0;
+    } else {
+        char *path;
+        char *p;
+
+        path = env_path;
+
+        while ((p = find_executable(prog, &path)) != NULL) {
+            missing = 0;
+            free(p);
+            break;
+        }
+    }
+    return missing;
+}
+
 
 static int lua_md5sum(lua_State *L)
 {
@@ -173,6 +264,123 @@ static int lua_exists(lua_State *L)
     return 1;
 }
 
+static void read_all(lua_State *L, int fd)
+{
+    luaL_Buffer b;
+    size_t nr;
+
+    luaL_buffinit(L, &b);
+
+    while (true) {
+        char *p = luaL_prepbuffer(&b);
+        nr = read(fd, p, BUFSIZ);
+        if (nr <= 0)
+            break;
+        luaL_addsize(&b, nr);
+    }
+
+    luaL_pushresult(&b);
+}
+
+static int lua_exec(lua_State *L)
+{
+    const char *cmd = luaL_checkstring(L, 1);
+    int n = lua_gettop(L);
+    int opipe[2] = {};
+    int epipe[2] = {};
+    pid_t pid;
+
+    if (which(cmd)) {
+        lua_pushnil(L);
+        lua_pushstring(L, "Command not found");
+        return 2;
+    }
+
+    if (pipe(opipe) < 0 || pipe(epipe) < 0)
+        goto err;
+
+    pid = fork();
+    if (pid < 0) {
+        goto err;
+    } else if (pid == 0) {
+        const char **args;
+        int i, j;
+
+        /* Close unused read end */
+        close(opipe[0]);
+        close(epipe[0]);
+
+        /* Redirect */
+        dup2(opipe[1], STDOUT_FILENO);
+        dup2(epipe[1], STDERR_FILENO);
+        close(opipe[1]);
+        close(epipe[1]);
+
+        args = malloc(sizeof(char *) * 2);
+
+        args[0] = cmd;
+        args[1] = NULL;
+
+        j = 1;
+
+        for (i = 2; i <= n; i++) {
+            args = realloc(args, sizeof(char *) * (2 + j));
+            args[j++] = lua_tostring(L, i);
+            args[j] = NULL;
+        }
+
+        execvp(cmd, (char *const *) args);
+    } else {
+        time_t st = time(NULL);
+        int wstatus;
+
+        /* Close unused write end */
+        close(opipe[1]);
+        close(epipe[1]);
+
+wait:
+        if (time(NULL) - st > 30) {
+            kill(pid, SIGKILL);
+            errno = ETIME;
+            goto err;
+        }
+
+        if (waitpid(pid, &wstatus, WNOHANG) < 0)
+            goto err;
+
+        if (!WIFEXITED(wstatus)) {
+            usleep(10);
+            goto wait;
+        }
+
+        lua_pushinteger(L, WEXITSTATUS(wstatus));
+
+        read_all(L, opipe[0]);
+        read_all(L, epipe[0]);
+
+        close(opipe[0]);
+        close(epipe[0]);
+
+        return 3;
+    }
+
+err:
+    lua_pushnil(L);
+    lua_pushstring(L, strerror(errno));
+
+    if (opipe[0] > 0) {
+        close(opipe[0]);
+        close(opipe[1]);
+    }
+
+    if (epipe[0] > 0) {
+        close(epipe[0]);
+        close(epipe[1]);
+    }
+
+    return 2;
+}
+
 static const luaL_Reg regs[] = {
     {"md5sum",            lua_md5sum},
     {"md5",               lua_md5},
@@ -180,6 +388,7 @@ static const luaL_Reg regs[] = {
     {"parse_route_addr",  lua_parse_route_addr},
     {"parse_route6_addr", lua_parse_route6_addr},
     {"exists", lua_exists},
+    {"exec", lua_exec},
     {NULL, NULL}
 };
 
