@@ -24,19 +24,19 @@ export default {
   },
   methods: {
     runPing (name) {
-      return this.$rpc.exec('ping', ['-c', '5', '-W', '1', name])
+      return this.$rpc.call('diagnose', 'ping', { args: '-c 5 -W 1 ' + name })
     },
     runPing6 (name) {
-      return this.$rpc.exec('ping6', ['-c', '5', '-W', '1', name])
+      return this.$rpc.call('diagnose', 'ping6', { args: '-c 5 -W 1 ' + name })
     },
     runTraceroute (name) {
-      return this.$rpc.exec('traceroute', ['-q', '1', '-w', '1', '-n', name])
+      return this.$rpc.call('diagnose', 'traceroute', { args: '-q 1 -w 1 -n ' + name })
     },
     runTraceroute6 (name) {
-      return this.$rpc.exec('traceroute6', ['-q', '1', '-w', '2', '-n', name])
+      return this.$rpc.call('diagnose', 'traceroute6', { args: '-q 1 -w 2 -n ' + name })
     },
     runNslookup (name) {
-      return this.$rpc.exec('nslookup', [name])
+      return this.$rpc.call('diagnose', 'nslookup', { args: name })
     },
     test () {
       this.loading = true
