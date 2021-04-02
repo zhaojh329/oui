@@ -14,7 +14,9 @@ PKG_RELEASE:=1
 PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 PKG_LICENSE:=MIT
 
-PKG_CONFIG_DEPENDS:=CONFIG_OUI_HTTPD_NOSSL \
+PKG_CONFIG_DEPENDS:=\
+		CONFIG_OUI_HTTPD_API_UBUS \
+		CONFIG_OUI_HTTPD_NOSSL \
 		CONFIG_OUI_HTTPD_MBEDTLS \
 		CONFIG_OUI_HTTPD_WOLFSSL \
 		CONFIG_OUI_HTTPD_OPENSSL
@@ -26,8 +28,8 @@ define Package/oui-httpd
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui rpc backend
-  DEPENDS:=+libuci-lua +jansson +lsqlite3 +libiwinfo-lua +libpthread\
-		+OUI_HTTPD_API_UBUS:+libubus-lua \
+  DEPENDS:=+libuci-lua +jansson +lsqlite3 +libiwinfo-lua +libpthread \
+		+OUI_HTTPD_API_UBUS:libubus-lua \
 		+OUI_HTTPD_NOSSL:libuhttpd-nossl \
 		+OUI_HTTPD_MBEDTLS:libuhttpd-mbedtls \
 		+OUI_HTTPD_WOLFSSL:libuhttpd-wolfssl \
