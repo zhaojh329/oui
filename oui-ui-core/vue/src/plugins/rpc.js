@@ -47,10 +47,6 @@ rpc.ubus = function (object, method, params, timeout) {
   return this.request('call', [sid(), 'ubus', 'call', { object, method, params }], timeout)
 }
 
-rpc.exec = function (cmd, params, timeout) {
-  return this.request('exec', [sid(), cmd, ...params], timeout)
-}
-
 rpc.login = function (username, password) {
   return this.request('login', {
     username,
