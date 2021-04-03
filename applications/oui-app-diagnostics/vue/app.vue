@@ -30,10 +30,10 @@ export default {
       return this.$rpc.call('diagnose', 'ping6', { args: '-c 5 -W 1 ' + name })
     },
     runTraceroute (name) {
-      return this.$rpc.call('diagnose', 'traceroute', { args: '-q 1 -w 1 -n ' + name })
+      return this.$rpc.call('diagnose', 'traceroute', { args: '-q 1 -w 1 -n ' + name }, 30000)
     },
     runTraceroute6 (name) {
-      return this.$rpc.call('diagnose', 'traceroute6', { args: '-q 1 -w 2 -n ' + name })
+      return this.$rpc.call('diagnose', 'traceroute6', { args: '-q 1 -w 2 -n ' + name }, 30000)
     },
     runNslookup (name) {
       return this.$rpc.call('diagnose', 'nslookup', { args: name })
