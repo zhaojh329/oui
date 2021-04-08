@@ -329,6 +329,8 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         return RPC_METHOD_RETURN_ERROR;
     }
 
+    conn->incref(conn);
+
     ctx->s = session_get(sid);
     ctx->is_local = is_local;
     ctx->conn = conn;
@@ -774,6 +776,7 @@ done:
 static void call_end_cb(struct ev_loop *loop, struct ev_async *w, int revents)
 {
     struct rpc_call_context *ctx;
+    struct uh_connection *conn;
 
     while (true) {
         pthread_mutex_lock(&rpc_context.mutex);
@@ -782,10 +785,13 @@ static void call_end_cb(struct ev_loop *loop, struct ev_async *w, int revents)
             return;
         }
         ctx = list_first_entry(&rpc_context.end_queue, struct rpc_call_context, node);
+        conn = ctx->conn;
         list_del(&ctx->node);
         pthread_mutex_unlock(&rpc_context.mutex);
 
         rpc_handle_done_final(ctx->conn, ctx->res);
+
+        conn->decref(conn);
 
         free(ctx);
     }
@@ -851,11 +857,15 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworke
 
 static void free_rpc_call_context(struct rpc_call_context *ctx)
 {
+    struct uh_connection *conn = ctx->conn;
+
     json_decref(ctx->args);
     json_decref(ctx->res);
     json_decref(ctx->id);
 
     list_del(&ctx->node);
+
+    conn->decref(conn);
 
     free(ctx);
 }
