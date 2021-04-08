@@ -211,26 +211,6 @@ static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
     free(s);
 }
 
-static void rpc_handle_done_deferred(struct rpc_call_context *ctx, json_t *result, bool is_error)
-{
-    struct uh_connection *conn = ctx->conn;
-
-    if (is_error)
-        ctx->res = rpc_error_response(ctx->id, result);
-    else
-        ctx->res = rpc_result_response(ctx->id, result);
-
-    json_decref(ctx->id);
-    ctx->id = NULL;
-
-    pthread_mutex_lock(&rpc_context.mutex);
-    list_add_tail(&ctx->node, &rpc_context.end_queue);
-    pthread_mutex_unlock(&rpc_context.mutex);
-
-    if (!ev_async_pending(&rpc_context.end_watcher))
-        ev_async_send(conn->get_loop(conn), &rpc_context.end_watcher);
-}
-
 static bool rpc_is_trusted(struct rpc_object *obj, const char *method)
 {
     struct rpc_trusted_method *m;
@@ -624,12 +604,12 @@ static int load_trusted()
 
         if (ptr.o->type == UCI_TYPE_STRING) {
             if (add_trusted_method(obj, ptr.o->v.string))
-                goto err;;
+                goto err;
         } else {
             struct uci_element *oe;
             uci_foreach_element(&ptr.o->v.list, oe) {
                 if (add_trusted_method(obj, oe->name))
-                    goto err;;
+                    goto err;
             }
         }
     }
@@ -765,7 +745,23 @@ call_done:
         lua_pop(L, 1);
 lua_broken:
         pthread_mutex_unlock(&obj->mutex);
-        rpc_handle_done_deferred(ctx, res, is_err);
+
+        if (is_err)
+            ctx->res = rpc_error_response(ctx->id, res);
+        else
+            ctx->res = rpc_result_response(ctx->id, res);
+
+        json_decref(ctx->id);
+        ctx->id = NULL;
+
+        pthread_mutex_lock(&rpc_context.mutex);
+        list_add_tail(&ctx->node, &rpc_context.end_queue);
+        pthread_mutex_unlock(&rpc_context.mutex);
+
+        if (!ev_async_pending(&rpc_context.end_watcher)) {
+            struct uh_connection *conn = ctx->conn;
+            ev_async_send(conn->get_loop(conn), &rpc_context.end_watcher);
+        }
     }
 
 done:
