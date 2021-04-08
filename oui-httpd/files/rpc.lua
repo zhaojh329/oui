@@ -1,14 +1,9 @@
 local sqlite3 = require "lsqlite3"
 
 local M = {
-    ERROR_CODE_PARSE_ERROR      = 0,
-    ERROR_CODE_INVALID_REQUEST  = 1,
-    ERROR_CODE_METHOD_NOT_FOUND = 2,
-    ERROR_CODE_INVALID_PARAMS   = 3,
-    ERROR_CODE_INTERNAL_ERROR   = 4,
-    ERROR_CODE_ACCESS           = 5,
-    ERROR_CODE_NOT_FOUND        = 6,
-    ERROR_CODE_TIMEOUT          = 7
+    ERROR_CODE_INVALID_PARAMS   = 4,
+    ERROR_CODE_INTERNAL_ERROR   = 5,
+    ERROR_CODE_ACCESS           = 6
 }
 
 M.session = function()

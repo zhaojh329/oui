@@ -110,7 +110,7 @@ static json_t *rpc_error_object(int code, const char *message, json_t *data)
 
 static json_t *rpc_error_object_predefined(int code, json_t *data)
 {
-    if (code > -1 && code < __ERROR_CODE_MAX)
+    if (code > ERROR_CODE_NONE && code < __ERROR_CODE_MAX)
         return rpc_error_object(rpc_errors[code].code, rpc_errors[code].msg, data);
     else
         return rpc_error_object(code, NULL, data);

@@ -28,6 +28,7 @@
 #include <jansson.h>
 
 enum {
+    ERROR_CODE_NONE,
     ERROR_CODE_PARSE_ERROR,
     ERROR_CODE_INVALID_REQUEST,
     ERROR_CODE_METHOD_NOT_FOUND,
