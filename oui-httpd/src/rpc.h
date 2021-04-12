@@ -25,6 +25,7 @@
 #ifndef __RPC_H
 #define __RPC_H
 
+#include <stdbool.h>
 #include <jansson.h>
 
 enum {
