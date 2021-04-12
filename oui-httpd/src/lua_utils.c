@@ -267,7 +267,7 @@ static int lua_exists(lua_State *L)
 static void read_all(lua_State *L, int fd)
 {
     luaL_Buffer b;
-    size_t nr;
+    ssize_t nr;
 
     luaL_buffinit(L, &b);
 
@@ -333,6 +333,7 @@ static int lua_exec(lua_State *L)
     } else {
         time_t st = time(NULL);
         int wstatus;
+        pid_t rc;
 
         /* Close unused write end */
         close(opipe[1]);
@@ -345,10 +346,11 @@ wait:
             goto err;
         }
 
-        if (waitpid(pid, &wstatus, WNOHANG) < 0)
+        rc = waitpid(pid, &wstatus, WNOHANG);
+        if (rc < 0)
             goto err;
 
-        if (!WIFEXITED(wstatus)) {
+        if (rc == 0) {
             usleep(10);
             goto wait;
         }
