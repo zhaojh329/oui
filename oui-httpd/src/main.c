@@ -93,13 +93,13 @@ int main(int argc, char **argv)
 {
     struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
+    int log_threshold = LOG_ERR;
     struct uh_server *srv = NULL;
     const char *rpc_dir = ".";
     const char *db = "oh.db";
     const char *home_dir = ".";
     const char *index_page = "oui.html";
     bool local_auth = false;
-    bool verbose = false;
     const char *cert = NULL;
     const char *key = NULL;
     int option_index;
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
             nworker = atoi(optarg);
             break;
         case 'v':
-            verbose = true;
+            log_threshold++;
             break;
         case LONG_OPT_RPC:
             rpc_dir = optarg;
@@ -153,8 +153,7 @@ int main(int argc, char **argv)
         }
     }
 
-    if (!verbose)
-        uh_log_threshold(LOG_ERR);
+    uh_log_threshold(log_threshold);
 
     uh_log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
