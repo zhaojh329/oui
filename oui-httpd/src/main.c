@@ -169,8 +169,6 @@ int main(int argc, char **argv)
 
     db_init(db);
 
-    session_init();
-
     if (rpc_init(loop, rpc_dir, local_auth, nworker) < 0)
         goto rpc_err;
 

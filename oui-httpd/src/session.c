@@ -32,6 +32,7 @@
 #include <stdio.h>
 
 #include "session.h"
+#include "utils.h"
 #include "db.h"
 
 struct login_param {
@@ -208,11 +209,6 @@ void session_logout(const char *sid)
         session_destroy(s);
 }
 
-void session_init()
-{
-    avl_init(&sessions, avl_strcmp, false, NULL);
-}
-
 static void free_all_session()
 {
     struct session *s, *temp;
@@ -225,4 +221,9 @@ static void free_all_session()
 void session_deinit()
 {
     free_all_session();
+}
+
+static void __init session_init()
+{
+    avl_init(&sessions, avl_strcmp, false, NULL);
 }

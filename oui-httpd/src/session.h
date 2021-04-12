@@ -47,8 +47,6 @@ struct session {
     int timeout;
 };
 
-void session_init();
-
 void session_deinit();
 
 const char *session_login(const char *username, const char *password);

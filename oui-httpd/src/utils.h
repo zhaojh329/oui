@@ -28,6 +28,8 @@
 #include <sys/socket.h>
 #include <stdbool.h>
 
+#define __init __attribute__((constructor))
+
 bool is_loopback_addr(const struct sockaddr *addr);
 
 #endif
