@@ -46,14 +46,14 @@ static const struct {
     int code;
     const char *msg;
 } rpc_errors[] = {
-    [ERROR_CODE_PARSE_ERROR] = {-32700, "Parse error"},
-    [ERROR_CODE_INVALID_REQUEST] = {-32600, "Invalid Request"},
-    [ERROR_CODE_METHOD_NOT_FOUND] = {-32601, "Method not found"},
-    [ERROR_CODE_INVALID_PARAMS] = {-32602, "Invalid params"},
-    [ERROR_CODE_INTERNAL_ERROR] = {-32603, "Internal error"},
-    [ERROR_CODE_ACCESS] = {-32000, "Access denied"},
-    [ERROR_CODE_NOT_FOUND] = {-32001, "Not found"},
-    [ERROR_CODE_TIMEOUT] = {-32002, "Timeout"}
+    [RPC_ERROR_CODE_PARSE_ERROR] = {-32700, "Parse error"},
+    [RPC_ERROR_CODE_INVALID_REQUEST] = {-32600, "Invalid Request"},
+    [RPC_ERROR_CODE_METHOD_NOT_FOUND] = {-32601, "Method not found"},
+    [RPC_ERROR_CODE_INVALID_PARAMS] = {-32602, "Invalid params"},
+    [RPC_ERROR_CODE_INTERNAL_ERROR] = {-32603, "Internal error"},
+    [RPC_ERROR_CODE_ACCESS] = {-32000, "Access denied"},
+    [RPC_ERROR_CODE_NOT_FOUND] = {-32001, "Not found"},
+    [RPC_ERROR_CODE_TIMEOUT] = {-32002, "Timeout"}
 };
 
 struct rpc_context {
@@ -110,7 +110,7 @@ static json_t *rpc_error_object(int code, const char *message, json_t *data)
 
 static json_t *rpc_error_object_predefined(int code, json_t *data)
 {
-    if (code > ERROR_CODE_NONE && code < __ERROR_CODE_MAX)
+    if (code > RPC_ERROR_CODE_NONE && code < __RPC_ERROR_CODE_MAX)
         return rpc_error_object(rpc_errors[code].code, rpc_errors[code].msg, data);
     else
         return rpc_error_object(code, NULL, data);
@@ -181,7 +181,7 @@ static json_t *rpc_validate_request(json_t *req, const char **method, json_t **p
     return NULL;
 
 invalid:
-    return rpc_error_response(*id, rpc_error_object_predefined(ERROR_CODE_INVALID_REQUEST, data));
+    return rpc_error_response(*id, rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_REQUEST, data));
 }
 
 static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
@@ -249,13 +249,13 @@ static int rpc_method_login(struct uh_connection *conn, json_t *id, json_t *para
     json_error_t error;
 
     if (json_unpack_ex(params, &error, 0, "{s:s,s?s}", "username", &username, "password", &password) < 0) {
-        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS, json_string(error.text));
         return RPC_METHOD_RETURN_ERROR;
     }
 
     sid = session_login(username, password);
     if (!sid) {
-        *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_ACCESS, NULL);
         return RPC_METHOD_RETURN_ERROR;
     }
 
@@ -270,7 +270,7 @@ static int rpc_method_logout(struct uh_connection *conn, json_t *id, json_t *par
     const char *sid;
 
     if (json_unpack_ex(params, &error, 0, "{s:s}", "sid", &sid) < 0) {
-        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS, json_string(error.text));
         return RPC_METHOD_RETURN_ERROR;
     }
 
@@ -285,12 +285,12 @@ static int rpc_method_alive(struct uh_connection *conn, json_t *id, json_t *para
     const char *sid;
 
     if (json_unpack_ex(params, &error, 0, "{s:s}", "sid", &sid) < 0) {
-        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS, json_string(error.text));
         return RPC_METHOD_RETURN_ERROR;
     }
 
     if (!session_get(sid)) {
-        *result = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_ACCESS, NULL);
         return RPC_METHOD_RETURN_ERROR;
     }
 
@@ -307,25 +307,25 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
     json_t *args;
 
     if (json_unpack_ex(params, &error, 0, "[ssso!]", &sid, &object, &method, &args) < 0) {
-        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS, json_string(error.text));
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS, json_string(error.text));
         return RPC_METHOD_RETURN_ERROR;
     }
 
     if (!json_is_object(args)) {
-        *result = rpc_error_object_predefined(ERROR_CODE_INVALID_PARAMS,
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS,
                                               json_string("The argument must be an object"));
         return RPC_METHOD_RETURN_ERROR;
     }
 
     obj = avl_find_element(&rpc_context.objects, object, obj, avl);
     if (!obj) {
-        *result = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, json_string("Object not found"));
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_NOT_FOUND, json_string("Object not found"));
         return RPC_METHOD_RETURN_ERROR;
     }
 
     ctx = calloc(1, sizeof(struct rpc_call_context) + strlen(method) + 1);
     if (!ctx) {
-        *result = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL);
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INTERNAL_ERROR, NULL);
         return RPC_METHOD_RETURN_ERROR;
     }
 
@@ -375,7 +375,7 @@ static void rpc_handle_request(struct uh_connection *conn, json_t *req)
     }
 
     if (!entry->name) {
-        resp = rpc_error_response(id, rpc_error_object_predefined(ERROR_CODE_METHOD_NOT_FOUND, NULL));
+        resp = rpc_error_response(id, rpc_error_object_predefined(RPC_ERROR_CODE_METHOD_NOT_FOUND, NULL));
         goto done;
     }
 
@@ -390,7 +390,7 @@ static void rpc_handle_request(struct uh_connection *conn, json_t *req)
         json_incref(id);
         return;
     default:
-        resp = rpc_error_response(id, rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL));
+        resp = rpc_error_response(id, rpc_error_object_predefined(RPC_ERROR_CODE_INTERNAL_ERROR, NULL));
         break;
     }
 
@@ -415,12 +415,12 @@ void serve_rpc(struct uh_connection *conn, int event)
     body = conn->get_body(conn);
     req = json_loadb(body.p, body.len, 0, &error);
     if (!req) {
-        resp = rpc_error_response(NULL, rpc_error_object_predefined(ERROR_CODE_PARSE_ERROR, NULL));
+        resp = rpc_error_response(NULL, rpc_error_object_predefined(RPC_ERROR_CODE_PARSE_ERROR, NULL));
         goto err;
     }
 
     if (json_is_array(req)) {
-        resp = rpc_error_response(NULL, rpc_error_object_predefined(ERROR_CODE_INVALID_REQUEST,
+        resp = rpc_error_response(NULL, rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_REQUEST,
                                                                     json_string("Not support batch")));
         goto err;
     }
@@ -676,19 +676,19 @@ static void *rpc_call_worker(void *arg)
 
         if (!lua_istable(L, -1)) {
             uh_log_err("%s.%s: lua state is broken. No table on stack!\n", obj->value, ctx->method);
-            res = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, NULL);
+            res = rpc_error_object_predefined(RPC_ERROR_CODE_INTERNAL_ERROR, NULL);
             goto lua_broken;
         }
 
         lua_getfield(L, -1, ctx->method);
         if (!lua_isfunction(L, -1)) {
-            res = rpc_error_object_predefined(ERROR_CODE_NOT_FOUND, json_string("Method not found"));
+            res = rpc_error_object_predefined(RPC_ERROR_CODE_NOT_FOUND, json_string("Method not found"));
             goto call_done;
         }
 
         if (!ctx->is_local && !rpc_is_trusted(obj, ctx->method) &&
             (!s || !rpc_call_access(s, obj->value, ctx->method))) {
-            res = rpc_error_object_predefined(ERROR_CODE_ACCESS, NULL);
+            res = rpc_error_object_predefined(RPC_ERROR_CODE_ACCESS, NULL);
             goto call_done;
         }
 
@@ -720,7 +720,7 @@ static void *rpc_call_worker(void *arg)
             json_t *data = json_string(err_msg);
 
             uh_log_err("%s\n", err_msg);
-            res = rpc_error_object_predefined(ERROR_CODE_INTERNAL_ERROR, data);
+            res = rpc_error_object_predefined(RPC_ERROR_CODE_INTERNAL_ERROR, data);
             goto call_done;
         }
 
