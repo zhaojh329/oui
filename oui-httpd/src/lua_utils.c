@@ -383,6 +383,32 @@ err:
     return 2;
 }
 
+static int lua_sleep(lua_State *L)
+{
+    lua_Number delay = lua_tonumber(L, 1);
+    struct timespec req;
+    struct timespec rem;
+
+    req.tv_sec = (time_t)delay;
+    req.tv_nsec = (delay - req.tv_sec) * 1000000000;
+
+    while (nanosleep(&req, &rem)) {
+        if (errno != EINTR) {
+            lua_pushnil(L);
+            lua_pushstring(L, strerror(errno));
+
+            return 2;
+        }
+
+        req.tv_sec = rem.tv_sec;
+        req.tv_nsec = rem.tv_nsec;
+    }
+
+    lua_pushinteger(L, 0);
+
+    return 1;
+}
+
 static const luaL_Reg regs[] = {
     {"md5sum",            lua_md5sum},
     {"md5",               lua_md5},
@@ -391,6 +417,7 @@ static const luaL_Reg regs[] = {
     {"parse_route6_addr", lua_parse_route6_addr},
     {"exists", lua_exists},
     {"exec", lua_exec},
+    {"sleep", lua_sleep},
     {NULL, NULL}
 };
 
