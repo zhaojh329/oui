@@ -883,8 +883,6 @@ static void free_rpc_call_contexts()
 
 void rpc_deinit(struct ev_loop *loop)
 {
-    unload_rpc_scripts();
-
     ev_stat_stop(loop, &rpc_context.stat);
 
     pthread_mutex_lock(&rpc_context.mutex);
@@ -905,4 +903,6 @@ void rpc_deinit(struct ev_loop *loop)
     }
 
     free_rpc_call_contexts();
+
+    unload_rpc_scripts();
 }
