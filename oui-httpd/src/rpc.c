@@ -57,6 +57,7 @@ static const struct {
 };
 
 struct rpc_context {
+    struct ev_loop *loop;
     struct avl_tree objects;
     struct ev_stat stat;
     bool local_auth;
@@ -86,8 +87,10 @@ struct rpc_object {
     struct avl_node avl;
     pthread_mutex_t mutex;
     struct list_head node;
-    time_t mtime;
+    struct ev_stat es;
+    size_t refcount;
     lua_State *L;
+    char path[128];
     char value[0];
 };
 
@@ -209,6 +212,41 @@ static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
     conn->done(conn);
 
     free(s);
+}
+
+static void rpc_object_incref(struct rpc_object *obj)
+{
+    if (!obj)
+        return;
+
+    __sync_add_and_fetch(&obj->refcount, 1);
+}
+
+static void free_all_trusted_methods(struct rpc_object *obj)
+{
+    struct rpc_trusted_method *m, *temp;
+
+    avl_for_each_element_safe(&obj->trusted_methods, m, avl, temp) {
+        avl_delete(&obj->trusted_methods, &m->avl);
+        free(m);
+    }
+}
+
+static void rpc_object_decref(struct rpc_object *obj)
+{
+    if (!obj)
+        return;
+
+    if (__sync_sub_and_fetch(&obj->refcount, 1))
+        return;
+
+    uh_log_debug("Free rpc object: %p\n", obj);
+
+    ev_stat_stop(rpc_context.loop, &obj->es);
+
+    free_all_trusted_methods(obj);
+    lua_close(obj->L);
+    free(obj);
 }
 
 static bool rpc_is_trusted(struct rpc_object *obj, const char *method)
@@ -433,7 +471,46 @@ err:
     json_decref(req);
 }
 
-static void load_rpc_scripts(const char *path)
+static bool load_rpc_script(lua_State *L, const char *path)
+{
+    if (luaL_dofile(L, path)) {
+        uh_log_err("load rpc: %s\n", lua_tostring(L, -1));
+        return false;
+    }
+
+    if (!lua_istable(L, -1)) {
+        uh_log_err("invalid rpc script, need return a table: %s\n", path);
+        return false;
+    }
+
+    return true;
+}
+
+static void rpc_object_changed(struct ev_loop *loop, struct ev_stat *w, int revents)
+{
+    struct rpc_object *obj = container_of(w, struct rpc_object, es);
+
+    if (w->attr.st_nlink) {
+        uh_log_info("rpc %s changed\n", w->path);
+
+        pthread_mutex_lock(&obj->mutex);
+        if (load_rpc_script(obj->L, obj->path)) {
+            pthread_mutex_unlock(&obj->mutex);
+            return;
+        }
+        pthread_mutex_unlock(&obj->mutex);
+    } else {
+        uh_log_info("rpc %s removed\n", w->path);
+    }
+
+    pthread_mutex_lock(&rpc_context.mutex);
+    avl_delete(&rpc_context.objects, &obj->avl);
+    pthread_mutex_unlock(&rpc_context.mutex);
+
+    rpc_object_decref(obj);
+}
+
+static void load_rpc_scripts(struct ev_loop *loop, const char *path)
 {
     DIR *dir;
     struct dirent *e;
@@ -447,7 +524,6 @@ static void load_rpc_scripts(const char *path)
     while ((e = readdir(dir))) {
         char object_path[512] = "";
         struct rpc_object *obj;
-        struct stat st;
         lua_State *L;
 
         if (e->d_type != DT_REG || strchr(e->d_name, '.'))
@@ -455,76 +531,51 @@ static void load_rpc_scripts(const char *path)
 
         snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
 
-        stat(object_path, &st);
-
         obj = avl_find_element(&rpc_context.objects, e->d_name, obj, avl);
-        if (obj) {
-            if (obj->mtime == st.st_mtime)
-                continue;
-
-            pthread_mutex_lock(&obj->mutex);
-
-            lua_close(obj->L);
-        }
+        if (obj)
+            continue;
 
         L = luaL_newstate();
 
         luaL_openlibs(L);
 
-        if (luaL_dofile(L, object_path)) {
-            uh_log_err("load rpc: %s\n", lua_tostring(L, -1));
+        if (!load_rpc_script(L, object_path))
             goto err;
-        }
 
-        if (!lua_istable(L, -1)) {
-            uh_log_err("invalid rpc script, need return a table: %s\n", object_path);
-            goto err;
-        }
-
+        obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
         if (!obj) {
-            obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
-            if (!obj) {
-                uh_log_err("calloc: %s\n", strerror(errno));
-                goto err;
-            }
-
-            obj->L = L;
-
-            pthread_mutex_init(&obj->mutex, NULL);
-
-            strcpy(obj->value, e->d_name);
-            obj->avl.key = obj->value;
-            avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
-            avl_insert(&rpc_context.objects, &obj->avl);
-        } else {
-            obj->L = L;
-            pthread_mutex_unlock(&obj->mutex);
+            uh_log_err("calloc: %s\n", strerror(errno));
+            goto err;
         }
 
-        obj->mtime = st.st_mtime;
+        obj->L = L;
+
+        pthread_mutex_init(&obj->mutex, NULL);
+
+        strcpy(obj->value, e->d_name);
+        obj->avl.key = obj->value;
+        avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
+
+        strcpy(obj->path, object_path);
+
+        ev_stat_init(&obj->es, rpc_object_changed, obj->path, 0.);
+        ev_stat_start(loop, &obj->es);
+
+        rpc_object_incref(obj);
+
+        pthread_mutex_lock(&rpc_context.mutex);
+        avl_insert(&rpc_context.objects, &obj->avl);
+        pthread_mutex_unlock(&rpc_context.mutex);
+
+        uh_log_info("rpc %s loaded\n", obj->path);
 
         continue;
 
 err:
         lua_close(L);
-
-        if (obj) {
-            avl_delete(&rpc_context.objects, &obj->avl);
-            pthread_mutex_unlock(&obj->mutex);
-        }
     }
 
     closedir(dir);
-}
-
-static void free_all_trusted_methods(struct rpc_object *obj)
-{
-    struct rpc_trusted_method *m, *temp;
-
-    avl_for_each_element_safe(&obj->trusted_methods, m, avl, temp) {
-        avl_delete(&obj->trusted_methods, &m->avl);
-        free(m);
-    }
 }
 
 static void unload_rpc_scripts()
@@ -533,9 +584,7 @@ static void unload_rpc_scripts()
 
     avl_for_each_element_safe(&rpc_context.objects, obj, avl, temp) {
         avl_delete(&rpc_context.objects, &obj->avl);
-        free_all_trusted_methods(obj);
-        lua_close(obj->L);
-        free(obj);
+        rpc_object_decref(obj);
     }
 }
 
@@ -629,7 +678,7 @@ err:
 
 static void rpc_dir_changed(struct ev_loop *loop, struct ev_stat *w, int revents)
 {
-    load_rpc_scripts(w->path);
+    load_rpc_scripts(loop, w->path);
 }
 
 static void *rpc_call_worker(void *arg)
@@ -801,9 +850,11 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworke
 {
     int i;
 
+    rpc_context.loop = loop;
+
     avl_init(&rpc_context.objects, avl_strcmp, false, NULL);
 
-    load_rpc_scripts(path);
+    load_rpc_scripts(loop, path);
 
     load_trusted();
 
