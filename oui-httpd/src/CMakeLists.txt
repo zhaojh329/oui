@@ -49,5 +49,10 @@ install(
 
 install(
 	TARGETS lua-utils
-	LIBRARY DESTINATION ${LUAPATH}/oui
+	LIBRARY DESTINATION ${LUAPATH}/oui/utils
+)
+
+install(
+	FILES lua/utils.lua
+	DESTINATION ${LUAPATH}/oui
 )

@@ -421,7 +421,7 @@ static const luaL_Reg regs[] = {
     {NULL, NULL}
 };
 
-int luaopen_oui_utils_core(lua_State *L)
+int luaopen_oui_utils_utils(lua_State *L)
 {
 #if LUA_VERSION_NUM <= 501
     luaL_register(L, "utils", regs);

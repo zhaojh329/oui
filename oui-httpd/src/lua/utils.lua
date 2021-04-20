@@ -1,4 +1,4 @@
-local utils = require "oui.utils.core"
+local utils = require "oui.utils.utils"
 
 function utils.readfile(name, n)
     local f = io.open(name, "r")
