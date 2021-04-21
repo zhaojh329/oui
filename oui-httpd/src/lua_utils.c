@@ -185,8 +185,13 @@ static int lua_statvfs(lua_State *L)
         return 1;
     }
 
+    /* total bytes */
     lua_pushinteger(L, s.f_blocks * s.f_frsize);
+
+    /* available bytes */
     lua_pushinteger(L, s.f_bfree * s.f_frsize);
+
+    /* used bytes */
     lua_pushinteger(L, (s.f_blocks - s.f_bfree) * s.f_frsize);
 
     return 3;
