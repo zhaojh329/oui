@@ -36,6 +36,8 @@
 #include <errno.h>
 #include <time.h>
 
+#include "lua_compat.h"
+
 static int file_is_executable(const char *name)
 {
     struct stat s;
@@ -428,12 +430,7 @@ static const luaL_Reg regs[] = {
 
 int luaopen_oui_utils_utils(lua_State *L)
 {
-#if LUA_VERSION_NUM <= 501
-    luaL_register(L, "utils", regs);
-#else
     luaL_newlib(L, regs);
-    lua_pushvalue(L, -1);
-    lua_setglobal(L, "utils");
-#endif
+
     return 1;
 }

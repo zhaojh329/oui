@@ -22,7 +22,8 @@
  * SOFTWARE.
  */
 
-#include "lua2json.h"
+#include "../lua2json.h"
+#include "lua_compat.h"
 
 static int json_encode(lua_State *L)
 {
@@ -66,12 +67,7 @@ static const luaL_Reg regs[] = {
 
 int luaopen_oui_json(lua_State *L)
 {
-#if LUA_VERSION_NUM <= 501
-    luaL_register(L, "cjson", regs);
-#else
     luaL_newlib(L, regs);
-    lua_pushvalue(L, -1);
-    lua_setglobal(L, "cjson");
-#endif
+
     return 1;
 }
