@@ -1,3 +1,4 @@
+local net = require "oui.network"
 local utils = require "oui.utils"
 local uci = require "uci"
 
@@ -119,8 +120,8 @@ function M.routes()
 
         if field[2] ~= "Destination" then
             routes[#routes + 1] = {
-                target = utils.parse_route_addr(field[2], field[8]),
-                nexthop = utils.parse_route_addr(field[3]),
+                target = net.hexaddr(field[2], field[8]),
+                nexthop = net.hexaddr(field[3]),
                 metric = field[7],
                 device = field[1]
             }
@@ -138,9 +139,9 @@ function M.routes6()
         end
 
         routes[#routes + 1] = {
-            target = utils.parse_route6_addr(field[1], field[2]),
-            source = utils.parse_route6_addr(field[3], field[4]),
-            nexthop = utils.parse_route6_addr(field[5]),
+            target = net.hex6addr(field[1], field[2]),
+            source = net.hex6addr(field[3], field[4]),
+            nexthop = net.hex6addr(field[5]),
             metric = tonumber(field[6], 16),
             device = field[10]
         }

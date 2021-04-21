@@ -199,66 +199,6 @@ static int lua_statvfs(lua_State *L)
     return 3;
 }
 
-static int lua_parse_route_addr(lua_State *L)
-{
-    const char *addr = lua_tostring(L, 1);
-    const char *mask = lua_tostring(L, 2);
-    char as[sizeof("255.255.255.255/32\0")];
-    struct in_addr a;
-    int bits;
-
-    if (!addr) {
-        lua_pushnil(L);
-        return 1;
-    }
-
-    a.s_addr = strtoul(addr, NULL, 16);
-    inet_ntop(AF_INET, &a, as, sizeof(as));
-
-    if (mask) {
-        for (a.s_addr = ntohl(strtoul(mask, NULL, 16)), bits = 0;
-             a.s_addr & 0x80000000;
-             a.s_addr <<= 1)
-            bits++;
-
-        sprintf(as + strlen(as), "/%u", bits);
-    }
-
-    lua_pushstring(L, as);
-    return 1;
-}
-
-static int lua_parse_route6_addr(lua_State *L)
-{
-    const char *addr = lua_tostring(L, 1);
-    const char *mask = lua_tostring(L, 2);
-    char as[INET6_ADDRSTRLEN + sizeof("/128")];
-    struct in6_addr a;
-    int i;
-
-#define hex(x) \
-    (((x) <= '9') ? ((x) - '0') : \
-        (((x) <= 'F') ? ((x) - 'A' + 10) : \
-            ((x) - 'a' + 10)))
-
-    if (!addr) {
-        lua_pushnil(L);
-        return 1;
-    }
-
-
-    for (i = 0; i < 16; i++, addr += 2)
-        a.s6_addr[i] = (16 * hex(*addr)) + hex(*(addr + 1));
-
-    inet_ntop(AF_INET6, &a, as, sizeof(as));
-
-    if (mask)
-        sprintf(as + strlen(as), "/%lu", strtoul(mask, NULL, 16));
-
-    lua_pushstring(L, as);
-    return 1;
-}
-
 static int lua_exists(lua_State *L)
 {
     const char *file = luaL_checkstring(L, 1);
@@ -420,8 +360,6 @@ static const luaL_Reg regs[] = {
     {"md5sum",            lua_md5sum},
     {"md5",               lua_md5},
     {"statvfs",           lua_statvfs},
-    {"parse_route_addr",  lua_parse_route_addr},
-    {"parse_route6_addr", lua_parse_route6_addr},
     {"exists", lua_exists},
     {"exec", lua_exec},
     {"sleep", lua_sleep},

@@ -6,6 +6,9 @@ add_library(lutils MODULE lutils.c)
 target_link_libraries(lutils ubox)
 set_target_properties(lutils PROPERTIES OUTPUT_NAME utils PREFIX "")
 
+add_library(lnetwork MODULE lnetwork.c)
+set_target_properties(lnetwork PROPERTIES OUTPUT_NAME network PREFIX "")
+
 if (NOT LUAPATH)
 	execute_process(
 		COMMAND  lua -e "for k in string.gmatch(package.cpath .. \";\", \"([^;]+)/..so;\") do if k:sub(1,1) == \"/\" then print(k) break end end"
@@ -28,4 +31,9 @@ install(
 install(
 	FILES utils.lua
 	DESTINATION ${LUAPATH}/oui
+)
+
+install(
+	TARGETS lnetwork
+	LIBRARY DESTINATION ${LUAPATH}/oui
 )
