@@ -20,12 +20,12 @@ endif()
 
 install(
 	TARGETS ljson
-	LIBRARY DESTINATION ${LUAPATH}/oui
+	DESTINATION ${LUAPATH}/oui
 )
 
 install(
 	TARGETS lutils
-	LIBRARY DESTINATION ${LUAPATH}/oui/utils
+	DESTINATION ${LUAPATH}/oui/utils
 )
 
 install(
@@ -35,5 +35,5 @@ install(
 
 install(
 	TARGETS lnetwork
-	LIBRARY DESTINATION ${LUAPATH}/oui
+	DESTINATION ${LUAPATH}/oui
 )
