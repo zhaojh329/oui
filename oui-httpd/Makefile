@@ -81,9 +81,9 @@ define Package/oui-httpd/install
 	$(INSTALL_CONF) ./files/oui-httpd.config $(1)/etc/config/oui-httpd
 	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/oui-httpd $(1)/usr/sbin
-	$(CP) $(PKG_BUILD_DIR)/json.so $(1)/usr/lib/lua/oui
-	$(CP) $(PKG_BUILD_DIR)/utils.so $(1)/usr/lib/lua/oui/utils
-	$(INSTALL_DATA) ./files/utils.lua $(1)/usr/lib/lua/oui
+	$(CP) $(PKG_BUILD_DIR)/lua/json.so $(1)/usr/lib/lua/oui
+	$(CP) $(PKG_BUILD_DIR)/lua/utils.so $(1)/usr/lib/lua/oui/utils
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/lua/utils.lua $(1)/usr/lib/lua/oui
 	$(INSTALL_DATA) ./files/rpc.lua $(1)/usr/lib/lua/oui
 	for f in `ls ./files/rpc`; do \
 		$(INSTALL_DATA) ./files/rpc/$$$$f $(1)/usr/lib/oui-httpd/rpc/$$$${f%.*}; \
