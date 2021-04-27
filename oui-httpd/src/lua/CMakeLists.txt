@@ -2,8 +2,7 @@ add_library(ljson MODULE ljson.c ../lua2json.c)
 target_link_libraries(ljson ${JANSSON_LIBRARIES})
 set_target_properties(ljson PROPERTIES OUTPUT_NAME json PREFIX "")
 
-add_library(lutils MODULE lutils.c)
-target_link_libraries(lutils ubox)
+add_library(lutils MODULE lutils.c md5.c base64.c)
 set_target_properties(lutils PROPERTIES OUTPUT_NAME utils PREFIX "")
 
 add_library(lnetwork MODULE lnetwork.c)

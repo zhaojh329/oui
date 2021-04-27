@@ -23,7 +23,6 @@
  */
 
 #include <sys/statvfs.h>
-#include <libubox/md5.h>
 #include <uhttpd/log.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
@@ -37,6 +36,15 @@
 #include <time.h>
 
 #include "lua_compat.h"
+
+#include "md5.h"
+
+#define B64_ENCODE_LEN(_len)	((((_len) + 2) / 3) * 4 + 1)
+#define B64_DECODE_LEN(_len)	(((_len) / 4) * 3 + 1)
+
+int b64_encode(const void *src, size_t src_len, void *dest, size_t dest_len);
+int b64_decode(const void *src, void *dest, size_t dest_len);
+
 
 static int file_is_executable(const char *name)
 {
@@ -356,6 +364,66 @@ static int lua_sleep(lua_State *L)
     return 1;
 }
 
+static int lua_b64_encode(lua_State *L)
+{
+    size_t src_len, dest_len;
+    const char *src;
+    char *dest;
+
+    src = luaL_checklstring(L, 1, &src_len);
+    if (!src) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    dest_len = B64_ENCODE_LEN(src_len);
+
+    dest = malloc(dest_len);
+    if (!dest) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+    }
+
+    if (b64_encode(src, src_len, dest, dest_len) < 0)
+        lua_pushnil(L);
+    else
+        lua_pushstring(L, dest);
+
+    return 1;
+}
+
+static int lua_b64_decode(lua_State *L)
+{
+    size_t src_len, dest_len;
+    const char *src;
+    char *dest;
+    int ret;
+
+    src = luaL_checklstring(L, 1, &src_len);
+    if (!src) {
+        lua_pushnil(L);
+        return 1;
+    }
+
+    dest_len = B64_DECODE_LEN(src_len);
+
+    dest = malloc(dest_len);
+    if (!dest) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+    }
+
+    ret = b64_decode(src, dest, dest_len);
+    if (ret < 0)
+        lua_pushnil(L);
+    else
+        lua_pushlstring(L, dest, ret);
+
+    return 1;
+}
+
 static const luaL_Reg regs[] = {
     {"md5sum",            lua_md5sum},
     {"md5",               lua_md5},
@@ -363,6 +431,8 @@ static const luaL_Reg regs[] = {
     {"exists", lua_exists},
     {"exec", lua_exec},
     {"sleep", lua_sleep},
+    {"b64encode", lua_b64_encode},
+    {"b64decode", lua_b64_decode},
     {NULL, NULL}
 };
 
