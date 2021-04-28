@@ -23,8 +23,7 @@
  */
 
 #include <libubox/avl-cmp.h>
-#include <libubox/utils.h>
-#include <libubox/md5.h>
+//#include <libubox/utils.h>
 #include <uhttpd/log.h>
 #include <sqlite3.h>
 #include <string.h>
@@ -33,6 +32,7 @@
 
 #include "session.h"
 #include "utils.h"
+#include "md5.h"
 #include "db.h"
 
 struct login_param {

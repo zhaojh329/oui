@@ -37,7 +37,7 @@
 
 #include "lua_compat.h"
 
-#include "md5.h"
+#include "../md5.h"
 
 #define B64_ENCODE_LEN(_len)	((((_len) + 2) / 3) * 4 + 1)
 #define B64_DECODE_LEN(_len)	(((_len) / 4) * 3 + 1)
