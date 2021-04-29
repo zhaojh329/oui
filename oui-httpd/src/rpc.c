@@ -341,15 +341,24 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
     const char *sid, *object, *method;
     struct rpc_call_context *ctx;
     struct rpc_object *obj;
+    const char *fmt = "[sss]";
     json_error_t error;
-    json_t *args;
+    json_t *args = NULL;
 
-    if (json_unpack_ex(params, &error, 0, "[ssso!]", &sid, &object, &method, &args) < 0) {
+    if (!json_is_array(params)) {
+        *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS, json_string("Expected array, got object"));
+        return RPC_METHOD_RETURN_ERROR;
+    }
+
+    if (json_array_size(params) > 3)
+        fmt = "[ssso]";
+
+    if (json_unpack_ex(params, &error, 0, fmt, &sid, &object, &method, &args) < 0) {
         *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS, json_string(error.text));
         return RPC_METHOD_RETURN_ERROR;
     }
 
-    if (!json_is_object(args)) {
+    if (args && !json_is_object(args)) {
         *result = rpc_error_object_predefined(RPC_ERROR_CODE_INVALID_PARAMS,
                                               json_string("The argument must be an object"));
         return RPC_METHOD_RETURN_ERROR;
