@@ -18,6 +18,21 @@ local function get_info(device)
     })
 end
 
+function M.devices()
+    local f = io.popen('ls /sys/class/net/')
+    local devices = {}
+
+    for dev in f:lines() do
+        if iwinfo.type(dev) then
+            devices[#devices + 1] = dev
+        end
+    end
+
+    f:close()
+
+    return devices
+end
+
 function M.info(params)
     local device = params.device
 
@@ -65,6 +80,16 @@ function M.info(params)
             name = info['hardware_name']
         }
     }
+end
+
+function M.assoclist(params)
+    local device = params.device
+
+    if type(device) ~= "string" then
+        return rpc.ERROR_CODE_INVALID_PARAMS
+    end
+
+    return get_info(device)['assoclist']
 end
 
 function M.scan(params)
