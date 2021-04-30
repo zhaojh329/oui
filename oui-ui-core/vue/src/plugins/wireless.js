@@ -10,7 +10,6 @@ wireless.getDevices = function () {
     }
 
     rpc.call('iwinfo', 'devices').then(devices => {
-      if (!Array.isArray()) devices = []
       this.devices = devices
       resolve(this.devices)
     })

@@ -795,7 +795,7 @@ static void *rpc_call_worker(void *arg)
             res = rpc_error_object_predefined(lua_tointeger(L, -2), data);
         } else {
             if (lua_istable(L, -2))
-                res = lua_to_json(L, -2, false);
+                res = lua_to_json(L, -2, true);
             is_err = false;
         }
 
