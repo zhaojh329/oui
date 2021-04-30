@@ -11,16 +11,21 @@ local function run_cmd(cmd, params)
         end
     end
 
-    local code, stdout, stderr = utils.exec(unpack(args))
-    if code then
-        return {
-            code = code,
-            stdout = stdout,
-            stderr = stderr
-        }
+    local r, err = utils.exec(unpack(args))
+    if not r then
+        error(err)
     end
 
-    error(stdout)
+    local code, stdout, stderr = r:wait()
+    if not code then
+        error(stdout)
+    end
+
+    return {
+        code = code,
+        stdout = stdout,
+        stderr = stderr
+    }
 end
 
 function M.ping(params)
