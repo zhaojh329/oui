@@ -39,6 +39,14 @@
 
 #include "../md5.h"
 
+struct exec_result {
+    pid_t pid;
+    int stdout_fd;
+    int stderr_fd;
+};
+
+#define EXEC_RES_MT_NAME "oui-httpd-exec-result"
+
 #define B64_ENCODE_LEN(_len)	((((_len) + 2) / 3) * 4 + 1)
 #define B64_DECODE_LEN(_len)	(((_len) / 4) * 3 + 1)
 
@@ -237,9 +245,64 @@ static void read_all(lua_State *L, int fd)
     luaL_pushresult(&b);
 }
 
+static int lua_exec_wait(lua_State *L)
+{
+    struct exec_result *er = (struct exec_result *)luaL_checkudata(L, 1, EXEC_RES_MT_NAME);
+    int delay = lua_tointeger(L, 2);
+    time_t st = time(NULL);
+    int wstatus;
+    pid_t rc;
+
+    if (delay <= 0)
+        delay = 30;
+
+wait:
+    if (time(NULL) - st > delay) {
+        kill(er->pid, SIGKILL);
+        lua_pushnil(L);
+        lua_pushstring(L, "timeout");
+        return 2;
+    }
+
+    rc = waitpid(er->pid, &wstatus, WNOHANG);
+    if (rc < 0) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+    }
+
+    if (rc == 0) {
+        usleep(10);
+        goto wait;
+    }
+
+    lua_pushinteger(L, WEXITSTATUS(wstatus));
+
+    read_all(L, er->stdout_fd);
+    read_all(L, er->stderr_fd);
+
+    return 3;
+}
+
+static int lua_exec_gc(lua_State *L)
+{
+    struct exec_result *er = (struct exec_result *)luaL_checkudata(L, 1, EXEC_RES_MT_NAME);
+
+    if (!er)
+        return 0;
+
+    close(er->stdout_fd);
+    close(er->stderr_fd);
+
+    /* Libev will catch SIGCHLD and call waitpid  */
+
+    return 0;
+}
+
 static int lua_exec(lua_State *L)
 {
     const char *cmd = luaL_checkstring(L, 1);
+    struct exec_result *er;
     int n = lua_gettop(L);
     int opipe[2] = {};
     int epipe[2] = {};
@@ -286,39 +349,19 @@ static int lua_exec(lua_State *L)
 
         execvp(cmd, (char *const *) args);
     } else {
-        time_t st = time(NULL);
-        int wstatus;
-        pid_t rc;
-
         /* Close unused write end */
         close(opipe[1]);
         close(epipe[1]);
 
-wait:
-        if (time(NULL) - st > 30) {
-            kill(pid, SIGKILL);
-            errno = ETIME;
-            goto err;
-        }
+        er = (struct exec_result *)lua_newuserdata(L, sizeof(struct exec_result));
+        er->pid = pid;
+        er->stdout_fd = opipe[0];
+        er->stderr_fd = epipe[0];
 
-        rc = waitpid(pid, &wstatus, WNOHANG);
-        if (rc < 0)
-            goto err;
+        luaL_getmetatable(L, EXEC_RES_MT_NAME);
+        lua_setmetatable(L, -2);
 
-        if (rc == 0) {
-            usleep(10);
-            goto wait;
-        }
-
-        lua_pushinteger(L, WEXITSTATUS(wstatus));
-
-        read_all(L, opipe[0]);
-        read_all(L, epipe[0]);
-
-        close(opipe[0]);
-        close(epipe[0]);
-
-        return 3;
+        return 1;
     }
 
 err:
@@ -424,10 +467,17 @@ static int lua_b64_decode(lua_State *L)
     return 1;
 }
 
+static const luaL_Reg exec_meta[] =
+{
+    {"wait", lua_exec_wait},
+    {"__gc", lua_exec_gc},
+    {NULL, NULL}
+};
+
 static const luaL_Reg regs[] = {
-    {"md5sum",            lua_md5sum},
-    {"md5",               lua_md5},
-    {"statvfs",           lua_statvfs},
+    {"md5sum", lua_md5sum},
+    {"md5", lua_md5},
+    {"statvfs", lua_statvfs},
     {"exists", lua_exists},
     {"exec", lua_exec},
     {"sleep", lua_sleep},
@@ -438,6 +488,11 @@ static const luaL_Reg regs[] = {
 
 int luaopen_oui_utils_utils(lua_State *L)
 {
+    luaL_newmetatable(L, EXEC_RES_MT_NAME);
+    lua_pushvalue(L, -1);
+    lua_setfield(L, -2, "__index");
+    luaL_setfuncs(L, exec_meta, 0);
+
     luaL_newlib(L, regs);
 
     return 1;

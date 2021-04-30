@@ -3,10 +3,9 @@ local utils = require "oui.utils"
 local M = {}
 
 function M.verify(params)
-    local code = os.execute("sysupgrade -T " .. params.path)
     local res = {}
 
-    res.code = code
+    res.code = utils.exec("sysupgrade", "-T", params.path):wait()
 
     if res.code == 0 then
         res.md5 = utils.md5sum(params.path)
@@ -16,20 +15,20 @@ function M.verify(params)
 end
 
 function M.upgrade(params)
-    local cmd = "sysupgrade "
-    if not params.keep then
-        cmd = cmd .. "-n "
+    if params.keep then
+        utils.exec("sysupgrade", params.path)
+    else
+        utils.exec("sysupgrade", "-n", params.path)
     end
-    os.execute(cmd .. params.path .. " &")
 end
 
 function M.backup_restore(params)
-    local code = os.execute("sysupgrade -r " .. params.path)
+    local code = utils.exec("sysupgrade", "-r", params.path)
     return {code = code}
 end
 
 function M.backup(params)
-    local code = os.execute("sysupgrade -b " .. params.path)
+    local code = utils.exec("sysupgrade", "-b", params.path)
     return {code = code}
 end
 
