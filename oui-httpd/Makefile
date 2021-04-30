@@ -15,6 +15,8 @@ PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 PKG_LICENSE:=MIT
 
 PKG_CONFIG_DEPENDS:=\
+		CONFIG_OUI_HTTPD_HTTP_PORT \
+		CONFIG_OUI_HTTPD_HTTPS_PORT \
 		CONFIG_OUI_HTTPD_API_UBUS \
 		CONFIG_OUI_HTTPD_NOSSL \
 		CONFIG_OUI_HTTPD_MBEDTLS \
@@ -39,6 +41,14 @@ endef
 
 define Package/oui-httpd/config
 if PACKAGE_oui-httpd
+config OUI_HTTPD_HTTP_PORT
+	int "Default http port"
+	default 80
+
+config OUI_HTTPD_HTTPS_PORT
+	int "Default https port"
+	default 443
+
 choice
 prompt "Selected SSL library"
 	default OUI_HTTPD_NOSSL
@@ -57,9 +67,8 @@ prompt "Selected SSL library"
 endchoice
 
 config OUI_HTTPD_API_UBUS
-	bool
+	bool "Support call ubus"
 	default y
-	prompt "Support call ubus"
 endif
 endef
 
@@ -92,6 +101,8 @@ define Package/oui-httpd/install
 ifeq ($(CONFIG_OUI_HTTPD_API_UBUS),)
 	rm $(1)/usr/lib/oui-httpd/rpc/ubus
 endif
+	$(SED) "3,4 s/80/$(CONFIG_OUI_HTTPD_HTTP_PORT)/" $(1)/etc/config/oui-httpd
+	$(SED) "7,8 s/443/$(CONFIG_OUI_HTTPD_HTTPS_PORT)/" $(1)/etc/config/oui-httpd
 endef
 
 $(eval $(call BuildPackage,oui-httpd))
