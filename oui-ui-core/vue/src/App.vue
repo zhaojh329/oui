@@ -44,6 +44,9 @@ export default {
       if (lang === 'zh') lang = 'zh-cn'
 
       this.$rpc.call('oui', 'load_locales', { locale: lang }).then(locales => {
+        /* Fix: empty Lua table to json */
+        if (!Array.isArray(locales)) locales = []
+
         locales.forEach(locale => this.$i18n.mergeLocaleMessage(lang, locale))
         this.$i18n.locale = lang
         this.loaded = true
