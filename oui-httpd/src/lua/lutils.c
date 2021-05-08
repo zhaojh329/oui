@@ -215,14 +215,22 @@ static int lua_statvfs(lua_State *L)
     return 3;
 }
 
-static int lua_exists(lua_State *L)
+static int lua_access(lua_State *L)
 {
     const char *file = luaL_checkstring(L, 1);
+    const char *mode = lua_tostring(L, 2);
+    int md = F_OK;
 
-    if (access(file, F_OK))
-        lua_pushboolean(L, false);
-    else
-        lua_pushboolean(L, true);
+    if (mode) {
+        if (strchr(mode, 'x'))
+            md |= X_OK;
+        else if (strchr(mode, 'w'))
+            md |= W_OK;
+        else if (strchr(mode, 'r'))
+            md |= R_OK;
+    }
+
+    lua_pushboolean(L, !access(file, md));
 
     return 1;
 }
@@ -478,7 +486,7 @@ static const luaL_Reg regs[] = {
     {"md5sum", lua_md5sum},
     {"md5", lua_md5},
     {"statvfs", lua_statvfs},
-    {"exists", lua_exists},
+    {"access", lua_access},
     {"exec", lua_exec},
     {"sleep", lua_sleep},
     {"b64encode", lua_b64_encode},
