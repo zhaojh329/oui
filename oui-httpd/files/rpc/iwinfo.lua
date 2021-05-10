@@ -1,22 +1,8 @@
 local utils = require "oui.utils"
-local iwinfo = require 'iwinfo'
+local iwinfo = require 'oui.iwinfo'
 local rpc = require 'oui.rpc'
 
 local M = {}
-
-local function get_info(device)
-    local iwtype = iwinfo.type(device)
-
-    if not iwtype then
-        error("Not support")
-    end
-
-    return setmetatable({}, {
-        __index = function(t, k)
-            return iwinfo[iwtype][k] and iwinfo[iwtype][k](device)
-        end
-    })
-end
 
 function M.devices()
     local f = io.popen('ls /sys/class/net/')
@@ -40,7 +26,7 @@ function M.info(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    local info = get_info(device)
+    local info = iwinfo.info(device)
 
     local hwmodes = {}
     local htmodes = {}
@@ -89,7 +75,7 @@ function M.assoclist(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    return get_info(device)['assoclist']
+    return iwinfo.info(device)['assoclist']
 end
 
 function M.scan(params)
@@ -99,7 +85,7 @@ function M.scan(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    return get_info(device)['scanlist']
+    return iwinfo.info(device)['scanlist']
 end
 
 function M.freqlist(params)
@@ -109,7 +95,7 @@ function M.freqlist(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    return get_info(device)['freqlist']
+    return iwinfo.info(device)['freqlist']
 end
 
 function M.txpowerlist(params)
@@ -119,7 +105,7 @@ function M.txpowerlist(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    return get_info(device)['txpwrlist']
+    return iwinfo.info(device)['txpwrlist']
 end
 
 function M.countrylist(params)
@@ -129,7 +115,7 @@ function M.countrylist(params)
         return rpc.ERROR_CODE_INVALID_PARAMS
     end
 
-    return get_info(device)['countrylist']
+    return iwinfo.info(device)['countrylist']
 end
 
 return M
