@@ -68,54 +68,24 @@ function M.info(params)
     }
 end
 
-function M.assoclist(params)
-    local device = params.device
-
-    if type(device) ~= "string" then
-        return rpc.ERROR_CODE_INVALID_PARAMS
-    end
-
-    return iwinfo.info(device)['assoclist']
+function M.assoclist(device)
+    return iwinfo.assoclist(device)
 end
 
-function M.scan(params)
-    local device = params.device
-
-    if type(device) ~= "string" then
-        return rpc.ERROR_CODE_INVALID_PARAMS
-    end
-
-    return iwinfo.info(device)['scanlist']
+function M.scan(device)
+    return iwinfo.scanlist(device)
 end
 
-function M.freqlist(params)
-    local device = params.device
-
-    if type(device) ~= "string" then
-        return rpc.ERROR_CODE_INVALID_PARAMS
-    end
-
-    return iwinfo.info(device)['freqlist']
+function M.freqlist(device)
+    return iwinfo.freqlist(device)
 end
 
-function M.txpowerlist(params)
-    local device = params.device
-
-    if type(device) ~= "string" then
-        return rpc.ERROR_CODE_INVALID_PARAMS
-    end
-
-    return iwinfo.info(device)['txpwrlist']
+function M.txpowerlist(device)
+    return iwinfo.txpwrlist(device)
 end
 
-function M.countrylist(params)
-    local device = params.device
-
-    if type(device) ~= "string" then
-        return rpc.ERROR_CODE_INVALID_PARAMS
-    end
-
-    return iwinfo.info(device)['countrylist']
+function M.countrylist(device)
+    return iwinfo.countrylist(device)
 end
 
 return M

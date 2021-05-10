@@ -16,4 +16,24 @@ M.info = function(device)
     })
 end
 
+function M.assoclist(device)
+   return M.info(device)['assoclist']
+end
+
+function M.scan(device)
+    return M.info(device)['scanlist']
+end
+
+function M.freqlist(device)
+    return M.info(device)['freqlist']
+end
+
+function M.txpowerlist(device)
+    return M.info(device)['txpwrlist']
+end
+
+function M.countrylist(device)
+    return M.info(device)['countrylist']
+end
+
 return M
