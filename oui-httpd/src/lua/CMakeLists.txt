@@ -28,11 +28,11 @@ install(
 )
 
 install(
-	FILES utils.lua
+	TARGETS lnetwork
 	DESTINATION ${LUAPATH}/oui
 )
 
 install(
-	TARGETS lnetwork
+	FILES utils.lua rpc.lua
 	DESTINATION ${LUAPATH}/oui
 )

@@ -1,6 +1,8 @@
-local utils = require "oui.utils.utils"
+local core = require "oui.utils.utils"
 
-function utils.readfile(name, n)
+local M = {}
+
+M.readfile = function(name, n)
     local f = io.open(name, "r")
     if not f then return nil end
     local data = f:read(n or "*a")
@@ -8,7 +10,7 @@ function utils.readfile(name, n)
     return data
 end
 
-function utils.writefile(name, data)
+M.writefile = function (name, data)
     local f = io.open(name, "w")
     if not f then return nil end
     f:write(data)
@@ -16,4 +18,8 @@ function utils.writefile(name, data)
     return true
 end
 
-return utils
+setmetatable(M, {
+    __index = core
+})
+
+return M
