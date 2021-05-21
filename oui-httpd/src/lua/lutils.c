@@ -27,10 +27,12 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <sys/stat.h>
 #include <stdbool.h>
 #include <lauxlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <dirent.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <time.h>
@@ -46,6 +48,7 @@ struct exec_result {
 };
 
 #define EXEC_RES_MT_NAME "oui-httpd-exec-result"
+#define DIR_MT_NAME "oui-httpd-dir"
 
 #define B64_ENCODE_LEN(_len)	((((_len) + 2) / 3) * 4 + 1)
 #define B64_DECODE_LEN(_len)	(((_len) / 4) * 3 + 1)
@@ -475,6 +478,95 @@ static int lua_b64_decode(lua_State *L)
     return 1;
 }
 
+static int lua_stat(lua_State *L)
+{
+    const char *pathname = luaL_checkstring(L, 1);
+    struct stat st;
+
+    if (stat(pathname, &st)) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+    }
+
+    lua_newtable(L);
+
+    switch (st.st_mode & S_IFMT) {
+    case S_IFBLK: lua_pushstring(L, "BLK");  break;
+    case S_IFCHR: lua_pushstring(L, "CHR");  break;
+    case S_IFDIR: lua_pushstring(L, "DIR");  break;
+    case S_IFIFO: lua_pushstring(L, "FIFO"); break;
+    case S_IFLNK: lua_pushstring(L, "LNK");  break;
+    case S_IFREG: lua_pushstring(L, "REG");  break;
+    case S_IFSOCK:lua_pushstring(L, "SOCK"); break;
+    default:      lua_pushstring(L, "");     break;
+    }
+    lua_setfield(L, -2, "type");
+
+    lua_pushinteger(L, st.st_atime);
+    lua_setfield(L, -2, "atime");
+
+    lua_pushinteger(L, st.st_mtime);
+    lua_setfield(L, -2, "mtime");
+
+    lua_pushinteger(L, st.st_ctime);
+    lua_setfield(L, -2, "ctime");
+
+    lua_pushinteger(L, st.st_nlink);
+    lua_setfield(L, -2, "nlink");
+
+    lua_pushinteger(L, st.st_uid);
+    lua_setfield(L, -2, "uid");
+
+    lua_pushinteger(L, st.st_gid);
+    lua_setfield(L, -2, "gid");
+
+    lua_pushinteger(L, st.st_size);
+    lua_setfield(L, -2, "size");
+
+    return 1;
+}
+
+static int dir_iter(lua_State *L)
+{
+    DIR *d = *(DIR **)lua_touserdata(L, lua_upvalueindex(1));
+    struct dirent *e;
+
+    if ((e = readdir(d))) {
+        lua_pushstring(L, e->d_name);
+        return 1;
+    }
+
+    return 0;
+}
+
+static int lua_dir(lua_State *L)
+{
+    const char *path = luaL_checkstring(L, 1);
+    DIR **d = (DIR **)lua_newuserdata(L, sizeof(DIR *));
+
+    luaL_getmetatable(L, DIR_MT_NAME);
+    lua_setmetatable(L, -2);
+
+    *d = opendir(path);
+    if (!*d)
+        luaL_error(L, "cannot open %s: %s\n", path, strerror(errno));
+
+    lua_pushcclosure(L, dir_iter, 1);
+
+    return 1;
+}
+
+static int dir_gc(lua_State *L)
+{
+    DIR *d = *(DIR **)lua_touserdata(L, 1);
+
+    if (d)
+        closedir(d);
+
+    return 0;
+}
+
 static const luaL_Reg exec_meta[] =
 {
     {"wait", lua_exec_wait},
@@ -491,6 +583,8 @@ static const luaL_Reg regs[] = {
     {"sleep", lua_sleep},
     {"b64encode", lua_b64_encode},
     {"b64decode", lua_b64_decode},
+    {"stat", lua_stat},
+    {"dir", lua_dir},
     {NULL, NULL}
 };
 
@@ -500,6 +594,10 @@ int luaopen_oui_utils_utils(lua_State *L)
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
     luaL_setfuncs(L, exec_meta, 0);
+
+    luaL_newmetatable(L, DIR_MT_NAME);
+    lua_pushcfunction(L, dir_gc);
+    lua_setfield(L, -2, "--gc");
 
     luaL_newlib(L, regs);
 
