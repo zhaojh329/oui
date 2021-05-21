@@ -567,13 +567,6 @@ static int dir_gc(lua_State *L)
     return 0;
 }
 
-static const luaL_Reg exec_meta[] =
-{
-    {"wait", lua_exec_wait},
-    {"__gc", lua_exec_gc},
-    {NULL, NULL}
-};
-
 static const luaL_Reg regs[] = {
     {"md5sum", lua_md5sum},
     {"md5", lua_md5},
@@ -593,7 +586,12 @@ int luaopen_oui_utils_utils(lua_State *L)
     luaL_newmetatable(L, EXEC_RES_MT_NAME);
     lua_pushvalue(L, -1);
     lua_setfield(L, -2, "__index");
-    luaL_setfuncs(L, exec_meta, 0);
+
+    lua_pushcfunction(L, lua_exec_wait);
+    lua_setfield(L, -2, "wait");
+
+    lua_pushcfunction(L, lua_exec_gc);
+    lua_setfield(L, -2, "--gc");
 
     luaL_newmetatable(L, DIR_MT_NAME);
     lua_pushcfunction(L, dir_gc);
