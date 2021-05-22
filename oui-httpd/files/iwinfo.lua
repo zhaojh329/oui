@@ -2,6 +2,10 @@ local iwinfo = require 'iwinfo'
 
 local M = {}
 
+setmetatable(M, {
+    __index = iwinfo
+})
+
 M.info = function(device)
     local iwtype = iwinfo.type(device)
 
