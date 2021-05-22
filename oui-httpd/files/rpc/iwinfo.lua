@@ -5,16 +5,13 @@ local rpc = require 'oui.rpc'
 local M = {}
 
 function M.devices()
-    local f = io.popen('ls /sys/class/net/')
     local devices = {}
 
-    for dev in f:lines() do
+    for dev in utils.dir("/sys/class/net") do
         if iwinfo.type(dev) then
             devices[#devices + 1] = dev
         end
     end
-
-    f:close()
 
     return devices
 end

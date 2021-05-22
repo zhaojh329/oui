@@ -99,9 +99,9 @@ end
 
 function M.init_list()
     local initscripts = {}
-    local f = io.popen("ls /etc/init.d")
-    if f then
-        for name in f:lines() do
+
+    for name in utils.dir("/etc/init.d") do
+        if name:sub(1, 1) ~= "." then
             local start, stop, enabled = false
             local line = utils.readfile("/etc/init.d/" .. name, "*l")
             if line and line:match("/etc/rc.common") then
@@ -128,8 +128,8 @@ function M.init_list()
                 end
             end
         end
-        f:close()
     end
+
     return { initscripts = initscripts }
 end
 
@@ -150,9 +150,9 @@ end
 
 function M.led_list()
     local leds = {}
-    local f = io.popen("ls /sys/class/leds")
-    if f then
-        for name in f:lines() do
+
+    for name in utils.dir("/sys/class/leds") do
+        if name:sub(1, 1) ~= "." then
             local data = utils.readfile("/sys/class/leds/" .. name .. "/trigger")
             local active_trigger, brightness, max_brightness
             local triggers = {}
@@ -176,8 +176,8 @@ function M.led_list()
                 max_brightness = tonumber(max_brightness)
             }
         end
-        f:close()
     end
+
     return { leds = leds }
 end
 
