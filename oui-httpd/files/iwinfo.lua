@@ -32,7 +32,7 @@ function M.freqlist(device)
     return M.info(device)['freqlist']
 end
 
-function M.txpowerlist(device)
+function M.txpwrlist(device)
     return M.info(device)['txpwrlist']
 end
 
