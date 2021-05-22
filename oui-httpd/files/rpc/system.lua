@@ -1,5 +1,6 @@
 local utils = require "oui.utils"
 local rpc = require "oui.rpc"
+local fs = require "oui.fs"
 
 local M = {}
 
@@ -11,7 +12,7 @@ function M.diskfree()
     local resp = {}
 
     for name, path in pairs(fslist) do
-        local total, free, used = utils.statvfs(path)
+        local total, free, used = fs.statvfs(path)
         if total then
             resp[name] = {
                 total = total,
@@ -100,7 +101,7 @@ end
 function M.init_list()
     local initscripts = {}
 
-    for name in utils.dir("/etc/init.d") do
+    for name in fs.dir("/etc/init.d") do
         if name:sub(1, 1) ~= "." then
             local start, stop, enabled = false
             local line = utils.readfile("/etc/init.d/" .. name, "*l")
@@ -151,7 +152,7 @@ end
 function M.led_list()
     local leds = {}
 
-    for name in utils.dir("/sys/class/leds") do
+    for name in fs.dir("/sys/class/leds") do
         if name:sub(1, 1) ~= "." then
             local data = utils.readfile("/sys/class/leds/" .. name .. "/trigger")
             local active_trigger, brightness, max_brightness

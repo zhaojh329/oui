@@ -1,13 +1,14 @@
 local utils = require "oui.utils"
 local iwinfo = require 'oui.iwinfo'
 local rpc = require 'oui.rpc'
+local fs = require "oui.fs"
 
 local M = {}
 
 function M.devices()
     local devices = {}
 
-    for dev in utils.dir("/sys/class/net") do
+    for dev in fs.dir("/sys/class/net") do
         if iwinfo.type(dev) then
             devices[#devices + 1] = dev
         end

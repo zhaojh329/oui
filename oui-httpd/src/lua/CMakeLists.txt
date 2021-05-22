@@ -8,6 +8,9 @@ set_target_properties(lutils PROPERTIES OUTPUT_NAME utils PREFIX "")
 add_library(lnetwork MODULE lnetwork.c)
 set_target_properties(lnetwork PROPERTIES OUTPUT_NAME network PREFIX "")
 
+add_library(lfs MODULE lfs.c)
+set_target_properties(lfs PROPERTIES OUTPUT_NAME fs PREFIX "")
+
 if (NOT LUAPATH)
 	execute_process(
 		COMMAND  lua -e "for k in string.gmatch(package.cpath .. \";\", \"([^;]+)/..so;\") do if k:sub(1,1) == \"/\" then print(k) break end end"
@@ -31,6 +34,12 @@ install(
 	TARGETS lnetwork
 	DESTINATION ${LUAPATH}/oui
 )
+
+install(
+	TARGETS lfs
+	DESTINATION ${LUAPATH}/oui
+)
+
 
 install(
 	FILES utils.lua rpc.lua

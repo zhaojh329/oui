@@ -22,17 +22,12 @@
  * SOFTWARE.
  */
 
-#include <sys/statvfs.h>
-#include <uhttpd/log.h>
-#include <arpa/inet.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <lauxlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <time.h>
@@ -48,7 +43,6 @@ struct exec_result {
 };
 
 #define EXEC_RES_MT_NAME "oui-httpd-exec-result"
-#define DIR_MT_NAME "oui-httpd-dir"
 
 #define B64_ENCODE_LEN(_len)	((((_len) + 2) / 3) * 4 + 1)
 #define B64_DECODE_LEN(_len)	(((_len) / 4) * 3 + 1)
@@ -187,53 +181,6 @@ static int lua_md5(lua_State *L)
         sprintf(md5 + i * 2, "%02x", buf[i]);
 
     lua_pushstring(L, md5);
-
-    return 1;
-}
-
-static int lua_statvfs(lua_State *L)
-{
-    const char *path = lua_tostring(L, 1);
-    struct statvfs s;
-
-    if (!path) {
-        lua_pushnil(L);
-        return 1;
-    }
-
-    if (statvfs(path, &s)) {
-        lua_pushnil(L);
-        return 1;
-    }
-
-    /* total bytes */
-    lua_pushinteger(L, s.f_blocks * s.f_frsize);
-
-    /* available bytes */
-    lua_pushinteger(L, s.f_bfree * s.f_frsize);
-
-    /* used bytes */
-    lua_pushinteger(L, (s.f_blocks - s.f_bfree) * s.f_frsize);
-
-    return 3;
-}
-
-static int lua_access(lua_State *L)
-{
-    const char *file = luaL_checkstring(L, 1);
-    const char *mode = lua_tostring(L, 2);
-    int md = F_OK;
-
-    if (mode) {
-        if (strchr(mode, 'x'))
-            md |= X_OK;
-        else if (strchr(mode, 'w'))
-            md |= W_OK;
-        else if (strchr(mode, 'r'))
-            md |= R_OK;
-    }
-
-    lua_pushboolean(L, !access(file, md));
 
     return 1;
 }
@@ -478,106 +425,13 @@ static int lua_b64_decode(lua_State *L)
     return 1;
 }
 
-static int lua_stat(lua_State *L)
-{
-    const char *pathname = luaL_checkstring(L, 1);
-    struct stat st;
-
-    if (stat(pathname, &st)) {
-        lua_pushnil(L);
-        lua_pushstring(L, strerror(errno));
-        return 2;
-    }
-
-    lua_newtable(L);
-
-    switch (st.st_mode & S_IFMT) {
-    case S_IFBLK: lua_pushstring(L, "BLK");  break;
-    case S_IFCHR: lua_pushstring(L, "CHR");  break;
-    case S_IFDIR: lua_pushstring(L, "DIR");  break;
-    case S_IFIFO: lua_pushstring(L, "FIFO"); break;
-    case S_IFLNK: lua_pushstring(L, "LNK");  break;
-    case S_IFREG: lua_pushstring(L, "REG");  break;
-    case S_IFSOCK:lua_pushstring(L, "SOCK"); break;
-    default:      lua_pushstring(L, "");     break;
-    }
-    lua_setfield(L, -2, "type");
-
-    lua_pushinteger(L, st.st_atime);
-    lua_setfield(L, -2, "atime");
-
-    lua_pushinteger(L, st.st_mtime);
-    lua_setfield(L, -2, "mtime");
-
-    lua_pushinteger(L, st.st_ctime);
-    lua_setfield(L, -2, "ctime");
-
-    lua_pushinteger(L, st.st_nlink);
-    lua_setfield(L, -2, "nlink");
-
-    lua_pushinteger(L, st.st_uid);
-    lua_setfield(L, -2, "uid");
-
-    lua_pushinteger(L, st.st_gid);
-    lua_setfield(L, -2, "gid");
-
-    lua_pushinteger(L, st.st_size);
-    lua_setfield(L, -2, "size");
-
-    return 1;
-}
-
-static int dir_iter(lua_State *L)
-{
-    DIR *d = *(DIR **)lua_touserdata(L, lua_upvalueindex(1));
-    struct dirent *e;
-
-    if ((e = readdir(d))) {
-        lua_pushstring(L, e->d_name);
-        return 1;
-    }
-
-    return 0;
-}
-
-static int lua_dir(lua_State *L)
-{
-    const char *path = luaL_checkstring(L, 1);
-    DIR **d = (DIR **)lua_newuserdata(L, sizeof(DIR *));
-
-    luaL_getmetatable(L, DIR_MT_NAME);
-    lua_setmetatable(L, -2);
-
-    *d = opendir(path);
-    if (!*d)
-        luaL_error(L, "cannot open %s: %s\n", path, strerror(errno));
-
-    lua_pushcclosure(L, dir_iter, 1);
-
-    return 1;
-}
-
-static int dir_gc(lua_State *L)
-{
-    DIR *d = *(DIR **)lua_touserdata(L, 1);
-
-    if (d)
-        closedir(d);
-
-    return 0;
-}
-
 static const luaL_Reg regs[] = {
     {"md5sum", lua_md5sum},
     {"md5", lua_md5},
-    {"statvfs", lua_statvfs},
-    {"access", lua_access},
     {"exec", lua_exec},
     {"sleep", lua_sleep},
     {"b64encode", lua_b64_encode},
     {"b64decode", lua_b64_decode},
-    {"stat", lua_stat},
-    {"dir", lua_dir},
     {NULL, NULL}
 };
 
@@ -591,10 +445,6 @@ int luaopen_oui_utils_utils(lua_State *L)
     lua_setfield(L, -2, "wait");
 
     lua_pushcfunction(L, lua_exec_gc);
-    lua_setfield(L, -2, "--gc");
-
-    luaL_newmetatable(L, DIR_MT_NAME);
-    lua_pushcfunction(L, dir_gc);
     lua_setfield(L, -2, "--gc");
 
     luaL_newlib(L, regs);

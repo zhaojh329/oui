@@ -2,6 +2,7 @@ local sqlite3 = require "lsqlite3"
 local utils = require "oui.utils"
 local cjson = require "oui.json"
 local rpc = require "oui.rpc"
+local fs = require "oui.fs"
 local uci = require "uci"
 
 local M = {}
@@ -41,7 +42,7 @@ end
 function M.menu(params)
     local menus = {}
 
-    for name in utils.dir(RPC_OUI_MENU_FILES_PATH) do
+    for name in fs.dir(RPC_OUI_MENU_FILES_PATH) do
         if name:match("%.json$") then
             local file = RPC_OUI_MENU_FILES_PATH .. "/" .. name
             local menu = cjson.decode(utils.readfile(file))
@@ -77,7 +78,7 @@ function M.load_locales(params)
 
     local match = string.format("%%.%s.json$", params.locale):gsub("%-", "%%-")
 
-    for name in utils.dir(RPC_OUI_LOCALES_PATH) do
+    for name in fs.dir(RPC_OUI_LOCALES_PATH) do
         if name:match(match) then
             local file = RPC_OUI_LOCALES_PATH .. "/" .. name
             local locale = cjson.decode(utils.readfile(file))
