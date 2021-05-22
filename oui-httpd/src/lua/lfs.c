@@ -161,6 +161,25 @@ static int lua_dir(lua_State *L)
     return 1;
 }
 
+static int lua_readlink(lua_State *L)
+{
+    const char *path = luaL_checkstring(L, 1);
+    char buf[PATH_MAX] = "";
+    ssize_t nbytes;
+
+    nbytes = readlink(path, buf, PATH_MAX);
+    if (nbytes < 0) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+    }
+
+    lua_pushlstring(L, buf, nbytes);
+
+    return 1;
+}
+
+
 static int dir_gc(lua_State *L)
 {
     DIR *d = *(DIR **)lua_touserdata(L, 1);
@@ -176,10 +195,11 @@ static const luaL_Reg regs[] = {
     {"access", lua_access},
     {"stat", lua_stat},
     {"dir", lua_dir},
+    {"readlink", lua_readlink},
     {NULL, NULL}
 };
 
-int luaopen_oui_utils_utils(lua_State *L)
+int luaopen_oui_fs(lua_State *L)
 {
     luaL_newmetatable(L, DIR_MT_NAME);
     lua_pushcfunction(L, dir_gc);
