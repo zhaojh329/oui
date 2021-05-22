@@ -2,6 +2,10 @@ local core = require "oui.utils.utils"
 
 local M = {}
 
+setmetatable(M, {
+    __index = core
+})
+
 M.readfile = function(name, n)
     local f = io.open(name, "r")
     if not f then return nil end
@@ -17,9 +21,5 @@ M.writefile = function (name, data)
     f:close()
     return true
 end
-
-setmetatable(M, {
-    __index = core
-})
 
 return M
