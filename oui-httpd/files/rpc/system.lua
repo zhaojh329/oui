@@ -103,7 +103,7 @@ function M.init_list()
 
     for name in fs.dir("/etc/init.d") do
         if name:sub(1, 1) ~= "." then
-            local start, stop, enabled = false
+            local start, stop, enabled
             local line = utils.readfile("/etc/init.d/" .. name, "*l")
             if line and line:match("/etc/rc.common") then
                 for line in io.lines("/etc/init.d/" .. name) do
@@ -124,7 +124,7 @@ function M.init_list()
                         name = name,
                         start = tonumber(start),
                         stop = tonumber(stop),
-                        enabled = enabled
+                        enabled = enabled = fs.access("/etc/rc.d/S" .. start .. name)
                     }
                 end
             end
@@ -183,7 +183,7 @@ function M.led_list()
 end
 
 function M.factory()
-    os.execute("jffs2reset -y -r &")
+    utils.exec("jffs2reset", "-y", "-r")
 end
 
 return M
