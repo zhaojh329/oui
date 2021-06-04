@@ -92,14 +92,14 @@ static int data_begin_cb(struct multipart_parser *p)
 
     if (st->parttype == PART_FILE) {
         if (!st->path[0]) {
-            uh_log_err("Not found path\n");
+            log_err("Not found path\n");
             conn->error(conn, HTTP_STATUS_FORBIDDEN, NULL);
             return 1;
         }
 
         st->fd = open(st->path, O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR);
         if (st->fd < 0) {
-            uh_log_err("Create '%s' fail: %s\n", st->path, strerror(errno));
+            log_err("Create '%s' fail: %s\n", st->path, strerror(errno));
             conn->error(conn, HTTP_STATUS_FORBIDDEN, NULL);
             return 1;
         }
@@ -117,7 +117,7 @@ static int data_cb(struct multipart_parser *p, const char *data, size_t len)
     switch (st->parttype) {
     case PART_PATH:
         if (strlen(st->path) + len > sizeof(st->path) - 1) {
-            uh_log_err("path too long\n");
+            log_err("path too long\n");
             return 1;
         }
         strncat(st->path, data, len);
@@ -126,7 +126,7 @@ static int data_cb(struct multipart_parser *p, const char *data, size_t len)
     case PART_FILE:
         if (write(st->fd, data, len) != wlen) {
             close(st->fd);
-            uh_log_err("write fail: %s\n", strerror(errno));
+            log_err("write fail: %s\n", strerror(errno));
             conn->error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
             return 1;
         }

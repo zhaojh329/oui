@@ -23,8 +23,6 @@
  */
 
 #include <uhttpd/uhttpd.h>
-#include <libubox/avl.h>
-#include <libubox/avl-cmp.h>
 #include <sys/sysinfo.h>
 #include <pthread.h>
 #include <lauxlib.h>
@@ -34,11 +32,11 @@
 #include <lualib.h>
 #include <unistd.h>
 #include <errno.h>
-#include <uci.h>
 
 #include "lua2json.h"
 #include "session.h"
 #include "utils.h"
+#include "avl.h"
 #include "rpc.h"
 #include "db.h"
 
@@ -83,7 +81,7 @@ struct rpc_call_context {
 };
 
 struct rpc_object {
-    struct avl_tree trusted_methods;
+    struct avl_tree no_auth_methods;
     struct avl_node avl;
     pthread_mutex_t mutex;
     struct list_head node;
@@ -94,7 +92,7 @@ struct rpc_object {
     char value[0];
 };
 
-struct rpc_trusted_method {
+struct rpc_no_auth_method {
     struct avl_node avl;
     char value[0];
 };
@@ -224,10 +222,10 @@ static void rpc_object_incref(struct rpc_object *obj)
 
 static void free_all_trusted_methods(struct rpc_object *obj)
 {
-    struct rpc_trusted_method *m, *temp;
+    struct rpc_no_auth_method *m, *temp;
 
-    avl_for_each_element_safe(&obj->trusted_methods, m, avl, temp) {
-        avl_delete(&obj->trusted_methods, &m->avl);
+    avl_for_each_element_safe(&obj->no_auth_methods, m, avl, temp) {
+        avl_delete(&obj->no_auth_methods, &m->avl);
         free(m);
     }
 }
@@ -240,7 +238,7 @@ static void rpc_object_decref(struct rpc_object *obj)
     if (__sync_sub_and_fetch(&obj->refcount, 1))
         return;
 
-    uh_log_debug("Free rpc object: %p\n", obj);
+    log_debug("Free rpc object: %p\n", obj);
 
     ev_stat_stop(rpc_context.loop, &obj->es);
 
@@ -251,9 +249,9 @@ static void rpc_object_decref(struct rpc_object *obj)
 
 static bool rpc_is_trusted(struct rpc_object *obj, const char *method)
 {
-    struct rpc_trusted_method *m;
+    struct rpc_no_auth_method *m;
 
-    return avl_find_element(&obj->trusted_methods, method, m, avl);
+    return avl_find_element(&obj->no_auth_methods, method, m, avl);
 }
 
 static int rpc_access_cb(void *data, int count, char **value, char **name)
@@ -483,12 +481,12 @@ err:
 static bool load_rpc_script(lua_State *L, const char *path)
 {
     if (luaL_dofile(L, path)) {
-        uh_log_err("load rpc: %s\n", lua_tostring(L, -1));
+        log_err("load rpc: %s\n", lua_tostring(L, -1));
         return false;
     }
 
     if (!lua_istable(L, -1)) {
-        uh_log_err("invalid rpc script, need return a table: %s\n", path);
+        log_err("invalid rpc script, need return a table: %s\n", path);
         return false;
     }
 
@@ -500,7 +498,7 @@ static void rpc_object_changed(struct ev_loop *loop, struct ev_stat *w, int reve
     struct rpc_object *obj = container_of(w, struct rpc_object, es);
 
     if (w->attr.st_nlink) {
-        uh_log_info("rpc %s changed\n", w->path);
+        log_info("rpc %s changed\n", w->path);
 
         pthread_mutex_lock(&obj->mutex);
         if (load_rpc_script(obj->L, obj->path)) {
@@ -509,7 +507,7 @@ static void rpc_object_changed(struct ev_loop *loop, struct ev_stat *w, int reve
         }
         pthread_mutex_unlock(&obj->mutex);
     } else {
-        uh_log_info("rpc %s removed\n", w->path);
+        log_info("rpc %s removed\n", w->path);
     }
 
     pthread_mutex_lock(&rpc_context.mutex);
@@ -526,7 +524,7 @@ static void load_rpc_scripts(struct ev_loop *loop, const char *path)
 
     dir = opendir(path);
     if (!dir) {
-        uh_log_err("opendir fail: %s\n", strerror(errno));
+        log_err("opendir fail: %s\n", strerror(errno));
         return;
     }
 
@@ -553,7 +551,7 @@ static void load_rpc_scripts(struct ev_loop *loop, const char *path)
 
         obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
         if (!obj) {
-            uh_log_err("calloc: %s\n", strerror(errno));
+            log_err("calloc: %s\n", strerror(errno));
             goto err;
         }
 
@@ -563,7 +561,7 @@ static void load_rpc_scripts(struct ev_loop *loop, const char *path)
 
         strcpy(obj->value, e->d_name);
         obj->avl.key = obj->value;
-        avl_init(&obj->trusted_methods, avl_strcmp, false, NULL);
+        avl_init(&obj->no_auth_methods, avl_strcmp, false, NULL);
 
         strcpy(obj->path, object_path);
 
@@ -576,7 +574,7 @@ static void load_rpc_scripts(struct ev_loop *loop, const char *path)
         avl_insert(&rpc_context.objects, &obj->avl);
         pthread_mutex_unlock(&rpc_context.mutex);
 
-        uh_log_info("rpc %s loaded\n", obj->path);
+        log_info("rpc %s loaded\n", obj->path);
 
         continue;
 
@@ -597,92 +595,63 @@ static void unload_rpc_scripts()
     }
 }
 
-static int add_trusted_method(struct rpc_object *obj, const char *value)
+static int add_no_auth_method(struct rpc_object *obj, const char *value)
 {
-    struct rpc_trusted_method *m = calloc(1, sizeof(struct rpc_trusted_method) + strlen(value) + 1);
+    struct rpc_no_auth_method *m = calloc(1, sizeof(struct rpc_no_auth_method) + strlen(value) + 1);
 
     if (!m) {
-        uh_log_err("calloc: %s\n", strerror(errno));
+        log_err("calloc: %s\n", strerror(errno));
         return -1;
     }
 
     strcpy(m->value, value);
     m->avl.key = m->value;
 
-    avl_insert(&obj->trusted_methods, &m->avl);
+    avl_insert(&obj->no_auth_methods, &m->avl);
 
     return 0;
 }
 
-static int load_trusted()
+static void load_no_auth_methods(const char *file)
 {
-    struct uci_context *uci = uci_alloc_context();
-    struct uci_package *p = NULL;
-    struct uci_section *s;
-    struct uci_element *e;
-    struct uci_ptr ptr = {.package = "oui-httpd"};
-    int ret = -1;
+    json_t *root, *methods, *method;
+    json_error_t error;
+    const char *key;
+    int i;
 
-    if (!uci) {
-        uh_log_err("uci_alloc_context fail\n");
-        return -1;
+    if (!file)
+        return;
+
+    root = json_load_file(file, 0, &error);
+    if (!root) {
+        log_err("json_load_file '%s' fail: %s\n", file, error.text);
+        return;
     }
 
-    uci_load(uci, ptr.package, &p);
+    if (!json_is_object(root))
+        goto done;
 
-    if (!p) {
-        uh_log_err("Load config 'oui-httpd' fail\n");
-        goto err;
-    }
-
-    uci_foreach_element(&p->sections, e) {
+    json_object_foreach(root, key, methods) {
         struct rpc_object *obj;
 
-        s = uci_to_section(e);
-
-        if (strcmp(s->type, "trusted-object"))
+        if (!json_is_array(methods))
             continue;
 
-        ptr.section = s->e.name;
-        ptr.s = NULL;
-
-        ptr.option = "object";
-        ptr.o = NULL;
-
-        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o || ptr.o->type != UCI_TYPE_STRING)
-            continue;
-
-        obj = avl_find_element(&rpc_context.objects, ptr.o->v.string, obj, avl);
+        obj = avl_find_element(&rpc_context.objects, key, obj, avl);
         if (!obj)
             continue;
 
-        ptr.option = "method";
-        ptr.o = NULL;
+        json_array_foreach(methods, i, method) {
+            if (!json_is_string(method))
+                continue;
 
-        if (uci_lookup_ptr(uci, &ptr, NULL, true) || !ptr.o)
-            continue;
-
-        if (ptr.o->type == UCI_TYPE_STRING) {
-            if (add_trusted_method(obj, ptr.o->v.string))
-                goto err;
-        } else {
-            struct uci_element *oe;
-            uci_foreach_element(&ptr.o->v.list, oe) {
-                if (add_trusted_method(obj, oe->name))
-                    goto err;
-            }
+            if (add_no_auth_method(obj, json_string_value(method)))
+                goto done;
         }
     }
 
-    ret = 0;
-
-err:
-    if (p)
-        uci_unload(uci, p);
-
-    uci_free_context(uci);
-
-    return ret;
+done:
+    json_decref(root);
 }
 
 static void rpc_dir_changed(struct ev_loop *loop, struct ev_stat *w, int revents)
@@ -700,7 +669,7 @@ static void *rpc_call_worker(void *arg)
     bool is_err;
     json_t *res;
 
-    uh_log_info("rpc worker(%d) running\n", id);
+    log_info("rpc worker(%d) running\n", id);
 
     while (true) {
         is_err = true;
@@ -733,7 +702,7 @@ static void *rpc_call_worker(void *arg)
         pthread_mutex_unlock(&rpc_context.mutex);
 
         if (!lua_istable(L, -1)) {
-            uh_log_err("%s.%s: lua state is broken. No table on stack!\n", obj->value, ctx->method);
+            log_err("%s.%s: lua state is broken. No table on stack!\n", obj->value, ctx->method);
             res = rpc_error_object_predefined(RPC_ERROR_CODE_INTERNAL_ERROR, NULL);
             goto lua_broken;
         }
@@ -777,7 +746,7 @@ static void *rpc_call_worker(void *arg)
             const char *err_msg = lua_tostring(L, -1);
             json_t *data = json_string(err_msg);
 
-            uh_log_err("%s\n", err_msg);
+            log_err("%s\n", err_msg);
             res = rpc_error_object_predefined(RPC_ERROR_CODE_INTERNAL_ERROR, data);
             goto call_done;
         }
@@ -827,7 +796,7 @@ lua_broken:
 done:
     rpc_context.nworker--;
     pthread_mutex_unlock(&rpc_context.mutex);
-    uh_log_info("rpc worker(%d) quit\n", id);
+    log_info("rpc worker(%d) quit\n", id);
     return NULL;
 }
 
@@ -855,7 +824,7 @@ static void call_end_cb(struct ev_loop *loop, struct ev_async *w, int revents)
     }
 }
 
-int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworker)
+int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, const char *no_auth_file, int nworker)
 {
     int i;
 
@@ -865,7 +834,7 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworke
 
     load_rpc_scripts(loop, path);
 
-    load_trusted();
+    load_no_auth_methods(no_auth_file);
 
     INIT_LIST_HEAD(&rpc_context.run_queue);
     INIT_LIST_HEAD(&rpc_context.end_queue);
@@ -883,7 +852,7 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworke
 
     if (nworker > RPC_MAX_WORKER_NUM) {
         nworker = RPC_MAX_WORKER_NUM;
-        uh_log_info("The number of worker threads is limited to %d\n", nworker);
+        log_info("The number of worker threads is limited to %d\n", nworker);
     }
 
     if (nworker < 0)
@@ -891,14 +860,14 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworke
 
     if (nworker == 1) {
         nworker++;
-        uh_log_info("At least 2 worker threads must be need\n");
+        log_info("At least 2 worker threads must be need\n");
     }
 
     for (i = 0; i < nworker; i++) {
         pthread_t tid;
 
         if (pthread_create(&tid, NULL, rpc_call_worker, (void *)(intptr_t)i)) {
-            uh_log_err("pthread_create: %s\n", strerror(errno));
+            log_err("pthread_create: %s\n", strerror(errno));
             break;
         }
 
@@ -908,7 +877,7 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, int nworke
     }
 
     if (i < 1) {
-        uh_log_err("no rpc call worker created\n");
+        log_err("no rpc call worker created\n");
         return -1;
     }
 

@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 include(FindPkgConfig)
 
 find_package(Libev REQUIRED)
-find_package(Libuhttpd 3.11 REQUIRED)
+find_package(Libuhttpd 3.12 REQUIRED)
 find_package(Lua51 REQUIRED)
 
 pkg_search_module(JANSSON REQUIRED jansson)
@@ -22,7 +22,7 @@ aux_source_directory(. SRCS)
 
 add_executable(oui-httpd ${SRCS})
 target_include_directories(oui-httpd PRIVATE ${LIBUHTTPD_INCLUDE_DIR} ${LIBEV_INCLUDE_DIR} ${JANSSON_INCLUDE_DIRS} ${SQLITE3_INCLUDE_DIRS})
-target_link_libraries(oui-httpd PRIVATE ${LIBUHTTPD_LIBRARY} ${LIBEV_LIBRARY} ${LUA_LIBRARY} ${JANSSON_LIBRARIES} ${SQLITE3_LIBRARIES} ubox uci pthread)
+target_link_libraries(oui-httpd PRIVATE ${LIBUHTTPD_LIBRARY} ${LIBEV_LIBRARY} ${LUA_LIBRARY} ${JANSSON_LIBRARIES} ${SQLITE3_LIBRARIES} pthread)
 
 install(
 	TARGETS oui-httpd

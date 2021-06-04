@@ -1,11 +1,15 @@
 #!/bin/sh /etc/rc.common
 
+. /usr/share/libubox/jshn.sh
+
 USE_PROCD=1
 START=60
 
 OUI_HTTPD_BIN="/usr/sbin/oui-httpd"
 PX5G_BIN="/usr/sbin/px5g"
 OPENSSL_BIN="/usr/bin/openssl"
+
+NO_AUTH_FILE="/etc/oui-httpd/no-auth.json"
 
 generate_keys() {
 	local cfg="$1"
@@ -37,6 +41,27 @@ generate_keys() {
 		mv "${SSL_KEY}.new" "${SSL_KEY}"
 		mv "${SSL_CERT}.new" "${SSL_CERT}"
 	}
+}
+
+parse_no_auth_methods() {
+	local cfg="$1"
+	local method
+
+	config_get object "$cfg" object
+	config_get methods "$cfg" method
+
+	[ -n "$object" ] || return 0
+
+	if [ $(json_is_a "$object" array) ];
+	then
+		json_select "$object"
+	else
+		json_add_array "$object"
+	fi
+
+	for method in $methods; do
+		json_add_string "" "$method"
+	done
 }
 
 start_instance() {
@@ -73,6 +98,15 @@ start_instance() {
 	config_get home "$cfg" home
 	config_get index "$cfg" index
 	config_get verbose "$cfg" verbose 0
+
+	json_init
+	json_load '{}'
+
+	config_foreach parse_no_auth_methods no-auth-methods
+
+	json_dump > "$NO_AUTH_FILE"
+
+	procd_append_param  command --no-auth-file "$NO_AUTH_FILE"
 
 	[ -n "$home" ] && procd_append_param  command --home "$home"
 	[ -n "$index" ] && procd_append_param  command --index "$index"

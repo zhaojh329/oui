@@ -25,9 +25,9 @@
 #ifndef __SESSION_H
 #define __SESSION_H
 
-#include <libubox/avl.h>
 #include <ev.h>
 
+#include "avl.h"
 #include "stdbool.h"
 
 #define DEFAULT_SESSION_TIMEOUT 300

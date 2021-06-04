@@ -36,7 +36,7 @@ static struct sqlite3 *db_open()
     struct sqlite3 *db;
 
     if (sqlite3_open(db_path, &db) != SQLITE_OK) {
-        uh_log_err("%s\n", db ? sqlite3_errmsg(db) : "Open DB fail");
+        log_err("%s\n", db ? sqlite3_errmsg(db) : "Open DB fail");
         sqlite3_close(db);
         return NULL;
     }
@@ -65,7 +65,7 @@ int db_exec(const char *sql)
         return -1;
 
     if (sqlite3_exec(db, sql, NULL, NULL, &errmsg) != SQLITE_OK) {
-        uh_log_err("sqlite3_exec: %s\n", errmsg);
+        log_err("sqlite3_exec: %s\n", errmsg);
         sqlite3_free(errmsg);
         ret = -1;
     }
@@ -87,7 +87,7 @@ int db_query(const char *sql, int (*cb)(void *data, int count, char **value, cha
 
     ret = sqlite3_exec(db, sql, cb, data, &errmsg);
     if (ret != SQLITE_OK && ret != SQLITE_ABORT){
-        uh_log_err("sqlite3_exec: %s\n", errmsg);
+        log_err("sqlite3_exec: %s\n", errmsg);
         sqlite3_free(errmsg);
         ret = -1;
     }

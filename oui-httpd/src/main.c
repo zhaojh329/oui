@@ -40,7 +40,8 @@ enum {
     LONG_OPT_HOME,
     LONG_OPT_INDEX,
     LONG_OPT_DB,
-    LONG_OPT_LOCAL_AUTH
+    LONG_OPT_LOCAL_AUTH,
+    LONG_OPT_NO_AUTH_FILE
 };
 
 void serve_upload(struct uh_connection *conn, int event);
@@ -59,7 +60,7 @@ static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
 {
     if (w->signum == SIGINT) {
         ev_break(loop, EVBREAK_ALL);
-        uh_log_info("Normal quit\n");
+        log_info("Normal quit\n");
     }
 }
 
@@ -76,6 +77,7 @@ static void usage(const char *prog)
                     "          --index oui.html  # index page(default is oui.html)\n"
                     "          --db oh.db        # database file(default is ./oh.db)\n"
                     "          --local-auth      # local auth\n"
+                    "          --no-auth-file    # no auth required methods in json file\n"
                     "          -w n              # rpc call workers number\n"
                     "          -v                # verbose\n", prog);
     exit(1);
@@ -86,19 +88,21 @@ static struct option long_options[] = {
     {"home",  required_argument, NULL, LONG_OPT_HOME},
     {"index", required_argument, NULL, LONG_OPT_INDEX},
     {"db",    required_argument, NULL, LONG_OPT_DB},
-    {"local-auth", no_argument, NULL, LONG_OPT_LOCAL_AUTH}
+    {"local-auth", no_argument, NULL, LONG_OPT_LOCAL_AUTH},
+    {"no-auth-file", required_argument, NULL, LONG_OPT_NO_AUTH_FILE}
 };
 
 int main(int argc, char **argv)
 {
     struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
-    int log_threshold = LOG_ERR;
+    int level = LOG_ERR;
     struct uh_server *srv = NULL;
     const char *rpc_dir = ".";
     const char *db = "oh.db";
     const char *home_dir = ".";
     const char *index_page = "oui.html";
+    const char *no_auth_file = NULL;
     bool local_auth = false;
     const char *cert = NULL;
     const char *key = NULL;
@@ -131,7 +135,10 @@ int main(int argc, char **argv)
             nworker = atoi(optarg);
             break;
         case 'v':
-            log_threshold++;
+            if (level == LOG_ERR)
+                level = LOG_INFO;
+            else
+                level++;
             break;
         case LONG_OPT_RPC:
             rpc_dir = optarg;
@@ -148,14 +155,17 @@ int main(int argc, char **argv)
         case LONG_OPT_LOCAL_AUTH:
             local_auth = true;
             break;
+        case LONG_OPT_NO_AUTH_FILE:
+            no_auth_file = optarg;
+            break;
         default: /* '?' */
             usage(argv[0]);
         }
     }
 
-    uh_log_threshold(log_threshold);
+    log_level(level);
 
-    uh_log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
+    log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
     if (cert && key) {
 #if UHTTPD_SSL_SUPPORT
@@ -168,7 +178,7 @@ int main(int argc, char **argv)
 
     db_init(db);
 
-    if (rpc_init(loop, rpc_dir, local_auth, nworker) < 0)
+    if (rpc_init(loop, rpc_dir, local_auth, no_auth_file, nworker) < 0)
         goto rpc_err;
 
     srv->set_docroot(srv, home_dir);
