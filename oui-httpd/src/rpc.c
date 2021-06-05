@@ -220,7 +220,7 @@ static void rpc_object_incref(struct rpc_object *obj)
     __sync_add_and_fetch(&obj->refcount, 1);
 }
 
-static void free_all_trusted_methods(struct rpc_object *obj)
+static void free_all_no_auth_methods(struct rpc_object *obj)
 {
     struct rpc_no_auth_method *m, *temp;
 
@@ -242,12 +242,12 @@ static void rpc_object_decref(struct rpc_object *obj)
 
     ev_stat_stop(rpc_context.loop, &obj->es);
 
-    free_all_trusted_methods(obj);
+    free_all_no_auth_methods(obj);
     lua_close(obj->L);
     free(obj);
 }
 
-static bool rpc_is_trusted(struct rpc_object *obj, const char *method)
+static bool rpc_is_no_auth(struct rpc_object *obj, const char *method)
 {
     struct rpc_no_auth_method *m;
 
@@ -713,7 +713,7 @@ static void *rpc_call_worker(void *arg)
             goto call_done;
         }
 
-        if (!ctx->is_local && !rpc_is_trusted(obj, ctx->method) &&
+        if (!ctx->is_local && !rpc_is_no_auth(obj, ctx->method) &&
             (!s || !rpc_call_access(s, obj->value, ctx->method))) {
             res = rpc_error_object_predefined(RPC_ERROR_CODE_ACCESS, NULL);
             goto call_done;
