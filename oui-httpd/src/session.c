@@ -22,7 +22,6 @@
  * SOFTWARE.
  */
 
-#include <libubox/avl-cmp.h>
 #include <uhttpd/log.h>
 #include <sqlite3.h>
 #include <string.h>
