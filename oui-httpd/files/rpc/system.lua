@@ -124,7 +124,7 @@ function M.init_list()
                         name = name,
                         start = tonumber(start),
                         stop = tonumber(stop),
-                        enabled = enabled = fs.access("/etc/rc.d/S" .. start .. name)
+                        enabled = fs.access("/etc/rc.d/S" .. start .. name)
                     }
                 end
             end
