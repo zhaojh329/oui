@@ -9,7 +9,7 @@ OUI_HTTPD_BIN="/usr/sbin/oui-httpd"
 PX5G_BIN="/usr/sbin/px5g"
 OPENSSL_BIN="/usr/bin/openssl"
 
-NO_AUTH_FILE="/etc/oui-httpd/no-auth.json"
+NO_AUTH_FILE="/var/run/oui-httpd-no-auth.json"
 
 generate_keys() {
 	local cfg="$1"
