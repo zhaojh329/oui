@@ -110,8 +110,10 @@ static struct session *session_create(int timeout, const char *username, const c
     if (!s)
         return NULL;
 
-    if (generate_sid(s->id))
+    if (generate_sid(s->id)) {
+        free(s);
         return NULL;
+    }
 
     s->avl.key = s->id;
     s->timeout = timeout;

@@ -55,7 +55,7 @@ static int lua_hexaddr(lua_State *L)
              a.s_addr <<= 1)
             bits++;
 
-        sprintf(as + strlen(as), "/%u", bits);
+        sprintf(as + strlen(as), "/%d", bits);
     }
 
     lua_pushstring(L, as);

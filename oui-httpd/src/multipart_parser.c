@@ -13,10 +13,13 @@ static void multipart_log(const char * format, ...)
 {
 #ifdef DEBUG_MULTIPART
     va_list args;
-    va_start(args, format);
 
     fprintf(stderr, "[HTTP_MULTIPART_PARSER] %s:%d: ", __FILE__, __LINE__);
+
+    va_start(args, format);
     vfprintf(stderr, format, args);
+    va_end(args);
+
     fprintf(stderr, "\n");
 #endif
 }
