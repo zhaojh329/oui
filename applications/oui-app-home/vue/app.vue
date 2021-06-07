@@ -119,14 +119,11 @@ export default {
     leasetime (expires) {
       return expires <= 0 ? this.$t('home.expired') : '%t'.format(expires)
     },
-    wifirate (sta, rx) {
-      const rate = rx ? sta.rx : sta.tx
-      let s = '%.1f Mbit/s'.format(rate.rate / 1000)
-      s += ', %dMHz'.format(rate['40mhz'] ? 40 : 20)
-
-      if (rate.mcs > 0) { s += ', MCS ' + rate.mcs }
-
-      if (rate.short_gi) { s += ', Short GI' }
+    wifirate (sta, t) {
+      const rate = sta[t + '_rate']
+      const bw = sta[t + '_mhz']
+      let s = '%.1f Mbit/s'.format(rate / 1000)
+      s += `, ${bw}MHz`
 
       return s
     },
@@ -136,10 +133,10 @@ export default {
       return `/icons/signal_${q}.png`
     },
     formatWifiRxRate (row) {
-      return this.wifirate(row, true)
+      return this.wifirate(row, 'rx')
     },
     formatWifiTxRate (row) {
-      return this.wifirate(row, false)
+      return this.wifirate(row, 'tx')
     },
     updateCpuUsage () {
       this.$rpc.call('system', 'cpu_time').then(times => {

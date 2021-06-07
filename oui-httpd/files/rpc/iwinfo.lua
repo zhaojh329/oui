@@ -14,7 +14,7 @@ function M.devices()
         end
     end
 
-    return devices
+    return { devices = devices }
 end
 
 function M.info(params)

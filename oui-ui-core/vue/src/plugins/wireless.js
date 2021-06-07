@@ -9,8 +9,8 @@ wireless.getDevices = function () {
       return
     }
 
-    rpc.call('iwinfo', 'devices').then(devices => {
-      this.devices = devices
+    rpc.call('iwinfo', 'devices').then(r => {
+      this.devices = r.devices || []
       resolve(this.devices)
     })
   })
@@ -34,7 +34,12 @@ wireless.getAssoclist = function () {
         const assoclist = []
 
         rs.forEach(r => {
-          assoclist.push(...r.results)
+          if (Array.isArray(r)) r = {}
+          for (const mac in r) {
+            const sta = r[mac]
+            sta.mac = mac
+            assoclist.push(sta)
+          }
         })
 
         resolve(assoclist)
