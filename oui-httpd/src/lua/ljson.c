@@ -59,9 +59,22 @@ static int json_decode(lua_State *L)
     return 1;
 }
 
+static int json_decodef(lua_State *L)
+{
+    const char *path = luaL_checkstring(L, 1);
+    json_t *root = json_load_file(path, 0, NULL);
+
+    json_to_lua(root, L);
+
+    json_decref(root);
+
+    return 1;
+}
+
 static const luaL_Reg regs[] = {
     {"encode", json_encode},
     {"decode", json_decode},
+    {"decodef", json_decodef},
     {NULL, NULL}
 };
 
