@@ -25,7 +25,7 @@
 #include "../lua2json.h"
 #include "lua_compat.h"
 
-static int json_encode(lua_State *L)
+static int ljson_encode(lua_State *L)
 {
     bool encode_empty_table_as_array;
     json_t *ret;
@@ -47,10 +47,27 @@ static int json_encode(lua_State *L)
     return 1;
 }
 
-static int json_decode(lua_State *L)
+static int json_decode(lua_State *L, bool is_file)
 {
-    const char *s = luaL_checkstring(L, 1);
-    json_t *root = json_loads(s, 0, NULL);
+    const char *name = luaL_checkstring(L, 1);
+    json_error_t error;
+    json_t *root;
+
+    if (is_file)
+        root = json_load_file(name, 0, &error);
+    else
+        root = json_loads(name, 0, &error);
+
+    if (!root) {
+        char text[JSON_ERROR_TEXT_LENGTH + 4];
+
+        lua_pushnil(L);
+
+        snprintf(text, sizeof(text), "%d: %s", error.line, error.text);
+        lua_pushstring(L, text);
+
+        return 2;
+    }
 
     json_to_lua(root, L);
 
@@ -59,22 +76,20 @@ static int json_decode(lua_State *L)
     return 1;
 }
 
-static int json_decodef(lua_State *L)
+static inline int ljson_decode(lua_State *L)
 {
-    const char *path = luaL_checkstring(L, 1);
-    json_t *root = json_load_file(path, 0, NULL);
+    return json_decode(L, false);
+}
 
-    json_to_lua(root, L);
-
-    json_decref(root);
-
-    return 1;
+static inline int ljson_decodef(lua_State *L)
+{
+    return json_decode(L, true);
 }
 
 static const luaL_Reg regs[] = {
-    {"encode", json_encode},
-    {"decode", json_decode},
-    {"decodef", json_decodef},
+    {"encode", ljson_encode},
+    {"decode", ljson_decode},
+    {"decodef", ljson_decodef},
     {NULL, NULL}
 };
 
