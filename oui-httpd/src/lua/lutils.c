@@ -203,6 +203,25 @@ static void read_all(lua_State *L, int fd)
     luaL_pushresult(&b);
 }
 
+static int __sleep(lua_Number delay)
+{
+    struct timespec req;
+    struct timespec rem;
+
+    req.tv_sec = (time_t)delay;
+    req.tv_nsec = (delay - req.tv_sec) * 1000000000;
+
+    while (nanosleep(&req, &rem)) {
+        if (errno != EINTR)
+            return -1;
+
+        req.tv_sec = rem.tv_sec;
+        req.tv_nsec = rem.tv_nsec;
+    }
+
+    return 0;
+}
+
 static int lua_exec_wait(lua_State *L)
 {
     struct exec_result *er = (struct exec_result *)luaL_checkudata(L, 1, EXEC_RES_MT_NAME);
@@ -257,16 +276,33 @@ static int lua_exec_gc(lua_State *L)
     return 0;
 }
 
+/**
+ * local code, stdout, stderr = utils.exec("echo", "hello"):wait()
+ *
+ * -- delay 1.1s before execution
+ * utils.exec({ cmd = "echo", delay = 1.1 }, "hello")
+ */
 static int lua_exec(lua_State *L)
 {
-    const char *cmd = luaL_checkstring(L, 1);
+    const char *cmd = NULL;
     struct exec_result *er;
     int n = lua_gettop(L);
+    lua_Number delay = 0.0;
     int opipe[2] = {};
     int epipe[2] = {};
     pid_t pid;
 
-    if (which(cmd)) {
+    if (lua_istable(L, 1)) {
+        lua_getfield(L, 1, "cmd");
+        cmd = luaL_checkstring(L, -1);
+
+        lua_getfield(L, 1, "delay");
+        delay = lua_tonumber(L, -1);
+    } else {
+        cmd = luaL_checkstring(L, 1);
+    }
+
+    if (!cmd || which(cmd)) {
         lua_pushnil(L);
         lua_pushstring(L, "Command not found");
         return 2;
@@ -293,6 +329,8 @@ static int lua_exec(lua_State *L)
         close(epipe[1]);
 
         args = malloc(sizeof(char *) * 2);
+        if (!args)
+            exit(1);
 
         args[0] = cmd;
         args[1] = NULL;
@@ -300,12 +338,19 @@ static int lua_exec(lua_State *L)
         j = 1;
 
         for (i = 2; i <= n; i++) {
-            args = realloc(args, sizeof(char *) * (2 + j));
+            const char **tmp = realloc(args, sizeof(char *) * (2 + j));
+            if (!tmp)
+                exit(1);
+            args = tmp;
             args[j++] = lua_tostring(L, i);
             args[j] = NULL;
         }
 
+        __sleep(delay);
+
         execvp(cmd, (char *const *) args);
+
+        free(args);
     } else {
         /* Close unused write end */
         close(opipe[1]);
@@ -342,22 +387,11 @@ err:
 static int lua_sleep(lua_State *L)
 {
     lua_Number delay = lua_tonumber(L, 1);
-    struct timespec req;
-    struct timespec rem;
 
-    req.tv_sec = (time_t)delay;
-    req.tv_nsec = (delay - req.tv_sec) * 1000000000;
-
-    while (nanosleep(&req, &rem)) {
-        if (errno != EINTR) {
-            lua_pushnil(L);
-            lua_pushstring(L, strerror(errno));
-
-            return 2;
-        }
-
-        req.tv_sec = rem.tv_sec;
-        req.tv_nsec = rem.tv_nsec;
+    if (__sleep(delay)) {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
     }
 
     lua_pushinteger(L, 0);
