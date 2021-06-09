@@ -168,7 +168,7 @@ int main(int argc, char **argv)
     log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
     if (cert && key) {
-#if UHTTPD_SSL_SUPPORT
+#ifdef SSL_SUPPORT
         if (srv->ssl_init(srv, cert, key) < 0)
             goto srv_err;
 #endif
