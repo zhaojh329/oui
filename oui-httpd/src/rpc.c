@@ -24,6 +24,7 @@
 
 #include <uhttpd/uhttpd.h>
 #include <sys/sysinfo.h>
+#include <netinet/in.h>
 #include <pthread.h>
 #include <lauxlib.h>
 #include <sqlite3.h>
@@ -672,6 +673,9 @@ static void *rpc_call_worker(void *arg)
     log_info("rpc worker(%d) running\n", id);
 
     while (true) {
+        char remote_addr[INET6_ADDRSTRLEN];
+        int remote_port;
+
         is_err = true;
         res = NULL;
 
@@ -728,6 +732,15 @@ static void *rpc_call_worker(void *arg)
             lua_pushstring(L, s->aclgroup);
             lua_setfield(L, -2, "aclgroup");
         }
+
+        saddr2str((struct sockaddr *)ctx->conn->get_addr(ctx->conn),
+            remote_addr, sizeof(remote_addr), &remote_port);
+
+        lua_pushinteger(L, remote_port);
+        lua_setfield(L, -2, "remote_port");
+
+        lua_pushstring(L, remote_addr);
+        lua_setfield(L, -2, "remote_addr");
 
         lua_pushboolean(L, ctx->is_local);
         lua_setfield(L, -2, "is_local");
