@@ -88,7 +88,7 @@ function buildRoutes (menus) {
 }
 
 menu.load = function (cb) {
-  rpc.call('oui', 'menu').then(r => {
+  rpc.call('ui', 'menu').then(r => {
     const menus = parseMenus(r.menu)
     const routes = buildRoutes(menus)
     cb(menus, routes)

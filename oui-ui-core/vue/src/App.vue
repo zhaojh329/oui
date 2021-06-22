@@ -37,13 +37,13 @@ export default {
     }
   },
   created () {
-    this.$rpc.call('oui', 'get_lang').then(({ lang }) => {
+    this.$rpc.call('ui', 'get_lang').then(({ lang }) => {
       this.$store.commit('setLang', lang)
       if (lang === 'auto') lang = navigator.language.toLowerCase()
 
       if (lang === 'zh') lang = 'zh-cn'
 
-      this.$rpc.call('oui', 'load_locales', { locale: lang }).then(locales => {
+      this.$rpc.call('ui', 'load_locales', { locale: lang }).then(locales => {
         /* Fix: empty Lua table to json */
         if (!Array.isArray(locales)) locales = []
 

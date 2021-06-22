@@ -52,7 +52,7 @@ export default {
     setPassword () {
       this.$refs.form.validate(valid => {
         if (!valid) return
-        this.$rpc.call('oui', 'set_password', {
+        this.$rpc.call('ui', 'set_password', {
           username: this.$session.username(),
           password: this.form.password
         }).then(() => {

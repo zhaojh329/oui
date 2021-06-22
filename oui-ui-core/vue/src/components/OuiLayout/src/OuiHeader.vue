@@ -87,14 +87,14 @@ export default {
     },
     onLangClick (item) {
       const lang = item.key
-      this.$rpc.call('oui', 'set_lang', { lang: lang }).then(({ lang }) => {
+      this.$rpc.call('ui', 'set_lang', { lang: lang }).then(({ lang }) => {
         this.$store.commit('setLang', lang)
         if (lang === 'auto') { lang = navigator.language.toLowerCase() }
 
         if (lang === 'zh') lang = 'zh-cn'
 
         if (!this.$i18n.loaded(lang)) {
-          this.$rpc.call('oui', 'load_locales', { locale: lang }).then(locales => {
+          this.$rpc.call('ui', 'load_locales', { locale: lang }).then(locales => {
             locales.forEach(locale => this.$i18n.mergeLocaleMessage(lang, locale))
             this.$i18n.locale = lang
           })

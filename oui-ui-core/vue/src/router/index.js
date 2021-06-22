@@ -74,7 +74,7 @@ function firstLogin () {
   return new Promise(resolve => {
     const value = sessionStorage.getItem('__oui_first_login')
     if (value === null) {
-      rpc.call('oui', 'first_login').then(r => {
+      rpc.call('ui', 'first_login').then(r => {
         sessionStorage.setItem('__oui_first_login', r.first)
         resolve(r.first)
       })

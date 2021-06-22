@@ -90,7 +90,7 @@ export default {
       if (lang === 'zh') lang = 'zh-cn'
 
       if (!this.$i18n.loaded(lang)) {
-        this.$rpc.call('oui', 'load_locales', { locale: lang }).then(locales => {
+        this.$rpc.call('ui', 'load_locales', { locale: lang }).then(locales => {
           locales.forEach(locale => this.$i18n.mergeLocaleMessage(lang, locale))
           this.$i18n.locale = lang
         })
@@ -101,7 +101,7 @@ export default {
     submit () {
       this.$refs.form.validate(valid => {
         if (!valid) return
-        this.$rpc.call('oui', 'first_set', {
+        this.$rpc.call('ui', 'first_set', {
           lang: this.form.lang,
           username: 'admin',
           password: this.form.password
