@@ -11,6 +11,10 @@ set_target_properties(lnetwork PROPERTIES OUTPUT_NAME network PREFIX "")
 add_library(lfs MODULE lfs.c)
 set_target_properties(lfs PROPERTIES OUTPUT_NAME fs PREFIX "")
 
+add_library(lsystem MODULE lsystem.c)
+target_link_libraries(lsystem crypt)
+set_target_properties(lsystem PROPERTIES OUTPUT_NAME system PREFIX "")
+
 if (NOT LUAPATH)
 	execute_process(
 		COMMAND  lua -e "for k in string.gmatch(package.cpath .. \";\", \"([^;]+)/..so;\") do if k:sub(1,1) == \"/\" then print(k) break end end"
@@ -40,6 +44,10 @@ install(
 	DESTINATION ${LUAPATH}/oui
 )
 
+install(
+	TARGETS lsystem
+	DESTINATION ${LUAPATH}/oui
+)
 
 install(
 	FILES utils.lua rpc.lua

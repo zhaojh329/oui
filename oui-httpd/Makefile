@@ -93,6 +93,7 @@ define Package/oui-httpd/install
 	$(CP) $(PKG_BUILD_DIR)/lua/json.so $(1)/usr/lib/lua/oui
 	$(CP) $(PKG_BUILD_DIR)/lua/network.so $(1)/usr/lib/lua/oui
 	$(CP) $(PKG_BUILD_DIR)/lua/fs.so $(1)/usr/lib/lua/oui
+	$(CP) $(PKG_BUILD_DIR)/lua/system.so $(1)/usr/lib/lua/oui
 	$(CP) $(PKG_BUILD_DIR)/lua/utils.so $(1)/usr/lib/lua/oui/utils
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/lua/utils.lua $(1)/usr/lib/lua/oui
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/lua/rpc.lua $(1)/usr/lib/lua/oui
