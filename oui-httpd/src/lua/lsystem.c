@@ -63,9 +63,9 @@ static int lua_password(lua_State *L)
     const char *new_password = luaL_checkstring(L, 3);
     char template[] = "shadow-XXXXXX";
     bool changed = false;
+    struct spwd *sp;
     FILE *ofp, *nfp;
     int ofd, nfd;
-    char buf[512];
     long size;
     int ret = 2;
 
@@ -91,23 +91,18 @@ static int lua_password(lua_State *L)
         goto err;
     }
 
-    while (true) {
-        struct spwd sp, *spp;
-
-        if (fgetspent_r(ofp, &sp, buf, sizeof(buf), &spp))
-            break;
-
-        if (!strcmp(sp.sp_namp, username)) {
+    while ((sp = fgetspent(ofp))) {
+        if (!strcmp(sp->sp_namp, username)) {
             struct crypt_data data = {};
             char *np;
 
-            np = crypt_r(new_password, sp.sp_pwdp, &data);
-            strcpy(sp.sp_pwdp, np);
+            np = crypt_r(new_password, sp->sp_pwdp, &data);
+            strcpy(sp->sp_pwdp, np);
 
             changed = true;
         }
 
-        putspent(&sp, nfp);
+        putspent(sp, nfp);
     }
 
     fclose(ofp);
