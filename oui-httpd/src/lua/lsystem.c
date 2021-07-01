@@ -85,7 +85,7 @@ static int lua_password(lua_State *L)
     nfp = fdopen(nfd, "w");
 
     ofp = fopen("/etc/shadow", "r");
-    if (ofp < 0) {
+    if (!ofp) {
         lua_pushboolean(L, false);
         lua_pushstring(L, strerror(errno));
         goto err;
