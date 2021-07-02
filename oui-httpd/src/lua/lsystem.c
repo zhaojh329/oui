@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
-#include <sys/sendfile.h>
 #include <stdbool.h>
 #include <lauxlib.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -47,8 +48,12 @@ static bool login_test(const char *username, const char *password)
     if (getspnam_r(username, &sp, buf, sizeof(buf), &spp))
         return false;
 
-    if (!spp || !spp->sp_pwdp[1])
+    if (!spp)
         return false;
+
+    /* empty password */
+    if (!spp->sp_pwdp || !spp->sp_pwdp[0])
+        return true;
 
     if (!password)
         password = "";
@@ -56,93 +61,102 @@ static bool login_test(const char *username, const char *password)
     return !strcmp(crypt_r(password, spp->sp_pwdp, &data), spp->sp_pwdp);
 }
 
+static int lua_login(lua_State *L)
+{
+    const char *username = luaL_checkstring(L, 1);
+    const char *password = lua_tostring(L, 2);
+    bool valid = login_test(username, password);
+
+    lua_pushboolean(L, valid);
+
+    return 1;
+}
+
 static int lua_password(lua_State *L)
 {
     const char *username = luaL_checkstring(L, 1);
     const char *old_password = luaL_checkstring(L, 2);
     const char *new_password = luaL_checkstring(L, 3);
-    char template[] = "shadow-XXXXXX";
-    bool changed = false;
-    struct spwd *sp;
-    FILE *ofp, *nfp;
-    int ofd, nfd;
-    long size;
-    int ret = 2;
+    const char *cmd = "/bin/passwd";
+    int fd, fds[2];
+    struct stat s;
+    pid_t pid;
 
     if (!login_test(username, old_password)) {
-        lua_pushboolean(L, false);
-        lua_pushstring(L, "Operation not permitted");
+        lua_pushinteger(L, -1);
+        lua_pushstring(L, "operation not permitted");
         return 2;
     }
 
-    nfd = mkostemp(template, O_RDWR);
-    if (nfd < 0) {
-        lua_pushboolean(L, false);
+    if (stat(cmd, &s)) {
+        cmd = "/usr/bin/passwd";
+
+        if (stat(cmd, &s)) {
+            lua_pushinteger(L, -2);
+            lua_pushstring(L, "not found command");
+            return 2;
+        }
+    }
+
+    if (!(s.st_mode & S_IXUSR)) {
+        lua_pushinteger(L, -1);
+        lua_pushstring(L, "operation not permitted");
+        return 2;
+    }
+
+    if (pipe(fds)) {
+        lua_pushinteger(L, -3);
         lua_pushstring(L, strerror(errno));
         return 2;
     }
 
-    nfp = fdopen(nfd, "w");
+    switch ((pid = fork())) {
+    case -1:
+        close(fds[0]);
+        close(fds[1]);
 
-    ofp = fopen("/etc/shadow", "r");
-    if (!ofp) {
-        lua_pushboolean(L, false);
+        lua_pushinteger(L, -3);
         lua_pushstring(L, strerror(errno));
-        goto err;
-    }
+        return 2;
 
-    while ((sp = fgetspent(ofp))) {
-        if (!strcmp(sp->sp_namp, username)) {
-            struct crypt_data data = {};
-            char *np;
+    case 0:
+        dup2(fds[0], 0);
+        close(fds[0]);
+        close(fds[1]);
 
-            np = crypt_r(new_password, sp->sp_pwdp, &data);
-            strcpy(sp->sp_pwdp, np);
-
-            changed = true;
+        if ((fd = open("/dev/null", O_RDWR)) > -1) {
+            dup2(fd, 1);
+            dup2(fd, 2);
+            close(fd);
         }
 
-        putspent(sp, nfp);
+        execl(cmd, "passwd", username, NULL);
+
+        return 0;
+
+    default:
+        close(fds[0]);
+
+        if (write(fds[1], new_password, strlen(new_password)));
+        if (write(fds[1], "\n", 1));
+
+        usleep(100 * 1000);
+
+        if (write(fds[1], new_password, strlen(new_password)));
+        if (write(fds[1], "\n", 1));
+
+        close(fds[1]);
+
+        waitpid(pid, NULL, 0);
+
+        lua_pushinteger(L, 0);
+
+        return 1;
     }
-
-    fclose(ofp);
-
-    if (!changed) {
-        lua_pushboolean(L, false);
-        lua_pushstring(L, "not found");
-        goto err;
-    }
-
-    fflush(nfp);
-
-    size = ftell(nfp);
-
-    nfd = fileno(nfp);
-
-    lseek(nfd, 0, SEEK_SET);
-
-    ofd = open("/etc/shadow", O_WRONLY | O_TRUNC);
-    if (ofd < 0) {
-        lua_pushboolean(L, false);
-        lua_pushstring(L, strerror(errno));
-        goto err;
-    }
-
-    sendfile(ofd, nfd, NULL, size);
-
-    close(ofd);
-
-    ret = 1;
-    lua_pushboolean(L, true);
-
-err:
-    close(nfd);
-    unlink(template);
-
-    return ret;
 }
 
 static const luaL_Reg regs[] = {
+    {"login", lua_login},
     {"password", lua_password},
     {NULL, NULL}
 };
