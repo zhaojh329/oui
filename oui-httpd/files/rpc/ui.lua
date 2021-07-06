@@ -48,19 +48,12 @@ function M.menu(params)
             local menu = cjson.decode(utils.readfile(file))
 
             for path, item in pairs(menu) do
-                local access, files = true, true
-                local tmp = {}
+                local files = not item.files or  menu_files(item.files)
 
-                for k, v in pairs(item) do
-                    if k == "files" then
-                        files = menu_files(v)
-                    else
-                        tmp[k] = v
-                    end
-                end
+                item.files = nil
 
                 if files and rpc.access("menu", "/" .. path, "r") then
-                    menus[path] = tmp
+                    menus[path] = item
                 end
             end
         end
