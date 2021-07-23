@@ -24,10 +24,14 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
 #include <lauxlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <string.h>
+#include <net/if.h>
+#include <unistd.h>
 
 #include "lua_compat.h"
 
@@ -153,7 +157,7 @@ static int lua_ipcalc(lua_State *L)
 
         lua_rawgeti(L, 1, 2);
 
-        switch(lua_type(L, -1)) {
+        switch (lua_type(L, -1)) {
         case LUA_TNUMBER:
             prefix = lua_tointeger(L, -1);
             break;
@@ -210,10 +214,56 @@ static int lua_ipcalc(lua_State *L)
     return 1;
 }
 
+static int ifup(const char *ifname, bool up)
+{
+    struct ifreq ifr;
+    int sock;
+    int ret;
+
+    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock < 0)
+        return -1;
+
+    strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+
+    ioctl(sock, SIOCGIFFLAGS, &ifr);
+
+    if (up)
+        ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
+    else
+        ifr.ifr_flags &= ~(IFF_UP | IFF_RUNNING);
+
+    ret = ioctl(sock, SIOCSIFFLAGS, &ifr);
+
+    close(sock);
+
+    return ret;
+}
+
+static int lua_ifup(lua_State *L)
+{
+    const char *ifname = luaL_checkstring(L, 1);
+
+    lua_pushboolean(L, !ifup(ifname, true));
+
+    return 1;
+}
+
+static int lua_ifdown(lua_State *L)
+{
+    const char *ifname = luaL_checkstring(L, 1);
+
+    lua_pushboolean(L, !ifup(ifname, false));
+
+    return 1;
+}
+
 static const luaL_Reg regs[] = {
     {"hexaddr",  lua_hexaddr},
     {"hex6addr", lua_hex6addr},
     {"ipcalc", lua_ipcalc},
+    {"ifup", lua_ifup},
+    {"ifdown", lua_ifdown},
     {NULL, NULL}
 };
 
