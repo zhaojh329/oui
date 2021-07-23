@@ -14,8 +14,8 @@ M.readfile = function(name, n)
     return data
 end
 
-M.writefile = function (name, data)
-    local f = io.open(name, "w")
+M.writefile = function (name, data, append)
+    local f = io.open(name, append and "a" or "w")
     if not f then return nil end
     f:write(data)
     f:close()
