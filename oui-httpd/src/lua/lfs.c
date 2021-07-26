@@ -136,6 +136,9 @@ static int dir_iter(lua_State *L)
     DIR *d = *(DIR **)lua_touserdata(L, lua_upvalueindex(1));
     struct dirent *e;
 
+    if (!d)
+        return 0;
+
     if ((e = readdir(d))) {
         lua_pushstring(L, e->d_name);
         return 1;
@@ -153,8 +156,6 @@ static int lua_dir(lua_State *L)
     lua_setmetatable(L, -2);
 
     *d = opendir(path);
-    if (!*d)
-        luaL_error(L, "cannot open %s: %s\n", path, strerror(errno));
 
     lua_pushcclosure(L, dir_iter, 1);
 
