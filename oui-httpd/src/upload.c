@@ -226,21 +226,21 @@ static struct multipart_parser *init_parser(struct uh_connection *conn)
 
 void serve_upload(struct uh_connection *conn, int event)
 {
-    static struct multipart_parser *p;
+    if (!conn->userdata) {
+        conn->userdata = init_parser(conn);
+        if (!conn->userdata)
+            return;
+    }
 
     if (event == UH_EV_BODY) {
+        struct multipart_parser *p = conn->userdata;
         struct uh_str body = conn->extract_body(conn);
-
-        if (!p) {
-            p = init_parser(conn);
-            if (!p)
-                return;
-        }
 
         multipart_parser_execute(p, body.p, body.len);
     } else if (event == UH_EV_COMPLETE) {
+        struct multipart_parser *p = conn->userdata;
+
         multipart_parser_free(p);
-        p = NULL;
         conn->done(conn);
     }
 }
