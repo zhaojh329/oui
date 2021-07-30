@@ -236,7 +236,8 @@ void serve_upload(struct uh_connection *conn, int event)
         struct multipart_parser *p = conn->userdata;
         struct uh_str body = conn->extract_body(conn);
 
-        multipart_parser_execute(p, body.p, body.len);
+        if (multipart_parser_execute(p, body.p, body.len) != body.len)
+            multipart_parser_free(p);
     } else if (event == UH_EV_COMPLETE) {
         struct multipart_parser *p = conn->userdata;
 
