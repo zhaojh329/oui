@@ -394,6 +394,8 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
 
     pthread_cond_signal(&rpc_context.cond);
 
+    log_debug("prepare call %s.%s...\n", object, method);
+
     return RPC_METHOD_RETURN_DEFERRED;
 }
 
@@ -754,6 +756,8 @@ static void *rpc_call_worker(void *arg)
         } else {
             lua_newtable(L);
         }
+
+        log_debug("call %s.%s...\n", obj->value, ctx->method);
 
         if (lua_pcall(L, 1, 2, 0)) {
             const char *err_msg = lua_tostring(L, -1);
