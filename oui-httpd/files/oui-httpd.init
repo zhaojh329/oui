@@ -110,8 +110,12 @@ start_instance() {
 
 	[ -n "$home" ] && procd_append_param  command --home "$home"
 	[ -n "$index" ] && procd_append_param  command --index "$index"
-	[ $verbose -gt 0 ] && procd_append_param command -vvv
-	[ $verbose -gt 1 ] && procd_append_param command -v
+	
+	while [ $verbose -gt 0 ];
+	do
+		procd_append_param command -v
+		let verbose=verbose-1
+	done
 
 	procd_set_param respawn
 	procd_close_instance
