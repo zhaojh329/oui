@@ -69,9 +69,11 @@ static void usage(const char *prog)
 {
     fprintf(stderr, "Usage: %s [option]\n"
                     "          -a [addr:]port    # Bind to specified address and port, multiple allowed\n"
+#ifdef SSL_SUPPORT
                     "          -s [addr:]port    # Like -a but provide HTTPS on this port\n"
                     "          -C file           # server certificate file\n"
                     "          -K file           # server private key file\n"
+#endif
                     "          --rpc dir         # rpc directory(default is .)\n"
                     "          --home dir        # document root(default is .)\n"
                     "          --index oui.html  # index page(default is oui.html)\n"
@@ -96,6 +98,7 @@ int main(int argc, char **argv)
 {
     struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
+    const char *shortopts = "a:C:K:w:v";
     int level = LOG_ERR;
     struct uh_server *srv = NULL;
     const char *rpc_dir = ".";
@@ -104,8 +107,10 @@ int main(int argc, char **argv)
     const char *index_page = "oui.html";
     const char *no_auth_file = NULL;
     bool local_auth = false;
+#ifdef SSL_SUPPORT
     const char *cert = NULL;
     const char *key = NULL;
+#endif
     int option_index;
     int nworker = -1;
     int ret = 0;
@@ -115,12 +120,17 @@ int main(int argc, char **argv)
     if (!srv)
         return -1;
 
-    while ((opt = getopt_long(argc, argv, "a:s:C:K:w:v", long_options, &option_index)) != -1) {
+#ifdef SSL_SUPPORT
+    shortopts = "a:s:C:K:w:v";
+#endif
+
+    while ((opt = getopt_long(argc, argv, shortopts, long_options, &option_index)) != -1) {
         switch (opt) {
         case 'a':
             if (srv->listen(srv, optarg, false) < 1)
                 goto srv_err;
             break;
+#ifdef SSL_SUPPORT
         case 's':
             if (srv->listen(srv, optarg, true) < 1)
                 goto srv_err;
@@ -131,6 +141,7 @@ int main(int argc, char **argv)
         case 'K':
             key = optarg;
             break;
+#endif
         case 'w':
             nworker = atoi(optarg);
             break;
@@ -167,12 +178,12 @@ int main(int argc, char **argv)
 
     log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
-    if (cert && key) {
 #ifdef SSL_SUPPORT
+    if (cert && key) {
         if (srv->ssl_init(srv, cert, key) < 0)
             goto srv_err;
-#endif
     }
+#endif
 
     signal(SIGPIPE, SIG_IGN);
 
