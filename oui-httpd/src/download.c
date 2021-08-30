@@ -27,13 +27,18 @@
 #include <ctype.h>
 #include <errno.h>
 
+#include "session.h"
+#include "utils.h"
+
 struct download_params {
+    char sid[33];
     char path[512];
     char filename[256];
 };
 
 enum {
     PARSE_STATE_UNKNOWN,
+    PARSE_STATE_SID,
     PARSE_STATE_PATH,
     PARSE_STATE_FILENAME
 };
@@ -46,7 +51,9 @@ static void parse_data(const char *body, int body_len, struct download_params *p
 
     for (p = body, i = 0; i < body_len; i++) {
         if (body[i] == '=') {
-            if (!strncmp(p, "path", 3))
+            if (!strncmp(p, "sid", 3))
+                s = PARSE_STATE_SID;
+            else if (!strncmp(p, "path", 3))
                 s = PARSE_STATE_PATH;
             else if (!strncmp(p, "filename", 3))
                 s = PARSE_STATE_FILENAME;
@@ -60,6 +67,9 @@ static void parse_data(const char *body, int body_len, struct download_params *p
                 len++;
 
             switch (s) {
+            case PARSE_STATE_SID:
+                strncpy(params->sid, p, len);
+                break;
             case PARSE_STATE_PATH:
                 strncpy(params->path, p, len);
                 break;
@@ -103,6 +113,11 @@ void serve_download(struct uh_connection *conn, int event)
     parse_data(body.p, body.len, &params);
 
     if (!params.path[0] || !params.filename[0]) {
+        conn->error(conn, HTTP_STATUS_FORBIDDEN, NULL);
+        return;
+    }
+
+    if (!is_loopback_addr(conn->get_addr(conn)) && (!params.sid[0] || !session_get(params.sid))) {
         conn->error(conn, HTTP_STATUS_FORBIDDEN, NULL);
         return;
     }

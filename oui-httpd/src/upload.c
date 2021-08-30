@@ -28,9 +28,12 @@
 #include <fcntl.h>
 
 #include "multipart_parser.h"
+#include "session.h"
+#include "utils.h"
 
 enum part {
     PART_UNKNOWN,
+    PART_SID,
     PART_PATH,
     PART_FILE
 };
@@ -40,10 +43,13 @@ struct state {
     bool is_content_disposition;
     enum part parttype;
     char path[256];
+    char sid[33];
+    bool authed;
     int fd;
 };
 
 const char *parts[] = {
+    "sid",
     "path",
     "file"
 };
@@ -91,6 +97,11 @@ static int data_begin_cb(struct multipart_parser *p)
     struct uh_connection *conn = st->conn;
 
     if (st->parttype == PART_FILE) {
+        if (!st->authed && !is_loopback_addr(conn->get_addr(conn))) {
+            conn->error(conn, HTTP_STATUS_UNAUTHORIZED, NULL);
+            return 1;
+        }
+
         if (!st->path[0]) {
             log_err("Not found path\n");
             conn->error(conn, HTTP_STATUS_FORBIDDEN, NULL);
@@ -115,6 +126,14 @@ static int data_cb(struct multipart_parser *p, const char *data, size_t len)
     int wlen = len;
 
     switch (st->parttype) {
+    case PART_SID:
+        if (strlen(st->sid) + len > sizeof(st->sid) - 1) {
+            log_err("sid too long\n");
+            return 1;
+        }
+        strncat(st->sid, data, len);
+        break;
+
     case PART_PATH:
         if (strlen(st->path) + len > sizeof(st->path) - 1) {
             log_err("path too long\n");
@@ -144,7 +163,10 @@ static int data_end_cb(struct multipart_parser *p)
 {
     struct state *st = multipart_parser_get_data(p);
 
-    if (st->parttype == PART_FILE) {
+    if (st->parttype == PART_SID) {
+        if (session_get(st->sid))
+            st->authed = true;
+    } else if (st->parttype == PART_FILE) {
         close(st->fd);
     }
 

@@ -2,6 +2,7 @@
   <div>
     <a-card :title="$t('upgrade.Backup / Restore')" style="margin-bottom: 15px">
       <form ref="backup" method="POST" action="/download">
+        <input v-show="false" type="text" :value="sid" name="sid"/>
         <input v-show="false" type="text" value="/tmp/backup.tar.gz" name="path"/>
         <input v-show="false" type="text" value="backup.tar.gz" name="filename"/>
       </form>
@@ -9,13 +10,13 @@
       <a-button type="primary" size="small" @click="generateArchive" style="margin-right: 10px">{{ $t('upgrade.Generate archive') }}</a-button>
       <a-button type="danger" size="small" @click="performReset">{{ $t('upgrade.Perform reset') }}</a-button>
       <p style="margin-bottom: 10px; margin-top: 10px">{{ $t('upgrade.RestoreDesc') }}</p>
-      <a-upload action="/upload" @change="onUploadArchive" :data="{path: '/tmp/backup.tar.gz'}">
+      <a-upload action="/upload" @change="onUploadArchive" :data="{sid: sid, path: '/tmp/backup.tar.gz'}">
         <a-button size="small" type="primary" icon="upload">{{ $t('upgrade.Select File') }}</a-button>
       </a-upload>
     </a-card>
     <a-card :title="$t('upgrade.Flash new firmware image')">
       <p style="margin-bottom: 10px">{{ $t('upgrade.UpgradeDesc') }}</p>
-      <a-upload action="/upload" @change="onUploadFirmware" :data="{path: '/tmp/firmware.bin'}">
+      <a-upload action="/upload" @change="onUploadFirmware" :data="{sid: sid, path: '/tmp/firmware.bin'}">
         <a-button size="small" type="primary" icon="upload">{{ $t('upgrade.Select File') }}</a-button>
       </a-upload>
     </a-card>
@@ -25,6 +26,11 @@
 <script>
 export default {
   name: 'upgrade',
+  data () {
+    return {
+      sid: ''
+    }
+  },
   methods: {
     restoreBackup () {
       return this.$rpc.call('upgrade', 'backup_restore', { path: '/tmp/backup.tar.gz' })
@@ -170,6 +176,9 @@ export default {
         }
       })
     }
+  },
+  created () {
+    this.sid = this.$session.sid()
   }
 }
 </script>
