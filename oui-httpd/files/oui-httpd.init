@@ -71,6 +71,16 @@ start_instance() {
 	procd_open_instance
 	procd_set_param command $OUI_HTTPD_BIN --rpc /usr/lib/oui-httpd/rpc --db /etc/oui-httpd/oh.db
 
+	config_get verbose "$cfg" verbose 0
+
+	while [ $verbose -gt 0 ];
+	do
+		procd_append_param command -v
+		let verbose=verbose-1
+	done
+
+	procd_set_param command --rpc /usr/lib/oui-httpd/rpc --db /etc/oui-httpd/oh.db
+
 	config_get http "$cfg" listen_http
 	for listen in $http; do
 		procd_append_param command -a "$listen"
@@ -97,7 +107,7 @@ start_instance() {
 
 	config_get home "$cfg" home
 	config_get index "$cfg" index
-	config_get verbose "$cfg" verbose 0
+	config_get cgi_prefix "$cfg" cgi_prefix
 
 	json_init
 	json_load '{}'
@@ -110,12 +120,7 @@ start_instance() {
 
 	[ -n "$home" ] && procd_append_param  command --home "$home"
 	[ -n "$index" ] && procd_append_param  command --index "$index"
-	
-	while [ $verbose -gt 0 ];
-	do
-		procd_append_param command -v
-		let verbose=verbose-1
-	done
+	[ -n "$cgi_prefix" ] && procd_append_param  command -x "$cgi_prefix"
 
 	procd_set_param respawn
 	procd_close_instance

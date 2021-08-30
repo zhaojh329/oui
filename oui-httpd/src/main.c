@@ -45,16 +45,7 @@ enum {
 };
 
 void serve_upload(struct uh_connection *conn, int event);
-
 void serve_download(struct uh_connection *conn, int event);
-
-static void default_handler(struct uh_connection *conn, int event)
-{
-    if (event != UH_EV_COMPLETE)
-        return;
-
-    conn->serve_file(conn);
-}
 
 static void signal_cb(struct ev_loop *loop, ev_signal *w, int revents)
 {
@@ -98,13 +89,14 @@ int main(int argc, char **argv)
 {
     struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
-    const char *shortopts = "a:C:K:w:v";
+    const char *shortopts = "a:C:K:w:x:v";
     int level = LOG_ERR;
     struct uh_server *srv = NULL;
     const char *rpc_dir = ".";
     const char *db = "oh.db";
     const char *home_dir = ".";
     const char *index_page = "oui.html";
+    const char *cgi_prefix = "^/cgi-bin/";
     const char *no_auth_file = NULL;
     bool local_auth = false;
 #ifdef SSL_SUPPORT
@@ -121,7 +113,7 @@ int main(int argc, char **argv)
         return -1;
 
 #ifdef SSL_SUPPORT
-    shortopts = "a:s:C:K:w:v";
+    shortopts = "a:s:C:K:w:x:v";
 #endif
 
     while ((opt = getopt_long(argc, argv, shortopts, long_options, &option_index)) != -1) {
@@ -144,6 +136,9 @@ int main(int argc, char **argv)
 #endif
         case 'w':
             nworker = atoi(optarg);
+            break;
+        case 'x':
+            cgi_prefix = optarg;
             break;
         case 'v':
             if (level == LOG_ERR)
@@ -195,10 +190,13 @@ int main(int argc, char **argv)
     srv->set_docroot(srv, home_dir);
     srv->set_index_page(srv, index_page);
 
-    srv->set_default_handler(srv, default_handler);
-    srv->add_path_handler(srv, "/rpc", serve_rpc);
-    srv->add_path_handler(srv, "/upload", serve_upload);
-    srv->add_path_handler(srv, "/download", serve_download);
+    /* use built-in handlers from libuhttpd */
+    srv->set_default_handler(srv, file_handler);
+    srv->add_path_handler(srv, cgi_prefix, cgi_handler);
+
+    srv->add_path_handler(srv, "^/rpc$", serve_rpc);
+    srv->add_path_handler(srv, "^/upload$", serve_upload);
+    srv->add_path_handler(srv, "^/download$", serve_download);
 
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
     ev_signal_start(loop, &sigint_watcher);

@@ -192,13 +192,13 @@ static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
     char *s;
 
     if (!resp) {
-        conn->error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
+        conn->send_error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
         return;
     }
 
     s = json_dumps(resp, 0);
     if (!s) {
-        conn->error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
+        conn->send_error(conn, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
         return;
     }
 
@@ -206,9 +206,11 @@ static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
 
     size = strlen(s);
 
-    conn->send_head(conn, HTTP_STATUS_OK, size, "Content-Type: application/json\r\n");
+    conn->send_head(conn, HTTP_STATUS_OK, size, NULL);
+    conn->send_header(conn, "Content-Type", "application/json");
+    conn->end_headers(conn);
     conn->send(conn, s, size);
-    conn->done(conn);
+    conn->end_response(conn);
 
     free(s);
 }
@@ -336,7 +338,7 @@ static int rpc_method_alive(struct uh_connection *conn, json_t *id, json_t *para
 
 static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *params, json_t **result)
 {
-    bool is_local = is_loopback_addr(conn->get_addr(conn)) && !rpc_context.local_auth;
+    bool is_local = is_loopback_addr(conn->get_paddr(conn)) && !rpc_context.local_auth;
     const char *sid, *object, *method;
     struct rpc_call_context *ctx;
     struct rpc_object *obj;
@@ -456,7 +458,7 @@ void serve_rpc(struct uh_connection *conn, int event)
         return;
 
     if (conn->get_method(conn) != HTTP_POST) {
-        conn->error(conn, HTTP_STATUS_METHOD_NOT_ALLOWED, NULL);
+        conn->send_error(conn, HTTP_STATUS_METHOD_NOT_ALLOWED, NULL);
         return;
     }
 
@@ -735,7 +737,7 @@ static void *rpc_call_worker(void *arg)
             lua_setfield(L, -2, "aclgroup");
         }
 
-        saddr2str((struct sockaddr *)ctx->conn->get_addr(ctx->conn),
+        saddr2str((struct sockaddr *)ctx->conn->get_paddr(ctx->conn),
             remote_addr, sizeof(remote_addr), &remote_port);
 
         lua_pushinteger(L, remote_port);
