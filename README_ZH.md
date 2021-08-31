@@ -38,9 +38,10 @@ Oui特别适合用于企业定制开发。
 # 如何编译
 ## 添加 feeds
 
-	echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
+	sed -i '1i\src-git oui https://gitee.com/zhaojh329/oui.git' feeds.conf.default
 	./scripts/feeds update oui
-	./scripts/feeds install -a -p oui
+	./scripts/feeds uninstall -a
+	./scripts/feeds install -a
 
 ## 配置
 
