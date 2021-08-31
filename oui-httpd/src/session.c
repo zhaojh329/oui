@@ -178,6 +178,9 @@ const char *session_login(const char *username, const char *password)
     char sql[256];
     int i;
 
+    if (sessions.count == MAX_SESSION)
+        return NULL;
+
     sprintf(sql, "SELECT acl, password FROM account WHERE username = '%s'", username);
 
     if (db_query(sql, login_cb, &param) < 0)
@@ -197,7 +200,7 @@ const char *session_login(const char *username, const char *password)
             return NULL;
     }
 
-    s = session_create(DEFAULT_SESSION_TIMEOUT, username, param.aclgroup);
+    s = session_create(SESSION_TIMEOUT, username, param.aclgroup);
 
     return s ? s->id : NULL;
 }

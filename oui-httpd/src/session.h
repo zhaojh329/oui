@@ -30,7 +30,8 @@
 #include "avl.h"
 #include "stdbool.h"
 
-#define DEFAULT_SESSION_TIMEOUT 300
+#define MAX_SESSION     10
+#define SESSION_TIMEOUT 300
 
 #define MAX_SID_LEN      32
 #define MAX_USERNAME_LEN 32
