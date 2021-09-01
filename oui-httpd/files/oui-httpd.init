@@ -62,6 +62,8 @@ parse_no_auth_methods() {
 	for method in $methods; do
 		json_add_string "" "$method"
 	done
+
+	json_select ..
 }
 
 start_instance() {
