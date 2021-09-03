@@ -71,7 +71,7 @@ start_instance() {
 	local listen http https home index verbose
 
 	procd_open_instance
-	procd_set_param command $OUI_HTTPD_BIN --rpc /usr/lib/oui-httpd/rpc --db /etc/oui-httpd/oh.db
+	procd_set_param command $OUI_HTTPD_BIN
 
 	config_get verbose "$cfg" verbose 0
 
