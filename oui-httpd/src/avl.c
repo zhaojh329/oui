@@ -70,7 +70,6 @@
 #include <assert.h>
 
 #include "avl.h"
-#include "list.h"
 
 /**
  * internal type save inline function to calculate the maximum of
