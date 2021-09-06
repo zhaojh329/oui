@@ -1,9 +1,9 @@
 local sqlite3 = require "lsqlite3"
 
 local M = {
-    ERROR_CODE_INVALID_PARAMS   = 4,
-    ERROR_CODE_INTERNAL_ERROR   = 5,
-    ERROR_CODE_ACCESS           = 6
+    ERROR_CODE_INVALID_PARAMS   = -32602,
+    ERROR_CODE_INTERNAL_ERROR   = -32603,
+    ERROR_CODE_ACCESS           = -32000
 }
 
 M.session = function()
