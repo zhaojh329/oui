@@ -81,7 +81,7 @@ start_instance() {
 		let verbose=verbose-1
 	done
 
-	procd_set_param command --rpc /usr/lib/oui-httpd/rpc --db /etc/oui-httpd/oh.db
+	procd_append_param command --rpc /usr/lib/oui-httpd/rpc --db /etc/oui-httpd/oh.db
 
 	config_get http "$cfg" listen_http
 	for listen in $http; do
