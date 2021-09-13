@@ -802,12 +802,12 @@ lua_broken:
 
         pthread_mutex_lock(&rpc_context.mutex);
         list_add_tail(&ctx->node, &rpc_context.end_queue);
-        pthread_mutex_unlock(&rpc_context.mutex);
 
         if (!ev_async_pending(&rpc_context.end_watcher)) {
             struct uh_connection *conn = ctx->conn;
             ev_async_send(conn->get_loop(conn), &rpc_context.end_watcher);
         }
+        pthread_mutex_unlock(&rpc_context.mutex);
     }
 
 done:
