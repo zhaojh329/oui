@@ -4,7 +4,7 @@
 #  LIBUHTTPD_INCLUDE_DIR    - The libuhttpd include directories
 #  LIBUHTTPD_LIBRARY        - The libraries needed to use libuhttpd
 
-find_path(LIBUHTTPD_INCLUDE_DIR uhttpd.h PATH_SUFFIXES include/uhttpd)
+find_path(LIBUHTTPD_INCLUDE_DIR uhttpd.h PATH_SUFFIXES uhttpd)
 find_library(LIBUHTTPD_LIBRARY uhttpd PATH_SUFFIXES lib64)
 
 string(REGEX REPLACE "uhttpd" "" LIBUHTTPD_INCLUDE_DIR "${LIBUHTTPD_INCLUDE_DIR}")
