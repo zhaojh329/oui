@@ -38,7 +38,8 @@ struct login_param {
     char pwhash[33];
 };
 
-static struct avl_tree sessions;
+static LIST_HEAD(sessions);
+static int nsession;
 
 static int generate_sid(char *dest)
 {
@@ -81,7 +82,7 @@ static void session_destroy(struct session *s)
 
     ev_timer_stop(loop, &s->tmr);
 
-    avl_delete(&sessions, &s->avl);
+    list_del(&s->node);
     free(s);
 }
 
@@ -114,7 +115,6 @@ static struct session *session_create(int timeout, const char *username, const c
         return NULL;
     }
 
-    s->avl.key = s->id;
     s->timeout = timeout;
 
     ev_timer_init(&s->tmr, session_timeout_cb, s->timeout, 0);
@@ -122,9 +122,11 @@ static struct session *session_create(int timeout, const char *username, const c
     strncpy(s->username, username, sizeof(s->username) - 1);
     strncpy(s->aclgroup, aclgroup, sizeof(s->aclgroup) - 1);
 
-    avl_insert(&sessions, &s->avl);
+    list_add(&s->node, &sessions);
 
     touch_session(s);
+
+    nsession++;
 
     return s;
 }
@@ -136,12 +138,14 @@ struct session *session_get(const char *sid)
     if (!sid)
         return NULL;
 
-    s = avl_find_element(&sessions, sid, s, avl);
-    if (!s)
-        return NULL;
+    list_for_each_entry(s, &sessions, node) {
+        if (!strcmp(s->id, sid)) {
+            touch_session(s);
+            return s;
+        }
+    }
 
-    touch_session(s);
-    return s;
+    return NULL;
 }
 
 static inline int hex2num(int x)
@@ -178,7 +182,7 @@ const char *session_login(const char *username, const char *password)
     char sql[256];
     int i;
 
-    if (sessions.count == MAX_SESSION)
+    if (nsession == MAX_SESSION)
         return NULL;
 
     sprintf(sql, "SELECT acl, password FROM account WHERE username = '%s'", username);
@@ -216,7 +220,7 @@ static void free_all_session()
 {
     struct session *s, *temp;
 
-    avl_for_each_element_safe(&sessions, s, avl, temp) {
+    list_for_each_entry_safe(s, temp, &sessions, node) {
         session_destroy(s);
     }
 }
@@ -224,9 +228,4 @@ static void free_all_session()
 void session_deinit()
 {
     free_all_session();
-}
-
-static void __init session_init()
-{
-    avl_init(&sessions, avl_strcmp, false, NULL);
 }

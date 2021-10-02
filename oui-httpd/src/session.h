@@ -25,10 +25,9 @@
 #ifndef __SESSION_H
 #define __SESSION_H
 
+#include <uhttpd/list.h>
+#include <stdbool.h>
 #include <ev.h>
-
-#include "avl.h"
-#include "stdbool.h"
 
 #define MAX_SESSION     10
 #define SESSION_TIMEOUT 300
@@ -38,7 +37,7 @@
 #define MAX_ACLGROUP_LEN 32
 
 struct session {
-    struct avl_node avl;
+    struct list_head node;
     char id[MAX_SID_LEN + 1];
     char username[MAX_USERNAME_LEN + 1];
     char aclgroup[MAX_ACLGROUP_LEN + 1];
