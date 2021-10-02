@@ -56,11 +56,11 @@ parse_no_auth_methods() {
 	then
 		json_select "$object"
 	else
-		json_add_array "$object"
+		json_add_object "$object"
 	fi
 
 	for method in $methods; do
-		json_add_string "" "$method"
+		json_add_boolean "$method" 1
 	done
 
 	json_select ..

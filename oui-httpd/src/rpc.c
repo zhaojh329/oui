@@ -37,51 +37,34 @@
 #include "lua2json.h"
 #include "session.h"
 #include "utils.h"
-#include "avl.h"
 #include "rpc.h"
 #include "db.h"
 
 struct rpc_context {
     struct ev_loop *loop;
-    struct avl_tree objects;
-    struct ev_stat stat;
+    const char *root;
     bool local_auth;
     struct list_head run_queue;
     struct list_head end_queue;
     struct ev_async end_watcher;
-    int nworker;
+    json_t *no_auth_methods;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
+    int nworker;
     bool done;
 };
 
 struct rpc_call_context {
     struct list_head node;
     struct uh_connection *conn;
-    struct rpc_object *obj;
+    const char *object;
+    const char *method;
     struct session *s;
     bool is_local;
+    json_t *params;
     json_t *args;
     json_t *id;
     json_t *res;
-    char method[0];
-};
-
-struct rpc_object {
-    struct avl_tree no_auth_methods;
-    struct avl_node avl;
-    pthread_mutex_t mutex;
-    struct list_head node;
-    struct ev_stat es;
-    size_t refcount;
-    lua_State *L;
-    char path[128];
-    char value[0];
-};
-
-struct rpc_no_auth_method {
-    struct avl_node avl;
-    char value[0];
 };
 
 static struct rpc_context rpc_context;
@@ -213,46 +196,13 @@ static void rpc_handle_done_final(struct uh_connection *conn, json_t *resp)
     conn->end_response(conn);
 }
 
-static void rpc_object_incref(struct rpc_object *obj)
+static bool rpc_is_no_auth(const char *object, const char *method)
 {
-    if (!obj)
-        return;
+    json_t *obj = json_object_get(rpc_context.no_auth_methods, object);
+    if (!json_is_object(obj))
+        return false;
 
-    __sync_add_and_fetch(&obj->refcount, 1);
-}
-
-static void free_all_no_auth_methods(struct rpc_object *obj)
-{
-    struct rpc_no_auth_method *m, *temp;
-
-    avl_for_each_element_safe(&obj->no_auth_methods, m, avl, temp) {
-        avl_delete(&obj->no_auth_methods, &m->avl);
-        free(m);
-    }
-}
-
-static void rpc_object_decref(struct rpc_object *obj)
-{
-    if (!obj)
-        return;
-
-    if (__sync_sub_and_fetch(&obj->refcount, 1))
-        return;
-
-    log_debug("Free rpc object: %p\n", obj);
-
-    ev_stat_stop(rpc_context.loop, &obj->es);
-
-    free_all_no_auth_methods(obj);
-    lua_close(obj->L);
-    free(obj);
-}
-
-static bool rpc_is_no_auth(struct rpc_object *obj, const char *method)
-{
-    struct rpc_no_auth_method *m;
-
-    return avl_find_element(&obj->no_auth_methods, method, m, avl);
+    return json_object_get(obj, method);
 }
 
 static int rpc_access_cb(void *data, int count, char **value, char **name)
@@ -339,7 +289,6 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
     bool is_local = is_loopback_addr(conn->get_paddr(conn)) && !rpc_context.local_auth;
     const char *sid, *object, *method;
     struct rpc_call_context *ctx;
-    struct rpc_object *obj;
     const char *fmt = "[sss]";
     json_error_t error;
     json_t *args = NULL;
@@ -363,13 +312,7 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
         return RPC_METHOD_RETURN_ERROR;
     }
 
-    obj = avl_find_element(&rpc_context.objects, object, obj, avl);
-    if (!obj) {
-        *result = rpc_error_object(RPC_ERROR_CODE_NOT_FOUND, json_string("Object not found"));
-        return RPC_METHOD_RETURN_ERROR;
-    }
-
-    ctx = calloc(1, sizeof(struct rpc_call_context) + strlen(method) + 1);
+    ctx = calloc(1, sizeof(struct rpc_call_context));
     if (!ctx) {
         *result = rpc_error_object(RPC_ERROR_CODE_INTERNAL_ERROR, NULL);
         return RPC_METHOD_RETURN_ERROR;
@@ -379,14 +322,15 @@ static int rpc_method_call(struct uh_connection *conn, json_t *id, json_t *param
 
     ctx->s = session_get(sid);
     ctx->is_local = is_local;
+    ctx->object = object;
+    ctx->method = method;
+    ctx->params = params;
     ctx->conn = conn;
     ctx->args = args;
-    ctx->obj = obj;
     ctx->id = id;
 
+    json_incref(params);
     json_incref(args);
-
-    strcpy(ctx->method, method);
 
     pthread_mutex_lock(&rpc_context.mutex);
     list_add_tail(&ctx->node, &rpc_context.run_queue);
@@ -481,193 +425,25 @@ err:
     json_decref(req);
 }
 
-static bool load_rpc_script(lua_State *L, const char *path)
-{
-    if (luaL_dofile(L, path)) {
-        log_err("load rpc: %s\n", lua_tostring(L, -1));
-        return false;
-    }
-
-    if (!lua_istable(L, -1)) {
-        log_err("invalid rpc script, need return a table: %s\n", path);
-        return false;
-    }
-
-    return true;
-}
-
-static void rpc_object_changed(struct ev_loop *loop, struct ev_stat *w, int revents)
-{
-    struct rpc_object *obj = container_of(w, struct rpc_object, es);
-
-    if (w->attr.st_nlink) {
-        log_info("rpc %s changed\n", w->path);
-
-        pthread_mutex_lock(&obj->mutex);
-        if (load_rpc_script(obj->L, obj->path)) {
-            pthread_mutex_unlock(&obj->mutex);
-            return;
-        }
-        pthread_mutex_unlock(&obj->mutex);
-    } else {
-        log_info("rpc %s removed\n", w->path);
-    }
-
-    pthread_mutex_lock(&rpc_context.mutex);
-    avl_delete(&rpc_context.objects, &obj->avl);
-    pthread_mutex_unlock(&rpc_context.mutex);
-
-    rpc_object_decref(obj);
-}
-
-static void load_rpc_scripts(struct ev_loop *loop, const char *path)
-{
-    DIR *dir;
-    struct dirent *e;
-
-    dir = opendir(path);
-    if (!dir) {
-        log_err("opendir fail: %s\n", strerror(errno));
-        return;
-    }
-
-    while ((e = readdir(dir))) {
-        char object_path[512] = "";
-        struct rpc_object *obj;
-        lua_State *L;
-
-        if (e->d_type != DT_REG || strchr(e->d_name, '.'))
-            continue;
-
-        snprintf(object_path, sizeof(object_path) - 1, "%s/%s", path, e->d_name);
-
-        obj = avl_find_element(&rpc_context.objects, e->d_name, obj, avl);
-        if (obj)
-            continue;
-
-        L = luaL_newstate();
-
-        luaL_openlibs(L);
-
-        if (!load_rpc_script(L, object_path))
-            goto err;
-
-        obj = calloc(1, sizeof(struct rpc_object) + strlen(e->d_name) + 1);
-        if (!obj) {
-            log_err("calloc: %s\n", strerror(errno));
-            goto err;
-        }
-
-        obj->L = L;
-
-        pthread_mutex_init(&obj->mutex, NULL);
-
-        strcpy(obj->value, e->d_name);
-        obj->avl.key = obj->value;
-        avl_init(&obj->no_auth_methods, avl_strcmp, false, NULL);
-
-        strcpy(obj->path, object_path);
-
-        ev_stat_init(&obj->es, rpc_object_changed, obj->path, 0.);
-        ev_stat_start(loop, &obj->es);
-
-        rpc_object_incref(obj);
-
-        pthread_mutex_lock(&rpc_context.mutex);
-        avl_insert(&rpc_context.objects, &obj->avl);
-        pthread_mutex_unlock(&rpc_context.mutex);
-
-        log_info("rpc %s loaded\n", obj->path);
-
-        continue;
-
-err:
-        lua_close(L);
-    }
-
-    closedir(dir);
-}
-
-static void unload_rpc_scripts()
-{
-    struct rpc_object *obj, *temp;
-
-    avl_for_each_element_safe(&rpc_context.objects, obj, avl, temp) {
-        avl_delete(&rpc_context.objects, &obj->avl);
-        rpc_object_decref(obj);
-    }
-}
-
-static int add_no_auth_method(struct rpc_object *obj, const char *value)
-{
-    struct rpc_no_auth_method *m = calloc(1, sizeof(struct rpc_no_auth_method) + strlen(value) + 1);
-
-    if (!m) {
-        log_err("calloc: %s\n", strerror(errno));
-        return -1;
-    }
-
-    strcpy(m->value, value);
-    m->avl.key = m->value;
-
-    avl_insert(&obj->no_auth_methods, &m->avl);
-
-    return 0;
-}
-
 static void load_no_auth_methods(const char *file)
 {
-    json_t *root, *methods, *method;
     json_error_t error;
-    const char *key;
-    int i;
 
     if (!file)
         return;
 
-    root = json_load_file(file, 0, &error);
-    if (!root) {
+    rpc_context.no_auth_methods = json_load_file(file, 0, &error);
+    if (!rpc_context.no_auth_methods) {
         log_err("json_load_file '%s' fail: %s\n", file, error.text);
-        return;
     }
-
-    if (!json_is_object(root))
-        goto done;
-
-    json_object_foreach(root, key, methods) {
-        struct rpc_object *obj;
-
-        if (!json_is_array(methods))
-            continue;
-
-        obj = avl_find_element(&rpc_context.objects, key, obj, avl);
-        if (!obj)
-            continue;
-
-        json_array_foreach(methods, i, method) {
-            if (!json_is_string(method))
-                continue;
-
-            if (add_no_auth_method(obj, json_string_value(method)))
-                goto done;
-        }
-    }
-
-done:
-    json_decref(root);
-}
-
-static void rpc_dir_changed(struct ev_loop *loop, struct ev_stat *w, int revents)
-{
-    load_rpc_scripts(loop, w->path);
 }
 
 static void *rpc_call_worker(void *arg)
 {
     struct rpc_call_context *ctx;
     int id = (intptr_t)arg;
-    struct rpc_object *obj;
     struct session *s;
+    char path[128];
     lua_State *L;
     bool is_err;
     json_t *res;
@@ -694,23 +470,20 @@ static void *rpc_call_worker(void *arg)
         }
 
         ctx = list_first_entry(&rpc_context.run_queue, struct rpc_call_context, node);
-        obj = ctx->obj;
-        L = obj->L;
-        s = ctx->s;
-
-        if (pthread_mutex_trylock(&obj->mutex)) {
-            pthread_mutex_unlock(&rpc_context.mutex);
-            continue;
-        }
 
         list_del(&ctx->node);
 
         pthread_mutex_unlock(&rpc_context.mutex);
 
-        if (!lua_istable(L, -1)) {
-            log_err("%s.%s: lua state is broken. No table on stack!\n", obj->value, ctx->method);
-            res = rpc_error_object(RPC_ERROR_CODE_INTERNAL_ERROR, NULL);
-            goto lua_broken;
+        snprintf(path, sizeof(path), "%s/%s", rpc_context.root, ctx->object);
+
+        L = luaL_newstate();
+
+        luaL_openlibs(L);
+
+        if (luaL_dofile(L, path)) {
+            res = rpc_error_object(RPC_ERROR_CODE_NOT_FOUND, json_string("Object not found"));
+            goto call_done;
         }
 
         lua_getfield(L, -1, ctx->method);
@@ -719,8 +492,10 @@ static void *rpc_call_worker(void *arg)
             goto call_done;
         }
 
-        if (!ctx->is_local && !rpc_is_no_auth(obj, ctx->method) &&
-            (!s || !rpc_call_access(s, obj->value, ctx->method))) {
+        s = ctx->s;
+
+        if (!ctx->is_local && !rpc_is_no_auth(ctx->object, ctx->method) &&
+            (!s || !rpc_call_access(s, ctx->object, ctx->method))) {
             res = rpc_error_object(RPC_ERROR_CODE_ACCESS, NULL);
             goto call_done;
         }
@@ -757,7 +532,7 @@ static void *rpc_call_worker(void *arg)
             lua_newtable(L);
         }
 
-        log_debug("call %s.%s...\n", obj->value, ctx->method);
+        log_debug("call %s.%s...\n", ctx->object, ctx->method);
 
         if (lua_pcall(L, 1, 2, 0)) {
             const char *err_msg = lua_tostring(L, -1);
@@ -785,12 +560,8 @@ static void *rpc_call_worker(void *arg)
             is_err = false;
         }
 
-        lua_pop(L, 1);
-
 call_done:
-        lua_pop(L, 1);
-lua_broken:
-        pthread_mutex_unlock(&obj->mutex);
+        lua_close(L);
 
         if (is_err)
             ctx->res = rpc_error_response(ctx->id, res);
@@ -837,6 +608,10 @@ static void call_end_cb(struct ev_loop *loop, struct ev_async *w, int revents)
 
         conn->decref(conn);
 
+        log_debug("call %s.%s done\n", ctx->object, ctx->method);
+
+        json_decref(ctx->params);
+
         free(ctx);
     }
 }
@@ -846,10 +621,7 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, const char
     int i;
 
     rpc_context.loop = loop;
-
-    avl_init(&rpc_context.objects, avl_strcmp, false, NULL);
-
-    load_rpc_scripts(loop, path);
+    rpc_context.root = path;
 
     load_no_auth_methods(no_auth_file);
 
@@ -858,9 +630,6 @@ int rpc_init(struct ev_loop *loop, const char *path, bool local_auth, const char
 
     pthread_mutex_init(&rpc_context.mutex, NULL);
     pthread_cond_init(&rpc_context.cond, NULL);
-
-    ev_stat_init(&rpc_context.stat, rpc_dir_changed, path, 0.);
-    ev_stat_start(loop, &rpc_context.stat);
 
     rpc_context.local_auth = local_auth;
 
@@ -929,8 +698,6 @@ static void free_rpc_call_contexts()
 
 void rpc_deinit(struct ev_loop *loop)
 {
-    ev_stat_stop(loop, &rpc_context.stat);
-
     pthread_mutex_lock(&rpc_context.mutex);
     rpc_context.done = true;
     pthread_mutex_unlock(&rpc_context.mutex);
@@ -950,5 +717,5 @@ void rpc_deinit(struct ev_loop *loop)
 
     free_rpc_call_contexts();
 
-    unload_rpc_scripts();
+    json_decref(rpc_context.no_auth_methods);
 }
