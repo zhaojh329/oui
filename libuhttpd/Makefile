@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libuhttpd
-PKG_VERSION:=3.13.0
+PKG_VERSION:=3.14.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL=https://github.com/zhaojh329/libuhttpd/releases/download/v$(PKG_VERSION)
-PKG_HASH:=a411d725dda2f0f8f2926485cef780b083e9fc249b1ec3527e6ad674f713756f
+PKG_HASH:=512d4abfced0ec916d985d3d1eac7528e6676eecae6aca27fdaf313374e29f16
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
