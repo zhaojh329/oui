@@ -119,7 +119,11 @@ static int __init oui_bwm_init(void)
         return -ENODEV;;
     }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+    proc_create_single("config", 0644, proc, proc_show);
+#else
     proc_create("config", 0644, proc, &proc_ops);
+#endif
 
     subnet_init(proc);
 
