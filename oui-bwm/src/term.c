@@ -9,6 +9,7 @@
 #include <linux/slab.h>
 #include <linux/jhash.h>
 #include <asm/unaligned.h>
+#include <linux/version.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 #include <linux/etherdevice.h>
@@ -213,7 +214,11 @@ int term_init(struct proc_dir_entry *proc)
     if (!term_cache)
         return -ENOMEM;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+    proc_create_single("term", 0644, proc, proc_show);
+#else
     proc_create("term", 0644, proc, &proc_ops);
+#endif
 
     for (i = 0; i < TERM_HASH_SIZE; i++) {
         INIT_HLIST_HEAD(&terms[i]);

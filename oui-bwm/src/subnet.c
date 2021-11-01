@@ -7,6 +7,7 @@
  */
 
 #include <linux/inetdevice.h>
+#include <linux/version.h>
 #include <linux/proc_fs.h>
 #include <linux/inet.h>
 
@@ -127,7 +128,11 @@ const static struct file_operations proc_ops = {
 
 int subnet_init(struct proc_dir_entry *proc)
 {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
+    proc_create_single("subnet", 0644, proc, proc_show);
+#else
     proc_create("subnet", 0644, proc, &proc_ops);
+#endif
 
     return 0;
 }
