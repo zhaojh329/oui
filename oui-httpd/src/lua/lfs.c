@@ -133,16 +133,20 @@ static int lua_stat(lua_State *L)
 
 static int dir_iter(lua_State *L)
 {
-    DIR *d = *(DIR **)lua_touserdata(L, lua_upvalueindex(1));
+    DIR **d = (DIR **)lua_touserdata(L, lua_upvalueindex(1));
     struct dirent *e;
 
     if (!d)
         return 0;
 
-    if ((e = readdir(d))) {
+    if ((e = readdir(*d))) {
         lua_pushstring(L, e->d_name);
         return 1;
     }
+
+    closedir(*d);
+
+    *d = NULL;
 
     return 0;
 }
@@ -204,7 +208,7 @@ int luaopen_oui_fs(lua_State *L)
 {
     luaL_newmetatable(L, DIR_MT_NAME);
     lua_pushcfunction(L, dir_gc);
-    lua_setfield(L, -2, "--gc");
+    lua_setfield(L, -2, "__gc");
 
     luaL_newlib(L, regs);
 
