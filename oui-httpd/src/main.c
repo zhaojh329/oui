@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
     const char *shortopts = "a:C:K:w:x:v";
-    int level = LOG_ERR;
+    int verbose = 0;
     struct uh_server *srv = NULL;
     const char *rpc_dir = ".";
     const char *db = "oh.db";
@@ -141,10 +141,12 @@ int main(int argc, char **argv)
             cgi_prefix = optarg;
             break;
         case 'v':
-            if (level == LOG_ERR)
-                level = LOG_INFO;
-            else
-                level++;
+            if (!verbose) {
+                verbose++;
+                log_level(LOG_INFO);
+            } else {
+                log_level(LOG_DEBUG);
+            }
             break;
         case LONG_OPT_RPC:
             rpc_dir = optarg;
@@ -168,8 +170,6 @@ int main(int argc, char **argv)
             usage(argv[0]);
         }
     }
-
-    log_level(level);
 
     log_info("libuhttpd version: %s\n", UHTTPD_VERSION_STRING);
 
