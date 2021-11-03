@@ -479,7 +479,7 @@ int luaopen_oui_utils_utils(lua_State *L)
     lua_setfield(L, -2, "wait");
 
     lua_pushcfunction(L, lua_exec_gc);
-    lua_setfield(L, -2, "--gc");
+    lua_setfield(L, -2, "__gc");
 
     luaL_newlib(L, regs);
 
