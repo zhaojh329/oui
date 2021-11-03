@@ -131,18 +131,16 @@ static json_t *rpc_validate_request(json_t *req, const char **method, json_t **p
     const char *version = NULL;
     json_t *data = NULL;
     json_error_t error;
-    int rc;
 
     *method = NULL;
     *params = NULL;
     *id = NULL;
 
-    rc = json_unpack_ex(req, &error, 0, "{s:s,s:o,s:s,s?o}",
+    if (json_unpack_ex(req, &error, 0, "{s:s,s:o,s:s,s?o}",
                         "jsonrpc", &version,
                         "id", id,
                         "method", method,
-                        "params", params);
-    if (rc < 0) {
+                        "params", params) < 0) {
         data = json_string(error.text);
         goto invalid;
     }
