@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 {
     struct ev_loop *loop = EV_DEFAULT;
     struct ev_signal sigint_watcher;
-    const char *shortopts = "a:C:K:w:x:v";
+    char shortopts[32] = "a:w:x:v";
     int verbose = 0;
     struct uh_server *srv = NULL;
     const char *rpc_dir = ".";
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
         return -1;
 
 #ifdef SSL_SUPPORT
-    shortopts = "a:s:C:K:w:x:v";
+    strcat(shortopts, "s:C:K:");
 #endif
 
     while ((opt = getopt_long(argc, argv, shortopts, long_options, &option_index)) != -1) {
