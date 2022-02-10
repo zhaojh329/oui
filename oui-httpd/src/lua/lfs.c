@@ -136,7 +136,7 @@ static int dir_iter(lua_State *L)
     DIR **d = (DIR **)lua_touserdata(L, lua_upvalueindex(1));
     struct dirent *e;
 
-    if (!d)
+    if (!*d)
         return 0;
 
     if ((e = readdir(*d))) {
