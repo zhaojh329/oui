@@ -54,7 +54,7 @@ static int lua_statvfs(lua_State *L)
     lua_pushinteger(L, s.f_blocks * s.f_frsize);
 
     /* available bytes */
-    lua_pushinteger(L, s.f_bfree * s.f_frsize);
+    lua_pushinteger(L, s.f_bavail * s.f_frsize);
 
     /* used bytes */
     lua_pushinteger(L, (s.f_blocks - s.f_bfree) * s.f_frsize);
