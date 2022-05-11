@@ -471,6 +471,14 @@ static void *rpc_call_worker(void *arg)
 
         list_del(&ctx->node);
 
+        //ubus call run number 0 thread
+        if (!strcmp(ctx->object, "ubus") && id != 0) {
+            list_add_tail(&ctx->node, &rpc_context.end_queue);
+            pthread_mutex_unlock(&rpc_context.mutex);
+            usleep(20*1000);
+            continue;
+        }
+
         pthread_mutex_unlock(&rpc_context.mutex);
 
         snprintf(path, sizeof(path), "%s/%s", rpc_context.root, ctx->object);
