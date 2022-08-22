@@ -1,7 +1,0 @@
-{
-    "system/users": {
-        "title": "Users",
-        "view": "oui-app-users",
-        "index": 10
-    }
-}

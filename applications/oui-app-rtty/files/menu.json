@@ -1,8 +1,0 @@
-{
-	"services/rtty": {
-		"title": "Rtty",
-		"view": "oui-app-rtty",
-		"files": [ "/etc/config/rtty" ],
-		"index": 10
-	}
-}

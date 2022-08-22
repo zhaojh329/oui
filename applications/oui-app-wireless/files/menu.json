@@ -1,8 +1,0 @@
-{
-    "network/wireless": {
-        "title": "Wireless",
-        "view": "oui-app-wireless",
-        "files": [ "/etc/config/wireless" ],
-        "index": 20
-    }
-}

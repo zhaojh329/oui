@@ -1,0 +1,51 @@
+From 6e101a24892367f0e95ea55eea04b7200ee227e3 Mon Sep 17 00:00:00 2001
+From: Jianhui Zhao <zhaojh329@gmail.com>
+Date: Sun, 21 Aug 2022 20:15:53 +0800
+Subject: [PATCH 2/2] nginx: update lua-nginx
+
+Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
+---
+ net/nginx/Makefile                                   |  4 ++--
+ .../patches/lua-nginx/001-fix-compile-error.patch    | 12 ++++++++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+ create mode 100644 net/nginx/patches/lua-nginx/001-fix-compile-error.patch
+
+diff --git a/net/nginx/Makefile b/net/nginx/Makefile
+index 812ee8c2f..5c56d9f44 100644
+--- a/net/nginx/Makefile
++++ b/net/nginx/Makefile
+@@ -467,11 +467,11 @@ define Prepare/nginx-naxsi
+ endef
+ 
+ define Download/lua-nginx
+-  VERSION:=e94f2e5d64daa45ff396e262d8dab8e56f5f10e0
++  VERSION:=2f270642bfd3fc252a278a48860ff168d65be703
+   SUBDIR:=lua-nginx
+   FILE:=lua-nginx-module-$$(VERSION).tar.xz
+   URL:=https://github.com/openresty/lua-nginx-module.git
+-  MIRROR_HASH:=27729921964f066d97e99c263da153b34622a2f4b811114e4c3ee61c6fc71395
++  MIRROR_HASH:=ea2d7d3a5eaa2676c8ed7ba060ad4e2d8167c5b8b2052334b13b89338ef9e0b9
+   PROTO:=git
+ endef
+ 
+diff --git a/net/nginx/patches/lua-nginx/001-fix-compile-error.patch b/net/nginx/patches/lua-nginx/001-fix-compile-error.patch
+new file mode 100644
+index 000000000..c3dfef16f
+--- /dev/null
++++ b/net/nginx/patches/lua-nginx/001-fix-compile-error.patch
+@@ -0,0 +1,12 @@
++Index: nginx-1.21.3/lua-nginx/src/ngx_http_lua_common.h
++===================================================================
++--- nginx-1.21.3.orig/lua-nginx/src/ngx_http_lua_common.h
+++++ nginx-1.21.3/lua-nginx/src/ngx_http_lua_common.h
++@@ -17,7 +17,6 @@
++ #include <setjmp.h>
++ #include <stdint.h>
++ 
++-#include <luajit.h>
++ #include <lualib.h>
++ #include <lauxlib.h>
++ 
+-- 
+2.34.1
+

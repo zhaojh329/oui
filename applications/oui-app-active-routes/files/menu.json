@@ -1,7 +1,0 @@
-{
-    "status/routes": {
-        "title": "Active Routes",
-        "view": "oui-app-active-routes",
-        "index": 20
-    }
-}

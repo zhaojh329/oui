@@ -1,0 +1,18 @@
+{
+    "rpc": {
+        "negative": false,
+        "matchs": ["*"]
+    },
+    "menu": {
+        "negative": false,
+        "matchs": ["*"]
+    },
+    "ubus": {
+        "negative": false,
+        "matchs": ["*"]
+    },
+    "uci": {
+        "negative": false,
+        "matchs": ["*"]
+    }
+}

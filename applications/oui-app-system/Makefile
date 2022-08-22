@@ -1,13 +1,14 @@
 #
-# Copyright (C) 2019 Jianhui Zhao <zhaojh329@gmail.com>
+# Copyright (C) 2022 Jianhui Zhao <zhaojh329@gmail.com>
 #
 # This is free software, licensed under the MIT.
 #
 
 include $(TOPDIR)/rules.mk
 
-APP_TITLE:=System Setting
+APP_TITLE:=System Configure
+APP_NAME:=system
 
-include ../../oui-app.mk
+include ../../oui.mk
 
 # call BuildPackage - OpenWrt buildroot signature

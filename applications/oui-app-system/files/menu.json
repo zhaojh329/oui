@@ -1,7 +1,12 @@
 {
-    "system/system": {
+    "/system/system": {
         "title": "System",
-        "view": "oui-app-system",
-        "index": 10
+        "view": "system",
+        "index": 0,
+        "locales": {
+            "en-US": "System",
+            "zh-CN": "系统",
+            "zh-TW": "系統"
+        }
     }
 }
