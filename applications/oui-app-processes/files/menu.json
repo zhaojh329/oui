@@ -1,7 +1,0 @@
-{
-    "status/processes": {
-        "title": "Processes",
-        "view": "oui-app-processes",
-        "index": 50
-    }
-}

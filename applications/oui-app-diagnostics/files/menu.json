@@ -1,7 +1,0 @@
-{
-    "network/diagnostics": {
-        "title": "Diagnostics",
-        "view": "oui-app-diagnostics",
-        "index": 80
-    }
-}

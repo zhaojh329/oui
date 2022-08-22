@@ -1,9 +1,0 @@
-{
-  "login": {
-    "Authorization Required": "需要授权",
-    "Please input username": "请输入用户名",
-    "Please input password": "请输入密码",
-    "Login": "登录",
-    "Wrong password given!": "密码错误"
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "login": {
-    "Authorization Required": "需要授權",
-    "Please input username": "請輸入用戶名",
-    "Please input password": "請輸入密碼",
-    "Login": "登錄",
-    "Wrong password given!": "密碼錯誤"
-  }
-}
