@@ -17,7 +17,7 @@ echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
 ### 更新feed
 
 ``` bash
-./scripts/feeds update oui
+./scripts/feeds update -a
 ./scripts/feeds install -a -p oui
 ```
 
