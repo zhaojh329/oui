@@ -3,7 +3,7 @@
 ::: tip
 阅读本教程，需要开发者具备 [Vue3](https://cn.vuejs.org/) 的知识。
 
-Oui 默认使用 [Naive UI](https://www.naiveui.com/) 作为其 UI 框架。你可以根据自己需求，选择适合自己的 UI 框架。
+Oui 默认使用 [Naive UI](https://www.naiveui.com/) 组件库。你可以根据自己需求，选择适合自己的组件库或者自己开发组件。
 :::
 
 ## 编译
@@ -33,9 +33,9 @@ OUI  --->
         <*> oui-app-acl. ACL
         <*> oui-app-backup. Backup / Restore
         <*> oui-app-dhcp-lease. DHCP lease
-        <*> oui-app-home. Home
-        <*> oui-app-layout. Layout
-        <*> oui-app-login. Login
+        <*> oui-app-home. OUI built-in home page
+        <*> oui-app-layout. OUI built-in layout page
+        <*> oui-app-login. OUI built-in login page
         <*> oui-app-stations. Stations
         <*> oui-app-system. System Configure
         <*> oui-app-upgrade. Upgrade

@@ -5,7 +5,7 @@ const { path } = require('@vuepress/utils')
 module.exports = {
   base: '/oui/',
   lang: 'zh-CN',
-  title: 'Nginx + Lua + Vue3 = Oui',
+  title: 'Oui',
   description: '一个用于开发 OpenWrt Web 接口的框架',
   theme: defaultTheme({
     repo: 'zhaojh329/oui',

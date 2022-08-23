@@ -1,6 +1,6 @@
 ---
 home: true
-title: oui
+heroImage: /images/hero.png
 actions:
   - text: 快速上手
     link: /guide/
@@ -30,7 +30,7 @@ footer: MIT Licensed | Copyright © 2022 Jianhui Zhao <zhaojh329@gmail.com>
   },
   {
     url: 'https://www.iyunlink.com',
-    logo: 'https://www.iyunlink.com/upload/202208/1661220453.jpg'
+    logo: 'https://www.iyunlink.com/upload/202208/1661233625.png'
   },
   {
     url: 'https://forgotfun.org',
