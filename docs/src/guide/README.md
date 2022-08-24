@@ -24,6 +24,11 @@ echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
 ### 给 Nginx 打上补丁
 
 参考 patches-nginx 目录
+::: tip
+修改文件所在目录 openwrt/feeds/packages/net/nginx
+1. Config_ssl.in文件增加1处,Makefile文件增加2处，具体参考第一个补丁修改日志
+2. 第二个补丁，需要增加一个目录，一个补丁文件，将修改日志中增加的内容放进去即可
+:::
 
 ### 配置
 
@@ -82,7 +87,7 @@ make V=s
     }
 }
 ```
-将其中的 `https://openwrt.lan` 修改为你的调试设备的地址
+将其中的 `https://openwrt.lan` 修改为你的调试设备的地址,如 `https://192.168.2.1`
 
 1. 使用 vscode 打开 oui 项目
 2. 进入 `oui-ui-core/htdoc` 目录
@@ -93,6 +98,7 @@ make V=s
 
 :::tip
 创建新的 app 后，需要重新执行 `npm run dev`
+建议在wsl或linux虚拟机里做开发
 :::
 
 ## oui app
