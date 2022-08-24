@@ -3,7 +3,7 @@ home: true
 heroImage: /images/hero.png
 actions:
   - text: 快速上手
-    link: /guide/
+    link: /guide/getting-started.md
     type: primary
 features:
 - title: 高性能

@@ -18,7 +18,26 @@ module.exports = {
         contributorsText: '贡献者',
         tip: '提示',
         warning: '注意',
-        danger: '警告'
+        danger: '警告',
+        navbar: [
+          {
+            text: '指南',
+            link: '/guide/'
+          }
+        ],
+        sidebar: {
+          '/guide/': [
+            {
+              text: '指南',
+              children: [
+                '/guide/README.md',
+                '/guide/getting-started.md',
+                '/guide/page.md',
+                '/guide/vue-api.md'
+              ]
+            }
+          ]
+        }
       }
     }
   }),
