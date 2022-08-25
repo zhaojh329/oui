@@ -1,10 +1,13 @@
-# 前端 API
+# Vue API
 
-Oui 框架在 Vue 中注册了一些全局对象，方便各个页面调用。
+Oui 框架在 Vue 中注册了一些实例对象，方便各个页面调用。
+文档中使用 `vm` (ViewModel 的缩写) 这个变量名表示 Vue 实例。
 
-## $oui
+## vm.$oui
 
-state: 一个响应式对象，包括如下字段
+### state: 全局状态
+
+一个响应式对象，包括如下字段
 
 | 名称  | 类型 | 描述 |
 | ---------- | --------| ------------- |
@@ -20,16 +23,57 @@ state: 一个响应式对象，包括如下字段
 
 ### call: 调用后端接口
 
-call 方法接受 3 个参数：
+* 用法: vm.$oui.call(mod, func, [param])
+* 参数
+	* mod - 模块名，对应着系统中的 `/usr/share/oui/rpc` 目录下的一个 `Lua` 文件名（不带后缀）
+	* func - 方法名，对应上面的 `Lua` 文件导出的 `Table` 中的一个方法
+  * param - 传递给要调用的方法的参数
+* 返回值: Promise
 
-* mod - 模块名，对应着系统中的 `/usr/share/oui/rpc` 目录下的一个 `Lua` 文件名（不带后缀）
-* func - 方法名，对应着系统中的 `/usr/share/oui/rpc` 目录下的一个 `Lua` 文件导出的 `Table` 中的一个方法
-* param - 传递给要调用的方法的参数
+<CodeGroup>
+  <CodeGroupItem title="Vue" active>
 
 ```js
 this.$oui.call('system', 'get_cpu_time').then(({ times }) => {
+  ...
 })
 ```
+
+  </CodeGroupItem>
+
+  <CodeGroupItem title="Lua">
+
+```lua
+-- /usr/share/oui/rpc/system.lua
+
+local fs = require 'oui.fs'
+
+local M = {}
+
+function M.get_cpu_time()
+    local result = {}
+
+    for line in io.lines('/proc/stat') do
+        local cpu = line:match('^(cpu%d?)')
+        if cpu then
+            local times = {}
+            for field in line:gmatch('%S+') do
+                if not field:match('cpu') then
+                    times[#times + 1] = tonumber(field)
+                end
+            end
+            result[cpu] = times
+        end
+    end
+
+    return { times = result }
+end
+
+return M
+```
+
+  </CodeGroupItem>
+</CodeGroup>
 
 ### ubus: 对 call 的封装
 
@@ -98,7 +142,7 @@ ubus call service event '{"type":"config.change", "data": {"package": "system"}}
 this.$oui.reloadConfig('system')
 ```
 
-### reconnect
+### reconnect: 等待系统重启完成
 
 当执行重启操作时，该方法比较有用。
 
@@ -138,7 +182,7 @@ export default {
 </script>
 ```
 
-使用 $timer 后，是这样的：
+使用 `vm.$timer` 后，是这样的：
 
 ```vue
 <script>
@@ -155,13 +199,13 @@ export default {
 </script>
 ```
 
-`$timer.create` 接受 3 个参数：
+`vm.$timer.create` 接受 3 个参数：
 
 * name: 定时器名称(不能重复)
-* func: 回调方法
+* callback: 回调方法
 * option: 选项
 
-其中选项包括如下字段：
+其中 `option` 包括如下字段：
 
 | 名称  | 类型 | 描述 |
 | ---------- | --------| ------------- |
@@ -170,9 +214,9 @@ export default {
 | immediate | Boolean  | 创建后是否立即执行一次回调函数 |
 | repeat    | Boolean  | 是否重复 |
 
-`$timer.start`：启动定时器
+`vm.$timer.start`：启动定时器
 
-`$timer.stop`：停止定时器
+`vm.$timer.stop`：停止定时器(用户无需调用该函数，除非有特别需要)
 
 ```js
 this.$timer.start('test')

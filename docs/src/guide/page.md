@@ -52,6 +52,8 @@ include ../../oui.mk
 
 ## 菜单配置
 
+对于 `login`, `layout`, `home` 这三种页面，不需要菜单配置文件。
+
 ``` json
 {
     "/demo": {

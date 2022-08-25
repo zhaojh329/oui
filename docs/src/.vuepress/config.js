@@ -33,7 +33,8 @@ module.exports = {
                 '/guide/README.md',
                 '/guide/getting-started.md',
                 '/guide/page.md',
-                '/guide/vue-api.md'
+                '/guide/vue-api.md',
+                '/guide/lua-lib.md'
               ]
             }
           ]

@@ -8,6 +8,13 @@ Oui 默认使用 [Naive UI](https://www.naiveui.com/) 组件库。你可以根�
 
 ## 编译
 
+:::tip
+Oui 需要 Nginx 的 `gzip static` 模块才能工作，较早的 Openwrt packages 中的 Nginx 未使能该模块。
+
+如果你用的 OpenWrt 版本较低，需要应用该补丁
+[https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427](https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427)
+:::
+
 ### 添加 feed
 
 ``` bash
@@ -20,12 +27,6 @@ echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
 ./scripts/feeds update -a
 ./scripts/feeds install -a -p oui
 ```
-
-### 给 OpenWrt packages 打上补丁以支持 nginx: gzip static mudule
-
-如果你用的 OpenWrt 版本较低，需要应用该补丁
-
-[https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427](https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427)
 
 ### 配置
 
