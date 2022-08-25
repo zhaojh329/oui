@@ -142,15 +142,6 @@ static int lua_stat(lua_State *L)
     }
     lua_setfield(L, -2, "type");
 
-    lua_pushnumber(L, st.st_atime);
-    lua_setfield(L, -2, "atime");
-
-    lua_pushnumber(L, st.st_mtime);
-    lua_setfield(L, -2, "mtime");
-
-    lua_pushnumber(L, st.st_ctime);
-    lua_setfield(L, -2, "ctime");
-
     lua_pushinteger(L, st.st_nlink);
     lua_setfield(L, -2, "nlink");
 
