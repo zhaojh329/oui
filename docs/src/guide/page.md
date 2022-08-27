@@ -119,25 +119,41 @@ include ../../oui.mk
 }
 ```
 
-## rpc 接口
+## 自定义 `login` `layout` `home` 页面
 
-一个简单的 rpc 接口: demo.lua
+以自定义 `login` 页面为例
 
-```lua
-local M = {}
+* 首先创建一个 app，比如 `applications/oui-app-login-x`，
+然后修改其 Makefile：
 
-function M.count(param)
-    param.n = param.n + 1
-    return param
-end
+```makefile{9,10}
+#
+# Copyright (C) 2022 Jianhui Zhao <zhaojh329@gmail.com>
+#
+# This is free software, licensed under the MIT.
+#
 
-return M
+include $(TOPDIR)/rules.mk
+
+APP_TITLE:=Login X
+APP_NAME:=login-x
+
+include ../../oui.mk
+
+# call BuildPackage - OpenWrt buildroot signature
 ```
 
-```js
-this.$oui.call('demo', 'count', { n: 1 }).then(({ n }) => {
-    console.log(n)
-})
+* 配置 oui-ui-core
+
+```sh
+Oui  --->
+    (login-x) Customize the login view
 ```
 
-输出: 2
+* 开发/调试
+
+创建文件: oui-ui-core/htdoc/.env.local
+
+```
+VITE_OUI_LOGIN_VIEW=login-x
+```
