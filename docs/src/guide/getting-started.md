@@ -1,17 +1,12 @@
 # 快速上手
 
-::: tip
-阅读本教程，需要开发者具备 [Vue3](https://cn.vuejs.org/) 的知识。
-
-Oui 默认使用 [Naive UI](https://www.naiveui.com/) 组件库。你可以根据自己需求，选择适合自己的组件库或者自己开发组件。
-:::
-
 ## 编译
 
 :::tip
 Oui 需要 Nginx 的 `gzip static` 模块才能工作，较早的 Openwrt packages 中的 Nginx 未使能该模块。
 
-如果你用的 OpenWrt 版本较低，需要应用该补丁
+如果你用的 OpenWrt 的版本较低，需要应用该补丁:
+
 [https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427](https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427)
 :::
 

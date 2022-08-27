@@ -38,10 +38,6 @@ footer: MIT Licensed | Copyright © 2022 Jianhui Zhao <zhaojh329@gmail.com>
   }
 ]"/>
 
-:::danger
-本项目可免费用于非商业用途，二次开发需注明出处或者购买商业授权。
-:::
-
 <iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
 <iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
 <iframe src="https://ghbtns.com/github-btn.html?user=zhaojh329&repo=oui&type=fork&count=true&size=large" frameborder="0" scrolling="0" width="158px" height="30px"></iframe>

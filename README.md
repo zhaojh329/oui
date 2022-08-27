@@ -18,8 +18,6 @@
 
 A `framework` used to develop Web interface for OpenWrt.
 
-`This project can be used for non-commercial purposes free of charge, and the secondary development needs to indicate the source or purchase commercial authorization.`
-
 ## Documentation
 
 [zhaojh329.github.io/oui/](https://zhaojh329.github.io/oui/)
