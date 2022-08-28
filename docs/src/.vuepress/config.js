@@ -34,7 +34,8 @@ module.exports = {
                 '/guide/getting-started.md',
                 '/guide/page.md',
                 '/guide/vue-api.md',
-                '/guide/lua-lib.md'
+                '/guide/lua-lib.md',
+                '/guide/lua-api.md'
               ]
             }
           ]
