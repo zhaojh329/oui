@@ -1,29 +1,29 @@
-# Get Started
+# 快速上手
 
-## Build & Install
+## 编译/安装
 
 :::tip
-Oui requires the `gzip Static` module of Nginx to work, which is not enabled for Nginx in earlier Openwrt Packages. 
+Oui 需要 Nginx 的 `gzip static` 模块才能工作，较早的 Openwrt packages 中的 Nginx 未使能该模块。
 
-If you are using a earlier OpenWrt, you will need to apply this patch: 
+如果你用的 OpenWrt 的版本较低，需要应用该补丁:
 
 [https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427](https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427)
 :::
 
-### Add feed
+### 添加 feed
 
 ``` bash
 echo "src-git oui https://github.com/zhaojh329/oui.git" >> feeds.conf.default
 ```
 
-### Update feed
+### 更新feed
 
 ``` bash
 ./scripts/feeds update -a
 ./scripts/feeds install -a -p oui
 ```
 
-### Configure
+### 配置
 
 ```
 OUI  --->
@@ -46,29 +46,26 @@ OUI  --->
 ::: tip
 编译 Oui 需要用到 Node，而且版本不能低于 14.18。
 
-The `Node` is needed to compile Oui, and the version cannot be later than 14.18.
+勾选 `CONFIG_OUI_USE_HOST_NODE` 可节约编译时间，需要确保主机上安装的 Node 版本不低于 14.18。
 
-Select `CONFIG_OUI_USE_HOST_NODE` can save compilation time. Ensure that the Node
-version installed on hosts is at least 14.18. 
-
-[Install the new version of Node on the host](https://nodejs.org/en/download/package-manager/)
+[在主机上安装新版本的 Node](https://nodejs.org/en/download/package-manager/)
 :::
 
-### Build
+### 编译
 
 ``` bash
 make V=s
 ```
 
 ::: tip
-Default username: admin
+默认用户名：admin
 
-Default password: 123456
+默认密码：123456
 :::
 
-## Development & Debugging
+## 开发/调试
 
-Start by modifying the HTTP proxy: oui-ui-core/htdoc/vite.config.js
+首先修改 http 代理: oui-ui-core/htdoc/vite.config.js
 ```js
 {
     server: {
@@ -89,15 +86,17 @@ Start by modifying the HTTP proxy: oui-ui-core/htdoc/vite.config.js
     }
 }
 ```
-Change the `https://openwrt.lan` to the address of your debug device, such as `https://192.168.1.1`
+将其中的 `https://openwrt.lan` 修改为你的调试设备的地址,如 `https://192.168.1.1`
 
-1. Open the OUI project using VSCode
-2. Enter into the directory: `oui-ui-core/htdoc`
-3. Execute `npm install`
-4. Execute `npm run dev`
+1. 使用 vscode 打开 oui 项目
+2. 进入 `oui-ui-core/htdoc` 目录
+3. 执行 `npm install`
+4. 执行 `npm run dev`
 
-After running `npm run dev`, open the browser as prompted. Any changes made to the code at this point are immediately rendered in the browser.
+执行完 `npm run dev` 后，根据提示打开浏览器。此时对代码中的任何修改，都将立即呈现在浏览器中。
 
 :::tip
-After creating a new app, you need to run `npm run dev` again.
+创建新的 app 后，需要重新执行 `npm run dev`
+
+建议在 wsl 或 linux 虚拟机里做开发
 :::

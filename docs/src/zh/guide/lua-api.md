@@ -1,6 +1,6 @@
-# Lua API
+# Lua 接口
 
-In Oui, Lua API are organized as `module-methods`.
+在 Oui 中，Lua 接口以 `模块-方法` 的形式进行组织。
 
 ```sh
 root@OpenWrt:~# ls /usr/share/oui/rpc/
@@ -8,9 +8,9 @@ acl.lua       network.lua   ubus.lua      ui.lua        wireless.lua
 demo.lua      system.lua    uci.lua       user.lua
 ```
 
-Each Lua file here represents a module. Module name is Lua file name(without suffix). 
+这里的每个 Lua 文件代表着一个模块。模块名为 Lua 文件名（不带后缀）。
 
-Each Lua API file needs to return a `Lua Table`, which consists of multiple `Lua functions`.
+每个 Lua 接口文件需要返回一个 `Lua Table`，该 `Lua Table` 由多个 `Lua function` 组成。
 
 ```lua
 -- /usr/share/oui/rpc/test.lua
@@ -18,9 +18,9 @@ Each Lua API file needs to return a `Lua Table`, which consists of multiple `Lua
 local M = {}
 
 --[[
-param: Parameters passed by the front-end call
-section: The login session information is a Table.
-         Contains the currently logged in username (username) and the permission group (acl) to which it belongs.
+param: 前端调用传递的参数
+section: 登录的会话信息，为一个 Table，
+         包含当前登录的用户名(username)和其所属的权限组(acl)
 --]]
 function M.func1(param, section)
     local res = {}
@@ -37,16 +37,16 @@ this.$oui.call('test', 'func1', {a: 1}).then(res => {
 })
 ```
 
-## Reference data
+## 参考资料
 
 * [lua-uci](https://openwrt.org/docs/techref/uci#lua_bindings_for_uci)
 * [lua-nginx-module](https://github.com/openresty/lua-nginx-module)
 * [lua-cjson](https://github.com/mpx/lua-cjson)
 
-## Delay apply
+## 延迟应用
 
 ```lua
--- The upgrade is delayed 0.5 seconds
+-- 延迟 0.5s 执行升级操作
 function M.sysupgrade(param)
     ngx.timer.at(0.5, function()
         local arg = param.keep and '' or '-n'
@@ -55,17 +55,17 @@ function M.sysupgrade(param)
 end
 ```
 
-## Logging
+## 日志
 
 ```lua
 ngx.log(ngx.ERR, "hello", " world", " nginx", " ok")
 ```
 
-## Turn off the Lua code cache
+## 关闭 Lua 代码缓存
 
-During debugging, the Lua code cache function of `Lua-nginx` module can be turned off to facilitate debugging.
+调试过程可关闭 `lua-nginx` 模块的 Lua 代码缓存功能，方便调试。
 
-Modify `/etc/nginx/conf.d/oui.conf`
+修改 `/etc/nginx/conf.d/oui.conf`
 
 ```nginx:{4}
 gzip_static on;
@@ -74,4 +74,4 @@ lua_shared_dict sessions 16k;
 lua_code_cache off;
 ```
 
-Then execute `/etc/init.d/nginx reload`
+然后执行 `/etc/init.d/nginx reload`

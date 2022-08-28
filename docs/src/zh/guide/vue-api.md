@@ -1,19 +1,19 @@
 # Vue API
 
-The Oui framework registers some instance objects in Vue for easy invocation by individual pages.
-The variable name 'vm' (short for ViewModel) is used in the documentation to denote Vue instances.
+Oui 框架在 Vue 中注册了一些实例对象，方便各个页面调用。
+文档中使用 `vm` (ViewModel 的缩写) 这个变量名表示 Vue 实例。
 
 ## vm.$oui
 
-### state: global state
+### state: 全局状态
 
-A reactive object with the following fields
+一个响应式对象，包括如下字段
 
-| Name  | Type | description |
+| 名称  | 类型 | 描述 |
 | ---------- | --------| ------------- |
-| locale     | String  | The current language |
-| theme      | String  | The current theme    |
-| hostname   | String  | The current hostname of the system |
+| locale     | String  | 当前语言       |
+| theme      | String  | 当前主题       |
+| hostname   | String  |当前系统的主机名 |
 
 ```vue
 <div>{{ $oui.state.locale }}</div>
@@ -21,7 +21,7 @@ A reactive object with the following fields
 <div>{{ $oui.state.hostname }}</div>
 ```
 
-### call: Call the backend API
+### call: 调用后端接口
 
 vm.$oui.call(mod, func, [param])
 
@@ -70,7 +70,7 @@ return M
   </CodeGroupItem>
 </CodeGroup>
 
-### ubus: Encapsulation of `call`
+### ubus: 对 `call` 的封装
 
 ```js
 this.$oui.ubus('system', 'validate_firmware_image',
@@ -80,8 +80,7 @@ this.$oui.ubus('system', 'validate_firmware_image',
 ).then(({ valid }) => {
 })
 ```
-Equivalent to
-
+等价于
 ```js
 this.$oui.call('ubus', 'call', {
     object: 'system',
@@ -91,46 +90,45 @@ this.$oui.call('ubus', 'call', {
 })
 ```
 
-### login: log in
+### login：登录
 
 ```js
 this.$oui.login('admin', '123456').then(() => {
 })
 ```
 
-### logout: log out
+### logout: 退出登录
 
 ```js
 this.$oui.logout().then(() => {
 })
 ```
 
-### setLocale: switch the language
+### setLocale: 切换语言
 
 ```js
 this.$oui.setLocale('en-US')
 ```
 
-### setTheme: Switch the theme
+### setTheme: 切换主题
 
 ```js
 this.$oui.setTheme('dark')
 ```
 
-### setHostname: Set the system's hostname
+### setHostname: 设置系统主机名
 
 ```js
 this.$oui.setHostname('OpenWrt')
 ```
 
 :::tip
-You need to set the hostname by calling this function so that `$oui.state.hostname` can be updated.
+你需要通过调用该函数来设置主机名，这样 `$oui.state.hostname` 才能得到更新。
 :::
 
-### reloadConfig: reload config
+### reloadConfig: 重载配置
 
-Encapsulation of the following UBUS operations
-
+对下面的 ubus 操作的封装
 ```sh
 ubus call service event '{"type":"config.change", "data": {"package": "system"}}'
 ```
@@ -139,9 +137,9 @@ ubus call service event '{"type":"config.change", "data": {"package": "system"}}
 this.$oui.reloadConfig('system')
 ```
 
-### reconnect: Wait until the system restarts finish
+### reconnect: 等待系统重启完成
 
-This method is useful when performing a restart operation.
+当执行重启操作时，该方法比较有用。
 
 ```js
 this.$oui.reconnect().then(() => {
@@ -151,7 +149,7 @@ this.$oui.reconnect().then(() => {
 
 ## $timer
 
-You might have written something like this before:
+你以前可能是这样写的：
 
 ```vue
 <script>
@@ -179,7 +177,7 @@ export default {
 </script>
 ```
 
-After using `vm.$timer`, it looks like this:
+使用 `vm.$timer` 后，是这样的：
 
 ```vue
 <script>
@@ -196,24 +194,24 @@ export default {
 </script>
 ```
 
-`vm.$timer.create` takes three arguments:
+`vm.$timer.create` 接受 3 个参数：
 
-* name: Timer name (cannot be repeated)
-* callback: The callback method
-* option: options
+* name: 定时器名称(不能重复)
+* callback: 回调方法
+* option: 选项
 
-`option` includes the following fields:
+其中 `option` 包括如下字段：
 
-| Name  | Type | Description |
+| 名称  | 类型 | 描述 |
 | ---------- | --------| ------------- |
-| time      | Number   | Timeout or interval (default value: 1000) |
-| autostart | Boolean  | Whether to automatically start after creation (default is true)  |
-| immediate | Boolean  | Whether to execute a callback function immediately after creation |
-| repeat    | Boolean  | Whether to repeat |
+| time      | Number   | 超时时间或者间隔时间（默认值为 1000）|
+| autostart | Boolean  | 是否创建后自动启动（默认为 true）  |
+| immediate | Boolean  | 创建后是否立即执行一次回调函数 |
+| repeat    | Boolean  | 是否重复 |
 
-`vm.$timer.start`: Start timer(If you set autostart as false, you need to call the function)
+`vm.$timer.start`：启动定时器（如果你设置 autostart 为 false，你需要调用该函数）
 
-`vm.$timer.stop`: Stop the timer (the user does not need to call this function unless otherwise required)
+`vm.$timer.stop`：停止定时器(用户无需调用该函数，除非有特别需要)
 
 ```js
 this.$timer.start('test')

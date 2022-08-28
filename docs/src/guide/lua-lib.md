@@ -1,6 +1,6 @@
-# Lua 辅助库
+# Lua auxiliary library
 
-Oui 框架提供了一些常用的 Lua 辅助函数，方便用户编写接口。
+The Oui framework provides some commonly used Lua helper functions to make it easy for users to write API.
 
 ## oui.fs
 
@@ -8,15 +8,15 @@ Oui 框架提供了一些常用的 Lua 辅助函数，方便用户编写接口�
 
 `writefile(path, data, mode)`
 
-这个函数用字符串 `mode` 指定的模式向一个文件写入数据 `data`
+This function writes data to a file in the `mode` specified by the string mode.
 
-mode 字符串可以是下列任意值：
+The mode string can be any of the following values:
 
-* "w": 写模式（默认）
-* "a": 追加模式
-* "r+": 更新模式，所有之前的数据都保留
-* "w+": 更新模式，所有之前的数据都删除
-* "a+": 追加更新模式，所有之前的数据都保留，只允许在文件尾部做写入
+* "w": Write mode (the default)
+* "a": Append mode
+* "r+": update mode, all previous data is preserved
+* "w+": update mode, all previous data is erased
+* "a+": append update mode, previous data is preserved, writing is only allowed at the end of file
 
 ```lua
 local fs = require 'oui.fs'
@@ -28,14 +28,14 @@ fs.writefile('test.txt', 'hello, oui\n')
 
 `readfile(path, format)`
 
-以指定的格式读取文件
+Reads the file in the specified format
 
-提供的格式有:
+The formats provided are:
 
-* "*a": 读取整个文件(默认)
-* "*n": 读取一个数字，根据 Lua 的转换文法，可能返回浮点数或整数。 （数字可以有前置或后置的空格，以及符号。） 只要能构成合法的数字，这个格式总是去读尽量长的串； 如果读出来的前缀无法构成合法的数字 （比如空串，"0x" 或 "3.4e-"）， 就中止函数运行，返回 nil
-* "*l": 读取一行并忽略行结束标记
-* number: 读取一个不超过这个数量字节数的字符串。如果 number 为零， 它什么也不读，返回一个空串
+* "*a": Read the entire file (the default)
+* "*n": reads a numeral and returns it as a float or an integer , following the lexical conventions of Lua. (The numeral may have leading spaces and a sign.) This format always reads the longest input sequence that is a valid prefix for a numeral; if that prefix does not form a valid numeral (e.g., an empty string, "0x", or "3.4e-"), it is discarded and the function returns nil
+* "*l": reads the next line skipping the end of line
+* number: reads a string with up to this number of bytes. If number is zero, it reads nothing and returns an empty string
 
 ```lua
 local fs = require 'oui.fs'
@@ -46,19 +46,20 @@ local data = fs.readfile('test.txt')
 
 `dirname(path)`
 
-参考 Linux 系统参考手册: dirname(1)
+See Linux manuals: dirname(1)
 
 ### basename
 
 `basename(path)`
 
-参考 Linux 系统参考手册: basename(1)
+See Linux manuals: basename(1)
 
 ### statvfs
 
 `statvfs(path)`
 
-获取文件系统信息。该函数返回三个 `number`，反别表示：总数，可用，已用。单位为 1024 Byte。
+Obtain the file system information. This function returns three `numbers`, respectively: total, available, used.
+The unit is 1024 Byte.
 
 ```lua
 local fs = require 'oui.fs'
@@ -70,14 +71,14 @@ local total, avail, used = fs.statvfs('/')
 
 `access(path, [mode])`
 
-文件权限检测，返回一个 `boolean` 值。
+File permission check, returns a `Boolean` value.
 
-其中 `mode` 可以是以下任意组合:
+The `mode` can be any combination of:
 
-* f - 检测文件是否存在（默认）
-* x - 检测文件是否可执行
-* w - 检测文件是否可写
-* r - 检测文件是否可读
+* f - Check if the file exists (default)
+* x - Check whether the file is executable
+* w - Checks whether the file is writable
+* r - Check whether the file is readable
 
 ```lua
 local fs = require 'oui.fs'
@@ -91,25 +92,25 @@ end
 
 `stat(path)`
 
-获取文件信息，返回一个 `Table`。具有如下属性：
+Get the file information and return a `Table` with the following attributes:
 
-* type - 文件类型
-* nlink - 硬件链接数
-* uid - 用户 ID
-* gid - 组 ID
-* size - 大小（单位 1024 Byte）
+* type - File type
+* nlink - Number of hard links
+* uid - User ID of owner
+* gid - Group ID of owner
+* size - Size(unit: 1024 Byte)
 
 ### readlink
 
 `readlink(path)`
 
-获取符号链接所指向的文件路径
+Gets the file path to which the symbolic link points
 
 ### dir
 
 `dir(path)`
 
-遍历目录
+Traversal directory
 
 ```lua
 local fs = require 'oui.fs'
@@ -126,13 +127,13 @@ end
 
 `ifup(ifname)`
 
-启动指定的网络接口
+Start the specified network interface
 
 ### ifdown
 
 `ifdown(ifname)`
 
-关闭指定的网络接口
+Stop the specified network interface
 
 ## oui.md5
 
@@ -140,7 +141,7 @@ end
 
 `sum(path)`
 
-计算一个文件的 MD5 值
+Calculate the MD5 value of a file
 
 ```lua
 local MD5 = require 'oui.md5'
@@ -150,7 +151,7 @@ local md5 = MD5.sum('test.bin')
 
 ### new
 
-返回一个 MD5 上下文
+Returns an MD5 context
 
 ```lua
 local MD5 = require 'oui.md5'
@@ -162,7 +163,7 @@ local md5 = ctx.done()
 ```
 
 :::tip
-对于只是简单的计算一个字符串的 MD5 值，可以使用 `lua-nginx` 模块提供的 `md5` 函数。
+For simply calculating the MD5 value of a string, you can use the `md5` function provided by the `Lua-nginx` module.
 
 ```lua
 local md5 = ngx.md5('abc123')

@@ -1,9 +1,8 @@
-# Page
+# 页面
 
-Typically, one page corresponds to an oui-app-xx
+通常，一个页面对应一个 oui-app-xx
 
-The directory structure of a basic page looks like this
-
+一个基本的页面的目录结构是这样的
 ```
 oui-app-demo/
 ├── files
@@ -22,10 +21,10 @@ oui-app-demo/
 ```
 
 ::: tip
-To create a new page, copy the `oui-app-demo` directory and rename it.
+如需创建新的页面，直接复制 oui-app-demo 目录，然后重命名即可
 :::
 
-## Makefile
+## Makefile 配置
 
 ```makefile{9,10}
 #
@@ -44,16 +43,16 @@ include ../../oui.mk
 # call BuildPackage - OpenWrt buildroot signature
 ```
 
-* `APP_TITLE` - Corresponds to the `TITLE` in the OpenWrt software package
-* `APP_NAME` - During compilation, menu configuration file and packaged JS file will be named `APP_NAME`
+* `APP_TITLE` - 对应 OpenWrt 软件包中的 TITLE
+* `APP_NAME` - 编译过程，菜单配置文件和打包的 js 文件会以 `APP_NAME` 命名
 
 :::warning
-`APP NAME` cannot be repeated
+`APP_NAME` 不能重复
 :::
 
-## Menu Configuration
+## 菜单配置
 
-For the `login`, `layout`, and `home` pages, no menu configuration file are required.
+对于 `login`, `layout`, `home` 这三种页面，不需要菜单配置文件。
 
 ``` json
 {
@@ -71,18 +70,17 @@ For the `login`, `layout`, and `home` pages, no menu configuration file are requ
 }
 ```
 
-* `view` - Same as `APP NAME` in Makefile
-* `index` - For menu sorting
-* `locales` - Menu Title Translation
-* `svg` - The menu icon
+* `view` - 和 Makefile 中的 `APP_NAME` 一致
+* `index` - 用于菜单排序
+* `locales` - 菜单标题翻译
+* `svg` - 菜单图标
 
 :::tip
-How to configure menu icon: Copy the SVG code for the icon you want from [xicons](https://www.xicons.org/#/),
-and then go to the [xml2json](https://jsonformatter.org/xml-to-json) site to convert the SVG code to JSON format.
+如何配置菜单图标：到 [xicons](https://www.xicons.org/#/) 复制所需图标的 svg 代码，然后到
+[xml2json](https://www.w3cschool.cn/tools/index?name=xmljson) 这个网站上将 svg 的代码转换为 json 格式。
 :::
 
-The menu is divided into primary menu and secondary menu. Oui-ui-core provides some common primary menus by default
-
+菜单分为一级菜单和二级菜单。oui-ui-core 默认提供了一些常用的一级菜单
 ```json
 {
     "/status": {
@@ -121,11 +119,11 @@ The menu is divided into primary menu and secondary menu. Oui-ui-core provides s
 }
 ```
 
-## Customize the `login` `layout` `home` page
+## 自定义 `login` `layout` `home` 页面
 
-Take the custom `login` page as an example
+以自定义 `login` 页面为例
 
-* First create an app, such as `applications/oui-app-login-x`, and then modify its Makefile
+* 首先创建一个 app，比如 `applications/oui-app-login-x`，然后修改其 Makefile：
 
 ```makefile{9,10}
 #
@@ -144,16 +142,16 @@ include ../../oui.mk
 # call BuildPackage - OpenWrt buildroot signature
 ```
 
-* Configure `oui-ui-core`
+* 配置 `oui-ui-core`
 
 ```sh
 Oui  --->
     (login-x) Customize the login view
 ```
 
-* Development/Debugging
+* 开发/调试
 
-Create a file: oui-ui-core/htdoc/.env.local
+创建文件: oui-ui-core/htdoc/.env.local
 
 ```
 VITE_OUI_LOGIN_VIEW=login-x

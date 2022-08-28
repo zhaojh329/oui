@@ -20,4 +20,6 @@ A `framework` used to develop Web interface for OpenWrt.
 
 ## Documentation
 
-[zhaojh329.github.io/oui/](https://zhaojh329.github.io/oui/)
+[English](https://zhaojh329.github.io/oui/)
+
+[中文](https://zhaojh329.github.io/oui/zh/)
