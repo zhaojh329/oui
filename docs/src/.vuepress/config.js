@@ -1,8 +1,12 @@
-const { registerComponentsPlugin } = require('@vuepress/plugin-register-components')
-const { defaultTheme } = require('vuepress')
-const { path } = require('@vuepress/utils')
+import { defineUserConfig } from 'vuepress'
+import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
+import { searchPlugin } from '@vuepress/plugin-search'
+import { getDirname, path } from '@vuepress/utils'
+import { defaultTheme } from '@vuepress/theme-default'
 
-module.exports = {
+const __dirname = getDirname(import.meta.url)
+
+export default defineUserConfig({
   base: '/oui/',
   title: 'Oui',
   locales: {
@@ -80,6 +84,16 @@ module.exports = {
   plugins: [
     registerComponentsPlugin({
       componentsDir: path.resolve(__dirname, './components')
+    }),
+    searchPlugin({
+      locales: {
+        '/': {
+          placeholder: 'Search',
+        },
+        '/zh/': {
+          placeholder: '搜索'
+        }
+      }
     })
   ]
-}
+})
