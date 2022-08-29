@@ -30,10 +30,10 @@ endef
 define Build/Prepare
 	$(CP) ./htdoc $(PKG_BUILD_DIR)
 	echo "VITE_APP_NAME=$(APP_NAME)" > $(PKG_BUILD_DIR)/htdoc/.env.local
+	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install
 endef
 
 define Build/Compile
-	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install
 	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build
 endef
 
