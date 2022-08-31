@@ -41,7 +41,8 @@ export default defineUserConfig({
                 '/guide/page.md',
                 '/guide/vue-api.md',
                 '/guide/lua-lib.md',
-                '/guide/lua-api.md'
+                '/guide/lua-api.md',
+                '/guide/acl.md'
               ]
             }
           ]
@@ -73,7 +74,8 @@ export default defineUserConfig({
                 '/zh/guide/page.md',
                 '/zh/guide/vue-api.md',
                 '/zh/guide/lua-lib.md',
-                '/zh/guide/lua-api.md'
+                '/zh/guide/lua-api.md',
+                '/zh/guide/acl.md'
               ]
             }
           ]
