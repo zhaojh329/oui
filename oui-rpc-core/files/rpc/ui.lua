@@ -27,7 +27,7 @@ function M.get_menus(param, session)
             local data = fs.readfile('/usr/share/oui/menu.d/' .. file)
             local menu = cjson.decode(data)
             for name, info in pairs(menu) do
-                if rpc.acl_match(session, menu, 'menu') then
+                if rpc.acl_match(session, name, 'menu') then
                     menus[name] = info
                 end
             end
