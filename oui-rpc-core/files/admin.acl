@@ -1,18 +1,14 @@
 {
     "rpc": {
-        "negative": false,
-        "matchs": ["*"]
+        "matchs": [".+"]
     },
     "menu": {
-        "negative": false,
-        "matchs": ["*"]
+        "matchs": [".+"]
     },
     "ubus": {
-        "negative": false,
-        "matchs": ["*"]
+        "matchs": [".+"]
     },
     "uci": {
-        "negative": false,
-        "matchs": ["*"]
+        "matchs": [".+"]
     }
 }

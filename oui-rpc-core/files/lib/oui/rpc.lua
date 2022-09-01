@@ -127,12 +127,12 @@ function M.acl_match(session, content, class)
     end
 
     for _, pattern in ipairs(matchs) do
-        if pattern == '*' or content:match(pattern) then
-            return not session.acls[class].negative
+        if content:match(pattern) then
+            return not session.acls[class].reverse
         end
     end
 
-    return session.acls[class].negative
+    return session.acls[class].reverse
 end
 
 function M.call(mod, func, args, session)
