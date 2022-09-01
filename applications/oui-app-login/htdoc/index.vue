@@ -89,9 +89,8 @@ export default {
 .copyright .n-a {
   font-size: 1.2em;
 }
-</style>
-<style>
-input:-webkit-autofill {
+
+::v-deep input:-webkit-autofill {
   -webkit-text-fill-color: #ededed !important;
   box-shadow: 0 0 0px 1000px transparent inset !important;
   background-color: transparent;
