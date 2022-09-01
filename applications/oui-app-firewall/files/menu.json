@@ -1,0 +1,12 @@
+{
+    "/system/firewall": {
+        "title": "firewall",
+        "view": "firewall",
+        "index": 60,
+        "locales": {
+            "en-US": "firewall",
+            "zh-CN": "防火墙",
+            "zh-TW": "防火牆"
+        }
+    }
+}
