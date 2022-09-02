@@ -40,7 +40,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/www/views
 	$(CP) $(PKG_BUILD_DIR)//htdoc/dist/* $(1)/www/views
-	if [ -d ./files -a -f ./files/menu.json ]; then \
+	if [ -f ./files/menu.json ]; then \
 		$(INSTALL_DIR) $(1)/usr/share/oui/menu.d; \
 		$(INSTALL_CONF) ./files/menu.json $(1)/usr/share/oui/menu.d/$(APP_NAME).json; \
 	fi
