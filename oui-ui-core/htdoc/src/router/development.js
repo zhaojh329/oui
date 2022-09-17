@@ -13,6 +13,7 @@ function addRoutes(r, menu) {
 export default function(routes, menus, loginView, layoutView, homeView) {
   routes.push({
     path: '/login',
+    name: 'login',
     component: () => import(`../applications/oui-app-${loginView}/htdoc/index.vue`)
   })
 
@@ -24,6 +25,7 @@ export default function(routes, menus, loginView, layoutView, homeView) {
     children: [
       {
         path: '/home',
+        name: 'home',
         component: () => import(`../applications/oui-app-${homeView}/htdoc/index.vue`)
       },
       {

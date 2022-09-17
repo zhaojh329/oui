@@ -33,6 +33,7 @@ if (import.meta.env.MODE === 'development') {
 } else {
   routes.push({
     path: '/login',
+    name: 'login',
     component: () => loadView(loginView)
   })
 
@@ -44,6 +45,7 @@ if (import.meta.env.MODE === 'development') {
     children: [
       {
         path: '/home',
+        name: 'home',
         component: () => loadView(homeView)
       },
       {
@@ -58,6 +60,7 @@ if (import.meta.env.MODE === 'development') {
 function addRoutes(menu) {
   if (menu.view && menu.path !== '/')
     router.addRoute('/', {
+      name: Symbol(),
       path: menu.path,
       component: () => loadView(menu.view),
       meta: { menu: menu }
@@ -87,6 +90,12 @@ router.beforeEach(async to => {
     return
 
   if (!oui.menus) {
+    router.getRoutes().forEach(r => {
+      const name = r.name
+      if (typeof(name) === 'string')
+        return
+      router.removeRoute(name)
+    })
     const menus = await oui.loadMenus()
     menus.forEach(m => addRoutes(m))
     return to.fullPath

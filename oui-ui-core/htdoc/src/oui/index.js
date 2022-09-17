@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue'
+import { reactive } from 'vue'
 import * as Vue from 'vue'
 import axios from 'axios'
 import md5 from 'js-md5'
@@ -51,6 +51,7 @@ class Oui {
   }
 
   logout() {
+    this.menus = null
     return this.rpc('logout')
   }
 
@@ -159,59 +160,53 @@ class Oui {
     return this.menus
   }
 
+  async setLocale(locale) {
+    if (locale !== 'auto' && !i18n.global.availableLocales.includes(locale))
+      return
+
+    await this.call('uci', 'set', { config: 'oui', section: 'global', values: { locale }})
+
+    this.state.locale = locale
+
+    if (locale === 'auto')
+      i18n.global.locale = navigator.language
+    else
+      i18n.global.locale = locale
+  }
+
+  async setTheme(theme) {
+    await this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
+    this.state.theme = theme
+  }
+
+  async setHostname(hostname) {
+    await this.call('uci', 'set', { config: 'system', section: '@system[0]', values: { hostname }})
+    await this.reloadConfig('system')
+    this.state.hostname = hostname
+  }
+
+  reconnect(delay) {
+    return new Promise(resolve => {
+      let interval
+
+      const img = document.createElement('img')
+
+      img.addEventListener('load', () => {
+        window.clearInterval(interval)
+        img.remove()
+        resolve()
+      })
+
+      window.setTimeout(() => {
+        interval = window.setInterval(() => {
+          img.src = '/favicon.ico?r=' + Math.random()
+        }, 1000)
+      }, delay || 5000)
+    })
+  }
+
   install(app) {
-    const oui = {
-      state: readonly(this.state),
-      rpc: this.rpc,
-      ubus: this.ubus,
-      call: this.call,
-      login: this.login,
-      logout: this.logout,
-      reloadConfig: this.reloadConfig,
-      setLocale: async locale => {
-        if (locale !== 'auto' && !i18n.global.availableLocales.includes(locale))
-          return
-
-        await this.call('uci', 'set', { config: 'oui', section: 'global', values: { locale }})
-
-        this.state.locale = locale
-
-        if (locale === 'auto')
-          i18n.global.locale = navigator.language
-        else
-          i18n.global.locale = locale
-      },
-      setTheme: async theme => {
-        await this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
-        this.state.theme = theme
-      },
-      setHostname: async hostname => {
-        await this.call('uci', 'set', { config: 'system', section: '@system[0]', values: { hostname }})
-        await this.reloadConfig('system')
-        this.state.hostname = hostname
-      },
-      reconnect(delay) {
-        return new Promise(resolve => {
-          let interval
-
-          const img = document.createElement('img')
-
-          img.addEventListener('load', () => {
-            window.clearInterval(interval)
-            img.remove()
-            resolve()
-          })
-
-          window.setTimeout(() => {
-            interval = window.setInterval(() => {
-              img.src = '/favicon.ico?r=' + Math.random()
-            }, 1000)
-          }, delay || 5000)
-        })
-      }
-    }
-
-    app.config.globalProperties.$oui = oui
+    app.config.globalProperties.$oui = this
     app.config.globalProperties.$md5 = md5
   }
 }
