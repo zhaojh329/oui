@@ -1,6 +1,6 @@
 <template>
   <n-button type="primary" @click="showAdd">{{ $t('Add user') }}</n-button>
-  <n-modal v-model:show="model" preset="dialog" :title="modify ? $t('Change password') : $t('Add user')"
+  <n-modal v-model:show="model" preset="dialog" :title="modify ? $t('Change') : $t('Add user')"
     :positive-text="$t('OK')"
     :negative-text="$t('Cancel')"
     @positive-click="addUser">
@@ -36,7 +36,7 @@ export default {
         {
           key: 'actions',
           render: r => h(resolveComponent('n-space'), () => [
-            h(resolveComponent('n-button'), { type: 'primary', onClick: () => this.modifyUser(r) }, () => this.$t('Change password')),
+            h(resolveComponent('n-button'), { type: 'primary', onClick: () => this.modifyUser(r) }, () => this.$t('Change')),
             h(resolveComponent('n-button'), { type: 'error', onClick: () => this.deleteUser(r) }, () => this.$t('Delete'))
           ])
         }
@@ -61,7 +61,8 @@ export default {
       },
       formValue: {
         username: '',
-        password: ''
+        password: '',
+        acl: ''
       },
       aclGroups: []
     }
@@ -86,6 +87,7 @@ export default {
       this.modify = ''
       this.formValue.username = ''
       this.formValue.password = ''
+      this.formValue.acl = ''
       this.model = true
     },
     addUser() {
@@ -97,15 +99,17 @@ export default {
           }
 
           if (this.modify) {
-            this.$oui.call('user', 'change_password', {
+            this.$oui.call('user', 'change', {
               password: this.formValue.password,
+              acl: this.formValue.acl,
               id: this.modify
             })
             resolve()
           } else {
             this.$oui.call('user', 'add_user', {
               username: this.formValue.username,
-              password: this.formValue.password
+              password: this.formValue.password,
+              acl: this.formValue.acl
             }).then(({ code }) => {
               if (code === 0) {
                 resolve()
@@ -123,6 +127,7 @@ export default {
       this.modify = r.id
       this.formValue.username = r.username
       this.formValue.password = ''
+      this.formValue.acl = r.acl
       this.model = true
     }
   },

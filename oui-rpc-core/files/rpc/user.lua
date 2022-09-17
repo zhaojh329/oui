@@ -9,6 +9,7 @@ function M.get_users()
     c:foreach('oui', 'user', function(s)
         users[#users + 1] = {
             username = s.username,
+            acl = s.acl,
             id = s['.name']
         }
     end)
@@ -24,19 +25,25 @@ function M.del_user(param)
     c:commit('oui')
 end
 
-function M.change_password(param)
+function M.change(param)
     local c = uci.cursor()
     local password = param.password
+    local acl = param.acl
     local id = param.id
+
     local username = c:get('oui', id, 'username')
-    c:set('oui', id, 'password', ngx.md5(username .. ':' .. password))
-    c:commit('oui')
+    if username then
+        c:set('oui', id, 'password', ngx.md5(username .. ':' .. password))
+        c:set('oui', id, 'acl', acl or "")
+        c:commit('oui')
+    end
 end
 
 function M.add_user(param)
     local c = uci.cursor()
     local username = param.username
     local password = param.password
+    local acl = param.acl
     local exist = false
 
     c:foreach('oui', 'user', function(s)
@@ -53,6 +60,7 @@ function M.add_user(param)
     local sid = c:add('oui', 'user')
     c:set('oui', sid, 'username', username)
     c:set('oui', sid, 'password', ngx.md5(username .. ':' .. password))
+    c:set('oui', sid, 'acl', acl or "")
     c:commit('oui')
 
     return { code = 0 }

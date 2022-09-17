@@ -9,7 +9,7 @@
     "Add user": "Add user",
     "This field is required": "This field is required",
     "username-exist": "The user '{ username }' already exist",
-    "Change password": "Change password",
+    "Change": "Change",
     "Delete": "Delete"
   },
   "zh-CN": {
@@ -22,7 +22,7 @@
     "Add user": "添加用户",
     "This field is required": "必填",
     "username-exist": "用户 \"{ username }\" 已经存在",
-    "Change password": "修改密码",
+    "Change": "修改",
     "Delete": "删除"
     
   },
@@ -36,7 +36,7 @@
     "Add user": "添加用戶",
     "This field is required": "必填",
     "username-exist": "用戶 \"{ username }\" 已經存在",
-    "Change password": "修改密碼",
+    "Change": "修改",
     "Delete": "删除"
   }
 }
