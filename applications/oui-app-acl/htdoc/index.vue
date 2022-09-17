@@ -103,10 +103,10 @@ export default {
             return
 
           this.allAcls[group] = {
-            rpc: { matchs: [ '*' ] },
-            menu: { matchs: [ '*' ] },
-            ubus: { matchs: [ '*' ] },
-            uci: { matchs: [ '*' ] }
+            rpc: { matchs: [ '.+' ] },
+            menu: { matchs: [ '.+' ] },
+            ubus: { matchs: [ '.+' ] },
+            uci: { matchs: [ '.+' ] }
           }
 
           this.group = group
