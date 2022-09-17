@@ -18,6 +18,7 @@ class Oui {
     window.Vue = Vue
     this.menus = null
     this.inited = false
+    this.components = {}
     this.state = reactive({
       locale: '',
       theme: '',
