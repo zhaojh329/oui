@@ -6,7 +6,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.0.0",
     "js-md5": "^0.7.3",
     "naive-ui": "^2.33.4",
     "vue": "^3.2.40",
