@@ -8,7 +8,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "js-md5": "^0.7.3",
-    "naive-ui": "^2.32.2",
+    "naive-ui": "^2.33.4",
     "vue": "^3.2.37",
     "vue-axios": "^3.4.1",
     "vue-i18n": "^9.2.2",

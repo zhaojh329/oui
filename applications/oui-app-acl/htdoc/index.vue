@@ -92,10 +92,8 @@ export default {
     addGroup() {
       let group = ''
       this.$dialog.create({
-        autoFocus: false,
         title: this.$t('Add group'),
-        content: () => h(this.$oui.components['NInput'], {
-          placeholder: '',
+        content: () => h(resolveComponent('n-input'), {
           'on-update:value': value => group = value
         }),
         positiveText: this.$t('OK'),
