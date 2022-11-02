@@ -52,10 +52,12 @@ local function get_networks_by_route(target, mask)
     local r = {}
 
     for _, network in ipairs(networks) do
-        for _, route in ipairs(network.route) do
-            if route.target == target and route.mask == mask then
-                r[#r + 1] = network
-                break
+        if network ~= nil and network.route ~= nil then
+            for _, route in ipairs(network.route) do
+                if route.target == target and route.mask == mask then
+                    r[#r + 1] = network
+                    break
+                end
             end
         end
     end
