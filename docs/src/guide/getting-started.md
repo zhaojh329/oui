@@ -44,8 +44,6 @@ OUI  --->
 ```
 
 ::: tip
-编译 Oui 需要用到 Node，而且版本不能低于 14.18。
-
 The `Node` is needed to compile Oui, and the version cannot be later than 14.18.
 
 Select `CONFIG_OUI_USE_HOST_NODE` can save compilation time. Ensure that the Node
