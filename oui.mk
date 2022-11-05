@@ -10,12 +10,6 @@ PKG_NAME:=$(notdir ${CURDIR})
 PKG_VERSION:=$(strip $(call findrev))
 PKG_RELEASE?=1
 
-ifeq ($(CONFIG_OUI_USE_HOST_NODE),)
-NPM:=$(STAGING_DIR_HOSTPKG)/bin/npm
-endif
-
-NPM?=npm
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
@@ -30,11 +24,11 @@ endef
 define Build/Prepare
 	$(CP) ./htdoc $(PKG_BUILD_DIR)
 	echo "VITE_APP_NAME=$(APP_NAME)" > $(PKG_BUILD_DIR)/htdoc/.env.local
-	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install
+	npm --prefix $(PKG_BUILD_DIR)/htdoc install
 endef
 
 define Build/Compile
-	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build
+	npm --prefix $(PKG_BUILD_DIR)/htdoc run build
 endef
 
 define Package/$(PKG_NAME)/install

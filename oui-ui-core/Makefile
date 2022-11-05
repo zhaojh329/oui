@@ -22,12 +22,6 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_OUI_LAYOUT_VIEW \
 	CONFIG_OUI_HOME_VIEW
 
-ifeq ($(CONFIG_OUI_USE_HOST_NODE),)
-NPM:=$(STAGING_DIR_HOSTPKG)/bin/npm
-endif
-
-NPM?=npm
-
 include $(INCLUDE_DIR)/package.mk
 
 define Package/oui-ui-core
@@ -70,11 +64,11 @@ define Build/Prepare
 	echo "VITE_OUI_LOGIN_VIEW=$(CONFIG_OUI_LOGIN_VIEW)" > $(PKG_BUILD_DIR)/htdoc/.env.local
 	echo "VITE_OUI_LAYOUT_VIEW=$(CONFIG_OUI_LAYOUT_VIEW)" >> $(PKG_BUILD_DIR)/htdoc/.env.local
 	echo "VITE_OUI_HOME_VIEW=$(CONFIG_OUI_HOME_VIEW)" >> $(PKG_BUILD_DIR)/htdoc/.env.local
-	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install
+	npm --prefix $(PKG_BUILD_DIR)/htdoc install
 endef
 
 define Build/Compile
-	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build
+	npm --prefix $(PKG_BUILD_DIR)/htdoc run build
 endef
 
 define Package/oui-ui-core/install
