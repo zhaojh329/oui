@@ -6,6 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 include ../version.mk
+include ../node.mk
 
 PKG_NAME:=oui-ui-core
 PKG_VERSION:=$(strip $(call findrev))
@@ -64,11 +65,11 @@ define Build/Prepare
 	echo "VITE_OUI_LOGIN_VIEW=$(CONFIG_OUI_LOGIN_VIEW)" > $(PKG_BUILD_DIR)/htdoc/.env.local
 	echo "VITE_OUI_LAYOUT_VIEW=$(CONFIG_OUI_LAYOUT_VIEW)" >> $(PKG_BUILD_DIR)/htdoc/.env.local
 	echo "VITE_OUI_HOME_VIEW=$(CONFIG_OUI_HOME_VIEW)" >> $(PKG_BUILD_DIR)/htdoc/.env.local
-	npm --prefix $(PKG_BUILD_DIR)/htdoc install
+	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install
 endef
 
 define Build/Compile
-	npm --prefix $(PKG_BUILD_DIR)/htdoc run build
+	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build
 endef
 
 define Package/oui-ui-core/install

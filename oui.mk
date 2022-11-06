@@ -5,6 +5,7 @@
 #
 
 include ${CURDIR}/../../version.mk
+include ${CURDIR}/../../node.mk
 
 PKG_NAME:=$(notdir ${CURDIR})
 PKG_VERSION:=$(strip $(call findrev))
@@ -24,11 +25,11 @@ endef
 define Build/Prepare
 	$(CP) ./htdoc $(PKG_BUILD_DIR)
 	echo "VITE_APP_NAME=$(APP_NAME)" > $(PKG_BUILD_DIR)/htdoc/.env.local
-	npm --prefix $(PKG_BUILD_DIR)/htdoc install
+	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install
 endef
 
 define Build/Compile
-	npm --prefix $(PKG_BUILD_DIR)/htdoc run build
+	$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build
 endef
 
 define Package/$(PKG_NAME)/install
