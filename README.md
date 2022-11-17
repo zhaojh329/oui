@@ -18,6 +18,8 @@
 
 ![](docs/src/.vuepress/public/images/hero.png)
 
+![](/clones.png)
+
 A `framework` used to develop Web interface for OpenWrt.
 
 ## Documentation
