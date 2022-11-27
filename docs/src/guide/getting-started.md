@@ -44,10 +44,9 @@ OUI  --->
 ```
 
 ::: tip
-The `Node` is needed to compile Oui, and the version cannot be later than 14.18.
+The `Node.js 14.18+` is required to compile Oui.
 
-Select `CONFIG_OUI_USE_HOST_NODE` can save compilation time. Ensure that the Node
-version installed on hosts is at least 14.18. 
+Select `CONFIG_OUI_USE_HOST_NODE` to reduce compilation time.
 
 [Install the new version of Node on the host](https://nodejs.org/en/download/package-manager/)
 
