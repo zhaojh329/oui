@@ -11,7 +11,7 @@ define ColorError
 endef
 
 ifneq ($(CONFIG_OUI_USE_HOST_NODE),)
-OUI_NODE_PATH := PATH=/usr/local/bin:/usr/bin
+OUI_NODE_PATH := PATH=/usr/local/bin:/usr/bin:/bin
 NODE := $(OUI_NODE_PATH) node
 NPM := $(OUI_NODE_PATH) npm
 $(eval $(call ColorInfo,Using Node.js from Host))
