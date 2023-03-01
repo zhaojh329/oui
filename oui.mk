@@ -5,7 +5,6 @@
 #
 
 include ${CURDIR}/../../version.mk
-include ${CURDIR}/../../node.mk
 
 PKG_NAME:=$(notdir ${CURDIR})
 PKG_VERSION:=$(strip $(call findrev))
