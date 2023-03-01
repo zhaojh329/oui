@@ -57,10 +57,9 @@ define Package/oui-ui-core/config
 
   config OUI_HOST_NODE_PATH
 	string "PATH for host node search"
-	default ""
+	default "/usr/local/bin:/usr/bin:/bin"
 	help
-	  This will set PATH env for host node search,
-	  left empty if you want to use current PATH.
+	  This will set PATH env for host node search.
 endef
 
 define Package/oui-ui-core/conffiles
