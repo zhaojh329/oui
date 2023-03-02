@@ -54,12 +54,6 @@ define Package/oui-ui-core/config
 	  This disables the build dependency on the node package from
 	  the OpenWrt packages feed, allowing for faster development
 	  builds.
-
-  config OUI_HOST_NODE_PATH
-	string "PATH for host node search"
-	default "/usr/local/bin:/usr/bin:/bin:$$\(NVM_BIN\)"
-	help
-	  This will set PATH env for host node search.
 endef
 
 define Package/oui-ui-core/conffiles

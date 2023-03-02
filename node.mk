@@ -7,12 +7,7 @@ define ColorError
 endef
 
 ifneq ($(CONFIG_OUI_USE_HOST_NODE),)
-OUI_NODE_PATH := $(subst ",,$(CONFIG_OUI_HOST_NODE_PATH))
-ifneq ($(OUI_NODE_PATH),)
-OUI_NODE_PATH := PATH=$(OUI_NODE_PATH)
-else
 OUI_NODE_PATH := PATH=$(shell echo $(PATH) | sed -E 's|$(TOPDIR)/staging_dir/host/bin:||g')
-endif
 NODE := $(OUI_NODE_PATH) node
 NPM := $(OUI_NODE_PATH) npm
 else
