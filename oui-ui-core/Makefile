@@ -57,7 +57,7 @@ define Package/oui-ui-core/config
 
   config OUI_HOST_NODE_PATH
 	string "PATH for host node search"
-	default "/usr/local/bin:/usr/bin:/bin"
+	default "/usr/local/bin:/usr/bin:/bin:$$\(NVM_BIN\)"
 	help
 	  This will set PATH env for host node search.
 endef
