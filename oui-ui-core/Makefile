@@ -61,7 +61,7 @@ define Package/oui-ui-core/conffiles
 endef
 
 define Build/Prepare
-	$(call OuiCheckNode)
+	$(call CheckNode,14.18)
 	$(CP) ./htdoc $(PKG_BUILD_DIR)
 	echo "VITE_OUI_LOGIN_VIEW=$(CONFIG_OUI_LOGIN_VIEW)" > $(PKG_BUILD_DIR)/htdoc/.env.local
 	echo "VITE_OUI_LAYOUT_VIEW=$(CONFIG_OUI_LAYOUT_VIEW)" >> $(PKG_BUILD_DIR)/htdoc/.env.local

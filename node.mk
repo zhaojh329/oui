@@ -7,20 +7,23 @@ define ColorError
 endef
 
 ifneq ($(CONFIG_OUI_USE_HOST_NODE),)
-OUI_NODE_PATH := PATH=$(shell echo $(PATH) | sed -E 's|$(TOPDIR)/staging_dir/host/bin:||g')
-NODE := $(OUI_NODE_PATH) node
-NPM := $(OUI_NODE_PATH) npm
+NODE_PATH := PATH=$(PATH)
 else
-NODE := node
-NPM := npm
+NODE_PATH := PATH=$(STAGING_DIR_HOSTPKG)/bin
 endif
 
-NODE_VER_MIN := 14.18
+NODE := $(NODE_PATH) node
+NPM := $(NODE_PATH) npm
 
-NODE_VER := $(shell $(NODE) -v | sed 's/v//' | awk -F. '{print $$1"."$$2}')
+NODE_BIN := $(shell $(NODE_PATH) $(STAGING_DIR_HOST)/bin/which node)
 
-define OuiCheckNode
-	@$(call ColorInfo, "Checking Node.js for build oui...")
+ifneq ($(NODE_BIN),)
+NODE_VER := $(shell $(NODE_BIN) -v | sed 's/v//')
+endif
+
+define CheckNode
+	@echo
+	@$(call ColorInfo, "Checking Node.js for building oui...")
 	@if [ -n "$(CONFIG_OUI_USE_HOST_NODE)" ]; \
 	then \
 		$(call ColorInfo, "Using Node.js from Host"); \
@@ -29,13 +32,15 @@ define OuiCheckNode
 	fi
 	@if [ -z "$(NODE_VER)" ]; \
 	then \
-		$(call ColorError, "Node.js $(NODE_VER_MIN)+ is required"); \
-		false; \
+		$(call ColorError, "Node.js $(1)+ is required"); \
+		echo;false; \
 	fi
+	@$(call ColorInfo, "Node.js path: $(NODE_BIN)")
 	@$(call ColorInfo, "Node.js version: $(NODE_VER)")
-	@if [ "$(shell echo $(NODE_VER) | awk '{if ($$1 >= $(NODE_VER_MIN)) { printf "ok" }}')" != "ok" ]; \
+	@if [ "$(shell echo $(NODE_VER) | awk '{if ($$1 >= $(1)) { printf "ok" }}')" != "ok" ]; \
 	then \
-		$(call ColorError, "Node.js $(NODE_VER_MIN)+ is required"); \
-		false; \
+		$(call ColorError, "Node.js $(1)+ is required"); \
+		echo;false; \
     fi
+	@echo
 endef
