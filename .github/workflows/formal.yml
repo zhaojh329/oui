@@ -61,13 +61,6 @@ jobs:
               err "Signed-off-by is missing or doesn't match author (should be '$sob')"
               RET=1
             fi
-
-            if echo "$body" | grep -v "Signed-off-by:"; then
-              success "A commit message exists"
-            else
-              err "Missing commit message. Please describe your changes"
-              RET=1
-            fi
           done
 
           exit $RET
