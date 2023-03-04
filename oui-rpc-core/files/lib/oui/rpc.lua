@@ -31,7 +31,7 @@ local function need_auth(mod, func)
         return false
     end
 
-    if not no_auth_funs then
+    if not no_auth_funcs then
         load_no_auth()
     end
 
