@@ -26,13 +26,11 @@ class Oui {
   }
 
   async rpc(method, param) {
-    const { data } = await axios.post('/oui-rpc', { method, param })
-    return data
+    return (await axios.post('/oui-rpc', { method, param })).data
   }
 
-  async call(mod, func, param) {
-    const { result } = await this.rpc('call', [mod, func, param ?? {}])
-    return result
+  async call(mod, func, param = {}) {
+    return (await this.rpc('call', [mod, func, param])).result
   }
 
   ubus(obj, method, param) {
@@ -76,16 +74,14 @@ class Oui {
     else
       i18n.global.locale = locale
 
-    const { theme } = await this.call('ui', 'get_theme')
-    this.state.theme = theme
+    this.state.theme = (await this.call('ui', 'get_theme')).theme
   }
 
   async initWithAuthed() {
     if (this.state.hostname)
       return
 
-    const { hostname } = await this.ubus('system', 'board')
-    this.state.hostname = hostname
+    this.state.hostname = (await this.ubus('system', 'board')).hostname
   }
 
   parseMenus(raw) {
