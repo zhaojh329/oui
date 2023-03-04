@@ -1,21 +1,17 @@
 <template>
   <n-layout has-sider position="absolute">
-    <n-layout-sider
-                    content-style="padding: 10px;" bordered :native-scrollbar="false"
-                    show-trigger="arrow-circle"
-                    collapse-mode="width"
-                    :collapsed-width="64"
-                    :collapsed="collapsed"
-                    @collapse="collapsed = true"
-                    @expand="collapsed = false"
-      >
-      <Logo :collapsed="collapsed"/>
+    <n-layout-sider content-style="padding: 10px;" bordered :native-scrollbar="false">
+      <div class="logo-name">
+        <router-link to="/">
+          <n-el tag="span" style="color: var(--info-color);">{{ $oui.state.hostname }}</n-el>
+        </router-link>
+      </div>
       <n-divider/>
       <n-menu ref="menu" :options="menuOptions" accordion
           :expanded-keys="expandedMenus" :value="selectedMenu"
           @update:value="clickMenuItem" @update:expanded-keys="menuExpanded"/>
     </n-layout-sider>
-    <n-layout>
+    <n-layout position="absolute" style="left: 272px;">
       <n-layout-header position="absolute" bordered style="padding: 4px">
         <n-space justify="end" size="large">
           <n-tooltip placement="bottom">
@@ -35,8 +31,7 @@
           </n-dropdown>
         </n-space>
       </n-layout-header>
-      <n-layout-content embedded position="absolute" style="top: 40px; bottom: 42px" content-style="padding: 10px;" :native-scrollbar="false" class="layout-content"
-        >
+      <n-layout-content embedded position="absolute" style="top: 40px; bottom: 42px" content-style="padding: 10px;" :native-scrollbar="false">
         <router-view>
           <template #default="{ Component }">
             <transition name="zoom-fade" mode="out-in">
@@ -66,7 +61,6 @@
 </template>
 
 <script>
-import Logo from './Logo.vue'
 import { h, resolveComponent } from 'vue'
 
 import {
@@ -113,7 +107,6 @@ export default {
     menus: Array
   },
   components: {
-    Logo,
     TranslateIcon,
     UserIcon,
     MoonIcon,
@@ -121,8 +114,6 @@ export default {
   },
   data() {
     return {
-      isMobile: false,
-      collapsed: false,
       modalSpin: false,
       expandedMenus: [],
       selectedMenu: '',
@@ -250,19 +241,10 @@ export default {
           }
         })
       }
-    },
-    watchWidth() {
-      if (document.body.clientWidth <= 950) {
-        this.collapsed = true
-      } else {
-        this.collapsed = false
-      }
     }
   },
   mounted() {
     this.updateMenu()
-    this.watchWidth()
-    window.addEventListener('resize', this.watchWidth)
   }
 }
 </script>
@@ -301,11 +283,6 @@ export default {
 .zoom-fade-leave-to {
   opacity: 0;
   transform: scale(1.03);
-}
-
-.layout-content {
-  flex: auto;
-  min-height: 100vh;
 }
 </style>
 
