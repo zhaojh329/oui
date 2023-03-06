@@ -1,8 +1,8 @@
 <template>
   <router-link to="/" style="text-decoration: none;" :class="{ dark: $oui.state.theme === 'dark' }">
     <div class="logo">
-        <img :class="{'mr-2': !collapsed}" />
-        <h2 v-show="!collapsed" class="title">{{ $oui.state.hostname }}</h2>
+      <img :class="{'mr-2': !collapsed}" />
+      <h2 v-show="!collapsed" class="title">{{ $oui.state.hostname }}</h2>
     </div>
   </router-link>
 </template>
