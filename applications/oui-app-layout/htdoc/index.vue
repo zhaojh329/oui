@@ -121,7 +121,6 @@ export default {
   },
   data() {
     return {
-      isMobile: false,
       collapsed: false,
       modalSpin: false,
       expandedMenus: [],
