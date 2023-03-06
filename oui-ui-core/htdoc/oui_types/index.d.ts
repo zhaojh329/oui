@@ -5,15 +5,15 @@ declare namespace OUI {
       theme: string;
       hostname: string;
     };
-    call(mod: string, func: string, param: any?): Promise<any>;
-    ubus(func: string, method: string, param: any?): Promise<any>;
+    call(mod: string, func: string, param: any): Promise<any>;
+    ubus(func: string, method: string, param: any): Promise<any>;
     login(user: string, passwd: string): Promise<void>;
     logout(): Promise<void>;
     setLocale(locale: string): Promise<void>;
     setTheme(theme: string): Promise<void>;
     setHostname(name: string): Promise<void>;
     reloadConfig(configName: string): Promise<any>;
-    reconnect(delay: number?): Promise<void>;
+    reconnect(delay: number | null | undefined): Promise<void>;
   }
 
   /* copied from @types/js-md5 */
