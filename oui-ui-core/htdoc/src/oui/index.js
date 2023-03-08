@@ -13,28 +13,90 @@ function mergeLocaleMessage(key, locales) {
   }
 }
 
+function getSID() {
+  return sessionStorage.getItem('__oui__sid__') || ''
+}
+
 class Oui {
   constructor() {
     window.Vue = Vue
     this.menus = null
     this.inited = false
+    this.aliveTimer = null
     this.state = reactive({
+      sid: '',
       locale: '',
       theme: '',
       hostname: ''
     })
+
+    const p = [
+      this.call('ui', 'get_locale'),
+      this.call('ui', 'get_theme')
+    ]
+
+    const sid = getSID()
+    if (sid)
+      p.push(this.rpc('alive', { sid }))
+
+    Promise.all(p).then(results => {
+      let locale = results[0].locale
+      if (!locale)
+        locale = 'auto'
+
+      this.state.locale = locale
+
+      if (locale === 'auto')
+        i18n.global.locale = navigator.language
+      else
+        i18n.global.locale = locale
+
+      this.state.theme = results[1].theme
+
+      if (sid) {
+        const alive = results[2].alive
+        if (alive)
+          this.initWithAlived(sid)
+      }
+
+      this.inited = true
+    })
   }
 
-  async rpc(method, param) {
-    return (await axios.post('/oui-rpc', { method, param })).data
+  waitUntil(conditionFn) {
+    if (conditionFn())
+      return
+
+    return new Promise((resolve) => {
+      const intervalId = setInterval(() => {
+        if (conditionFn()) {
+          clearInterval(intervalId)
+          resolve()
+        }
+      }, 10)
+    })
   }
 
-  async call(mod, func, param = {}) {
-    return (await this.rpc('call', [mod, func, param])).result
+  initWithAlived(sid) {
+    this.state.sid = sid
+
+    this.ubus('system', 'board').then(({ hostname }) => this.state.hostname = hostname)
+
+    this.aliveTimer = setInterval(() => {
+      this.rpc('alive', { sid })
+    }, 5000)
   }
 
-  ubus(obj, method, param) {
-    return this.call('ubus', 'call', {object: obj, method, param})
+  async rpc(method, params) {
+    return (await axios.post('/oui-rpc', { method, params })).data
+  }
+
+  async call(mod, func, params = {}) {
+    return (await this.rpc('call', [getSID(), mod, func, params])).result
+  }
+
+  ubus(obj, method, params) {
+    return this.call('ubus', 'call', {object: obj, method, params})
   }
 
   reloadConfig(config) {
@@ -45,43 +107,34 @@ class Oui {
     const { nonce } = await this.rpc('challenge', { username })
     const hash1 = md5(`${username}:${password}`)
     const hash2 = md5(`${hash1}:${nonce}`)
-    return this.rpc('login', { username, password: hash2 })
+    const { sid } = await this.rpc('login', { username, password: hash2 })
+
+    sessionStorage.setItem('__oui__sid__', sid)
+
+    this.initWithAlived(sid)
   }
 
   logout() {
     this.menus = null
-    return this.rpc('logout')
-  }
-
-  async isAuthenticated() {
-    const { authenticated } = await this.rpc('authenticated')
-    return authenticated
-  }
-
-  async init() {
-    if (this.state.locale)
+    const sid = getSID()
+    if (!sid)
       return
 
-    let { locale } = await this.call('ui', 'get_locale')
+    if (this.aliveTimer) {
+      clearInterval(this.aliveTimer)
+      this.aliveTimer = null
+    }
 
-    if (!locale)
-      locale = 'auto'
+    sessionStorage.removeItem('__oui__sid__')
 
-    this.state.locale = locale
-
-    if (locale === 'auto')
-      i18n.global.locale = navigator.language
-    else
-      i18n.global.locale = locale
-
-    this.state.theme = (await this.call('ui', 'get_theme')).theme
+    return this.rpc('logout', { sid })
   }
 
-  async initWithAuthed() {
-    if (this.state.hostname)
-      return
-
-    this.state.hostname = (await this.ubus('system', 'board')).hostname
+  async isAlived() {
+    const sid = getSID()
+    if (!sid)
+      return false
+    return (await this.rpc('alive', { sid })).alive
   }
 
   parseMenus(raw) {

@@ -1,0 +1,353 @@
+#!/usr/bin/env eco
+
+local http = require 'eco.http'
+local time = require 'eco.time'
+local ubus = require 'eco.ubus'
+local file = require 'eco.file'
+local sys = require 'eco.sys'
+local log = require 'eco.log'
+local cjson = require 'cjson'
+local uci = require 'uci'
+
+local rpc = require 'oui.rpc'
+
+eco.panic_hook = function(err)
+    log.err('panic:', err)
+end
+
+local rpc_methods = {}
+
+rpc_methods['challenge'] = function(con, req, params)
+    if type(params.username) ~= 'string' then
+        log.err('call challenge: username is required')
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    local c = uci.cursor()
+    local found = false
+
+    c:foreach('oui', 'user', function(s)
+        if s.username == params.username then
+            found = true
+            return false
+        end
+    end)
+
+    if not found then
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    local nonce = rpc.create_nonce()
+    if not nonce then
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    con:send(cjson.encode({ nonce = nonce }))
+end
+
+rpc_methods['login'] = function(con, req, params)
+    local username = params.username
+    local password = params.password
+
+    if type(username) ~= 'string' then
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    local acl = rpc.login(username, password)
+    if not acl then
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    local sid = rpc.create_session(username, acl, req.remote_addr)
+
+    con:send(cjson.encode({ sid = sid }))
+end
+
+rpc_methods['logout'] = function(con, req, params)
+    local sid = params.sid
+
+    if type(sid) == 'string' then
+        rpc.delete_session(sid)
+    end
+end
+
+rpc_methods['alive'] = function(con, req, params)
+    local sid = params.sid
+    local alive = false
+
+    if type(sid) == 'string' and rpc.get_session(sid) then
+        alive = true
+    end
+
+    con:send(cjson.encode({ alive = alive }))
+end
+
+rpc_methods['call'] = function(con, req, params)
+    local sid = params[1]
+    local mod = params[2]
+    local func = params[3]
+    local args = params[4] or {}
+
+    if type(sid) ~= 'string' or type(mod) ~= 'string' or type(func) ~= 'string' or type(args) ~= 'table' then
+        return con:send_error(http.STATUS_BAD_REQUEST)
+    end
+
+    local session = rpc.get_session(sid) or { remote_addr = req.remote_addr }
+
+    local result, err = rpc.call(mod, func, args, session)
+    if type(err) == 'number' then
+        if err == rpc.ERROR_CODE_INVALID_ARGUMENT then
+            return con:send_error(http.STATUS_BAD_REQUEST)
+        end
+
+        if err == rpc.ERROR_CODE_NOT_FOUND then
+            return con:send_error(http.STATUS_NOT_FOUND)
+        end
+
+        if err == rpc.ERROR_CODE_UNAUTHORIZED then
+            return con:send_error(http.STATUS_UNAUTHORIZED)
+        end
+
+        if err == rpc.ERROR_CODE_PERMISSION_DENIED then
+            return con:send_error(http.STATUS_FORBIDDEN)
+        end
+
+        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
+    end
+
+    if result then
+        local resp = cjson.encode({ result = result }):gsub('{}','[]')
+        con:send(resp)
+    else
+        con:send('{}')
+    end
+end
+
+local function handle_rpc(con, req)
+    if req.method ~= 'POST' then
+        return con:send_error(http.STATUS_BAD_REQUEST)
+    end
+
+    local body, err = con:read_body()
+    if not body then
+        log.err('read body fail:', err)
+        return con:send_error(http.STATUS_BAD_REQUEST)
+    end
+
+    local ok, msg = pcall(cjson.decode, body)
+    if not ok or type(msg) ~= 'table' or type(msg.method) ~= 'string' then
+        return con:send_error(http.STATUS_BAD_REQUEST)
+    end
+
+    if type(msg.params or {}) ~= 'table' then
+        return con:send_error(http.STATUS_BAD_REQUEST)
+    end
+
+    if not rpc_methods[msg.method] then
+        log.err('Oui: Not supported rpc method: ', msg.method)
+        return con:send_error(http.STATUS_NOT_FOUND)
+    end
+
+    rpc_methods[msg.method](con, req, msg.params or {})
+end
+
+local function handle_upload(con, req)
+    local content_length = tonumber(req.headers['content-length'] or 0)
+
+    if content_length == 0 then
+        return con:send_error(http.STATUS_BAD_REQUEST, 'no Content-Length')
+    end
+
+    local sid = req.query['sid']
+    if not sid then
+        return con:send_error(http.STATUS_BAD_REQUEST, 'no "sid" in query')
+    end
+
+    if not rpc.get_session(sid) then
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    local path = req.query['path']
+    if not path then
+        return con:send_error(http.STATUS_BAD_REQUEST, 'no "path" in query')
+    end
+
+    local dir = file.dirname(path)
+    local _, a = file.statvfs(dir)
+    if a < content_length / 1024 then
+        return con:send_error(http.STATUS_PAYLOAD_TOO_LARGE)
+    end
+
+    local total = 0
+    local f, err = io.open(path, 'w+')
+    if not f then
+        log.err('open "' .. path .. '" fail: ' .. err)
+        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
+    end
+
+    while true do
+        local data, err = con:read_body(4096)
+        if not data then
+            if err then
+                log.err('read body:' .. err)
+            end
+            break
+        end
+
+        total = total + #data
+        f:write(data)
+    end
+
+    f:close()
+
+    local p, err = sys.exec('md5sum', path)
+    if not p then
+        log.err('exec md5sum "' .. path .. '" fail: ' .. err)
+        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
+    end
+
+    local stdout = p:read_stdout('*a') or ''
+    local md5_val = stdout:match('%x+')
+    if not md5_val then
+        log.err('read md5 fail')
+        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
+    end
+
+    con:send(cjson.encode({ size = total, md5 = md5_val }))
+end
+
+local function handle_download(con, req)
+    local path = req.query['path']
+    if not path then
+        return con:send_error(http.STATUS_BAD_REQUEST, 'no "path" in query')
+    end
+
+    local sid = req.query['sid']
+    if not sid then
+        return con:send_error(http.STATUS_BAD_REQUEST, 'no "sid" in query')
+    end
+
+    if not rpc.get_session(sid) then
+        return con:send_error(http.STATUS_UNAUTHORIZED)
+    end
+
+    con:add_header('content-type', 'application/octet-stream')
+    con:send_file(path)
+end
+
+local function http_handler(con, req)
+    local path = req.path
+
+    if path == '/oui-rpc' then
+        handle_rpc(con, req)
+    elseif path == '/oui-upload' then
+        handle_upload(con, req)
+    elseif path == '/oui-download' then
+        handle_download(con, req)
+    else
+        con:serve_file(req)
+    end
+end
+
+local function parse_listen_addr(str)
+    local ip, port = str:match('^%[?([%d%.:]+)%]?:(%d+)$')
+    if not ip then
+        return nil
+    end
+
+    if ip:match('^%d+%.%d+%.%d+%.%d+$') then
+        return ip, tonumber(port)
+    elseif ip:match('^%[?[%x:]+%]?$') then
+        return ip:gsub('^%[?([a-fA-F0-9:]+)%]?$', '%1'), tonumber(port), true
+    else
+        return nil
+    end
+end
+
+local function listen_http(addr, global_options, ssl)
+    local options = {}
+
+    for k, v in pairs(global_options) do
+        options[k] = v
+    end
+
+    local ipaddr, port, ipv6 = parse_listen_addr(addr)
+    if not ipaddr then
+        log.err('invalid addr:' .. addr)
+        return
+    end
+
+    options.ipv6 = ipv6
+
+    if ssl then
+        log.info('listen https:', addr)
+    else
+        log.info('listen http:', addr)
+    end
+
+    eco.run(function()
+        local srv, err = http.listen(ipaddr, port, options, http_handler)
+        if not srv then
+            log.err(err)
+            return
+        end
+    end)
+end
+
+local function parse_config()
+    local c = uci.cursor()
+
+    local options = {
+        docroot = '/www',
+        reuseaddr = true,
+        gzip = true
+    }
+
+    c:foreach('oui', 'httpd', function(s)
+        log.set_level(log[s.log_level or 'INFO'])
+
+        if s.log_path then
+            log.set_path(s.log_path)
+        end
+
+        options.http_keepalive = tonumber(s.http_keepalive or 0)
+        options.tcp_keepalive = tonumber(s.tcp_keepalive or 0)
+
+        for _, addr in ipairs(s.listen_http or {}) do
+            listen_http(addr, options)
+        end
+
+        local cert = '/etc/oui-httpd.crt'
+        local key = '/etc/oui-httpd.key'
+
+        if s.listen_https and file.access(cert) and file.access(key) then
+            options.cert = cert
+            options.key = key
+
+            for _, addr in ipairs(s.listen_https) do
+                listen_http(addr, options, true)
+            end
+        end
+
+        return false
+    end)
+end
+
+rpc.load_acl()
+rpc.load_no_auth()
+
+parse_config()
+
+sys.signal(sys.SIGINT, function()
+    log.info('\nGot SIGINT, now quit')
+    eco.unloop()
+end)
+
+sys.signal(sys.SIGTERM, function()
+    log.info('\nGot SIGTERM, now quit')
+    eco.unloop()
+end)
+
+while true do
+    time.sleep(1)
+end

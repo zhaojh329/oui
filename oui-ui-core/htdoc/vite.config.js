@@ -81,15 +81,15 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/oui-rpc': {
-          target: 'https://openwrt.lan',
+          target: 'http://openwrt.lan',
           secure: false
         },
         '/oui-upload': {
-          target: 'https://openwrt.lan',
+          target: 'http://openwrt.lan',
           secure: false
         },
         '/oui-download': {
-          target: 'https://openwrt.lan',
+          target: 'http://openwrt.lan',
           secure: false
         }
       }

@@ -1,5 +1,5 @@
-local fs = require 'oui.fs'
-local uci = require 'uci'
+local time = require 'eco.time'
+local sys = require 'eco.sys'
 
 local M = {}
 
@@ -22,20 +22,20 @@ function M.get_cpu_time()
     return { times = result }
 end
 
-function M.sysupgrade(param)
-    ngx.timer.at(0.5, function()
-        local arg = param.keep and '' or '-n'
+function M.sysupgrade(params)
+    time.at(0.5, function()
+        local arg = params.keep and '' or '-n'
         os.execute('sysupgrade ' .. arg .. ' /tmp/firmware.bin')
     end)
 end
 
-function M.create_backup(param)
-    local path = param.path
-    os.execute('sysupgrade -b ' .. path)
+function M.create_backup(params)
+    local path = params.path
+    sys.exec('sysupgrade', '-b', path)
 end
 
-function M.list_backup(param)
-    local path = param.path
+function M.list_backup(params)
+    local path = params.path
 
     local f = io.popen('tar -tzf ' .. path)
     if not f then
@@ -49,16 +49,16 @@ function M.list_backup(param)
     return { files = files }
 end
 
-function M.restore_backup(param)
-    os.execute('sysupgrade -r ' .. param.path)
+function M.restore_backup(params)
+    os.execute('sysupgrade -r ' .. params.path)
 
-    ngx.timer.at(0.5, function()
+    time.at(0.5, function()
         os.execute('reboot')
     end)
 end
 
 function M.reset()
-    ngx.timer.at(0.5, function()
+    time.at(0.5, function()
         os.execute('firstboot -y && reboot')
     end)
 end

@@ -1,16 +1,17 @@
+local ubus = require 'eco.ubus'
+local file = require 'eco.file'
 local cjson = require 'cjson'
 local rpc = require 'oui.rpc'
-local fs = require 'oui.fs'
 
 local M = {}
 
 function M.load()
-    return rpc.load_acl()
+    return rpc.get_acls()
 end
 
-function M.set(param)
-    for group, acls in pairs((param.acls)) do
-        fs.writefile('/usr/share/oui/acl/' .. group .. '.json', cjson.encode(acls))
+function M.set(params)
+    for group, acls in pairs((params.acls)) do
+        file.writefile('/usr/share/oui/acl/' .. group .. '.json', cjson.encode(acls))
     end
 
     rpc.load_acl()

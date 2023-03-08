@@ -15,30 +15,25 @@ PKG_MAINTAINER:=Jianhui Zhao <zhaojh329@gmail.com>
 PKG_LICENSE:=MIT
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 
 define Package/oui-rpc-core
   SECTION:=oui
   CATEGORY:=Oui
   TITLE:=Oui rpc core
   URL:=https://github.com/zhaojh329/oui
-  DEPENDS:=+liblua +libuci-lua +libiwinfo-lua +libubus-lua +lua-cjson +nginx-ssl \
-  	+@NGINX_HTTP_GZIP_STATIC +@NGINX_HTTP_ACCESS +@NGINX_HTTP_REWRITE +@NGINX_LUA
+  DEPENDS:=+liblua +libuci-lua +lua-cjson +lua-eco-http +lua-eco-ubus +lua-md5 +px5g-mbedtls
 endef
 
+Build/Compile=
+
 define Package/oui-rpc-core/install
-	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/nginx/conf.d $(1)/etc/nginx/lua \
-		$(1)/usr/share/oui $(1)/usr/lib/lua/oui $(1)/usr/share/oui/acl
+	$(INSTALL_DIR) $(1)/etc/config $(1)/usr/share/oui $(1)/usr/lib/lua/oui \
+		$(1)/usr/share/oui/acl $(1)/usr/sbin $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/oui-httpd.lua $(1)/usr/sbin/oui-httpd
+	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_CONF) ./files/oui.config $(1)/etc/config/oui
-	$(INSTALL_CONF) ./files/ngx/oui.locations $(1)/etc/nginx/conf.d
-	$(INSTALL_CONF) ./files/ngx/oui.conf $(1)/etc/nginx/conf.d
-	$(INSTALL_CONF) ./files/ngx/oui-rpc.lua $(1)/etc/nginx/lua
-	$(INSTALL_CONF) ./files/ngx/oui-upload.lua $(1)/etc/nginx/lua
-	$(INSTALL_CONF) ./files/ngx/oui-download.lua $(1)/etc/nginx/lua
 	$(INSTALL_CONF) ./files/admin.acl $(1)/usr/share/oui/acl/admin.json
-	$(CP) ./files/lib/oui $(1)/usr/lib/lua
-	$(CP) ./files/lib/resty $(1)/usr/lib/lua
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lua/oui $(1)/usr/lib/lua
+	$(CP) ./files/rpc.lua $(1)/usr/lib/lua/oui
 	$(CP) ./files/rpc $(1)/usr/share/oui
 endef
 

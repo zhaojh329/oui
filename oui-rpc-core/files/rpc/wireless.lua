@@ -46,7 +46,7 @@ function M.status()
     return { devs = devs }
 end
 
-function M.stations(param)
+function M.stations(params)
     local conn = ubus.connect()
     local status = conn:call('network.wireless', 'status', {}) or {}
     conn:close()

@@ -1,7 +1,7 @@
 local M = {}
 
-local ubus = require 'ubus'
-local fs = require 'oui.fs'
+local ubus = require 'eco.ubus'
+local file = require 'eco.file'
 local uci = require 'uci'
 
 function M.dhcp_leases()
@@ -9,7 +9,7 @@ function M.dhcp_leases()
     local leases = {}
     local leasefile = c:get('dhcp', '@dnsmasq[0]', 'leasefile') or '/tmp/dhcp.leases'
 
-    if not fs.access(leasefile) then
+    if not file.access(leasefile) then
         return { leases = leases }
     end
 
@@ -41,9 +41,7 @@ function M.dhcp_leases()
 end
 
 local function get_networks()
-    local con = ubus.connect()
-    local status = con:call('network.interface', 'dump', {})
-    con:close()
+    local status = ubus.call('network.interface', 'dump', {})
     return status.interface
 end
 

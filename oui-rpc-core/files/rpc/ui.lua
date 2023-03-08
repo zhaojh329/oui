@@ -1,6 +1,6 @@
-local cjson = require 'cjson'
+local file = require 'eco.file'
 local rpc = require 'oui.rpc'
-local fs = require 'oui.fs'
+local cjson = require 'cjson'
 local uci = require 'uci'
 
 local M = {}
@@ -19,16 +19,16 @@ function M.get_theme()
     return { theme = theme }
 end
 
-function M.get_menus(param, session)
+function M.get_menus(params, session)
     local menus = {}
 
-    for file in fs.dir('/usr/share/oui/menu.d') do
-        if file:match('^%w.*%.json$') then
-            local data = fs.readfile('/usr/share/oui/menu.d/' .. file)
+    for name in file.dir('/usr/share/oui/menu.d') do
+        if name:match('^%w.*%.json$') then
+            local data = file.readfile('/usr/share/oui/menu.d/' .. name)
             local menu = cjson.decode(data)
-            for name, info in pairs(menu) do
-                if rpc.acl_match(session, name, 'menu') then
-                    menus[name] = info
+            for m, info in pairs(menu) do
+                if rpc.acl_match(session, m, 'menu') then
+                    menus[m] = info
                 end
             end
         end

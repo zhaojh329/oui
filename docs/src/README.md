@@ -1,23 +1,9 @@
 ---
 home: true
-heroImage: /images/hero.png
 actions:
   - text: Get Started
     link: /guide/getting-started.md
     type: primary
-features:
-- title: High-performance
-  details: Enjoy the high performance of Nginx + Lua coroutines.
-- title: Vue-Powered
-  details: Enjoy the development experience brought by the modern front-end framework Vue.  Help you achieve cool pages.
-- title: Separation of front-end and backend
-  details: There are specializations (developer separation).
-- title: Lua
-  details: Use Lua development interface, improve development efficiency, less work.
-- title: Multi-user/ACL management
-  details: Provides fine-grained permission management.
-- title: Modularization
-  details: As with Luci, each page is individually packaged as an IPK.
 footer: MIT Licensed | Copyright © 2022 Jianhui Zhao <zhaojh329@gmail.com>
 ---
 

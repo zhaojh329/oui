@@ -75,16 +75,15 @@ const router = createRouter({
 })
 
 router.beforeEach(async to => {
-  await oui.init()
+  await oui.waitUntil(() => oui.inited)
 
-  if (to.path === '/login')
+  if (to.path === '/login') {
+    oui.logout()
     return
+  }
 
-  const authenticated = await oui.isAuthenticated()
-  if (!authenticated)
+  if (!(await oui.isAlived()))
     return '/login'
-
-  await oui.initWithAuthed()
 
   if (import.meta.env.MODE === 'development')
     return

@@ -40,7 +40,6 @@ export default defineUserConfig({
                 '/guide/getting-started.md',
                 '/guide/page.md',
                 '/guide/vue-api.md',
-                '/guide/lua-lib.md',
                 '/guide/lua-api.md',
                 '/guide/acl.md'
               ]
@@ -73,7 +72,6 @@ export default defineUserConfig({
                 '/zh/guide/getting-started.md',
                 '/zh/guide/page.md',
                 '/zh/guide/vue-api.md',
-                '/zh/guide/lua-lib.md',
                 '/zh/guide/lua-api.md',
                 '/zh/guide/acl.md'
               ]

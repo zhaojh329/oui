@@ -7,7 +7,7 @@
   <n-button :loading="loading" type="primary" style="margin-top: 4px" @click="generateBackup">{{ $t('Generate backup file') }}</n-button>
   <n-divider/>
   <n-h2>{{ $t('Restore from backup') }}</n-h2>
-  <n-upload ref="upload" directory-dnd action="/oui-upload" :data="{path: '/tmp/backup.tar.gz'}" :on-finish="onUploadFinish">
+  <n-upload ref="upload" directory-dnd :custom-request="customRequest">
     <n-upload-dragger>
       <div><n-icon size="48"><arrow-up-circle-icon/></n-icon></div>
       <n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
@@ -57,26 +57,34 @@ export default {
   methods: {
     generateBackup() {
       this.loading = true
+      const sid = this.$oui.state.sid
       this.$oui.call('system', 'create_backup', { path: '/tmp/backup.tar.gz' }).then(() => {
-        this.axios.post('/oui-download', { path: '/tmp/backup.tar.gz' }, { responseType: 'blob' }).then(resp => {
+        this.axios.get(`/oui-download?sid=${sid}&path=/tmp/backup.tar.gz`, { responseType: 'blob' }).then(resp => {
           this.backupUrl = window.URL.createObjectURL(resp.data)
           this.loading = false
         })
       })
     },
-    onUploadFinish() {
-      this.$refs.upload.clear()
+    customRequest(ctx) {
+      const sid = this.$oui.state.sid
+      this.axios.post(`/oui-upload?sid=${sid}&path=/tmp/backup.tar.gz`, ctx.file.file, {
+        onUploadProgress: ev => ctx.onProgress({ percent: Math.ceil(ev.loaded * 100 / ev.total) })
+      }).then(() => {
+        ctx.onFinish()
 
-      this.$oui.call('system', 'list_backup', { path: '/tmp/backup.tar.gz' }).then(({ files }) => {
-        if (!files) {
-          this.$dialog.error({
-            content: this.$t('The uploaded backup archive is not readable')
-          })
-        } else {
-          this.backupFiles = files
-          this.modalConfirm = true
-        }
-      })
+        this.$refs.upload.clear()
+
+        this.$oui.call('system', 'list_backup', { path: '/tmp/backup.tar.gz' }).then(({ files }) => {
+          if (!files) {
+            this.$dialog.error({
+              content: this.$t('The uploaded backup archive is not readable')
+            })
+          } else {
+            this.backupFiles = files
+            this.modalConfirm = true
+          }
+        })
+      }).catch(error => ctx.onError(error))
     },
     doRestore() {
       this.$oui.call('system', 'restore_backup', { path: '/tmp/backup.tar.gz' }).then(() => {

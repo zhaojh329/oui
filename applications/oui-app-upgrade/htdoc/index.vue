@@ -1,5 +1,5 @@
 <template>
-  <n-upload ref="upload" directory-dnd action="/oui-upload" :data="{path: '/tmp/firmware.bin'}" :on-finish="onUploadFinish">
+  <n-upload ref="upload" directory-dnd :custom-request="customRequest">
     <n-upload-dragger>
       <div><n-icon size="48"><arrow-up-circle-icon/></n-icon></div>
       <n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
@@ -57,22 +57,28 @@ export default {
 
       return (bytes / Math.pow(1024, k)).toFixed(2) + ' ' + units
     },
-    onUploadFinish({ event }) {
-      const response = JSON.parse(event.target.response)
-      this.size = response.size
-      this.md5 = response.md5
-      this.$refs.upload.clear()
+    customRequest(ctx) {
+      const sid = this.$oui.state.sid
+      this.axios.post(`/oui-upload?sid=${sid}&path=/tmp/firmware.bin`, ctx.file.file, {
+        onUploadProgress: ev => ctx.onProgress({ percent: Math.ceil(ev.loaded * 100 / ev.total) })
+      }).then(resp => {
+        ctx.onFinish()
+        this.size = resp.data.size
+        this.md5 = resp.data.md5
 
-      this.$oui.ubus('system', 'validate_firmware_image', { path: '/tmp/firmware.bin' }).then(({ valid }) => {
-        if (!valid) {
-          this.$dialog.error({
-            content: this.$t('Firmware verification failed. Please upload the firmware again')
-          })
-        } else {
-          this.keepConfig = true
-          this.modalConfirm = true
-        }
-      })
+        this.$refs.upload.clear()
+
+        this.$oui.ubus('system', 'validate_firmware_image', { path: '/tmp/firmware.bin' }).then(({ valid }) => {
+          if (!valid) {
+            this.$dialog.error({
+              content: this.$t('Firmware verification failed. Please upload the firmware again')
+            })
+          } else {
+            this.keepConfig = true
+            this.modalConfirm = true
+          }
+        })
+      }).catch(error => ctx.onError(error))
     },
     doUpgrade() {
       this.$oui.call('system', 'sysupgrade', { keep: this.keepConfig }).then(() => {

@@ -1,21 +1,18 @@
+local ubus = require 'eco.ubus'
 local rpc = require 'oui.rpc'
-local ubus = require 'ubus'
+local log = require 'eco.log'
 
 local M = {}
 
-function M.call(param, session)
-    local object = param.object
-    local method = param.method
+function M.call(params, session)
+    local object = params.object
+    local method = params.method
 
-    if not rpc.acl_match(session, param.object .. '.' .. param.method, 'ubus') then
-        ngx.exit(ngx.HTTP_FORBIDDEN)
+    if not rpc.acl_match(session, params.object .. '.' .. params.method, 'ubus') then
+        return nil, M.ERROR_CODE_PERMISSION_DENIED
     end
 
-    local conn = ubus.connect()
-    local res = conn:call(object, method, param.param or {})
-    conn:close()
-
-    return res
+    return ubus.call(object, method, params.params or {})
 end
 
 return M

@@ -1,7 +1,7 @@
 local M = {}
 
-function M.echo(param)
-    return param
+function M.echo(params)
+    return params
 end
 
 return M

@@ -1,4 +1,5 @@
 local uci = require 'uci'
+local md5 = require 'md5'
 
 local M = {}
 
@@ -17,33 +18,33 @@ function M.get_users()
     return { users = users }
 end
 
-function M.del_user(param)
+function M.del_user(params)
     local c = uci.cursor()
-    local id = param.id
+    local id = params.id
 
     c:delete('oui', id)
     c:commit('oui')
 end
 
-function M.change(param)
+function M.change(params)
     local c = uci.cursor()
-    local password = param.password
-    local acl = param.acl
-    local id = param.id
+    local password = params.password
+    local acl = params.acl
+    local id = params.id
 
     local username = c:get('oui', id, 'username')
     if username then
-        c:set('oui', id, 'password', ngx.md5(username .. ':' .. password))
-        c:set('oui', id, 'acl', acl or "")
+        c:set('oui', id, 'password', md5.sumhexa(username .. ':' .. password))
+        c:set('oui', id, 'acl', acl or '')
         c:commit('oui')
     end
 end
 
-function M.add_user(param)
+function M.add_user(params)
     local c = uci.cursor()
-    local username = param.username
-    local password = param.password
-    local acl = param.acl
+    local username = params.username
+    local password = params.password
+    local acl = params.acl
     local exist = false
 
     c:foreach('oui', 'user', function(s)
@@ -59,8 +60,8 @@ function M.add_user(param)
 
     local sid = c:add('oui', 'user')
     c:set('oui', sid, 'username', username)
-    c:set('oui', sid, 'password', ngx.md5(username .. ':' .. password))
-    c:set('oui', sid, 'acl', acl or "")
+    c:set('oui', sid, 'password', md5.sumhexa(username .. ':' .. password))
+    c:set('oui', sid, 'acl', acl or '')
     c:commit('oui')
 
     return { code = 0 }

@@ -3,11 +3,11 @@
 ## Build & Install
 
 :::tip
-Oui requires the `gzip Static` module of Nginx to work, which is not enabled for Nginx in earlier Openwrt Packages. 
+Oui depends on the latest version of `Lua-eco`.
 
-If you are using a earlier OpenWrt, you will need to apply this patch: 
+If you are using a earlier OpenWrt, you will need to upgrade it: 
 
-[https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427](https://github.com/openwrt/packages/commit/33a93e20a6875873232467621624b8b4df8ca427)
+[https://github.com/openwrt/packages/tree/master/lang/lua-eco](https://github.com/openwrt/packages/tree/master/lang/lua-eco)
 :::
 
 ### Add feed
@@ -73,22 +73,22 @@ Start by modifying the HTTP proxy: oui-ui-core/htdoc/vite.config.js
     server: {
         proxy: {
         '/oui-rpc': {
-            target: 'https://openwrt.lan',
+            target: 'http://openwrt.lan',
             secure: false
         },
         '/oui-upload': {
-            target: 'https://openwrt.lan',
+            target: 'http://openwrt.lan',
             secure: false
         },
         '/oui-download': {
-            target: 'https://openwrt.lan',
+            target: 'http://openwrt.lan',
             secure: false
         }
         }
     }
 }
 ```
-Change the `https://openwrt.lan` to the address of your debug device, such as `https://192.168.1.1`
+Change the `http://openwrt.lan` to the address of your debug device, such as `http://192.168.1.1`
 
 1. Open the OUI project using VSCode
 2. Enter into the directory: `oui-ui-core/htdoc`
