@@ -5,7 +5,7 @@
 
 import { defineConfig } from 'vite'
 import viteCompression from 'vite-plugin-compression'
-import vueI18n from '@intlify/vite-plugin-vue-i18n'
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import eslint from 'vite-plugin-eslint'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
