@@ -1,5 +1,8 @@
 #!/usr/bin/env eco
 
+-- SPDX-License-Identifier: MIT
+-- Author: Jianhui Zhao <zhaojh329@gmail.com>
+
 local http = require 'eco.http'
 local time = require 'eco.time'
 local ubus = require 'eco.ubus'

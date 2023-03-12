@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Author: Jianhui Zhao <zhaojh329@gmail.com>
+ */
+
 import {createRouter, createWebHashHistory} from 'vue-router'
 import addRoutesDev from './development.js'
 import oui from '../oui'

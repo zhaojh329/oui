@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Author: Jianhui Zhao <zhaojh329@gmail.com>
+ */
+
 import { defineConfig } from 'vite'
 import viteCompression from 'vite-plugin-compression'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'

@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Author: Jianhui Zhao <zhaojh329@gmail.com>
+ */
+
 function addRoutes(r, menu) {
   if (menu.view && menu.path !== '/') {
     r.push({

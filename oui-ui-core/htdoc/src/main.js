@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Author: Jianhui Zhao <zhaojh329@gmail.com>
+ */
+
 import { createApp } from 'vue'
 import VueAxios from 'vue-axios'
 import axios from 'axios'

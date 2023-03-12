@@ -1,3 +1,8 @@
+/* SPDX-License-Identifier: MIT */
+/*
+ * Author: Jianhui Zhao <zhaojh329@gmail.com>
+ */
+
 import { reactive } from 'vue'
 import * as Vue from 'vue'
 import axios from 'axios'
