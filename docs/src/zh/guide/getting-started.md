@@ -46,9 +46,9 @@ OUI  --->
 ::: tip
 编译 Oui 需要用到 Node，而且版本不能低于 14.18。
 
-勾选 `CONFIG_OUI_USE_HOST_NODE` 可节约编译时间，需要确保主机上安装的 Node 版本不低于 14.18。
+勾选 `Use existing nodejs installation on the host system` 可节约编译时间，需要确保主机上安装的 Node 版本不低于 14.18。
 
-[在主机上安装新版本的 Node](https://nodejs.org/en/download/package-manager/)
+你可以使用 [nvm](https://github.com/nvm-sh/nvm) 管理多个 Node 版本。
 
 可能你之前勾选了 Luci 相关的配置，这会和 oui 产生冲突，需要将其取消。
 :::
