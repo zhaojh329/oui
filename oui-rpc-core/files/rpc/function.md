@@ -723,3 +723,373 @@ return:
         }
     ]
 }
+
+
+
+第4页
+{"method":"call","param":["PAGE4","",{}]}
+-----------------------------------
+function Get_Port_Forwarding_Info()
+params:None
+return:
+{
+    "result": [
+        {
+            "function": "ROUTE to 192.168.1.1",
+            "is_in_use": "1",
+            "rule": "IPV4 from WAN to THIS_DEVICE",
+            "name": "转发1"
+        },
+        {
+            "function": "ROUTE to 192.168.2.1",
+            "is_in_use": "0",
+            "rule": "IPV4 from WAN to THIS_DEVICE",
+            "name": "转发2"
+        }
+    ]
+}
+
+-------------------------------------------
+function Get_Device_Firewall_Info()
+params:None
+return:
+{
+    "result": [
+        {
+            "function": "ACCESS",
+            "is_in_use": "1",
+            "rule": "IPV4 UDP from WAN to THIS_DEVICE port 68",
+            "name": "allow"
+        },
+        {
+            "function": "ACCESS",
+            "is_in_use": "0",
+            "rule": "IPV4 UDP from WAN to THIS_DEVICE port 80",
+            "name": "allow"
+        }
+    ]
+}
+
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+function Get_Kernel_Log()
+params:None
+return:
+{
+    "result": [
+        {
+            "log": "klogklogklog"
+        }
+    ]
+}
+
+
+function Get_Whitelist_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "name": "1",
+            "mac": "FF:FF:FF:FF:FF"
+        },
+        {
+            "name": "2",
+            "mac": "FF:FF:FF:FF:FF"
+        }
+    ]
+}
+
+
+第5页
+{"method":"call","param":["PAGE5","",{}]}
+-----------------------------------
+
+function Get_Language_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "language": "Chinese",
+            "theme": "light"
+        }
+    ]
+}
+
+function Set_Language_Config(params)
+params:{"language":"","theme":""}
+return:
+{
+    "result": [
+        {
+            "language": "",
+            "theme": ""
+        }
+    ]
+}
+
+function Get_Hostname_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "hostname": "openwrt"
+        }
+    ]
+}
+
+function Set_Hostname_Config(params)
+params:{"hostname":""}
+return:
+{
+    "result": [
+        {
+            "hostname": ""
+        }
+    ]
+}
+
+function Get_Device_Log_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "extern_log_server_ip_addr": "0.0.0.0",
+            "log_buffer_size": "64",
+            "extern_log_server_proto": "UDP",
+            "corn_log_level": "Warning",
+            "log_level": "Debug",
+            "log_file_addr": "/tmp",
+            "extern_log_server_port": "114"
+        }
+    ]
+}
+
+function Set_Device_Log_Config(params)
+params:{"log_buffer_size":"","extern_log_server_ip_addr":"","extern_log_server_port":"","extern_log_server_proto":"","log_file_addr":"","log_level":"","corn_log_level":""}
+return:
+{
+    "result": [
+        {
+            "extern_log_server_ip_addr": "0.0.0.0",
+            "log_buffer_size": "64",
+            "extern_log_server_proto": "UDP",
+            "corn_log_level": "Warning",
+            "log_level": "Debug",
+            "log_file_addr": "/tmp",
+            "extern_log_server_port": "114"
+        }
+    ]
+}
+
+function Get_TZ_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "tz": "UTC+8:00"
+        }
+    ]
+}
+
+function Set_TZ_Config(params)
+params:{"tz":""}
+return:
+{
+    "result": [
+        {
+            "tz": ""
+        }
+    ]
+}
+
+function Get_Systime()
+params:None
+return:
+{
+    "result": [
+        {
+            "time": "2023/05/20 22:35:35"
+        }
+    ]
+}
+
+function Set_Systime(params)
+params:{"time":""}
+return:
+{
+    "result": [
+        {
+            "time": ""
+        }
+    ]
+}
+
+------------------------------------
+function Sysupgrade_Auto()
+params:None
+return:
+{
+    "result": [
+        {
+            "return": "1"
+        }
+    ]
+}
+
+function Sysupgrade_Manual()
+params:None
+return:
+{
+    "result": [
+        {
+            "return": "1"
+        }
+    ]
+}
+
+function Sysupgrade_Flash(params)
+params:{"path":""}
+return:
+{
+    "result": [
+        {
+            "path": ""
+        }
+    ]
+}
+
+function Sysupgrade_Factary()
+params:None
+return:
+{
+    "result": [
+        {
+            "return": "1"
+        }
+    ]
+}
+
+function Sysupgrade_Backup(params)
+params:{"path":""}
+return:
+{
+    "result": [
+        {
+            "path": ""
+        }
+    ]
+}
+
+function Sysupgrade_Factary(params)
+params:{"path":""}
+return:
+{
+    "result": [
+        {
+            "path": ""
+        }
+    ]
+}
+
+---------------------------------------
+function Get_User_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "role": "admin",
+            "name": "A",
+            "phone": "11111111111",
+            "create_time": "2023/05/02 11:12:25",
+            "status": "1",
+            "id": "121"
+        },
+        {
+            "role": "user",
+            "name": "A1",
+            "phone": "11221111111",
+            "create_time": "2023/05/02 11:12:24",
+            "status": "0",
+            "id": "1211"
+        }
+    ]
+}
+
+---------------------------------------
+function Get_Role_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "create_time": "2023/05/02 11:12:24",
+            "role_description": "A",
+            "role_name": "121",
+            "permission_switch": "1"
+        },
+        {
+            "create_time": "2023/05/02 11:12:24",
+            "role_description": "A",
+            "role_name": "121",
+            "permission_switch": "1"
+        }
+    ]
+}
+
+-------------------------------------------
+
+function Get_Debug_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "debug": "1"
+        }
+    ]
+}
+
+function Set_Debug_Config(params)
+params:{"path":""}
+return:
+{
+    "result": [
+        {
+            "debug": ""
+        }
+    ]
+}
+
+function Get_Transmission_Config()
+params:None
+return:
+{
+    "result": [
+        {
+            "transmission": "1"
+        }
+    ]
+}
+
+function Set_Transmission_Config(params)
+params:{"transmission":""}
+return:
+{
+    "result": [
+        {
+            "transmission": "1"
+        }
+    ]
+}
+
+function Reboot()
+params:None
+return:None
