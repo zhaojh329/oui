@@ -1,9 +1,15 @@
-第一页
+# 第一页
+```json
 {"method":"call","param":["PAGE1","",{}]}
+```
 --------------------------------------------
-function Get_Wire_Connection()
-params:None
-return:
+
+## function Get_Wire_Connection()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -20,10 +26,14 @@ return:
         }
     ]
 }
+```
 
-function Get_24_Connection()
-params:None
-return:
+## function Get_24_Connection()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -40,10 +50,14 @@ return:
         }
     ]
 }
+```
 
-function Get_5G_Connection()
-params:None
-return:
+## function Get_5G_Connection()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -60,10 +74,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_Whitelist(params)
-params:{"mac":"","status":""}
-return:
+## function Set_Device_Whitelist(params)
+
+> params:{"mac":"","status":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -72,10 +90,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_Ethcontrol(params)
-params:{"mac":"","status":""}
-return:
+## function Set_Device_Ethcontrol(params)
+
+> params:{"mac":"","status":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -84,10 +106,14 @@ return:
         }
     ]
 }
---------------------------------------------------
-function Get_Device_Info()
-params:None
-return:
+```
+
+## function Get_Device_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -102,9 +128,14 @@ return:
         }
     ]
 }
-function Get_Node_Info()
-params:None
-return:
+```
+
+## function Get_Node_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -115,10 +146,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Link_Info()
-params:None
-return:
+## function Get_Link_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -131,10 +166,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Ethinfo()
-params:None
-return:
+## function Get_Device_Ethinfo()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -150,10 +189,15 @@ return:
         }
     ]
 }
---------------------------------------------------------
-function Get_Device_WWWinfo()
-params:None
-return:
+```
+
+
+## function Get_Device_WWWinfo()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -164,22 +208,33 @@ return:
         }
     ]
 }
+```
 
-function Get_WWW_Speed()
-params:None
-return:
+## function Get_WWW_Speed()
+
+> params:None
+
+**return:**
+```json
 {
 "result":
 [{"upload_speed":"","download_speed":""}]
 }
+```
 
-
-第二页
-{"method":"call","param":["PAGE2","",{}]}
 ------------------------------------------------------
-function Get_Proxy_Mode()
-params:None
-return:
+
+# 第二页
+```json
+{"method":"call","param":["PAGE2","",{}]}
+```
+
+## function Get_Proxy_Mode()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -188,10 +243,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Proxy_Mode(params)
-params:{"mode":"","is_private_proto":""}
-return:
+## function Set_Proxy_Mode(params)
+
+> params:{"mode":"","is_private_proto":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -200,10 +259,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Type1_Link_Info()
-params:None
-return:
+## function Get_Type1_Link_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -228,10 +291,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Type1_Link_Route(params)
-params:{"jump_num":"","out_country":""}
-return:
+## function Set_Type1_Link_Route(params)
+
+> params:{"jump_num":"","out_country":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -240,10 +307,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Type1_Link_Advance_Info()
-params:None
-return:
+## function Get_Type1_Link_Advance_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -255,10 +326,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Type1_Link_Advance_Info(params)
-params:{"fix_land_ip":"","auto_switch":"","fix_out_country":"","switch_cycle":"","switch_cycle_value":""}
-return:
+## function Set_Type1_Link_Advance_Info(params)
+
+> params:{"fix_land_ip":"","auto_switch":"","fix_out_country":"","switch_cycle":"","switch_cycle_value":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -270,10 +345,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Type2_Link_Info()
-params:None
-return:
+## function Get_Type2_Link_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -290,10 +369,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Type2_Link_Advance_Info()
-params:None
-return:
+## function Get_Type2_Link_Advance_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -305,10 +388,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Type1_Link_Advance_Info(params)
-params:{"fix_land_ip":"","fix_link":"","random_personal_link":"","switch_cycle":"","switch_cycle_value":""}
-return:
+## function Set_Type1_Link_Advance_Info(params)
+
+> params:{"fix_land_ip":"","fix_link":"","random_personal_link":"","switch_cycle":"","switch_cycle_value":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -320,10 +407,14 @@ return:
         }
     ]
 }
------------------------------------------------
-function Get_Type2_Link_Advance_Info()
-params:None
-return:
+```
+
+## function Get_Type2_Link_Advance_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -341,10 +432,14 @@ return:
         }
     ]
 }
------------------------------------------------
-function Get_Port_Forwarding_Info()
-params:None
-return:
+```
+
+## function Get_Port_Forwarding_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -367,10 +462,14 @@ return:
         }
     ]
 }
----------------------------------------------
-function Get_VPN_Info()
-params:None
-return:
+```
+
+## function Get_VPN_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -393,10 +492,14 @@ return:
         }
     ]
 }
------------------------------------------------
-function Set_VPN_Info(params)
-params:{"smart_vpn_routing":"","service_vpn_routing":""}
-return:
+```
+
+## function Set_VPN_Info(params)
+
+> params:{"smart_vpn_routing":"","service_vpn_routing":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -405,13 +508,20 @@ return:
         }
     ]
 }
-
-第3页
-{"method":"call","param":["PAGE3","",{}]}
+```
 -----------------------------------
-function Get_Network_Interface_Info()
-params:None
-return:
+
+# 第3页
+```json
+{"method":"call","param":["PAGE3","",{}]}
+```
+
+## function Get_Network_Interface_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -436,10 +546,14 @@ return:
         }
     ]
 }
---------------------------------------
-function Get_Device_Net_Info()
-params:None
-return:
+```
+
+## function Get_Device_Net_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -452,10 +566,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Net_Config()
-params:None
-return:
+## function Get_Device_Net_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -467,10 +585,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_Net_Config(params)
-params:{"conn_way":"","auto_dns_conf":"","manual_dns_conf":"","dns1":"","dns2":""}
-return:
+## function Set_Device_Net_Config(params)
+
+> params:{"conn_way":"","auto_dns_conf":"","manual_dns_conf":"","dns1":"","dns2":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -482,10 +604,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_MAC_Info()
-params:None
-return:
+## function Get_Device_MAC_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -493,10 +619,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_MAC_Info(params)
-params:{"mac":""}
-return:
+## function Set_Device_MAC_Info(params)
+
+> params:{"mac":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -504,10 +634,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Wifi_Config()
-params:None
-return:
+## function Get_Device_Wifi_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -533,12 +667,16 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_Wifi_Config(params)
-params:
+## function Set_Device_Wifi_Config(params)
+
+> params:
 {"is_wifi_ssid_2in1": "","is_wifi_24_hide_ssid": "","wifi_24_dbm": "","wifi_24_channel": "","wifi_24_passwd": "","wifi_24_encryption_method": "","wifi_24_name": "","is_wifi_24_on": "","wifi_5g_name": "","wifi_5g_dbm": "","is_wifi_5g_on": "","wifi_5g_channel": "","wifi_5g_ encryption_method": "","wifi_5g_passwd": "","is_wifi_5g_hide_ssid": ""    
 }
-return:
+
+**return:**
+```json
 {
     "result": [
         {
@@ -564,11 +702,14 @@ return:
         }
     ]
 }
+```
 
---------------------------------------------
-function Get_LAN_Config()
-params:None
-return:
+## function Get_LAN_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -581,10 +722,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_LAN_Config(params)
-params:{"is_dhcp_on":"","dhcp_start_ip":"","dhcp_stop_ip":"","lan_ip":""}
-return:
+## function Set_Device_LAN_Config(params)
+
+> params:{"is_dhcp_on":"","dhcp_start_ip":"","dhcp_stop_ip":"","lan_ip":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -597,10 +742,14 @@ return:
         }
     ]
 }
------------------------------------------------
-function Get_Device_Static_Ipv4_Route()
-params:None
-return:
+```
+
+## function Get_Device_Static_Ipv4_Route()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -621,10 +770,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Static_Ipv6_Route()
-params:None
-return:
+## function Get_Device_Static_Ipv6_Route()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -643,10 +796,14 @@ return:
         }
     ]
 }
-----------------------------------------------------
-function Get_Device_ARP_Info()
-params:None
-return:
+```
+
+## function Get_Device_ARP_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -661,10 +818,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Active_Ipv4_Info()
-params:None
-return:
+## function Get_Device_Active_Ipv4_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -683,10 +844,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Ipv6_Neighbors_Info()
-params:None
-return:
+## function Get_Device_Ipv6_Neighbors_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -701,10 +866,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Active_Ipv6_Info()
-params:None
-return:
+## function Get_Device_Active_Ipv6_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -723,15 +892,21 @@ return:
         }
     ]
 }
+```
 
-
-
-第4页
-{"method":"call","param":["PAGE4","",{}]}
 -----------------------------------
-function Get_Port_Forwarding_Info()
-params:None
-return:
+
+# 第4页
+```json
+{"method":"call","param":["PAGE4","",{}]}
+```
+
+## function Get_Port_Forwarding_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -748,11 +923,14 @@ return:
         }
     ]
 }
+```
 
--------------------------------------------
-function Get_Device_Firewall_Info()
-params:None
-return:
+## function Get_Device_Firewall_Info()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -769,14 +947,14 @@ return:
         }
     ]
 }
+```
 
----------------------------------------
----------------------------------------
+## function Get_Kernel_Log()
 
----------------------------------------
-function Get_Kernel_Log()
-params:None
-return:
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -784,11 +962,14 @@ return:
         }
     ]
 }
+```
 
+## function Get_Whitelist_Config()
 
-function Get_Whitelist_Config()
-params:None
-return:
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -801,15 +982,21 @@ return:
         }
     ]
 }
+```
 
-
-第5页
-{"method":"call","param":["PAGE5","",{}]}
 -----------------------------------
 
-function Get_Language_Config()
-params:None
-return:
+# 第5页
+```json
+{"method":"call","param":["PAGE5","",{}]}
+```
+
+## function Get_Language_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -818,10 +1005,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Language_Config(params)
-params:{"language":"","theme":""}
-return:
+## function Set_Language_Config(params)
+
+> params:{"language":"","theme":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -830,10 +1021,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Hostname_Config()
-params:None
-return:
+## function Get_Hostname_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -841,10 +1036,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Hostname_Config(params)
-params:{"hostname":""}
-return:
+## function Set_Hostname_Config(params)
+
+> params:{"hostname":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -852,10 +1051,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Device_Log_Config()
-params:None
-return:
+## function Get_Device_Log_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -869,10 +1072,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Device_Log_Config(params)
-params:{"log_buffer_size":"","extern_log_server_ip_addr":"","extern_log_server_port":"","extern_log_server_proto":"","log_file_addr":"","log_level":"","corn_log_level":""}
-return:
+## function Set_Device_Log_Config(params)
+
+> params:{"log_buffer_size":"","extern_log_server_ip_addr":"","extern_log_server_port":"","extern_log_server_proto":"","log_file_addr":"","log_level":"","corn_log_level":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -886,10 +1093,14 @@ return:
         }
     ]
 }
+```
 
-function Get_TZ_Config()
-params:None
-return:
+## function Get_TZ_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -897,10 +1108,14 @@ return:
         }
     ]
 }
+```
 
-function Set_TZ_Config(params)
-params:{"tz":""}
-return:
+## function Set_TZ_Config(params)
+
+> params:{"tz":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -908,10 +1123,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Systime()
-params:None
-return:
+## function Get_Systime()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -919,10 +1138,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Systime(params)
-params:{"time":""}
-return:
+## function Set_Systime(params)
+
+> params:{"time":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -930,11 +1153,14 @@ return:
         }
     ]
 }
+```
 
-------------------------------------
-function Sysupgrade_Auto()
-params:None
-return:
+## function Sysupgrade_Auto()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -942,10 +1168,14 @@ return:
         }
     ]
 }
+```
 
-function Sysupgrade_Manual()
-params:None
-return:
+## function Sysupgrade_Manual()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -953,10 +1183,14 @@ return:
         }
     ]
 }
+```
 
-function Sysupgrade_Flash(params)
-params:{"path":""}
-return:
+## function Sysupgrade_Flash(params)
+
+> params:{"path":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -964,10 +1198,14 @@ return:
         }
     ]
 }
+```
 
-function Sysupgrade_Factary()
-params:None
-return:
+## function Sysupgrade_Factary()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -975,10 +1213,14 @@ return:
         }
     ]
 }
+```
 
-function Sysupgrade_Backup(params)
-params:{"path":""}
-return:
+## function Sysupgrade_Backup(params)
+
+> params:{"path":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -986,10 +1228,14 @@ return:
         }
     ]
 }
+```
 
-function Sysupgrade_Factary(params)
-params:{"path":""}
-return:
+## function Sysupgrade_Factary(params)
+
+> params:{"path":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -997,11 +1243,14 @@ return:
         }
     ]
 }
+```
 
----------------------------------------
-function Get_User_Config()
-params:None
-return:
+## function Get_User_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -1022,11 +1271,14 @@ return:
         }
     ]
 }
+```
 
----------------------------------------
-function Get_Role_Config()
-params:None
-return:
+## function Get_Role_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -1043,12 +1295,14 @@ return:
         }
     ]
 }
+```
 
--------------------------------------------
+## function Get_Debug_Config()
 
-function Get_Debug_Config()
-params:None
-return:
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -1056,10 +1310,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Debug_Config(params)
-params:{"path":""}
-return:
+## function Set_Debug_Config(params)
+
+> params:{"path":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -1067,10 +1325,14 @@ return:
         }
     ]
 }
+```
 
-function Get_Transmission_Config()
-params:None
-return:
+## function Get_Transmission_Config()
+
+> params:None
+
+**return:**
+```json
 {
     "result": [
         {
@@ -1078,10 +1340,14 @@ return:
         }
     ]
 }
+```
 
-function Set_Transmission_Config(params)
-params:{"transmission":""}
-return:
+## function Set_Transmission_Config(params)
+
+> params:{"transmission":""}
+
+**return:**
+```json
 {
     "result": [
         {
@@ -1089,7 +1355,10 @@ return:
         }
     ]
 }
+```
 
-function Reboot()
-params:None
-return:None
+## function Reboot()
+
+> params:None
+
+**return: None**
