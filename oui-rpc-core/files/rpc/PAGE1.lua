@@ -130,6 +130,16 @@ end
 
 --PAGE2-1
 function M.Get_Out_Country_Detail()
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["id"] = "1"
+    table_data1["country"] = "美国"
+    table_data1["node_num"] = "5"
+    table_data2["id"] = "2"
+    table_data2["country"] = "美国2"
+    table_data2["node_num"] = "10"
+    local ret = {table_data1,table_data2}
+    return ret
 end
 
 --PAGE3

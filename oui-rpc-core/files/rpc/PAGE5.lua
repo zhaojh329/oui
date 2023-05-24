@@ -162,39 +162,72 @@ end
 
 function M.Get_User_Config()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["id"] = "121"
-    lable_data1["name"] = "A"
-    lable_data1["phone"] = "11111111111"
-    lable_data1["role"] = "admin"
-    lable_data1["status"] = "1"
-    lable_data1["create_time"] = "2023/05/02 11:12:25"
-    lable_data2["id"] = "1211"
-    lable_data2["name"] = "A1"
-    lable_data2["phone"] = "11221111111"
-    lable_data2["role"] = "user"
-    lable_data2["status"] = "0"
-    lable_data2["create_time"] = "2023/05/02 11:12:24"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["id"] = "121"
+    table_data1["name"] = "A"
+    table_data1["phone"] = "11111111111"
+    table_data1["role"] = "admin"
+    table_data1["status"] = "1"
+    table_data1["create_time"] = "2023/05/02 11:12:25"
+    table_data2["id"] = "1211"
+    table_data2["name"] = "A1"
+    table_data2["phone"] = "11221111111"
+    table_data2["role"] = "user"
+    table_data2["status"] = "0"
+    table_data2["create_time"] = "2023/05/02 11:12:24"
+    local ret = {table_data1,table_data2}
     return ret
 end
+
+--PAGE3-1
+function M.Set_New_User_Config(params)
+    local param = params
+    -----
+    local data = {}
+    data["id"] = "121"
+    data["password"] = "123456"
+    data["name"] = "A"
+    data["phone"] = "12344567890"
+    data["role"] = "admin"
+    local ret = {data}
+    return ret
+end
+
 
 --PAGE4
 
 function M.Get_Role_Config()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["role_name"] = "121"
-    lable_data1["role_description"] = "A"
-    lable_data1["permission_switch"] = "1"
-    lable_data1["create_time"] = "2023/05/02 11:12:24"
-    lable_data2["role_name"] = "121"
-    lable_data2["role_description"] = "A"
-    lable_data2["permission_switch"] = "1"
-    lable_data2["create_time"] = "2023/05/02 11:12:24"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["role_name"] = "121"
+    table_data1["role_description"] = "A"
+    table_data1["permission_switch"] = "1"
+    table_data1["create_time"] = "2023/05/02 11:12:24"
+    table_data2["role_name"] = "121"
+    table_data2["role_description"] = "A"
+    table_data2["permission_switch"] = "1"
+    table_data2["create_time"] = "2023/05/02 11:12:24"
+    local ret = {table_data1,table_data2}
+    return ret
+end
+
+--PAGE4-1
+
+function M.Set_New_Role(params)
+    local param = params
+    -----
+    local data = {}
+    data["role_name"] = "admin"
+    data["role_description"] = "A"
+    data["permission_index"] = "1"
+    data["permission__index_tun"] = "1"
+    data["permission_tun"] = "11"
+    data["permission_multi_socket"] = "11"
+    data["permission_port_forwarding"] = "11"
+    data["permission_custom_link"] = "11"
+    local ret = {data}
     return ret
 end
 

@@ -4,25 +4,25 @@ local M = {}
 
 function M.Get_Network_Interface_Info()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["proto"] = "static"
-    lable_data1["running_time"] = "1d12h23m46s"
-    lable_data1["mac"] = "FF:FF:FF:FF:FF"
-    lable_data1["rx"] = "114B(57数据包)"
-    lable_data1["tx"] = "514B(257数据包)"
-    lable_data1["ipv4"] = "0.0.0.0"
-    lable_data1["ipv6"] = "fe80::da0e:67ec:654b:3ee1%17"
-    lable_data1["info"] = ""
-    lable_data2["proto"] = "DHCP"
-    lable_data2["running_time"] = "1d25h23m46s"
-    lable_data2["mac"] = "FF:FF:FF:FF:FF"
-    lable_data2["rx"] = "114B(57数据包)"
-    lable_data2["tx"] = "514B(257数据包)"
-    lable_data2["ipv4"] = "3.3.3.3"
-    lable_data2["ipv6"] = "fe80::da0e:67ec:654b:3ae1%17"
-    lable_data2["info"] = "main"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["proto"] = "static"
+    table_data1["running_time"] = "1d12h23m46s"
+    table_data1["mac"] = "FF:FF:FF:FF:FF"
+    table_data1["rx"] = "114B(57数据包)"
+    table_data1["tx"] = "514B(257数据包)"
+    table_data1["ipv4"] = "0.0.0.0"
+    table_data1["ipv6"] = "fe80::da0e:67ec:654b:3ee1%17"
+    table_data1["info"] = ""
+    table_data2["proto"] = "DHCP"
+    table_data2["running_time"] = "1d25h23m46s"
+    table_data2["mac"] = "FF:FF:FF:FF:FF"
+    table_data2["rx"] = "114B(57数据包)"
+    table_data2["tx"] = "514B(257数据包)"
+    table_data2["ipv4"] = "3.3.3.3"
+    table_data2["ipv6"] = "fe80::da0e:67ec:654b:3ae1%17"
+    table_data2["info"] = "main"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
@@ -171,21 +171,21 @@ end
 
 local function Get_Static_Ipv4_Route()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["conn"] = "A"
-    lable_data1["target"] = "A"
-    lable_data1["ipv4_mask"] = "255.255.255.0"
-    lable_data1["ipv4_gateway"] = "127.0.0.1"
-    lable_data1["jump"] = "6"
-    lable_data1["on_link_route"] = "A"
-    lable_data2["conn"] = "A"
-    lable_data2["target"] = "A"
-    lable_data2["ipv4_mask"] = "255.255.255.0"
-    lable_data2["ipv4_gateway"] = "127.0.0.1"
-    lable_data2["jump"] = "6"
-    lable_data2["on_link_route"] = "A"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["conn"] = "A"
+    table_data1["target"] = "A"
+    table_data1["ipv4_mask"] = "255.255.255.0"
+    table_data1["ipv4_gateway"] = "127.0.0.1"
+    table_data1["jump"] = "6"
+    table_data1["on_link_route"] = "A"
+    table_data2["conn"] = "A"
+    table_data2["target"] = "A"
+    table_data2["ipv4_mask"] = "255.255.255.0"
+    table_data2["ipv4_gateway"] = "127.0.0.1"
+    table_data2["jump"] = "6"
+    table_data2["on_link_route"] = "A"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
@@ -196,19 +196,19 @@ end
 
 local function Get_Static_Ipv6_Route()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["conn"] = "A"
-    lable_data1["target"] = "A"
-    lable_data1["ipv6_gateway"] = "A"
-    lable_data1["jump"] = "6"
-    lable_data1["on_link_route"] = "A"
-    lable_data2["conn"] = "B"
-    lable_data2["target"] = "B"
-    lable_data2["ipv6_gateway"] = "B"
-    lable_data2["jump"] = "8"
-    lable_data2["on_link_route"] = "B"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["conn"] = "A"
+    table_data1["target"] = "A"
+    table_data1["ipv6_gateway"] = "A"
+    table_data1["jump"] = "6"
+    table_data1["on_link_route"] = "A"
+    table_data2["conn"] = "B"
+    table_data2["target"] = "B"
+    table_data2["ipv6_gateway"] = "B"
+    table_data2["jump"] = "8"
+    table_data2["on_link_route"] = "B"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
@@ -217,69 +217,109 @@ function M.Get_Device_Static_Ipv6_Route()
     return ret
 end
 
+--PAGE5-1
+
+function M.Set_New_Static_Ipv4_Route(params)
+    local param = params
+    -----
+    local data= {}
+    data["conn"] = "A"
+    data["target"] = "A"
+    data["ipv4_mask"] = "255.255.255.0"
+    data["ipv4_gateway"] = "127.0.0.1"
+    data["jump"] = "6"
+    data["mtu"] = "1500"
+    data["route_type"] = "A"
+    data["route_table"] = "A"
+    data["origin_addr"] = "255.255.255.0"
+    data["is_on_link_route"] = "1"
+    local ret = {data}
+    return ret
+end
+
+--PAGE5-2
+function M.Set_New_Static_Ipv6_Route(params)
+    local param = params
+    -----
+    local data= {}
+    data["conn"] = "A"
+    data["target"] = "A"
+    data["ipv4_mask"] = "255.255.255.0"
+    data["ipv4_gateway"] = "127.0.0.1"
+    data["jump"] = "6"
+    data["mtu"] = "1500"
+    data["route_type"] = "A"
+    data["route_table"] = "A"
+    data["origin_addr"] = "255.255.255.0"
+    data["is_on_link_route"] = "1"
+    local ret = {data}
+    return ret
+end
+
+
 --PAGE6
 
 function M.Get_Device_ARP_Info()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["ipv4"] = "192.168.1.14"
-    lable_data1["ipv6"] = "A"
-    lable_data1["conn"] = "lan"
-    lable_data2["ipv4"] = "192.168.1.15"
-    lable_data2["ipv6"] = "A"
-    lable_data2["conn"] = "wan"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["ipv4"] = "192.168.1.14"
+    table_data1["ipv6"] = "A"
+    table_data1["conn"] = "lan"
+    table_data2["ipv4"] = "192.168.1.15"
+    table_data2["ipv6"] = "A"
+    table_data2["conn"] = "wan"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
 function M.Get_Device_Active_Ipv4_Info()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["net"] = "A"
-    lable_data1["target"] = "A"
-    lable_data1["ipv4_gateway"] = "A"
-    lable_data1["jump"] = "A"
-    lable_data1["table"] = "A"
-    lable_data2["net"] = "A"
-    lable_data2["target"] = "A"
-    lable_data2["ipv4_gateway"] = "A"
-    lable_data2["jump"] = "A"
-    lable_data2["table"] = "A"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["net"] = "A"
+    table_data1["target"] = "A"
+    table_data1["ipv4_gateway"] = "A"
+    table_data1["jump"] = "A"
+    table_data1["table"] = "A"
+    table_data2["net"] = "A"
+    table_data2["target"] = "A"
+    table_data2["ipv4_gateway"] = "A"
+    table_data2["jump"] = "A"
+    table_data2["table"] = "A"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
 function M.Get_Device_Ipv6_Neighbors_Info()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["ipv6"] = "A"
-    lable_data1["mac"] = "FF:FF:FF:FF:FF"
-    lable_data1["conn"] = "A"
-    lable_data2["ipv6"] = "B"
-    lable_data2["mac"] = "FF:FF:FF:FF:FF"
-    lable_data2["conn"] = "B"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["ipv6"] = "A"
+    table_data1["mac"] = "FF:FF:FF:FF:FF"
+    table_data1["conn"] = "A"
+    table_data2["ipv6"] = "B"
+    table_data2["mac"] = "FF:FF:FF:FF:FF"
+    table_data2["conn"] = "B"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
 function M.Get_Device_Active_Ipv6_Info()
     -----
-    local lable_data1 = {}
-    local lable_data2 = {}
-    lable_data1["network"] = "A"
-    lable_data1["target"] = "B"
-    lable_data1["from_addr"] = "A"
-    lable_data1["jump"] = "B"
-    lable_data1["table"] = "C"
-    lable_data2["network"] = "A"
-    lable_data2["target"] = "B"
-    lable_data2["from_addr"] = "A"
-    lable_data2["jump"] = "B"
-    lable_data2["table"] = "C"
-    local ret = {lable_data1,lable_data2}
+    local table_data1 = {}
+    local table_data2 = {}
+    table_data1["network"] = "A"
+    table_data1["target"] = "B"
+    table_data1["from_addr"] = "A"
+    table_data1["jump"] = "B"
+    table_data1["table"] = "C"
+    table_data2["network"] = "A"
+    table_data2["target"] = "B"
+    table_data2["from_addr"] = "A"
+    table_data2["jump"] = "B"
+    table_data2["table"] = "C"
+    local ret = {table_data1,table_data2}
     return ret
 end
 
