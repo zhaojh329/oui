@@ -4,9 +4,7 @@ local iwinfo = require 'iwinfo'
 local ubus = require 'eco.ubus'
 
 function M.stations()
-    local conn = ubus.connect()
-    local status = conn:call('network.wireless', 'status', {}) or {}
-    conn:close()
+    local status = ubus.call('network.wireless', 'status', {}) or {}
 
     local stations = {}
 
