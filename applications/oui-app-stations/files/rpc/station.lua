@@ -1,55 +1,10 @@
 local M = {}
 
 local iwinfo = require 'iwinfo'
-local ubus = require 'ubus'
-local uci = require 'uci'
+local ubus = require 'eco.ubus'
 
-function M.status()
-    local devs = {}
-
-    local conn = ubus.connect()
-    local status = conn:call('network.wireless', 'status', {}) or {}
-    conn:close()
-
-    for dev_name, dev in pairs(status) do
-        if dev.up then
-            local typ = iwinfo.type(dev_name)
-            if not typ then
-                return
-            end
-
-            local iw = iwinfo[typ]
-
-            devs[dev_name] = {
-                type = typ,
-                channel = iw.channel(dev_name),
-                bitrate = iw.bitrate(dev_name)
-            }
-
-            local interfaces = {}
-
-            for _, ifs in ipairs(dev.interfaces) do
-                local ifname = ifs.ifname
-                interfaces[#interfaces + 1] = {
-                    ifname = ifname,
-                    ssid = iw.ssid(ifname),
-                    mode = iw.mode(ifname),
-                    bssid = iw.bssid(ifname),
-                    encryption = iw.encryption(ifname)
-                }
-            end
-
-            devs[dev_name].interfaces = interfaces
-        end
-    end
-
-    return { devs = devs }
-end
-
-function M.stations(params)
-    local conn = ubus.connect()
-    local status = conn:call('network.wireless', 'status', {}) or {}
-    conn:close()
+function M.stations()
+    local status = ubus.call('network.wireless', 'status', {}) or {}
 
     local stations = {}
 
@@ -63,8 +18,6 @@ function M.stations(params)
             local iw = iwinfo[typ]
 
             local band = dev.config.band
-
-            local interfaces = {}
 
             for _, ifs in ipairs(dev.interfaces) do
                 local ifname = ifs.ifname

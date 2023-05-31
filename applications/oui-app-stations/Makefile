@@ -8,6 +8,7 @@ include $(TOPDIR)/rules.mk
 
 APP_TITLE:=Stations
 APP_NAME:=stations
+APP_DEPENDS:=+libiwinfo-lua +lua-eco-ubus
 
 include ../../oui.mk
 

@@ -66,7 +66,7 @@ export default {
       return s
     },
     getStations() {
-      this.$oui.call('wireless', 'stations').then(({ stations }) => {
+      this.$oui.call('station', 'stations').then(({ stations }) => {
         this.stations = stations
       })
     }

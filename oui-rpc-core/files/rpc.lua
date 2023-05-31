@@ -13,7 +13,8 @@ local M = {
     ERROR_CODE_INVALID_ARGUMENT  = -2,
     ERROR_CODE_UNAUTHORIZED      = -3,
     ERROR_CODE_PERMISSION_DENIED = -4,
-    ERROR_CODE_UNKNOWN           = -5
+    ERROR_CODE_LOAD_SCRIPT       = -5,
+    ERROR_CODE_UNKNOWN           = -6
 }
 
 local SESSION_TIMEOUT = 300
@@ -179,10 +180,15 @@ function M.call(mod, func, args, session)
     if not funcs[mod] then
         local script = '/usr/share/oui/rpc/' .. mod .. '.lua'
 
+        if not file.access(script) then
+            log.err('module "' .. mod .. '" not found')
+            return nil, M.ERROR_CODE_NOT_FOUND
+        end
+
         local ok, tb = pcall(dofile, script)
         if not ok then
-            log.err('load script:', tb)
-            return nil, M.ERROR_CODE_NOT_FOUND
+            log.err('load module "' .. mod .. '":', tb)
+            return nil, M.ERROR_CODE_LOAD_SCRIPT
         end
 
         if type(tb) == 'table' then
@@ -191,6 +197,7 @@ function M.call(mod, func, args, session)
     end
 
     if not funcs[mod] or not funcs[mod][func] then
+        log.err('module "' .. mod .. '.' .. func .. '" not found')
         return nil, M.ERROR_CODE_NOT_FOUND
     end
 
