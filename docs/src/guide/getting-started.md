@@ -49,8 +49,6 @@ The `Node.js 14.18+` is required to compile Oui.
 Select `Use existing nodejs installation on the host system` to reduce compilation time.
 
 You can manage multiple versions of Node with [nvm](https://github.com/nvm-sh/nvm).
-
-You may have selected the configuration related to Luci before, which will conflict with oui, so you need to deselect it.
 :::
 
 ### Build
