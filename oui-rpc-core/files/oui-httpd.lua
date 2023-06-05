@@ -302,6 +302,7 @@ local function parse_config()
 
     local options = {
         docroot = '/www',
+        index = 'oui.html',
         reuseaddr = true,
         gzip = true
     }

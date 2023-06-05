@@ -49,8 +49,6 @@ OUI  --->
 勾选 `Use existing nodejs installation on the host system` 可节约编译时间，需要确保主机上安装的 Node 版本不低于 14.18。
 
 你可以使用 [nvm](https://github.com/nvm-sh/nvm) 管理多个 Node 版本。
-
-可能你之前勾选了 Luci 相关的配置，这会和 oui 产生冲突，需要将其取消。
 :::
 
 ### 编译
