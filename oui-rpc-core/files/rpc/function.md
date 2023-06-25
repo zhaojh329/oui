@@ -1000,8 +1000,8 @@
 {
     "result": [
         {
-            "language": "Chinese",
-            "theme": "light"
+            "language": "",
+            "theme": ""
         }
     ]
 }
@@ -1032,7 +1032,7 @@
 {
     "result": [
         {
-            "hostname": "openwrt"
+            "hostname": "OpenWrt"
         }
     ]
 }
@@ -1098,13 +1098,14 @@
 ## function Get_TZ_Config()
 
 > params:None
+> https://openwrt.org/zh/docs/guide-user/base-system/system_configuration
 
 **return:**
 ```json
 {
     "result": [
         {
-            "tz": "UTC+8:00"
+            "tz": "UTC"
         }
     ]
 }
@@ -1134,7 +1135,7 @@
 {
     "result": [
         {
-            "time": "2023/05/20 22:35:35"
+            "time": "Fri Jun 16 20:43:04 UTC 2023"
         }
     ]
 }
@@ -1230,7 +1231,7 @@
 }
 ```
 
-## function Sysupgrade_Factary(params)
+## function Sysupgrade_Rec(params)
 
 > params:{"path":""}
 
@@ -1273,6 +1274,69 @@
 }
 ```
 
+## function Set_User_Status()
+
+> params:{"name":"","status":""}
+
+**return:**
+```json
+{
+    "result": [
+        {
+            "status": "0"
+        }
+    ]
+}
+```
+
+## function Set_Edit_User_Config()
+
+> params:{"id":"","password":"","name":"","new_name":"","phone":"","role":""}
+
+**return:**
+```json
+{
+    "result": [
+        {
+            "phone": "17799280429",
+            "role": "user",
+            "create_time": "Fri Jun 16 20:49:20 UTC 2023",
+            "id": "111"
+        }
+    ]
+}
+```
+
+## function Set_Delete_User_Config()
+
+> params:{"name":""}
+
+**return:**
+```json
+None
+```
+
+## function Set_New_User_Config()
+
+> params:{"id":"","password":"","name":"","phone":"","role":""}
+
+**return:**
+```json
+{
+    "result": [
+        {
+            "password": "123",
+            "role": "user",
+            "name": "test",
+            "id": "111",
+            "create_time": "Fri Jun 16 20:53:19 UTC 2023",
+            "status": "1",
+            "phone": "17799280429"
+        }
+    ]
+}
+```
+
 ## function Get_Role_Config()
 
 > params:None
@@ -1292,6 +1356,70 @@
             "role_description": "A",
             "role_name": "121",
             "permission_switch": "1"
+        }
+    ]
+}
+```
+
+## function Set_Role_Status()
+
+> params:{"name":"","permission_switch":""}
+
+**return:**
+```json
+None
+```
+
+## function Set_Edit_Role_Config()
+
+> params:{"role_name":"","role_new_name":"","role_discription":"","permission_index":"","permission_index_tun":"","permission_tun":"","permission_multi_socket":"","permission_port_forwarding":"","permission_custom_link":""}
+
+**return:**
+```json
+{
+    "result": [
+        {
+            "role_name": "test2",
+            "permission_tun": "test",
+            "permission_index": "test",
+            "permission_multi_socket": "test",
+            "permission_port_forwarding": "test",
+            "role_discription": "test",
+            "permission_index_tun": "test",
+            "permission_custom_link": "test"
+        }
+    ]
+}
+```
+
+## function Set_Delete_Role_Config()
+
+> params:{"name":"","permission_switch":""}
+
+**return:**
+```json
+None
+```
+
+## function Set_New_Role()
+
+> params:{"name":"","permission_switch":""}
+
+**return:**
+```json
+{
+    "result": [
+        {
+            "permission_multi_socket": "test",
+            "permission_index": "test",
+            "permission_index_tun": "test",
+            "create_time": "Fri Jun 16 21:02:51 UTC 2023",
+            "role_name": "test",
+            "permission_switch": "1",
+            "permission_port_forwarding": "test",
+            "permission_tun": "test",
+            "role_discription": "test",
+            "permission_custom_link": "test"
         }
     ]
 }
