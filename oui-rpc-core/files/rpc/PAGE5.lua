@@ -235,49 +235,45 @@ function M.Set_Edit_User_Config(params)
     local phone = param.phone
     local acl = "admin"
     local role = param.role
-    local flag = {0,0}
+    local flag = 0
     local sname =''
     c:foreach('oui', 'user', function(s)
         if s.username == name then
             sname = s['.name']
-            flag[1] = 1
+            flag = 2
         end
-    end)
-    c:foreach('oui', 'user', function(s)
-        if s.username == new_name then
-            flag[2] = 1
+        if s.username ~= name and s.username == new_name then
+            flag = 1
         end
     end)
     local data_exist = {}
-    if flag[1] == 0 then
+    if flag == 0 then
         data_exist["err"] = "not exist"
         return {data_exist}
     end
-    if flag[2] == 1 then
-        data_exist["err"] = "used"
+    if flag == 1 then
+        data_exist["err"] = "already exist"
         return {data_exist}
     end
-    if flag == {1,0} then
-        c:set('oui', sname, 'id', id)
-        c:set('oui', sname, 'username', new_name)
-        c:set('oui', sname, 'password', ngx.md5(name .. ':' .. password))
-        c:set('oui', sname, 'phone', phone)
-        c:set('oui', sname, 'role', role)
-        c:set('oui', sname, 'acl', acl or "")
-        local cmd_exe= io.popen('date')
-        local cmd_output = remove_n(cmd_exe:read("*all"))
-        c:set('oui', sname, 'create_time', cmd_output)
-        c:commit('oui')
-        -----
-        local data = {}
-        data["id"] = c:get('oui', sname, 'id')
-        data["name"] = c:get('oui', sname, 'name')
-        data["phone"] = c:get('oui', sname, 'phone')
-        data["role"] = c:get('oui', sname, 'role')
-        data["create_time"] = c:get('oui', sname, 'create_time')
-        local ret = {data}
-        return ret
-    end
+    c:set('oui', sname, 'id', id)
+    c:set('oui', sname, 'username', new_name)
+    c:set('oui', sname, 'password', ngx.md5(name .. ':' .. password))
+    c:set('oui', sname, 'phone', phone)
+    c:set('oui', sname, 'role', role)
+    c:set('oui', sname, 'acl', acl or "")
+    local cmd_exe= io.popen('date')
+    local cmd_output = remove_n(cmd_exe:read("*all"))
+    c:set('oui', sname, 'create_time', cmd_output)
+    c:commit('oui')
+    -----
+    local data = {}
+    data["id"] = c:get('oui', sname, 'id')
+    data["name"] = c:get('oui', sname, 'name')
+    data["phone"] = c:get('oui', sname, 'phone')
+    data["role"] = c:get('oui', sname, 'role')
+    data["create_time"] = c:get('oui', sname, 'create_time')
+    local ret = {data}
+    return ret
 end
 
 function M.Set_Delete_User_Config(params)
@@ -388,17 +384,24 @@ function M.Set_Edit_Role_Config(params)
     local permission_multi_socket = param.permission_multi_socket
     local permission_port_forwarding = param.permission_port_forwarding
     local permission_custom_link = param.permission_custom_link
-    local flag = true
+    local flag = 0
     local sname = ''
     c:foreach('oui', 'role', function(s)
         if s.role_name == role_name then
             sname = s['.name']
-            flag = false
+            flag = 2
         end
+        if s.role_name ~= role_name and s.name == role_new_name then
+            flag = 1
+        end       
     end)
     local data_exist = {}
-    data_exist["err"] = "not exist"
-    if flag then
+    if flag == 0 then
+        data_exist["err"] = "not exist"
+        return {data_exist}
+    end
+    if flag == 1 then
+        data_exist["err"] = "already exist"
         return {data_exist}
     end
     c:set('oui', sname, 'role_name', role_new_name)
