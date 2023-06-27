@@ -5,9 +5,12 @@
 :::tip
 Oui depends on the latest version of `Lua-eco`.
 
-If you are using a earlier OpenWrt, you will need to upgrade it: 
+If you are using an earlier OpenWrt, you will need to upgrade it: 
 
 [https://github.com/openwrt/packages/tree/master/lang/lua-eco](https://github.com/openwrt/packages/tree/master/lang/lua-eco)
+
+You can replace `feeds/packages/lang/lua-eco/Makefile` with
+[https://github.com/zhaojh329/lua-eco/blob/openwrt-package/Makefile](https://github.com/zhaojh329/lua-eco/blob/openwrt-package/Makefile).
 :::
 
 ### Add feed

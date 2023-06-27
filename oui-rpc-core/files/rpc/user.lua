@@ -1,5 +1,6 @@
+local hex = require 'eco.encoding.hex'
+local md5 = require 'eco.crypto.md5'
 local uci = require 'uci'
-local md5 = require 'md5'
 
 local M = {}
 
@@ -34,7 +35,7 @@ function M.change(params)
 
     local username = c:get('oui', id, 'username')
     if username then
-        c:set('oui', id, 'password', md5.sumhexa(username .. ':' .. password))
+        c:set('oui', id, 'password', hex.encode(md5.sum(username .. ':' .. password)))
         c:set('oui', id, 'acl', acl or '')
         c:commit('oui')
     end
@@ -59,8 +60,8 @@ function M.add_user(params)
     end
 
     local sid = c:add('oui', 'user')
-    c:set('oui', sid, 'username', username)
-    c:set('oui', sid, 'password', md5.sumhexa(username .. ':' .. password))
+    c:set('oui', sid, 'username', username) 
+    c:set('oui', sid, 'password', hex.encode(md5.sum(username .. ':' .. password)))
     c:set('oui', sid, 'acl', acl or '')
     c:commit('oui')
 

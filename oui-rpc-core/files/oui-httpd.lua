@@ -3,9 +3,10 @@
 -- SPDX-License-Identifier: MIT
 -- Author: Jianhui Zhao <zhaojh329@gmail.com>
 
+local hex = require 'eco.encoding.hex'
+local md5 = require 'eco.crypto.md5'
 local http = require 'eco.http'
 local time = require 'eco.time'
-local ubus = require 'eco.ubus'
 local file = require 'eco.file'
 local sys = require 'eco.sys'
 local log = require 'eco.log'
@@ -188,6 +189,8 @@ local function handle_upload(con, req)
         return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
     end
 
+    local md5ctx = md5.new()
+
     while true do
         local data, err = con:read_body(4096)
         if not data then
@@ -199,24 +202,13 @@ local function handle_upload(con, req)
 
         total = total + #data
         f:write(data)
+
+        md5ctx:update(data)
     end
 
     f:close()
 
-    local p, err = sys.exec('md5sum', path)
-    if not p then
-        log.err('exec md5sum "' .. path .. '" fail: ' .. err)
-        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
-    end
-
-    local stdout = p:read_stdout('*a') or ''
-    local md5_val = stdout:match('%x+')
-    if not md5_val then
-        log.err('read md5 fail')
-        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
-    end
-
-    con:send(cjson.encode({ size = total, md5 = md5_val }))
+    con:send(cjson.encode({ size = total, md5 = hex.encode(md5ctx:final()) }))
 end
 
 local function handle_download(con, req)

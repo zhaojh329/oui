@@ -1,8 +1,9 @@
+local hex = require 'eco.encoding.hex'
+local md5 = require 'eco.crypto.md5'
 local time = require 'eco.time'
 local file = require 'eco.file'
 local log = require 'eco.log'
 local cjson = require 'cjson'
-local md5 = require 'md5'
 local uci = require 'uci'
 
 local concat = table.concat
@@ -88,7 +89,7 @@ function M.login(username, password)
             end
 
             for nonce in pairs(nonces) do
-                if md5.sumhexa(table.concat({s.password, nonce}, ':')) == password then
+                if hex.encode(md5.sum(table.concat({s.password, nonce}, ':'))) == password then
                     acl = s.acl
                     valid = true
                     return false
