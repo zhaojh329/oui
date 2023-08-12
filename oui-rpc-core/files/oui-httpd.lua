@@ -329,8 +329,8 @@ local function parse_config()
     end)
 end
 
+rpc.init()
 rpc.load_acl()
-rpc.load_no_auth()
 
 parse_config()
 

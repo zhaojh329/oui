@@ -26,6 +26,7 @@ local funcs = {}
 local acls = {}
 local nonces = {}
 local sessions = {}
+local lua_code_cache = true
 
 local function random_string(n)
     local t = {
@@ -42,6 +43,20 @@ local function random_string(n)
     end
 
     return concat(s)
+end
+
+function M.init()
+    local c = uci.cursor()
+
+    lua_code_cache = c:get('oui', 'global', 'lua_code_cache') ~= '0'
+
+    c:foreach('oui', 'no-auth', function(s)
+        no_auth_funcs[s.module] = {}
+
+        for _, func in ipairs(s.func or {}) do
+            no_auth_funcs[s.module][func] = true
+        end
+    end)
 end
 
 function M.create_nonce()
@@ -116,20 +131,6 @@ function M.delete_session(sid)
     sessions[sid] = nil
 end
 
-function M.load_no_auth()
-    local c = uci.cursor()
-
-    no_auth_funcs = {}
-
-    c:foreach('oui', 'no-auth', function(s)
-        no_auth_funcs[s.module] = {}
-
-        for _, func in ipairs(s.func or {}) do
-            no_auth_funcs[s.module][func] = true
-        end
-    end)
-end
-
 function M.get_acls()
     return acls
 end
@@ -178,7 +179,7 @@ function M.acl_match(session, content, class)
 end
 
 function M.call(mod, func, args, session)
-    if not funcs[mod] then
+    if not lua_code_cache or not funcs[mod] then
         local script = '/usr/share/oui/rpc/' .. mod .. '.lua'
 
         if not file.access(script) then
