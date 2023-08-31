@@ -78,7 +78,7 @@ end
 function M.create_session(username, acl, remote_addr)
     local sid = random_string(32)
     local session = {
-        tmr = time.at(SESSION_TIMEOUT, function() sessions[sid] = nil end),
+        tmr = time.timer(SESSION_TIMEOUT, function() sessions[sid] = nil end),
         remote_addr = remote_addr,
         username = username,
         acls = acls[acl],
