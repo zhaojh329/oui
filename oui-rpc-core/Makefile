@@ -27,13 +27,13 @@ endef
 Build/Compile=
 
 define Package/oui-rpc-core/install
-	$(INSTALL_DIR) $(1)/etc/config $(1)/usr/share/oui $(1)/usr/lib/lua/oui \
+	$(INSTALL_DIR) $(1)/etc/config $(1)/usr/share/oui $(1)/usr/local/lib/lua/5.3/oui \
 		$(1)/usr/share/oui/acl $(1)/usr/sbin $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/oui-httpd.lua $(1)/usr/sbin/oui-httpd
 	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_CONF) ./files/oui.config $(1)/etc/config/oui
 	$(INSTALL_CONF) ./files/admin.acl $(1)/usr/share/oui/acl/admin.json
-	$(CP) ./files/rpc.lua $(1)/usr/lib/lua/oui
+	$(CP) ./files/rpc.lua $(1)/usr/local/lib/lua/5.3/oui
 	$(CP) ./files/rpc $(1)/usr/share/oui
 endef
 
