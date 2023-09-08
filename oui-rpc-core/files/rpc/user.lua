@@ -1,5 +1,5 @@
 local hex = require 'eco.encoding.hex'
-local md5 = require 'eco.crypto.md5'
+local md5 = require 'eco.hash.md5'
 local uci = require 'uci'
 
 local M = {}
