@@ -2,14 +2,15 @@
   <n-el style="background-color: var(--base-color); opacity: 0.8; width: 100%; height: 100vh;">
     <n-form class="login" size="large" ref="form" :model="formValue" :rules="rules">
       <n-form-item path="username">
-        <n-input v-model:value="formValue.username" :placeholder="$t('Please enter username')">
+        <n-input v-model:value="formValue.username" :placeholder="$t('Please enter username')" @keyup.enter="handleSubmit">
           <template #prefix>
             <n-icon size="18" color="#808695"><person-outline/></n-icon>
           </template>
         </n-input>
       </n-form-item>
       <n-form-item path="password">
-        <n-input v-model:value="formValue.password" :placeholder="$t('Please enter password')" type="password" show-password-on="mousedown">
+        <n-input v-model:value="formValue.password" :placeholder="$t('Please enter password')" type="password"
+                                                      show-password-on="mousedown" @keyup.enter="handleSubmit">
           <template #prefix>
             <n-icon size="18" color="#808695"><lock-closed-outline/></n-icon>
           </template>
