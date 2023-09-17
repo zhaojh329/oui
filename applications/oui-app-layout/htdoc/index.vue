@@ -35,7 +35,7 @@
           </n-dropdown>
         </n-space>
       </n-layout-header>
-      <n-layout-content embedded position="absolute" style="top: 40px; bottom: 42px" content-style="padding: 10px;" :native-scrollbar="false" class="layout-content"
+      <n-layout-content embedded position="absolute" style="top: 40px; bottom: 42px" content-style="padding: 16px;" :native-scrollbar="false" class="layout-content"
         >
         <router-view>
           <template #default="{ Component }">
