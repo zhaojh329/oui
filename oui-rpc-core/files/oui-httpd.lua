@@ -4,8 +4,8 @@
 -- Author: Jianhui Zhao <zhaojh329@gmail.com>
 
 local hex = require 'eco.encoding.hex'
+local http = require 'eco.http.server'
 local md5 = require 'eco.hash.md5'
-local http = require 'eco.http'
 local time = require 'eco.time'
 local file = require 'eco.file'
 local sys = require 'eco.sys'
