@@ -304,7 +304,6 @@ export default {
 
 .layout-content {
   flex: auto;
-  min-height: 100vh;
 }
 </style>
 
