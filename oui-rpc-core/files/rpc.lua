@@ -147,10 +147,12 @@ function M.load_acl()
     end
 end
 
-local function need_auth(session, mod, func)
-    local is_local = session.remote_addr == '127.0.0.1' or session.remote_addr == '::1'
+local function is_local_session(session)
+    return session.remote_addr == '127.0.0.1' or session.remote_addr == '::1'
+end
 
-    if is_local then
+local function need_auth(session, mod, func)
+    if is_local_session(session) then
         return false
     end
 
@@ -158,6 +160,10 @@ local function need_auth(session, mod, func)
 end
 
 function M.acl_match(session, content, class)
+    if is_local_session(session) then
+        return true
+    end
+
     if not session.acls then
         return false
     end
