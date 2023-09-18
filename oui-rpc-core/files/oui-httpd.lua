@@ -62,7 +62,7 @@ rpc_methods['login'] = function(con, req, params)
         return con:send_error(http.STATUS_UNAUTHORIZED)
     end
 
-    local sid = rpc.create_session(username, acl, req.remote_addr)
+    local sid = rpc.create_session(username, acl, con:remote_addr().ipaddr)
 
     con:send(cjson.encode({ sid = sid }))
 end
@@ -96,7 +96,7 @@ rpc_methods['call'] = function(con, req, params)
         return con:send_error(http.STATUS_BAD_REQUEST)
     end
 
-    local session = rpc.get_session(sid) or { remote_addr = req.remote_addr }
+    local session = rpc.get_session(sid) or { remote_addr = con:remote_addr().ipaddr }
 
     local result, err = rpc.call(mod, func, args, session)
     if type(err) == 'number' then
