@@ -8,7 +8,7 @@ function M.load(params, session)
     local c = uci.cursor()
 
     if not rpc.acl_match(session, config, 'uci') then
-        return nil, M.ERROR_CODE_PERMISSION_DENIED
+        return nil, rpc.ERROR_CODE_PERMISSION_DENIED
     end
 
     return c:get_all(params.config)
@@ -21,7 +21,7 @@ function M.get(params, session)
     local option = params.option
 
     if not rpc.acl_match(session, config, 'uci') then
-        return nil, M.ERROR_CODE_PERMISSION_DENIED
+        return nil, rpc.ERROR_CODE_PERMISSION_DENIED
     end
 
     return c:get(config, section, option)
@@ -33,7 +33,7 @@ function M.set(params, session)
     local section = params.section
 
     if not rpc.acl_match(session, config, 'uci') then
-        return nil, M.ERROR_CODE_PERMISSION_DENIED
+        return nil, rpc.ERROR_CODE_PERMISSION_DENIED
     end
 
     for option, value in pairs(params.values) do
@@ -50,7 +50,7 @@ function M.delete(params, session)
     local options = params.options
 
     if not rpc.acl_match(session, config, 'uci') then
-        return nil, M.ERROR_CODE_PERMISSION_DENIED
+        return nil, rpc.ERROR_CODE_PERMISSION_DENIED
     end
 
     if options then
@@ -72,7 +72,7 @@ function M.add(params, session)
     local values = params.values
 
     if not rpc.acl_match(session, config, 'uci') then
-        return nil, M.ERROR_CODE_PERMISSION_DENIED
+        return nil, rpc.ERROR_CODE_PERMISSION_DENIED
     end
 
     if name then
