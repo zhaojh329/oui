@@ -5,9 +5,7 @@
 :::tip
 Oui 依赖最新版本的 `Lua-eco`。
 
-如果你用的 OpenWrt 的版本较低，需要升级 `Lua-eco`:
-
-[https://github.com/openwrt/packages/tree/master/lang/lua-eco](https://github.com/openwrt/packages/tree/master/lang/lua-eco)
+请确保你使用的 `OpenWrt` 中的 `Lua-eco` 已更新到最新版本。
 
 你可以直接使用 [https://github.com/zhaojh329/lua-eco/blob/openwrt-package/Makefile](https://github.com/zhaojh329/lua-eco/blob/openwrt-package/Makefile)
 替换 `feeds/packages/lang/lua-eco/Makefile`
