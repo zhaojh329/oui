@@ -24,9 +24,9 @@ export default {
           render: r => r.macaddr.toUpperCase()
         },
         {
-          title: () => this.$t('Signal'),
+          title: () => this.$t('Signal / Noise'),
           key: 'signal',
-          render: r => `${r.signal} dBm`
+          render: r => `${r.signal} dBm / ${r.noise} dBm (SNR ${r.signal - r.noise})`
         },
         {
           title: () => this.$t('RX Rate / TX Rate'),
