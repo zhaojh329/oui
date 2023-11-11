@@ -47,12 +47,12 @@ export default {
           })
         },
         {
-          title: () => this.$t('Negative'),
-          key: 'negative',
+          title: () => this.$t('Reverse'),
+          key: 'reverse',
           width: 100,
           render: r => h(resolveComponent('n-switch'), {
-            value: r.negative,
-            'on-update:value': value => this.allAcls[this.group][r.cls].negative = value
+            value: r.reverse,
+            'on-update:value': value => this.allAcls[this.group][r.cls].reverse = value
           })
         }
       ],
@@ -79,7 +79,7 @@ export default {
         return {
           cls: cls,
           matchs: acls[cls].matchs,
-          negative: acls[cls].negative || false
+          reverse: acls[cls].reverse || false
         }
       })
     }
