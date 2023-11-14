@@ -100,7 +100,7 @@ export default {
         content: this.$t('ResettConfirm') + '?',
         positiveText: this.$t('OK'),
         onPositiveClick: () => {
-          this.$oui.ubus('system', 'reset').then(() => {
+          this.$oui.call('system', 'reset').then(() => {
             this.modalSpin = true
             this.$oui.reconnect().then(() => {
               this.modalSpin = false
