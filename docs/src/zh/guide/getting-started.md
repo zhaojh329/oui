@@ -45,9 +45,9 @@ OUI  --->
 ```
 
 ::: tip
-编译 Oui 需要用到 Node，而且版本不能低于 14.18。
+编译 Oui 需要用到 Node，而且版本不能低于 18。
 
-勾选 `Use existing nodejs installation on the host system` 可节约编译时间，需要确保主机上安装的 Node 版本不低于 14.18。
+勾选 `Use existing nodejs installation on the host system` 可节约编译时间，需要确保主机上安装的 Node 版本不低于 18。
 
 你可以使用 [nvm](https://github.com/nvm-sh/nvm) 管理多个 Node 版本。
 :::
