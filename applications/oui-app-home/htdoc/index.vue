@@ -1,5 +1,5 @@
 <template>
-  <n-space justify="space-around">
+  <el-space :size="100">
     <dashboard :label="$t('CPU Usage')" :percentage="cpuUsage['cpu']" :color="cpuUsageColor">
       <div v-for="name in Object.keys(cpuUsage).sort()" :key="name">{{ name + ': ' + cpuUsage[name] + '%' }}</div>
     </dashboard>
@@ -10,25 +10,19 @@
       <div>{{ $t('Total') + ': ' + bytesToHuman(sysinfo.root.total * 1024) }}</div>
       <div>{{ $t('Used') + ': ' + bytesToHuman(sysinfo.root.used * 1024) }}</div>
     </dashboard>
-  </n-space>
-  <n-divider/>
-  <n-space>
-    <n-descriptions label-placement="left" :title="$t('System')" bordered :column="1">
-      <n-descriptions-item v-for="item in renderSysinfo" :key="item[0]">
-        <template #label>{{ $t(item[0]) }}</template>{{ item[1] }}
-      </n-descriptions-item>
-    </n-descriptions>
-    <n-descriptions v-for="net in wanNetworks" :key="net.interface" label-placement="left" :title="'IPv4 ' + $t('Upstream')" bordered :column="1">
-      <n-descriptions-item v-for="item in renderNetworkInfo(net)" :key="item[0]">
-        <template #label>{{ $t(item[0]) }}</template>{{ item[1] }}
-      </n-descriptions-item>
-    </n-descriptions>
-    <n-descriptions v-for="net in wan6Networks" :key="net.interface" label-placement="left" :title="'IPv6 '+ $t('Upstream')" bordered :column="1">
-      <n-descriptions-item v-for="item in renderNetworkInfo(net, true)" :key="item[0]">
-        <template #label>{{ $t(item[0]) }}</template>{{ item[1] }}
-      </n-descriptions-item>
-    </n-descriptions>
-  </n-space>
+  </el-space>
+  <el-divider/>
+  <el-space wrap>
+    <el-descriptions :title="$t('System')" border :column="1">
+      <el-descriptions-item v-for="item in renderSysinfo" :key="item[0]" :label="$t(item[0])">{{ item[1] }}</el-descriptions-item>
+    </el-descriptions>
+    <el-descriptions v-for="net in wanNetworks" :key="net.interface" :title="'IPv4 ' + $t('Upstream')" border :column="1">
+      <el-descriptions-item v-for="item in renderNetworkInfo(net)" :key="item[0]" :label="$t(item[0])">{{ item[1] }}</el-descriptions-item>
+    </el-descriptions>
+    <el-descriptions v-for="net in wan6Networks" :key="net.interface" :title="'IPv6 '+ $t('Upstream')" border :column="1">
+      <el-descriptions-item v-for="item in renderNetworkInfo(net, true)" :key="item[0]" :label="$t(item[0])">{{ item[1] }}</el-descriptions-item>
+    </el-descriptions>
+  </el-space>
 </template>
 
 <script>

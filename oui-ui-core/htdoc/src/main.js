@@ -11,7 +11,7 @@ import router from './router'
 import timers from './timers'
 import i18n from './i18n'
 import oui from './oui'
-import NaiveUI from './naive-ui'
+import ElementPlus from './element-plus'
 
 const app = createApp(App)
 
@@ -20,6 +20,6 @@ app.use(router)
 app.use(i18n)
 app.use(oui)
 app.use(timers)
-app.use(NaiveUI)
+app.use(ElementPlus)
 
 app.mount('#app')

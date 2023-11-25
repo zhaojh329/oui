@@ -6,6 +6,8 @@
     "Reverse": "Reverse",
     "Change Matchs": "Change Matchs",
     "Add group": "Add group",
+    "Delete group": "Delete group",
+    "delete-group-confirm": "Are you sure you want to delete the group '{ group }'?",
     "Save & Apply": "Save & Apply"
   },
   "zh-CN": {
@@ -14,6 +16,8 @@
     "Matchs": "匹配项",
     "Reverse": "反向匹配",
     "Add group": "添加组",
+    "Delete group": "删除组",
+    "delete-group-confirm": "你确定要删除组 \"{ group }\" 吗?",
     "Save & Apply": "保存和应用"
   },
   "zh-TW": {
@@ -23,6 +27,8 @@
     "Reverse": "反向匹配",
     "Username": "用戶名",
     "Add group": "添加組",
+    "Delete group": "刪除組",
+    "delete-group-confirm": "你確定要刪除組 \"{ group }\" 嗎?",
     "Save & Apply": "保存和應用"
   }
 }

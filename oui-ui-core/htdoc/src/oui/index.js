@@ -3,11 +3,14 @@
  * Author: Jianhui Zhao <zhaojh329@gmail.com>
  */
 
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
+import { useDark } from '@vueuse/core'
 import * as Vue from 'vue'
 import axios from 'axios'
 import md5 from 'js-md5'
 import i18n from '../i18n'
+
+const isDark = useDark()
 
 function mergeLocaleMessage(key, locales) {
   for (const locale in locales) {
@@ -31,8 +34,18 @@ class Oui {
     this.state = reactive({
       sid: '',
       locale: '',
-      theme: '',
       hostname: ''
+    })
+
+    this.state.isDark = computed({
+      get() {
+        return isDark.value
+      },
+      set: dark => {
+        isDark.value = dark
+        const theme = dark ? 'dark' : 'light'
+        this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
+      }
     })
 
     const p = [
@@ -56,7 +69,7 @@ class Oui {
       else
         i18n.global.locale = locale
 
-      this.state.theme = results[1].theme
+      this.state.isDark = results[1].theme === 'dark'
 
       if (sid) {
         const alive = results[2].alive
@@ -226,11 +239,6 @@ class Oui {
       i18n.global.locale = navigator.language
     else
       i18n.global.locale = locale
-  }
-
-  async setTheme(theme) {
-    await this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
-    this.state.theme = theme
   }
 
   async setHostname(hostname) {

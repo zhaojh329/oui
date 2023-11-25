@@ -4,7 +4,7 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "@intlify/unplugin-vue-i18n": "^1.4.0",
+    "@intlify/unplugin-vue-i18n": "^1.5.0",
     "@vicons/antd": "^0.12.0",
     "@vicons/carbon": "^0.12.0",
     "@vicons/fa": "^0.12.0",
@@ -13,9 +13,9 @@
     "@vicons/ionicons5": "^0.12.0",
     "@vicons/material": "^0.12.0",
     "@vicons/tabler": "^0.12.0",
-    "@vitejs/plugin-vue": "^4.4.0",
-    "vite": "^4.5.0",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "vite": "^5.0.0",
     "vite-plugin-compression": "^0.5.1",
-    "vue-i18n": "^9.6.1"
+    "vue-i18n": "^9.7.0"
   }
 }

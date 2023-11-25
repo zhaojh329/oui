@@ -1,15 +1,17 @@
 <template>
-  <n-form size="large" ref="form" label-placement="left" label-width="auto" :model="formValue" :rules="rules">
-    <n-form-item :label="$t('Hostname')" path="hostname">
-      <n-input v-model:value="formValue.hostname"/>
-    </n-form-item>
-    <n-form-item :label="$t('Timezone')" path="zonename">
-      <n-select v-model:value="formValue.zonename" :options="zoneinfo" filterable/>
-    </n-form-item>
-  </n-form>
-  <n-space justify="end" style="padding-right: 100px">
-    <n-button type="primary" :loading="loading" @click="handleSubmit">{{ $t('Save & Apply') }}</n-button>
-  </n-space>
+  <el-form ref="form" size="large" label-width="auto" label-suffix=":" :model="formValue" :rules="rules">
+    <el-form-item :label="$t('Hostname')" prop="hostname">
+      <el-input v-model="formValue.hostname"/>
+    </el-form-item>
+    <el-form-item :label="$t('Timezone')" prop="zonename">
+      <el-select v-model="formValue.zonename" filterable>
+        <el-option v-for="item in zoneinfo" :key="item[0]" :label="item[0]" :value="item[0]"/>
+      </el-select>
+    </el-form-item>
+  </el-form>
+  <div style="text-align: right; padding-right: 100px">
+    <el-button type="primary" :loading="loading" @click="handleSubmit">{{ $t('Save & Apply') }}</el-button>
+  </div>
 </template>
 
 <script>
@@ -19,6 +21,7 @@ export default {
   data() {
     return {
       loading: false,
+      zoneinfo: zoneinfo,
       formValue: {
         hostname: this.$oui.state.hostname,
         zonename: ''
@@ -27,26 +30,16 @@ export default {
         hostname: {
           required: true,
           trigger: 'blur',
-          validator: (_, value) => {
+          validator: (_, value, callback) => {
             if (!value)
-              return Error(this.$t('This field is required'))
+              return callback(new Error(this.$t('This field is required')))
 
             if (value.length <= 253 && (value.match(/^[a-zA-Z0-9_]+$/) || (value.match(/^[a-zA-Z0-9_][a-zA-Z0-9_\-.]*[a-zA-Z0-9]$/) && value.match(/[^0-9.]/))))
-              return
-            return Error(this.$t('Invalid hostname'))
+              return callback()
+            return callback(new Error(this.$t('Invalid hostname')))
           }
         }
       }
-    }
-  },
-  computed: {
-    zoneinfo() {
-      return zoneinfo.map(item => {
-        return {
-          label: item[0],
-          value: item[0]
-        }
-      })
     }
   },
   created() {
@@ -60,8 +53,8 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.$refs.form.validate(async errors => {
-        if (errors)
+      this.$refs.form.validate(async valid => {
+        if (!valid)
           return
 
         this.loading = true

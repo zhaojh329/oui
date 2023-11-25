@@ -14,7 +14,7 @@
 
 [Lua-eco]: https://github.com/zhaojh329/lua-eco
 [Vue3]: https://github.com/vuejs/core
-[Naive-ui]: https://github.com/tusen-ai/naive-ui
+[Element Plus]: https://github.com/element-plus/element-plus
 [Vite]: https://github.com/vitejs/vite
 
 ![](/oui.gif)
@@ -25,7 +25,7 @@ A `framework` used to develop Web interface for OpenWrt.
 
 * Separation of front-end and backend
 * Developing back-end APIs using [Lua-eco].
-* Developing front-end pages using [Vue3] + [Naive-ui] + [Vite].
+* Developing front-end pages using [Vue3] + [Element Plus] + [Vite].
 * Support multi-user and ACL management, provides fine-grained permission management.
 * Modularization as with Luci, each page is individually packaged as an IPK.
 

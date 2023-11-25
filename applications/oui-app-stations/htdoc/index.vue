@@ -1,42 +1,32 @@
 <template>
-  <n-data-table :row-key="r => r.macaddr" :columns="columns" :data="stations"/>
+  <el-table :data="stations">
+    <el-table-column prop="band" :label="$t('Type')" width="80"/>
+    <el-table-column prop="ifname" :label="$t('Network')" width="100"/>
+    <el-table-column :label="$t('MAC address')" width="150">
+      <template #default="{ row }">
+        <span>{{ row.macaddr.toUpperCase() }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column :label="$t('Signal / Noise')" width="220">
+      <template #default="{ row }">
+        <span>{{ `${row.signal} dBm / ${row.noise} dBm (SNR ${row.signal - row.noise})` }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column :label="$t('RX Rate / TX Rate')">
+      <template #default="{ row }">
+        <div>
+          <p>{{ wifiRate(row.rx_rate) }}</p>
+          <p>{{ wifiRate(row.tx_rate) }}</p>
+        </div>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
-import { h } from 'vue'
-
 export default {
-  name: 'dhcp',
   data() {
     return {
-      columns: [
-        {
-          title: () => this.$t('Type'),
-          key: 'band'
-        },
-        {
-          title: () => this.$t('Network'),
-          key: 'ifname'
-        },
-        {
-          title: () => this.$t('MAC address'),
-          key: 'macaddr',
-          render: r => r.macaddr.toUpperCase()
-        },
-        {
-          title: () => this.$t('Signal / Noise'),
-          key: 'signal',
-          render: r => `${r.signal} dBm / ${r.noise} dBm (SNR ${r.signal - r.noise})`
-        },
-        {
-          title: () => this.$t('RX Rate / TX Rate'),
-          key: 'rate',
-          render: r => h('div', [
-            h('p', this.wifiRate(r.rx_rate)),
-            h('p', this.wifiRate(r.tx_rate))
-          ])
-        }
-      ],
       stations: []
     }
   },

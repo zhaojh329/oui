@@ -1,9 +1,9 @@
 <template>
-  <n-config-provider :theme="theme" :locale="locale" :date-locale="dateLocale" inline-theme-disabled>
+  <el-config-provider :locale="locale">
     <router-view/>
-  </n-config-provider>
+  </el-config-provider>
 </template>
 
 <script setup>
-import { theme, locale, dateLocale } from './naive-ui'
+import { locale } from './element-plus'
 </script>

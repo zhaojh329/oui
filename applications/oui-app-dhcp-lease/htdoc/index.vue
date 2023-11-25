@@ -1,33 +1,26 @@
 <template>
-  <n-card :title="$t('Active DHCP Leases')">
-    <n-data-table :row-key="r => r.macaddr" :columns="columns" :data="leases"/>
-  </n-card>
+  <el-card :header="$t('Active DHCP Leases')">
+    <el-table :data="leases">
+      <el-table-column prop="hostname" :label="$t('Hostname')" width="180"/>
+      <el-table-column prop="ipaddr" :label="$t('IPv4 address')" width="120"/>
+      <el-table-column :label="$t('MAC address')" width="150">
+        <template #default="{ row }">
+          <span>{{ row.macaddr.toUpperCase() }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('Lease')" width="180">
+        <template #default="{ row }">
+          <span>{{ formatSecond(row.expire) }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-card>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      columns: [
-        {
-          title: () => this.$t('Hostname'),
-          key: 'hostname'
-        },
-        {
-          title: () => this.$t('IPv4 address'),
-          key: 'ipaddr'
-        },
-        {
-          title: () => this.$t('MAC address'),
-          key: 'macaddr',
-          render: r => r.macaddr.toUpperCase()
-        },
-        {
-          title: () => this.$t('Lease'),
-          key: 'expire',
-          render: r => this.formatSecond(r.expire)
-        }
-      ],
       leases: []
     }
   },

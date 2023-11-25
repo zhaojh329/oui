@@ -1,123 +1,82 @@
 <template>
-  <n-space>
-    <n-select v-model:value="group" :options="groups" style="width: 200px"/>
-    <n-button type="primary" @click="addGroup">{{ $t('Add group') }}</n-button>
-  </n-space>
-  <n-divider></n-divider>
-  <n-data-table :row-key="r => r.cls" :columns="columns" :data="acls"/>
-  <n-divider></n-divider>
-  <n-space justify="end" style="padding-right: 100px">
-    <n-button type="primary" :loading="loading" @click="handleSubmit">{{ $t('Save & Apply') }}</n-button>
-  </n-space>
+  <el-space>
+    <el-select v-model="group">
+      <el-option v-for="o in groups" :key="o" :label="o" :value="o"/>
+    </el-select>
+    <el-button type="primary" @click="addGroup">{{ $t('Add group') }}</el-button>
+    <el-button type="danger" @click="delGroup" :disabled="group == 'admin'">{{ $t('Delete group') }}</el-button>
+  </el-space>
+  <el-divider/>
+  <el-table :data="acls[group]">
+    <el-table-column prop="cls" :label="$t('Class')" width="80"/>
+    <el-table-column :label="$t('Matchs')">
+      <template #default="{ row }">
+        <dynamic-tags v-model="row.matchs"/>
+      </template>
+    </el-table-column>
+    <el-table-column :label="$t('Reverse')" width="80">
+      <template #default="{ row }">
+        <el-switch v-model="row.reverse"/>
+      </template>
+    </el-table-column>
+  </el-table>
+  <el-divider/>
+  <el-button type="primary" @click="handleSubmit">{{ $t('Save & Apply') }}</el-button>
 </template>
 
 <script>
-import { h, resolveComponent } from 'vue'
+import DynamicTags from './dynamic-tags.vue'
 
 export default {
+  components: {
+    DynamicTags
+  },
   data() {
     return {
-      columns: [
-        {
-          title: () => this.$t('Class'),
-          key: 'cls',
-          width: 100
-        },
-        {
-          title: () => this.$t('Matchs'),
-          key: 'matchs',
-          ellipsis: {
-            tooltip: true
-          },
-          render: r => h(resolveComponent('n-dynamic-tags'), {
-            value: r.matchs,
-            'on-update:value': value => {
-              if (value.length > r.matchs.length) {
-                r.matchs.push(value[value.length - 1])
-                return
-              }
-
-              r.matchs.forEach((m, i) => {
-                if (!value.includes(m)) {
-                  r.matchs.splice(i, 1)
-                  return false
-                }
-              })
-            }
-          })
-        },
-        {
-          title: () => this.$t('Reverse'),
-          key: 'reverse',
-          width: 100,
-          render: r => h(resolveComponent('n-switch'), {
-            value: r.reverse,
-            'on-update:value': value => this.allAcls[this.group][r.cls].reverse = value
-          })
-        }
-      ],
       group: '',
-      allAcls: {},
-      loading: false
+      acls: {}
     }
   },
   computed: {
     groups() {
-      return Object.keys(this.allAcls).map(group => {
-        return {
-          label: group,
-          value: group
-        }
-      })
-    },
-    acls() {
-      if (!this.allAcls || !this.group)
-        return []
-
-      const acls = this.allAcls[this.group]
-      return Object.keys(acls).map(cls => {
-        return {
-          cls: cls,
-          matchs: acls[cls].matchs,
-          reverse: acls[cls].reverse || false
-        }
-      })
+      return Object.keys(this.acls)
     }
   },
   methods: {
     handleSubmit() {
-      this.loading = true
-      this.$oui.call('acl', 'set', { acls: this.allAcls }).then(() => this.loading = false)
+      this.$oui.call('acl', 'set', { acls: this.acls })
     },
     addGroup() {
-      let group = ''
-      this.$dialog.create({
-        title: this.$t('Add group'),
-        content: () => h(resolveComponent('n-input'), {
-          'on-update:value': value => group = value
-        }),
-        positiveText: this.$t('OK'),
-        onPositiveClick: () => {
-          group = group.trim()
-          if (!group)
-            return
+      this.$prompt('', this.$t('Add group'), {
+      }).then(({ value }) => {
+        value = value.trim()
+        if (!value)
+          return
 
-          this.allAcls[group] = {
-            rpc: { matchs: [ '.+' ] },
-            menu: { matchs: [ '.+' ] },
-            ubus: { matchs: [ '.+' ] },
-            uci: { matchs: [ '.+' ] }
+        this.acls[value] = [ 'rpc', 'menu', 'ubus', 'uci' ].map(cls => {
+          return {
+            cls: cls,
+            matchs: [ '.+' ],
+            reverse: false
           }
+        })
 
-          this.group = group
-        }
+        this.group = value
+      })
+    },
+    delGroup() {
+      this.$confirm(this.$t('delete-group-confirm', { group: this.group }), this.$t('Delete group'), {
+        type: 'warning'
+      }).then(() => {
+        delete this.acls[this.group]
+        this.group = this.groups[0]
       })
     }
   },
   created() {
     this.$oui.call('acl', 'load').then(acls => {
-      this.allAcls = acls
-      this.group = this.groups[0].value
+      this.acls = acls
+      this.group = this.groups[0]
     })
   }
 }

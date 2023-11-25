@@ -1,13 +1,13 @@
 <template>
-  <n-space vertical>
-    <n-tooltip trigger="hover">
-      <template #trigger>
-        <n-progress type="dashboard" gap-position="bottom" :percentage="percentage" :color="color"/>
+  <el-space direction="vertical">
+    <el-tooltip>
+      <template #content>
+        <slot></slot>
       </template>
-      <slot></slot>
-    </n-tooltip>
-    <div style="text-align: center;">{{ label }}</div>
-  </n-space>
+      <el-progress type="dashboard" :stroke-width="10" :percentage="percentage" :color="color"/>
+    </el-tooltip>
+    <div>{{ label }}</div>
+  </el-space>
 </template>
 
 <script>

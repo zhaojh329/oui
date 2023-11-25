@@ -156,57 +156,54 @@ local function handle_rpc(con, req)
 end
 
 local function handle_upload(con, req)
-    local content_length = tonumber(req.headers['content-length'] or 0)
-
-    if content_length == 0 then
-        return con:send_error(http.STATUS_BAD_REQUEST, 'no Content-Length')
-    end
-
-    local sid = req.query['sid']
-    if not sid then
-        return con:send_error(http.STATUS_BAD_REQUEST, 'no "sid" in query')
-    end
-
-    if not rpc.get_session(sid) then
-        return con:send_error(http.STATUS_UNAUTHORIZED)
-    end
-
-    local path = req.query['path']
-    if not path then
-        return con:send_error(http.STATUS_BAD_REQUEST, 'no "path" in query')
-    end
-
-    local dir = file.dirname(path)
-    local _, a = file.statvfs(dir)
-    if a < content_length / 1024 then
-        return con:send_error(http.STATUS_PAYLOAD_TOO_LARGE)
-    end
-
+    local part, sid, f, md5ctx
     local total = 0
-    local f, err = io.open(path, 'w+')
-    if not f then
-        log.err('open "' .. path .. '" fail: ' .. err)
-        return con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
-    end
-
-    local md5ctx = md5.new()
 
     while true do
-        local data, err = con:read_body(4096)
-        if not data then
-            if err then
-                log.err('read body:' .. err)
+        local typ, data = con:read_formdata(req)
+        if typ == 'header' then
+            if data[1] == 'content-disposition' then
+                part = data[2]:match('name="([%w_-]+)"')
             end
+        elseif typ == 'body' then
+            if part == 'sid' then
+                sid = data[1]
+                if not rpc.get_session(sid) then
+                    return con:send_error(http.STATUS_UNAUTHORIZED)
+                end
+            elseif part == 'path' then
+                f = io.open(data[1], 'w')
+                if not f then
+                    return con:send_error(http.STATUS_FORBIDDEN)
+                end
+
+                md5ctx = md5.new()
+            elseif part == 'file' then
+                if not f then
+                    return con:send_error(http.STATUS_BAD_REQUEST)
+                end
+
+                if not sid then
+                    return con:send_error(http.STATUS_UNAUTHORIZED)
+                end
+
+                f:write(data[1])
+
+                md5ctx:update(data[1])
+                total = total + #data[1]
+            end
+        elseif typ == 'end' then
             break
+        else
+            return con:send_error(http.STATUS_BAD_REQUEST)
         end
-
-        total = total + #data
-        f:write(data)
-
-        md5ctx:update(data)
     end
 
-    f:close()
+    if f then f:close() end
+
+    if not f then
+        return con:send_error(http.STATUS_BAD_REQUEST)
+    end
 
     con:send(cjson.encode({ size = total, md5 = hex.encode(md5ctx:final()) }))
 end

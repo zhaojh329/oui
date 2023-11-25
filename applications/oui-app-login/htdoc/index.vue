@@ -1,40 +1,28 @@
 <template>
-  <n-el style="background-color: var(--base-color); opacity: 0.8; width: 100%; height: 100vh;">
-    <n-form class="login" size="large" ref="form" :model="formValue" :rules="rules">
-      <n-form-item path="username">
-        <n-input v-model:value="formValue.username" :placeholder="$t('Please enter username')" @keyup.enter="handleSubmit">
-          <template #prefix>
-            <n-icon size="18" color="#808695"><person-outline/></n-icon>
-          </template>
-        </n-input>
-      </n-form-item>
-      <n-form-item path="password">
-        <n-input v-model:value="formValue.password" :placeholder="$t('Please enter password')" type="password"
-                                                      show-password-on="mousedown" @keyup.enter="handleSubmit">
-          <template #prefix>
-            <n-icon size="18" color="#808695"><lock-closed-outline/></n-icon>
-          </template>
-        </n-input>
-      </n-form-item>
-      <n-form-item>
-        <n-button type="primary" block :loading="loading" @click="handleSubmit">{{ $t('Login') }}</n-button>
-      </n-form-item>
-      <div class="copyright">
-        <n-text type="info">Copyright © 2022 Powered by </n-text>
-        <n-a href="https://github.com/zhaojh329/oui" target="_blank">oui</n-a>
-      </div>
-    </n-form>
-  </n-el>
+  <el-card class="login">
+    <template #header>
+      <div class="header">{{ $t('Login') }}</div>
+    </template>
+    <el-form ref="form" :model="formValue" :rules="rules" label-width="80px" label-suffix=":" size="large">
+      <el-form-item :label="$t('Username')" prop="username">
+        <el-input v-model="formValue.username" prefix-icon="user" :placeholder="$t('Please enter username')" @keyup.enter="login" autofocus/>
+      </el-form-item>
+      <el-form-item :label="$t('Password')" prop="password">
+        <el-input type="password" v-model="formValue.password" prefix-icon="lock" :placeholder="$t('Please enter password')" @keyup.enter="login" show-password/>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" :loading="loading" @click="login" class="login-button">{{ $t('Login') }}</el-button>
+      </el-form-item>
+    </el-form>
+    <el-divider/>
+    <div class="copyright">
+      <p>Copyright © 2022 Powered by <a href="https://github.com/zhaojh329/oui" target="_blank">oui</a></p>
+    </div>
+  </el-card>
 </template>
 
 <script>
-import { PersonOutline, LockClosedOutline } from '@vicons/ionicons5'
-
 export default {
-  components: {
-    PersonOutline,
-    LockClosedOutline
-  },
   data() {
     return {
       loading: false,
@@ -52,9 +40,9 @@ export default {
     }
   },
   methods: {
-    handleSubmit() {
-      this.$refs.form.validate(async errors => {
-        if (errors)
+    login() {
+      this.$refs.form.validate(async valid => {
+        if (!valid)
           return
 
         this.loading = true
@@ -74,21 +62,26 @@ export default {
 </script>
 
 <style scoped>
+.header {
+  text-align: center;
+}
+
 .login {
-  width: 400px;
+  width: 500px;
   top: 40%;
   left: 50%;
   position: fixed;
   transform: translate(-50%, -50%);
 }
 
-.copyright {
-  text-align: center;
-  font-size: medium;
+.login-button {
+  width: 100%;
 }
 
-.copyright .n-a {
+.copyright {
+  text-align: right;
   font-size: 1.2em;
+  color: #888;
 }
 </style>
 

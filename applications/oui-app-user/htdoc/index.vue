@@ -1,46 +1,46 @@
 <template>
-  <n-button type="primary" @click="showAdd">{{ $t('Add user') }}</n-button>
-  <n-modal v-model:show="model" preset="dialog" :title="modify ? $t('Change') : $t('Add user')"
-    :positive-text="$t('OK')"
-    :negative-text="$t('Cancel')"
-    @positive-click="addUser">
-    <n-form ref="form" :model="formValue" :rules="rules" label-placement="left" label-width="auto">
-      <n-form-item :label="$t('Username')" path="username">
-        <n-input v-model:value="formValue.username" :readonly="modify !== ''"/>
-      </n-form-item>
-      <n-form-item :label="$t('Password')" path="password" type="password" show-password-on="mousedown">
-        <n-input v-model:value="formValue.password"/>
-      </n-form-item>
-      <n-form-item :label="$t('ACL group')" path="acl">
-        <n-select v-model:value="formValue.acl" :options="aclGroups"/>
-      </n-form-item>
-    </n-form>
-  </n-modal>
-  <n-divider></n-divider>
-  <n-data-table :row-key="r => r.id" :columns="columns" :data="users"/>
+  <el-button type="primary" @click="showAdd">{{ $t('Add user') }}</el-button>
+  <el-dialog v-model="model" :title="modify ? $t('Change') : $t('Add user')">
+    <el-form ref="form" :model="formValue" :rules="rules" label-width="auto" label-suffix=":" size="large">
+      <el-form-item :label="$t('Username')" prop="username">
+        <el-input v-model="formValue.username" :readonly="modify !== ''"/>
+      </el-form-item>
+      <el-form-item :label="$t('Password')" prop="password">
+        <el-input v-model="formValue.password" type="password" show-password/>
+      </el-form-item>
+      <el-form-item :label="$t('ACL group')" prop="acl">
+        <el-select v-model="formValue.acl">
+          <el-option v-for="o in aclGroups" :key="o" :label="o" :value="o"/>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="model = false">{{ $t('Cancel') }}</el-button>
+      <el-button type="primary" @click="addUser">{{ $t('OK') }}</el-button>
+    </template>
+  </el-dialog>
+  <el-divider/>
+  <el-table :data="users">
+    <el-table-column prop="username" :label="$t('Username')" width="200"/>
+    <el-table-column>
+      <template #default="{ row }">
+        <el-space>
+          <el-button type="primary" @click="modifyUser(row)">{{ $t('Change') }}</el-button>
+          <el-button type="danger" @click="deleteUser(row)" :disabled="row.username === 'admin'">{{ $t('Delete') }}</el-button>
+        </el-space>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
-import { h, resolveComponent } from 'vue'
+import { nextTick } from 'vue'
 
 export default {
   data() {
     return {
       model: false,
       modify: '',
-      columns: [
-        {
-          title: () => this.$t('Username'),
-          key: 'username'
-        },
-        {
-          key: 'actions',
-          render: r => h(resolveComponent('n-space'), () => [
-            h(resolveComponent('n-button'), { type: 'primary', onClick: () => this.modifyUser(r) }, () => this.$t('Change')),
-            h(resolveComponent('n-button'), { type: 'error', onClick: () => this.deleteUser(r) }, () => this.$t('Delete'))
-          ])
-        }
-      ],
       users: [],
       rules: {
         username: {
@@ -69,58 +69,47 @@ export default {
   },
   methods: {
     getUsers() {
-      this.$oui.call('user', 'get_users').then(({ users }) => {
-        this.users = users
-      })
+      this.$oui.call('user', 'get_users').then(({ users }) => this.users = users)
     },
     deleteUser(user) {
-      this.$dialog.create({
-        content: this.$t('delete-user-confirm', { username: user.username }),
-        negativeText: this.$t('Cancel'),
-        positiveText: this.$t('OK'),
-        onPositiveClick: () => {
-          this.$oui.call('user', 'del_user', { id: user.id }).then(() => this.getUsers())
-        }
-      })
+      this.$confirm(this.$t('delete-user-confirm', { username: user.username }), this.$t('Delete'), {
+        type: 'warning'
+      }).then(() => this.$oui.call('user', 'del_user', { id: user.id }).then(() => this.getUsers()))
     },
     showAdd() {
       this.modify = ''
       this.formValue.username = ''
       this.formValue.password = ''
-      this.formValue.acl = ''
+      this.formValue.acl = this.aclGroups[0]
       this.model = true
+      nextTick(() => this.$refs.form.clearValidate())
     },
     addUser() {
-      return new Promise((resolve, reject) => {
-        this.$refs.form.validate(errors => {
-          if (errors) {
-            reject()
-            return
-          }
+      this.$refs.form.validate(valid => {
+        if (!valid)
+          return
 
-          if (this.modify) {
-            this.$oui.call('user', 'change', {
-              password: this.formValue.password,
-              acl: this.formValue.acl,
-              id: this.modify
-            })
-            resolve()
-          } else {
-            this.$oui.call('user', 'add_user', {
-              username: this.formValue.username,
-              password: this.formValue.password,
-              acl: this.formValue.acl
-            }).then(({ code }) => {
-              if (code === 0) {
-                resolve()
-                this.getUsers()
-              } else {
-                reject()
-                this.$message.error(this.$t('username-exist', { username: this.formValue.username }))
-              }
-            })
-          }
-        })
+        if (this.modify) {
+          this.$oui.call('user', 'change', {
+            password: this.formValue.password,
+            acl: this.formValue.acl,
+            id: this.modify
+          })
+          this.model = false
+        } else {
+          this.$oui.call('user', 'add_user', {
+            username: this.formValue.username,
+            password: this.formValue.password,
+            acl: this.formValue.acl
+          }).then(({ code }) => {
+            if (code === 0) {
+              this.model = false
+              this.getUsers()
+            } else {
+              this.$message.error(this.$t('username-exist', { username: this.formValue.username }))
+            }
+          })
+        }
       })
     },
     modifyUser(r) {
@@ -129,18 +118,12 @@ export default {
       this.formValue.password = ''
       this.formValue.acl = r.acl
       this.model = true
+      nextTick(() => this.$refs.form.clearValidate())
     }
   },
   created() {
     this.getUsers()
-    this.$oui.call('acl', 'load').then(acls => {
-      this.aclGroups = Object.keys(acls).map(group => {
-        return {
-          label: group,
-          value: group
-        }
-      })
-    })
+    this.$oui.call('acl', 'load').then(acls => this.aclGroups = Object.keys(acls))
   }
 }
 </script>

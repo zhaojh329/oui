@@ -1,41 +1,29 @@
 <template>
-  <n-upload ref="upload" directory-dnd :custom-request="customRequest">
-    <n-upload-dragger>
-      <div><n-icon size="48"><arrow-up-circle-icon/></n-icon></div>
-      <n-text style="font-size: 16px">{{ $t('Click or drag files to this area to upload') }}</n-text>
-    </n-upload-dragger>
-  </n-upload>
-  <n-modal v-model:show="modalConfirm" preset="dialog" :title="$t('Upgrade')"
-    :positive-text="$t('OK')"
-    :negative-text="$t('Cancel')"
-    @positive-click="doUpgrade">
-    <n-space vertical>
+  <el-upload v-loading="loading" drag action="/oui-upload" :data="{sid: $oui.state.sid, path: '/tmp/firmware.bin'}"
+    :show-file-list="false" :on-success="onUploadSuccess" :before-upload="() => loading = true">
+    <el-icon size="30"><upload-filled/></el-icon>
+    <div>{{ $t('Click or drag files to this area to upload') }}</div>
+  </el-upload>
+  <el-dialog v-model="modalConfirm" :title="$t('Upgrade')">
+    <el-space direction="vertical" fill>
       <p>{{ $t('flash-confirm', { btn: this.$t('OK') }) }}</p>
-      <n-text type="info">{{ this.$t('Size') + ': ' + bytesToHuman(this.size) }}</n-text>
-      <n-text type="info">{{ 'MD5: ' + this.md5 }}</n-text>
-      <n-checkbox v-model:checked="keepConfig">{{ $t('Keep settings and retain the current configuration') }}</n-checkbox>
-    </n-space>
-  </n-modal>
-  <n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
-    <n-spin size="large">
-      <template #description>
-        <n-el style="color: var(--primary-color)">{{ $t('Upgrading') }}...</n-el>
-      </template>
-    </n-spin>
-  </n-modal>
+      <el-text type="info">{{ this.$t('Size') + ': ' + bytesToHuman(this.size) }}</el-text>
+      <el-text type="info">{{ 'MD5: ' + this.md5 }}</el-text>
+      <el-checkbox v-model="keepConfig" :label="$t('Keep settings and retain the current configuration')"/>
+    </el-space>
+    <template #footer>
+      <el-button @click="modalConfirm = false">{{  $t('Cancel') }}</el-button>
+      <el-button type="primary" @click="doUpgrade">{{ $t('OK') }}</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
-import { ArrowUpCircle as ArrowUpCircleIcon } from '@vicons/ionicons5'
-
 export default {
-  components: {
-    ArrowUpCircleIcon
-  },
   data() {
     return {
+      loading: false,
       modalConfirm: false,
-      modalSpin: false,
       size: 0,
       md5: '',
       keepConfig: true
@@ -57,33 +45,32 @@ export default {
 
       return (bytes / Math.pow(1024, k)).toFixed(2) + ' ' + units
     },
-    customRequest(ctx) {
-      const sid = this.$oui.state.sid
-      this.axios.post(`/oui-upload?sid=${sid}&path=/tmp/firmware.bin`, ctx.file.file, {
-        onUploadProgress: ev => ctx.onProgress({ percent: Math.ceil(ev.loaded * 100 / ev.total) })
-      }).then(resp => {
-        ctx.onFinish()
-        this.size = resp.data.size
-        this.md5 = resp.data.md5
+    onUploadSuccess(res) {
+      this.loading = false
 
-        this.$refs.upload.clear()
-
-        this.$oui.ubus('system', 'validate_firmware_image', { path: '/tmp/firmware.bin' }).then(({ valid }) => {
-          if (!valid) {
-            this.$dialog.error({
-              content: this.$t('Firmware verification failed. Please upload the firmware again')
-            })
-          } else {
-            this.keepConfig = true
-            this.modalConfirm = true
-          }
-        })
-      }).catch(error => ctx.onError(error))
+      this.$oui.ubus('system', 'validate_firmware_image', { path: '/tmp/firmware.bin' }).then(({ valid }) => {
+        if (!valid) {
+          this.$message.error(this.$t('Firmware verification failed. Please upload the firmware again'))
+        } else {
+          this.size = res.size
+          this.md5 = res.md5
+          this.modalConfirm = true
+          this.keepConfig = true
+        }
+      })
     },
     doUpgrade() {
+      this.modalConfirm = false
+
       this.$oui.call('system', 'sysupgrade', { keep: this.keepConfig }).then(() => {
-        this.modalSpin = true
+        const loading = this.$loading({
+          lock: true,
+          text: this.$t('Upgrading') + '...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+
         this.$oui.reconnect().then(() => {
+          loading.close()
           this.$router.push('/login')
         })
       })

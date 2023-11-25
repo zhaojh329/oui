@@ -1,167 +1,104 @@
 <template>
-  <n-layout has-sider position="absolute">
-    <n-layout-sider
-                    content-style="padding: 10px;" bordered :native-scrollbar="false"
-                    show-trigger="arrow-circle"
-                    collapse-mode="width"
-                    :collapsed-width="64"
-                    :collapsed="collapsed"
-                    @collapse="collapsed = true"
-                    @expand="collapsed = false"
-      >
-      <Logo :collapsed="collapsed"/>
-      <n-divider/>
-      <n-menu ref="menu" :options="menuOptions" accordion
-          :expanded-keys="expandedMenus" :value="selectedMenu"
-          @update:value="clickMenuItem" @update:expanded-keys="menuExpanded"/>
-    </n-layout-sider>
-    <n-layout>
-      <n-layout-header position="absolute" bordered style="padding: 4px">
-        <n-space justify="end" size="large">
-          <n-tooltip placement="bottom">
-            <template #trigger>
-              <n-switch v-model:value="darkTheme" :rail-style="() => 'background-color: #000e1c'">
-                <template #checked><n-icon size="14" color="#ffd93b"><sunny-sharp-icon/></n-icon></template>
-                <template #unchecked><n-icon size="14" color="#ffd93b"><moon-icon/></n-icon></template>
-              </n-switch>
-            </template>
-            <span>{{ $t((darkTheme ? 'Dark' : 'Light') + ' theme') }}</span>
-          </n-tooltip>
-          <n-dropdown :options="localeOptions" @select="key => $oui.setLocale(key)" :render-icon="renderLocaleIcon">
-            <n-button text><n-icon size="25" color="#0e7a0d"><translate-icon/></n-icon></n-button>
-          </n-dropdown>
-          <n-dropdown :options="userOptions" @select="handleUserAction">
-            <n-button text><n-icon size="25" color="#0e7a0d"><user-icon/></n-icon></n-button>
-          </n-dropdown>
-        </n-space>
-      </n-layout-header>
-      <n-layout-content embedded position="absolute" style="top: 40px; bottom: 42px" content-style="padding: 16px;" :native-scrollbar="false" class="layout-content"
-        >
-        <router-view>
-          <template #default="{ Component }">
-            <transition name="zoom-fade" mode="out-in">
-              <div :key="$route.path">
-                <component :is="Component"/>
-              </div>
-            </transition>
-          </template>
-        </router-view>
-        <n-back-top/>
-      </n-layout-content>
-      <n-layout-footer position="absolute" bordered style="padding: 4px">
-        <div class="copyright">
-          <n-text type="info">Copyright © 2022 Powered by </n-text>
-          <n-a href="https://github.com/zhaojh329/oui" target="_blank">oui</n-a>
+  <el-container class="oui-container" style="height: calc(100vh - 16px);">
+    <el-aside width="200px">
+      <el-scrollbar>
+        <div style="text-align: center;">
+          <el-link type="primary" @click="$router.push('/')" :underline="false" style="font-size: large;">{{ $oui.state.hostname }}</el-link>
         </div>
-      </n-layout-footer>
-    </n-layout>
-  </n-layout>
-  <n-modal v-model:show="modalSpin" :close-on-esc="false" :mask-closable="false">
-    <n-spin size="large">
-      <template #description>
-        <n-el style="color: var(--primary-color)">{{ $t('Rebooting') }}...</n-el>
-      </template>
-    </n-spin>
-  </n-modal>
+        <el-divider/>
+        <el-menu unique-opened router :default-active="selectedMenu">
+          <template v-for="menu in menus" :key="menu.path">
+            <el-sub-menu v-if="menu.children" :index="menu.path">
+              <template #title>
+                <el-icon v-if="menu.svg"><div v-html="renderSvg('svg', menu.svg)"></div></el-icon>
+                <span>{{ $t('menus.' + menu.title) }}</span>
+              </template>
+              <el-menu-item v-for="submenu in menu.children" :key="submenu.path" :index="submenu.path">
+                <template #title>{{ $t('menus.' + submenu.title) }}</template>
+              </el-menu-item>
+            </el-sub-menu>
+            <el-menu-item v-else :index="menu.path">
+              <el-icon v-if="menu.svg"><div v-html="renderSvg('svg', menu.svg)"></div></el-icon>
+              <template #title>{{ $t('menus.' + menu.title) }}</template>
+            </el-menu-item>
+          </template>
+        </el-menu>
+      </el-scrollbar>
+    </el-aside>
+    <el-container>
+      <el-header style="text-align: right;">
+        <el-space size="large">
+          <el-icon color="#ffd93b" size="24" style="cursor: pointer;" @click="$oui.state.isDark = !$oui.state.isDark">
+            <component :is="$oui.state.isDark ? MoonIcon : SunnySharpIcon"/>
+          </el-icon>
+          <el-dropdown @command="lang => $oui.setLocale(lang)">
+            <span class="el-dropdown-link"><el-icon><TranslateIcon/></el-icon></span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="i in localeOptions" :key="i.key" :command="i.key" :class="{selected: i.key === $oui.state.locale}">{{ i.label }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <el-dropdown @command="handleUserAction">
+            <span class="el-dropdown-link"><el-icon><Avatar/></el-icon></span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="logout" :icon="LogoutIcon">{{ $t('Logout') }}</el-dropdown-item>
+                <el-dropdown-item command="reboot" icon="SwitchButton">{{ $t('Reboot') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </el-space>
+      </el-header>
+      <el-main>
+        <el-scrollbar>
+          <router-view/>
+          <el-backtop target=".oui-container .el-container .el-scrollbar__wrap"/>
+        </el-scrollbar>
+      </el-main>
+      <el-footer>
+        <div class="copyright">
+          <p>Copyright © 2022 Powered by <a href="https://github.com/zhaojh329/oui" target="_blank">oui</a></p>
+        </div>
+      </el-footer>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
-import Logo from './Logo.vue'
-import { h, resolveComponent } from 'vue'
-
 import {
   Translate as TranslateIcon
 } from '@vicons/carbon'
 
 import {
-  PersonCircleOutline as UserIcon,
-  LogOutOutline as LogoutIcon,
-  PowerSharp as PowerSharpIcon,
-  ChevronForward as ChevronForwardIcon,
   Moon as MoonIcon,
-  SunnySharp as SunnySharpIcon
+  SunnySharp as SunnySharpIcon,
+  LogOutOutline as LogoutIcon
 } from '@vicons/ionicons5'
-
-function renderIcon(icon) {
-  return () => h(resolveComponent('n-icon'), () => h(icon))
-}
-
-function renderSvg(el, opt) {
-  const props = {}
-  const children = []
-
-  Object.keys(opt).forEach(key => {
-    if (key.startsWith('-')) {
-      props[key.substring(1)] = opt[key]
-    } else {
-      if (Array.isArray(opt[key]))
-        opt[key].forEach(item => children.push(renderSvg(key, item)))
-      else
-        children.push(renderSvg(key, opt[key]))
-    }
-  })
-
-  return h(el, props, children)
-}
-
-function renderIconSvg(opt) {
-  return () => h(resolveComponent('n-icon'), () => renderSvg('svg', opt ?? {}))
-}
 
 export default {
   props: {
-    menus: Array
+    menus: {
+      type: Array,
+      required: true
+    }
   },
   components: {
-    Logo,
-    TranslateIcon,
-    UserIcon,
-    MoonIcon,
-    SunnySharpIcon
+    TranslateIcon
   },
   data() {
     return {
-      collapsed: false,
-      modalSpin: false,
-      expandedMenus: [],
-      selectedMenu: '',
-      userOptions: [
-        {
-          key: 'logout',
-          label: () => this.$t('Logout'),
-          icon: renderIcon(LogoutIcon)
-        },
-        {
-          key: 'reboot',
-          label: () => this.$t('Reboot'),
-          icon: renderIcon(PowerSharpIcon)
-        }
-      ]
+      selectedMenu: ''
+    }
+  },
+  setup() {
+    return {
+      LogoutIcon,
+      MoonIcon,
+      SunnySharpIcon
     }
   },
   computed: {
-    menuOptions() {
-      return this.menus.map(m => {
-        if (m.children) {
-          return {
-            label: this.$t('menus.' + m.title),
-            key: m.path,
-            icon: renderIconSvg(m.svg),
-            children: m.children.map(c => this.renderMenuOption(c))
-          }
-        } else {
-          return this.renderMenuOption(m)
-        }
-      })
-    },
-    darkTheme: {
-      get() {
-        return this.$oui.state.theme === 'dark'
-      },
-      set(val) {
-        this.$oui.setTheme(val ? 'dark' : 'light')
-      }
-    },
     localeOptions() {
       const titles = {
         'en-US': 'English',
@@ -185,125 +122,93 @@ export default {
       return options
     }
   },
-  watch: {
-    '$route'() {
-      this.updateMenu()
-    }
-  },
   methods: {
-    renderMenuOption(m) {
-      return {
-        label: () => h(resolveComponent('router-link'), { to: { path: m.path } }, () => this.$t('menus.' + m.title)),
-        key: m.path,
-        icon: renderIconSvg(m.svg)
-      }
-    },
-    updateMenu() {
-      const path = this.$route.path
-      const paths = path.split('/')
+    renderSvg(el, opt) {
+      const props = []
+      const children = []
 
-      if (path === '/home') {
-        this.expandedMenus = []
-        this.selectedMenu = ''
-        return
-      }
+      Object.keys(opt).forEach(key => {
+        if (key.startsWith('-')) {
+          props.push(`${key.substring(1)}="${opt[key]}"`)
+        } else {
+          if (Array.isArray(opt[key]))
+            opt[key].forEach(item => children.push(this.renderSvg(key, item)))
+          else
+            children.push(this.renderSvg(key, opt[key]))
+        }
+      })
 
-      this.selectedMenu = path
-
-      if (paths.length > 2)
-        this.expandedMenus = ['/' + paths[1]]
+      return `<${el} ${props.join(' ')}>${children.join(' ')}</${el}>`
     },
-    clickMenuItem(key) {
-      this.selectedMenu = key
-      if (key.split('/').length === 2)
-        this.expandedMenus = []
-    },
-    menuExpanded(keys) {
-      this.expandedMenus = keys
-    },
-    renderLocaleIcon(o) {
-      if (o.key === this.$oui.state.locale)
-        return renderIcon(ChevronForwardIcon)()
-    },
-    renderThemeIcon(o) {
-      if (o.key === this.$oui.state.theme)
-        return renderIcon(ChevronForwardIcon)()
-    },
-    handleUserAction(key) {
-      if (key === 'logout') {
+    handleUserAction(command) {
+      if (command === 'logout') {
         this.$oui.logout()
         this.$router.push('/login')
-      } else if (key === 'reboot') {
-        this.$dialog.warning({
-          title: this.$t('Reboot'),
-          content: this.$t('RebootConfirm'),
-          positiveText: this.$t('OK'),
-          onPositiveClick: () => {
-            this.$oui.ubus('system', 'reboot').then(() => {
-              this.modalSpin = true
-              this.$oui.reconnect().then(() => {
-                this.modalSpin = false
-                this.$router.push('/login')
-              })
+      } else if (command === 'reboot') {
+        this.$confirm(this.$t('RebootConfirm'), this.$t('Reboot'), {
+          type: 'warning'
+        }).then(() => {
+          this.$oui.ubus('system', 'reboot').then(() => {
+            const loading = this.$loading({
+              lock: true,
+              text: this.$t('Rebooting') + '...',
+              background: 'rgba(0, 0, 0, 0.7)'
             })
-          }
+
+            this.$oui.reconnect().then(() => {
+              loading.close()
+              this.$router.push('/login')
+            })
+          })
         })
-      }
-    },
-    watchWidth() {
-      if (document.body.clientWidth <= 950) {
-        this.collapsed = true
-      } else {
-        this.collapsed = false
       }
     }
   },
   mounted() {
-    this.updateMenu()
-    this.watchWidth()
-    window.addEventListener('resize', this.watchWidth)
+    this.selectedMenu = this.$route.path
   }
 }
 </script>
 
 <style scoped>
-.logo-name {
-  line-height: 50px;
-  text-align: center;
-  font-size: 2em;
+.oui-container .el-menu {
+  border-right: none;
 }
 
-.logo-name a {
-  text-decoration:none;
+.oui-container .el-aside {
+  border-right: 1px var(--el-border-color) var(--el-border-style);
+}
+
+.oui-container .el-header {
+  height: 35px;
+}
+
+.oui-container .el-main {
+  border: 1px var(--el-border-color) var(--el-border-style);
+}
+
+:deep(.el-dropdown-menu__item).selected {
+  background-color: var(--el-dropdown-menuItem-hover-fill);
+  color: var(--el-dropdown-menuItem-hover-color);
 }
 
 .copyright {
   text-align: right;
-  font-size: medium;
-  padding-right: 40px;
-}
-
-.copyright .n-a {
   font-size: 1.2em;
+  color: #888;
 }
 
-.zoom-fade-enter-active,
-.zoom-fade-leave-active {
-  transition: transform 0.35s, opacity 0.28s ease-in-out;
+.el-dropdown-link {
+  color: var(--el-color-primary);
+  cursor: pointer;
 }
 
-.zoom-fade-enter-from {
-  opacity: 0;
-  transform: scale(0.97);
+.el-dropdown-link:focus {
+  outline: none;
 }
 
-.zoom-fade-leave-to {
-  opacity: 0;
-  transform: scale(1.03);
-}
-
-.layout-content {
-  flex: auto;
+.el-dropdown-link .el-icon {
+  font-size: 24px;
 }
 </style>
 
