@@ -33,6 +33,7 @@ endef
 define Build/Compile
 	if [ -d $(PKG_BUILD_DIR)/htdoc ]; then \
 		$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build; \
+		$(RM) -rf $(PKG_BUILD_DIR)/htdoc/node_modules; \
 	fi
 endef
 
