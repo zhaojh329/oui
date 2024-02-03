@@ -25,7 +25,7 @@ endef
 define Build/Prepare
 	if [ -d ./htdoc ]; then \
 		$(CP) ./htdoc $(PKG_BUILD_DIR); \
-		echo "VITE_APP_NAME=$(APP_NAME)" > $(PKG_BUILD_DIR)/htdoc/.env.local
+		echo "VITE_APP_NAME=$(APP_NAME)" > $(PKG_BUILD_DIR)/htdoc/.env.local; \
 	fi
 endef
 
@@ -33,7 +33,7 @@ define Build/Compile
 	if [ -d $(PKG_BUILD_DIR)/htdoc ]; then \
 		$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install && \
 		$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build && \
-		$(RM) -rf $(PKG_BUILD_DIR)/htdoc/node_modules
+		$(RM) -rf $(PKG_BUILD_DIR)/htdoc/node_modules; \
 	fi
 endef
 
