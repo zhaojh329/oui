@@ -21,7 +21,7 @@ define Package/lua-cjson-53
   CATEGORY:=Languages
   TITLE:=Lua5.3 CJSON parser
   URL:=https://github.com/mpx/lua-cjson
-  DEPENDS:= +lua
+  DEPENDS:= +liblua5.3
 endef
 
 define Package/lua-cjson-53/description
