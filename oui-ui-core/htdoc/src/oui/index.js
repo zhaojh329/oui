@@ -270,6 +270,7 @@ class Oui {
   install(app) {
     app.config.globalProperties.$oui = this
     app.config.globalProperties.$md5 = md5
+    app.provide('$oui', this)
   }
 }
 
