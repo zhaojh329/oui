@@ -6,18 +6,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
-    "@vueuse/core": "^10.6.1",
-    "axios": "^1.6.2",
-    "element-plus": "^2.4.2",
+    "@element-plus/icons-vue": "^2.3.1",
+    "@vueuse/core": "^10.8.0",
+    "axios": "^1.6.7",
+    "element-plus": "^2.5.6",
     "js-md5": "^0.8.3",
-    "vue": "^3.3.8",
+    "vue": "^3.4.19",
     "vue-axios": "^3.5.2",
-    "vue-i18n": "^9.7.0",
-    "vue-router": "^4.2.5"
+    "vue-i18n": "^9.9.1",
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
-    "@intlify/unplugin-vue-i18n": "^1.5.0",
+    "@intlify/unplugin-vue-i18n": "^2.0.0",
     "@vicons/antd": "^0.12.0",
     "@vicons/carbon": "^0.12.0",
     "@vicons/fa": "^0.12.0",
@@ -26,10 +26,10 @@
     "@vicons/ionicons5": "^0.12.0",
     "@vicons/material": "^0.12.0",
     "@vicons/tabler": "^0.12.0",
-    "@vitejs/plugin-vue": "^4.5.0",
-    "eslint": "^8.54.0",
-    "eslint-plugin-vue": "^9.18.1",
-    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.21.1",
+    "vite": "^5.1.4",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-eslint": "^1.8.1"
   }
