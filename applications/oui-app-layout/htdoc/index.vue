@@ -1,12 +1,12 @@
 <template>
   <el-container class="oui-container" style="height: calc(100vh - 16px);">
-    <el-aside width="200px">
+    <el-aside width="auto">
       <el-scrollbar>
-        <div style="text-align: center;">
+        <div v-if="!isCollapse" style="text-align: center;">
           <el-link type="primary" @click="$router.push('/')" :underline="false" style="font-size: large;">{{ $oui.state.hostname }}</el-link>
         </div>
-        <el-divider/>
-        <el-menu unique-opened router :default-active="selectedMenu">
+        <el-divider v-if="!isCollapse"/>
+        <el-menu unique-opened router :default-active="selectedMenu" :collapse="isCollapse">
           <template v-for="menu in menus" :key="menu.path">
             <el-sub-menu v-if="menu.children" :index="menu.path">
               <template #title>
@@ -26,7 +26,10 @@
       </el-scrollbar>
     </el-aside>
     <el-container>
-      <el-header style="text-align: right;">
+      <el-header>
+        <el-icon @click="isCollapse = !isCollapse" class="collapse-icon" :size="25">
+          <component :is="isCollapse ? 'Expand' : 'Fold'"/>
+        </el-icon>
         <el-space size="large">
           <el-icon color="#ffd93b" size="24" style="cursor: pointer;" @click="$oui.state.isDark = !$oui.state.isDark">
             <component :is="$oui.state.isDark ? MoonIcon : SunnySharpIcon"/>
@@ -88,7 +91,8 @@ export default {
   },
   data() {
     return {
-      selectedMenu: ''
+      selectedMenu: '',
+      isCollapse: false
     }
   },
   setup() {
@@ -190,6 +194,16 @@ export default {
 :deep(.el-dropdown-menu__item).selected {
   background-color: var(--el-dropdown-menuItem-hover-fill);
   color: var(--el-dropdown-menuItem-hover-color);
+}
+
+.el-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.collapse-icon {
+  color: var(--el-color-primary);
+  cursor: pointer;
 }
 
 .copyright {
