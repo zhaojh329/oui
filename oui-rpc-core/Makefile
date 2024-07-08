@@ -21,7 +21,7 @@ define Package/oui-rpc-core
   CATEGORY:=Oui
   TITLE:=Oui rpc core
   URL:=https://github.com/zhaojh329/oui
-  DEPENDS:=+libuci-lua53 +lua-cjson-53 +lua-eco-md5 +lua-eco-http +lua-eco-ubus +px5g-mbedtls
+  DEPENDS:=+libuci-lua53 +lua-cjson-53 +lua-eco-http +lua-eco-ubus +px5g-mbedtls +libubox
 endef
 
 Build/Compile=
@@ -33,6 +33,7 @@ define Package/oui-rpc-core/install
 	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_CONF) ./files/oui.config $(1)/etc/config/oui
 	$(INSTALL_CONF) ./files/admin.acl $(1)/usr/share/oui/acl/admin.json
+	$(CP) ./files/utils.lua $(1)/usr/local/lib/lua/5.3/oui
 	$(CP) ./files/rpc.lua $(1)/usr/local/lib/lua/5.3/oui
 	$(CP) ./files/rpc $(1)/usr/share/oui
 endef

@@ -1,10 +1,10 @@
-local hex = require 'eco.encoding.hex'
-local md5 = require 'eco.hash.md5'
 local time = require 'eco.time'
 local file = require 'eco.file'
 local log = require 'eco.log'
 local cjson = require 'cjson'
 local uci = require 'uci'
+
+local utils = require 'oui.utils'
 
 local concat = table.concat
 local random = math.random
@@ -95,6 +95,8 @@ function M.login(username, password)
     local valid = false
     local acl
 
+    local md5ctx = utils.md5()
+
     c:foreach('oui', 'user', function(s)
         if s.username == username then
             if not s.password then
@@ -104,7 +106,8 @@ function M.login(username, password)
             end
 
             for nonce in pairs(nonces) do
-                if hex.encode(md5.sum(table.concat({s.password, nonce}, ':'))) == password then
+
+                if md5ctx:sum(table.concat({s.password, nonce}, ':')) == password then
                     acl = s.acl
                     valid = true
                     return false

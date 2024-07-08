@@ -3,9 +3,7 @@
 -- SPDX-License-Identifier: MIT
 -- Author: Jianhui Zhao <zhaojh329@gmail.com>
 
-local hex = require 'eco.encoding.hex'
 local http = require 'eco.http.server'
-local md5 = require 'eco.hash.md5'
 local time = require 'eco.time'
 local file = require 'eco.file'
 local sys = require 'eco.sys'
@@ -13,6 +11,7 @@ local log = require 'eco.log'
 local cjson = require 'cjson'
 local uci = require 'uci'
 
+local utils = require 'oui.utils'
 local rpc = require 'oui.rpc'
 
 eco.panic_hook = function(err)
@@ -177,7 +176,7 @@ local function handle_upload(con, req)
                     return con:send_error(http.STATUS_FORBIDDEN)
                 end
 
-                md5ctx = md5.new()
+                md5ctx = utils.md5()
             elseif part == 'file' then
                 if not f then
                     return con:send_error(http.STATUS_BAD_REQUEST)
@@ -188,8 +187,7 @@ local function handle_upload(con, req)
                 end
 
                 f:write(data[1])
-
-                md5ctx:update(data[1])
+                md5ctx:hash(data[1]);
                 total = total + #data[1]
             end
         elseif typ == 'end' then
@@ -205,7 +203,7 @@ local function handle_upload(con, req)
         return con:send_error(http.STATUS_BAD_REQUEST)
     end
 
-    con:send(cjson.encode({ size = total, md5 = hex.encode(md5ctx:final()) }))
+    con:send(cjson.encode({ size = total, md5 = md5ctx:final() }))
 end
 
 local function handle_download(con, req)
