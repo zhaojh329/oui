@@ -34,3 +34,7 @@ A `framework` used to develop Web interface for OpenWrt.
 [English](https://zhaojh329.github.io/oui/)
 
 [中文](https://zhaojh329.github.io/oui/zh/)
+
+## Support
+
+If this project is helpful to you, please don't hesitate to give it a star. Thank you!
