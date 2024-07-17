@@ -401,10 +401,7 @@ uci_lua_each(lua_State *L)
 	ctx = find_context(L, &offset);
 	package = luaL_checkstring(L, 1 + offset);
 
-	if (lua_isnil(L, 2 + offset))
-		type = NULL;
-	else
-		type = luaL_checkstring(L, 2 + offset);
+	type = lua_tostring(L, 2 + offset);
 
 	p = find_package(L, ctx, package, true);
 	if (!p) {
