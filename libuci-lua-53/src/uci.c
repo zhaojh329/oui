@@ -374,11 +374,11 @@ again:
 	if (type && (strcmp(s->type, type) != 0))
 		goto again;
 
-	lua_pushlightuserdata(L, tmp);
-	lua_replace(L, lua_upvalueindex(4));
-
 	lua_pushlightuserdata(L, e);
 	lua_replace(L, lua_upvalueindex(3));
+
+	lua_pushlightuserdata(L, tmp);
+	lua_replace(L, lua_upvalueindex(4));
 
 	lua_pushinteger(L, i);
 	lua_replace(L, lua_upvalueindex(5));
@@ -418,8 +418,8 @@ uci_lua_each(lua_State *L)
 		lua_pushnil(L);
 
 	lua_pushlightuserdata(L, &p->sections);
-	lua_pushlightuserdata(L, tmp);
 	lua_pushlightuserdata(L, e);
+	lua_pushlightuserdata(L, tmp);
 	lua_pushinteger(L, i);
 
 	lua_pushcclosure(L, uci_lua_each_iter, 5);
