@@ -352,7 +352,7 @@ static int
 uci_lua_each_iter(lua_State *L)
 {
 	const char *type = lua_tostring(L, lua_upvalueindex(1));
-	const const struct uci_list *list = lua_topointer(L, lua_upvalueindex(2));
+	const struct uci_list *list = lua_topointer(L, lua_upvalueindex(2));
 	struct uci_element *e = (struct uci_element *)lua_topointer(L, lua_upvalueindex(3));
 	struct uci_element *tmp = (struct uci_element *)lua_topointer(L, lua_upvalueindex(4));
 	int i = lua_tointeger(L, lua_upvalueindex(5));
