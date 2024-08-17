@@ -28,3 +28,5 @@ dist-ssr
 .cache
 
 oui-ui-core/htdoc/src/applications
+
+.eslintcache

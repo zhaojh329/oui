@@ -45,7 +45,7 @@ OUI  --->
 ```
 
 ::: tip
-The `Node.js 18+` is required to compile Oui.
+The `Node.js 20.9+` is required to compile Oui.
 
 Select `Use existing nodejs installation on the host system` to reduce compilation time.
 
