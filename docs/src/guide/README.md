@@ -13,5 +13,5 @@ The Oui front-end is written in [Vue3][2], and the front-end code is build with 
 Unlike traditional front-end projects, all pages are packaged as a whole. Oui implements the same modularity as Luci, with each page packaged independently of the other. This is done by packaging each page as a library.
 
 ::: tip
-Oui uses the [Naive UI](https://www.naiveui.com/) component library by default. You can choose your own library or develop your own components according to your needs.
+Oui uses the [Element Plus](https://github.com/element-plus/element-plus) component library by default. You can choose your own library or develop your own components according to your needs.
 :::
