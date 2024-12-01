@@ -8,7 +8,7 @@ Oui depends on the latest version of `Lua-eco`.
 Make sure that the `Lua-eco` in OpenWrt you are using is up to date.
 
 You can replace `feeds/packages/lang/lua-eco/Makefile` with
-[https://github.com/zhaojh329/lua-eco/blob/openwrt-package/Makefile](https://github.com/zhaojh329/lua-eco/blob/openwrt-package/Makefile).
+[https://github.com/openwrt/packages/blob/master/lang/lua-eco/Makefile](https://github.com/openwrt/packages/blob/master/lang/lua-eco/Makefile).
 :::
 
 ### Add feed
