@@ -14,7 +14,7 @@
     "js-md5": "^0.8.3",
     "vue": "^3.4.38",
     "vue-axios": "^3.5.2",
-    "vue-i18n": "^9.14.0",
+    "vue-i18n": "^9.14.2",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
