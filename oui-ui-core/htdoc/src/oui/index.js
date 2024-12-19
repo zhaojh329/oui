@@ -44,7 +44,8 @@ class Oui {
       set: dark => {
         isDark.value = dark
         const theme = dark ? 'dark' : 'light'
-        this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
+        if (this.inited)
+          this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
       }
     })
 
