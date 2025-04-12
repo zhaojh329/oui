@@ -8,6 +8,6 @@
     "@vitejs/plugin-vue": "^5.1.2",
     "vite": "^5.4.1",
     "vite-plugin-compression": "^0.5.1",
-    "vue-i18n": "^9.14.0"
+    "vue-i18n": "^9.14.4"
   }
 }
