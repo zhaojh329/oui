@@ -1,7 +1,7 @@
 local file = require 'eco.file'
 local rpc = require 'oui.rpc'
 local cjson = require 'cjson'
-local uci = require 'uci'
+local uci = require 'eco.uci'
 
 local M = {}
 

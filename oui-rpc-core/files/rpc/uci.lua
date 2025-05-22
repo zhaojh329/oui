@@ -1,5 +1,5 @@
 local rpc = require 'oui.rpc'
-local uci = require 'uci'
+local uci = require 'eco.uci'
 
 local M = {}
 

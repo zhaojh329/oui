@@ -21,19 +21,19 @@ define Package/oui-rpc-core
   CATEGORY:=Oui
   TITLE:=Oui rpc core
   URL:=https://github.com/zhaojh329/oui
-  DEPENDS:=+libuci-lua53 +lua-cjson-lua5.3 +lua-eco-md5 +lua-eco-http +lua-eco-ubus +px5g-mbedtls
+  DEPENDS:=+lua-cjson-lua5.4 +lua-eco-uci +lua-eco-md5 +lua-eco-http +lua-eco-ubus +px5g-mbedtls
 endef
 
 Build/Compile=
 
 define Package/oui-rpc-core/install
-	$(INSTALL_DIR) $(1)/etc/config $(1)/usr/share/oui $(1)/usr/local/lib/lua/5.3/oui \
+	$(INSTALL_DIR) $(1)/etc/config $(1)/usr/share/oui $(1)/usr/local/lib/lua/5.4/oui \
 		$(1)/usr/share/oui/acl $(1)/usr/sbin $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/oui-httpd.lua $(1)/usr/sbin/oui-httpd
 	$(INSTALL_BIN) ./files/oui-httpd.init $(1)/etc/init.d/oui-httpd
 	$(INSTALL_CONF) ./files/oui.config $(1)/etc/config/oui
 	$(INSTALL_CONF) ./files/admin.acl $(1)/usr/share/oui/acl/admin.json
-	$(CP) ./files/rpc.lua $(1)/usr/local/lib/lua/5.3/oui
+	$(CP) ./files/rpc.lua $(1)/usr/local/lib/lua/5.4/oui
 	$(CP) ./files/rpc $(1)/usr/share/oui
 endef
 

@@ -2,7 +2,7 @@ local M = {}
 
 local ubus = require 'eco.ubus'
 local file = require 'eco.file'
-local uci = require 'uci'
+local uci = require 'eco.uci'
 
 function M.dhcp_leases()
     local c = uci.cursor()

@@ -1,6 +1,6 @@
 local hex = require 'eco.encoding.hex'
 local md5 = require 'eco.hash.md5'
-local uci = require 'uci'
+local uci = require 'eco.uci'
 
 local M = {}
 

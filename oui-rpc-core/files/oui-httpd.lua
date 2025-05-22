@@ -11,7 +11,7 @@ local file = require 'eco.file'
 local sys = require 'eco.sys'
 local log = require 'eco.log'
 local cjson = require 'cjson'
-local uci = require 'uci'
+local uci = require 'eco.uci'
 
 local rpc = require 'oui.rpc'
 

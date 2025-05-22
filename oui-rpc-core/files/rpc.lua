@@ -4,7 +4,7 @@ local time = require 'eco.time'
 local file = require 'eco.file'
 local log = require 'eco.log'
 local cjson = require 'cjson'
-local uci = require 'uci'
+local uci = require 'eco.uci'
 
 local concat = table.concat
 local random = math.random
