@@ -17,7 +17,7 @@
 [Element Plus]: https://github.com/element-plus/element-plus
 [Vite]: https://github.com/vitejs/vite
 
-![](/oui.gif)
+![](/img/oui.gif)
 
 A `framework` used to develop Web interface for OpenWrt.
 
