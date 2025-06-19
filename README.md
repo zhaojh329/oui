@@ -35,6 +35,9 @@ A `framework` used to develop Web interface for OpenWrt.
 
 [中文](https://zhaojh329.github.io/oui/zh/)
 
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=zhaojh329/oui&type=Date)](https://www.star-history.com/#zhaojh329/oui&Date)
+
 ## Support
 
 If this project is helpful to you, please don't hesitate to give it a star. Thank you!
