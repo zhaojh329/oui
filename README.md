@@ -38,6 +38,8 @@ A `framework` used to develop Web interface for OpenWrt.
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=zhaojh329/oui&type=Date)](https://www.star-history.com/#zhaojh329/oui&Date)
 
+## [OpenWrt Web interface](https://openwrt.org/docs/guide-user/luci/webinterface.overview)
+
 ## Support
 
 If this project is helpful to you, please don't hesitate to give it a star. Thank you!
