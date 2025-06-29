@@ -108,7 +108,7 @@ this.$oui.logout().then(() => {
 ### setLocale: switch the language
 
 ```js
-this.$oui.setLocale('en-US')
+this.$oui.setLocale('en')
 ```
 
 ### setTheme: Switch the theme

@@ -61,7 +61,7 @@ include ../../oui.mk
         "view": "demo",
         "index": 60,
         "locales": {
-            "en-US": "Oui Demo",
+            "en": "Oui Demo",
             "zh-CN": "Oui 示范",
             "zh-TW": "Oui 示範"
         },
@@ -88,7 +88,7 @@ include ../../oui.mk
         "icon": "md-stats",
         "index": 10,
         "locales": {
-            "en-US": "Status",
+            "en": "Status",
             "zh-CN": "状态",
             "zh-TW": "狀態"
         },
@@ -99,7 +99,7 @@ include ../../oui.mk
         "icon": "md-settings",
         "index": 20,
         "locales": {
-            "en-US": "System",
+            "en": "System",
             "zh-CN": "系统",
             "zh-TW": "系統"
         },
@@ -110,7 +110,7 @@ include ../../oui.mk
         "icon": "md-git-network",
         "index": 30,
         "locales": {
-            "en-US": "Network",
+            "en": "Network",
             "zh-CN": "网络",
             "zh-TW": "網絡"
         },

@@ -236,10 +236,14 @@ class Oui {
 
     this.state.locale = locale
 
-    if (locale === 'auto')
-      i18n.global.locale = navigator.language
-    else
+    if (locale === 'auto') {
+      let language = navigator.language
+      if (language === 'en-US')
+        language = 'en'
+      i18n.global.locale = language
+    } else {
       i18n.global.locale = locale
+    }
   }
 
   async setHostname(hostname) {
