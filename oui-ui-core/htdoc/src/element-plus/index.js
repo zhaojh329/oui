@@ -2,16 +2,16 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import zhCN from 'element-plus/dist/locale/zh-cn.mjs'
-import zhTW from 'element-plus/dist/locale/zh-tw.mjs'
-import jaJP from 'element-plus/dist/locale/ja.mjs'
-import enUS from 'element-plus/dist/locale/en.mjs'
+import zhCN from 'element-plus/es/locale/lang/zh-cn'
+import zhTW from 'element-plus/es/locale/lang/zh-tw'
+import jaJP from 'element-plus/es/locale/lang/ja'
+import en from 'element-plus/es/locale/lang/en'
 
 import { computed } from 'vue'
 import oui from '../oui'
 
 const locales = {
-  'en-US': enUS,
+  'en': en,
   'zh-CN': zhCN,
   'zh-TW': zhTW,
   'ja-JP': jaJP

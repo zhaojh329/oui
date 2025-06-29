@@ -4,7 +4,7 @@
         "view": "demo",
         "index": 60,
         "locales": {
-            "en-US": "Oui Demo",
+            "en": "Oui Demo",
             "zh-CN": "Oui 示范",
             "zh-TW": "Oui 示範"
         },

@@ -11,7 +11,7 @@ export default defineUserConfig({
   title: 'Oui',
   locales: {
     '/': {
-      lang: 'en-US',
+      lang: 'en',
       description: 'A framework used to develop Web interface for OpenWrt'
     },
     '/zh/': {

@@ -105,7 +105,7 @@ export default {
   computed: {
     localeOptions() {
       const titles = {
-        'en-US': 'English',
+        'en': 'English',
         'ja-JP': '日本語',
         'zh-CN': '简体中文',
         'zh-TW': '繁體中文'

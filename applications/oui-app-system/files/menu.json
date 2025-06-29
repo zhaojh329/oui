@@ -4,7 +4,7 @@
         "view": "system",
         "index": 0,
         "locales": {
-            "en-US": "System",
+            "en": "System",
             "zh-CN": "系统",
             "zh-TW": "系統"
         }

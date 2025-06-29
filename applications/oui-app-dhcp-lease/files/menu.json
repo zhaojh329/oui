@@ -4,7 +4,7 @@
         "view": "dhcp-lease",
         "index": 1,
         "locales": {
-            "en-US": "DHCP lease",
+            "en": "DHCP lease",
             "zh-CN": "DHCP 租约",
             "zh-TW": "DHCP 租約"
         }
