@@ -5,6 +5,7 @@
 
 local hex = require 'eco.encoding.hex'
 local http = require 'eco.http.server'
+local httpc = require 'eco.http.client'
 local md5 = require 'eco.hash.md5'
 local time = require 'eco.time'
 local file = require 'eco.file'
@@ -227,6 +228,69 @@ local function handle_download(con, req)
     con:send_file(path)
 end
 
+local proxys = {}
+
+local function handle_proxy(con, req)
+    local proxy
+
+    for key, p in pairs(proxys) do
+        if req.path:match(key) then
+            proxy = p
+            break
+        end
+    end
+
+    if not proxy then
+        return false
+    end
+
+    local url = proxy.url .. req.raw_path
+    local body = con:read_body()
+    local opts = {
+        headers = {}
+    }
+
+    local removed_headers = {
+        ['connection'] = true,
+        ['keep-alive'] = true,
+        ['transfer-encoding'] = true,
+        ['upgrade'] = true,
+        ['content-length'] = true,
+        ['date'] = true
+    }
+
+    for name, value in pairs(req.headers) do
+        if not removed_headers[name] then
+            opts.headers[name] = value
+        end
+    end
+
+    for name, value in pairs(proxy.headers) do
+        opts.headers[name] = value
+    end
+
+    local resp, err = httpc.request(req.method, url, body, opts)
+    if not resp then
+        log.err('proxy', proxy.url, err)
+        con:send_error(http.STATUS_INTERNAL_SERVER_ERROR)
+        return true
+    end
+
+    con:set_status(resp.code, resp.status)
+
+    for name, value in pairs(resp.headers) do
+        if not removed_headers[name] then
+            con:add_header(name, value)
+        end
+    end
+
+    if resp.body then
+        con:send(resp.body)
+    end
+
+    return true
+end
+
 local function http_handler(con, req)
     local path = req.path
 
@@ -237,7 +301,9 @@ local function http_handler(con, req)
     elseif path == '/oui-download' then
         handle_download(con, req)
     else
-        con:serve_file(req)
+        if not handle_proxy(con, req) then
+            con:serve_file(req)
+        end
     end
 end
 
@@ -323,6 +389,22 @@ local function parse_config()
         end
 
         return false
+    end)
+
+    c:foreach('oui', 'proxy-pass', function(s)
+        local headers = {}
+
+        for _, header in ipairs(s.header or {}) do
+            local name, value = header:match('([%w%p]+) *: *([%w%p ]+)\r?$')
+            if name and value then
+                headers[name] = value
+            end
+        end
+
+        proxys[s.path] = {
+            url = s.url,
+            headers = headers
+        }
     end)
 end
 
