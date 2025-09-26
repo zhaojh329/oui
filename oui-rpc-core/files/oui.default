@@ -1,0 +1,1 @@
+sed -i 's/index.html/oui.html/' /etc/lighttpd/lighttpd.conf
