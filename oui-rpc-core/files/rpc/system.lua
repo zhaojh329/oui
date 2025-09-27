@@ -31,7 +31,7 @@ end
 
 function M.create_backup(params)
     local path = params.path
-    sys.exec('sysupgrade', '-b', path)
+    sys.sh('sysupgrade -b ' .. path)
 end
 
 function M.list_backup(params)
