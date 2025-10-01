@@ -63,7 +63,7 @@ export default {
       this.$oui.call('system', 'restore_backup', { path: '/tmp/backup.tar.gz' }).then(() => {
         const loading = this.$loading({
           lock: true,
-          text: this.$t('Upgrading') + '...',
+          text: this.$t('Rebooting') + '...',
           background: 'rgba(0, 0, 0, 0.7)'
         })
 
@@ -80,7 +80,7 @@ export default {
         this.$oui.ubus('system', 'reset').then(() => {
           const loading = this.$loading({
             lock: true,
-            text: this.$t('Upgrading') + '...',
+            text: this.$t('Rebooting') + '...',
             background: 'rgba(0, 0, 0, 0.7)'
           })
 
