@@ -1,6 +1,6 @@
 <template>
   <el-space>
-    <el-select v-model="group">
+    <el-select v-model="group" style="width: 200px">
       <el-option v-for="o in groups" :key="o" :label="o" :value="o"/>
     </el-select>
     <el-button type="primary" @click="addGroup">{{ $t('Add group') }}</el-button>
