@@ -43,3 +43,5 @@ A `framework` used to develop Web interface for OpenWrt.
 ## Support
 
 If this project is helpful to you, please don't hesitate to give it a star. Thank you!
+
+## ❤️ [Donation](https://zhaojh329.github.io/zhaojh329/)
