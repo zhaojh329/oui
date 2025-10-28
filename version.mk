@@ -11,7 +11,7 @@ define findrev
       if [ -n "$$1" ]; then
         secs="$$(($$1 % 86400))"; \
         yday="$$(date --utc --date="@$$1" "+%y.%j")"; \
-        printf '%s.%05d~%s' "$$yday" "$$secs" "$$2"; \
+        printf '%s.%05d-%s' "$$yday" "$$secs" "$$2"; \
       else \
         echo "0"; \
       fi; \
