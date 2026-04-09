@@ -20,7 +20,7 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
-    "@nabla/vite-plugin-eslint": "^2.0.4",
+    "@nabla/vite-plugin-eslint": "^2.0.6",
     "@vicons/antd": "^0.12.0",
     "@vicons/carbon": "^0.12.0",
     "@vicons/fa": "^0.12.0",
@@ -29,11 +29,11 @@
     "@vicons/ionicons5": "^0.12.0",
     "@vicons/material": "^0.12.0",
     "@vicons/tabler": "^0.12.0",
-    "@vitejs/plugin-vue": "^5.1.2",
+    "@vitejs/plugin-vue": "^5.2.4",
     "eslint": "^9.9.0",
     "eslint-plugin-vue": "^9.27.0",
     "globals": "^15.9.0",
-    "vite": "^5.4.1",
+    "vite": "^8.0.7",
     "vite-plugin-compression": "^0.5.1"
   }
 }
