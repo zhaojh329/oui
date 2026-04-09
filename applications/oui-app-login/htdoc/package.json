@@ -5,8 +5,8 @@
   },
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^4.0.0",
-    "@vitejs/plugin-vue": "^5.1.2",
-    "vite": "^5.4.1",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "vite": "^8.0.7",
     "vite-plugin-compression": "^0.5.1",
     "vue-i18n": "^9.14.0"
   }
