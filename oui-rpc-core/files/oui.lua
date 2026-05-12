@@ -16,8 +16,10 @@ local uci = require 'eco.uci'
 
 local rpc = require 'oui.rpc'
 
+local sock_path = '/var/run/oui.sock'
+
 eco.panic_hook = function(err)
-    os.remove('/var/run/oui-rpc.sock')
+    os.remove(sock_path)
     log.err('panic:', err)
 end
 
@@ -526,8 +528,7 @@ local function handle_scgi(c)
 end
 
 local function run_scgi_server()
-    local path = '/var/run/oui.sock'
-    local s, err = socket.listen_unix(path)
+    local s, err = socket.listen_unix(sock_path)
     if not s then
         error(err)
     end
@@ -536,7 +537,7 @@ local function run_scgi_server()
     if username then
         local pw = sys.getpwnam(username)
         if pw then
-            file.chown(path, pw.uid)
+            file.chown(sock_path, pw.uid)
         end
     end
 
