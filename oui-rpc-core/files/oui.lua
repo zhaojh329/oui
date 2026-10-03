@@ -449,7 +449,7 @@ end
 
 local function handle_scgi(c)
     local con<close> = c
-    local data, err = con:recvuntil(':', 3)
+    local data, err = con:readuntil(':', 3)
     if not data then
         log.err('read scgi:', err)
         return send_scgi_status(con, 400)
