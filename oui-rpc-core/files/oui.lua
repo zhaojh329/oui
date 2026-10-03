@@ -19,11 +19,11 @@ local rpc = require 'oui.rpc'
 
 local sock_path = '/var/run/oui.sock'
 
-eco.set_panic_hook = function(traceback1, traceback2)
+eco.set_panic_hook(function(traceback1, traceback2)
     os.remove(sock_path)
     log.err(traceback1)
     log.err(traceback2)
-end
+end)
 
 local function trace_hook(event)
     local info3 = debug.getinfo(3, 'Sl')
