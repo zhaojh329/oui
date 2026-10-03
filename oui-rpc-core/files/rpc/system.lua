@@ -7,7 +7,7 @@ function M.get_cpu_time()
     local result = {}
 
     for line in io.lines('/proc/stat') do
-        local cpu = line:match('^(cpu%d?)')
+        local cpu = line:match('^(cpu%d*)%s')
         if cpu then
             local times = {}
             for field in line:gmatch('%S+') do
