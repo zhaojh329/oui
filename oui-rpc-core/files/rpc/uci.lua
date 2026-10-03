@@ -3,7 +3,35 @@ local uci = require 'eco.uci'
 
 local M = {}
 
+local function valid_values(values)
+    if type(values) ~= 'table' then
+        return false
+    end
+
+    for option, value in pairs(values) do
+        if type(option) ~= 'string' then
+            return false
+        end
+
+        if type(value) == 'table' then
+            for key, item in pairs(value) do
+                if math.type(key) ~= 'integer' or key < 1 or type(item) ~= 'string' then
+                    return false
+                end
+            end
+        elseif type(value) ~= 'string' and type(value) ~= 'number' then
+            return false
+        end
+    end
+
+    return true
+end
+
 function M.load(params, session)
+    if type(params.config) ~= 'string' or not params.config:match('^[%w_-]+$') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
     local config = params.config
     local c = uci.cursor()
 
@@ -15,6 +43,15 @@ function M.load(params, session)
 end
 
 function M.get(params, session)
+    if type(params.config) ~= 'string' or not params.config:match('^[%w_-]+$') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if type(params.section) ~= 'string' or
+       (params.option ~= nil and type(params.option) ~= 'string') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
     local c = uci.cursor()
     local config = params.config
     local section = params.section
@@ -28,6 +65,19 @@ function M.get(params, session)
 end
 
 function M.set(params, session)
+    if type(params.config) ~= 'string' or not params.config:match('^[%w_-]+$') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if type(params.section) ~= 'string' or
+       (params.option ~= nil and type(params.option) ~= 'string') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if not valid_values(params.values) then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
     local c = uci.cursor()
     local config = params.config
     local section = params.section
@@ -37,13 +87,37 @@ function M.set(params, session)
     end
 
     for option, value in pairs(params.values) do
-        c:set(config, section, option, value)
+        if not c:set(config, section, option, value) then
+            return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+        end
     end
 
-    c:commit(config)
+    if not c:commit(config) then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
 end
 
 function M.delete(params, session)
+    if type(params.config) ~= 'string' or not params.config:match('^[%w_-]+$') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if type(params.section) ~= 'string' or
+       (params.option ~= nil and type(params.option) ~= 'string') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if params.options ~= nil then
+        if type(params.options) ~= 'table' then
+            return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+        end
+        for _, option in pairs(params.options) do
+            if type(option) ~= 'string' then
+                return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+            end
+        end
+    end
+
     local c = uci.cursor()
     local config = params.config
     local section = params.section
@@ -61,10 +135,24 @@ function M.delete(params, session)
         c:delete(config, section)
     end
 
-    c:commit(config)
+    if not c:commit(config) then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
 end
 
 function M.add(params, session)
+    if type(params.config) ~= 'string' or not params.config:match('^[%w_-]+$') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if not valid_values(params.values) then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if type(params.type) ~= 'string' or (params.name ~= nil and type(params.name) ~= 'string') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
     local c = uci.cursor()
     local config = params.config
     local typ = params.type
@@ -76,16 +164,25 @@ function M.add(params, session)
     end
 
     if name then
-        c:set(config, name, typ)
+        if not c:set(config, name, typ) then
+            return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+        end
     else
         name = c:add(config, typ)
+        if not name then
+            return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+        end
     end
 
     for option, value in pairs(values) do
-        c:set(config, name, option, value)
+        if not c:set(config, name, option, value) then
+            return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+        end
     end
 
-    c:commit(config)
+    if not c:commit(config) then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
 end
 
 return M
