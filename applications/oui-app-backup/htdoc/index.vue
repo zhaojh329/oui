@@ -77,7 +77,7 @@ export default {
       this.$confirm(this.$t('ResettConfirm') + '?', this.$t('Reset to defaults'), {
         type: 'warning'
       }).then(() => {
-        this.$oui.ubus('system', 'reset').then(() => {
+        this.$oui.call('system', 'reset').then(() => {
           const loading = this.$loading({
             lock: true,
             text: this.$t('Rebooting') + '...',
