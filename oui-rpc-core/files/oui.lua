@@ -213,7 +213,11 @@ local function read_scgi_body(con, req)
 
     local content_length = tonumber(headers['CONTENT_LENGTH'])
     if content_length then
-        local data, err = con:readfull(content_length)
+        if content_length < 0 or content_length > 1024 * 1024 or content_length % 1 ~= 0 then
+            return nil, 413
+        end
+
+        local data, err = con:readfull(content_length, 10)
         if not data then
             log.err('read scgi:', err)
             return nil, 400
@@ -449,18 +453,27 @@ end
 
 local function handle_scgi(c)
     local con<close> = c
-    local data, err = con:readuntil(':', 3)
-    if not data then
-        log.err('read scgi:', err)
+    local digits = ''
+
+    while true do
+        local ch = con:recv(1, 3)
+        if ch == ':' then
+            break
+        end
+
+        if not ch or not ch:match('^%d$') or #digits >= 5 then
+            return send_scgi_status(con, 400)
+        end
+
+        digits = digits .. ch
+    end
+
+    local length = tonumber(digits)
+    if not length or length < 1 or length > 16384 then
         return send_scgi_status(con, 400)
     end
 
-    local length = tonumber(data)
-    if not length then
-        return send_scgi_status(con, 400)
-    end
-
-    data, err = con:readfull(length)
+    local data, err = con:readfull(length, 10)
     if not data then
         log.err('read scgi:', err)
         return send_scgi_status(con, 400)
@@ -487,7 +500,7 @@ local function handle_scgi(c)
         data = data:sub(pos + 1)
     until #data == 0
 
-    data, err = con:recv(1)
+    data, err = con:recv(1, 10)
     if not data then
         log.err('read scgi:', err)
         return send_scgi_status(con, 400)
@@ -503,11 +516,11 @@ local function handle_scgi(c)
 
     local req = { headers = headers }
 
-    local query_string = headers['QUERY_STRING']
+    local query_string = headers['QUERY_STRING'] or ''
     local query = {}
 
     for q in query_string:gmatch('[^&]+') do
-        local name, value = q:match('(.+)=(.+)')
+        local name, value = q:match('^([^=]+)=(.*)$')
         if name then
             name = url_unescape(name)
             query[name] = url_unescape(value)
