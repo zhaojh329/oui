@@ -30,11 +30,13 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	if [ -d $(PKG_BUILD_DIR)/htdoc ]; then \
-		$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install && \
-		$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build && \
-		$(RM) -rf $(PKG_BUILD_DIR)/htdoc/node_modules; \
-	fi
+	$(call locked, \
+		if [ -d $(PKG_BUILD_DIR)/htdoc ]; then \
+			$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc install && \
+			$(NPM) --prefix $(PKG_BUILD_DIR)/htdoc run build && \
+			$(RM) -rf $(PKG_BUILD_DIR)/htdoc/node_modules; \
+		fi, \
+		oui-app-build)
 endef
 
 define Package/$(PKG_NAME)/install
