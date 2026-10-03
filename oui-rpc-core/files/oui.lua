@@ -71,7 +71,7 @@ local function parse_config()
     log.set_ident('oui')
     log.set_flags(log.FLAG_LF | log.FLAG_PATH)
 
-    c:foreach('oui', 'global', function(s)
+    c:foreach('oui', 'oui', function(s)
         log.set_level(log[s.log_level or 'INFO'])
 
         if s.log_path then
