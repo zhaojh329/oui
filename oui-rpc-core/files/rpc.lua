@@ -185,6 +185,21 @@ function M.acl_match(session, content, class)
 end
 
 function M.call(mod, func, args, session)
+    if type(mod) ~= 'string' or not mod:match('^[%w_-]+$') or
+       type(func) ~= 'string' or not func:match('^[%w_]+$') or type(args) ~= 'table' then
+        return nil, M.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if need_auth(session, mod, func) then
+        if not session.username then
+            return nil, M.ERROR_CODE_UNAUTHORIZED
+        end
+
+        if not M.acl_match(session, mod .. '.' .. func, 'rpc') then
+            return nil, M.ERROR_CODE_PERMISSION_DENIED
+        end
+    end
+
     if not lua_code_cache or not funcs[mod] then
         local script = '/usr/share/oui/rpc/' .. mod .. '.lua'
 
@@ -204,19 +219,9 @@ function M.call(mod, func, args, session)
         end
     end
 
-    if not funcs[mod] or not funcs[mod][func] then
+    if not funcs[mod] or type(funcs[mod][func]) ~= 'function' then
         log.err('module "' .. mod .. '.' .. func .. '" not found')
         return nil, M.ERROR_CODE_NOT_FOUND
-    end
-
-    if need_auth(session, mod, func) then
-        if not session.username then
-            return nil, M.ERROR_CODE_UNAUTHORIZED
-        end
-
-        if not M.acl_match(session, mod .. '.' .. func, 'rpc') then
-            return nil, M.ERROR_CODE_PERMISSION_DENIED
-        end
     end
 
     return funcs[mod][func](args, session)
