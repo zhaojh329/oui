@@ -26,7 +26,7 @@
       <template #default="{ row }">
         <el-space>
           <el-button type="primary" @click="modifyUser(row)">{{ $t('Change') }}</el-button>
-          <el-button type="danger" @click="deleteUser(row)" :disabled="row.username === 'admin'">{{ $t('Delete') }}</el-button>
+          <el-button type="danger" @click="deleteUser(row)" :disabled="row.acl === 'admin'">{{ $t('Delete') }}</el-button>
         </el-space>
       </template>
     </el-table-column>
