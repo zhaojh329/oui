@@ -185,12 +185,12 @@ export default {
     },
     getWanNetworks() {
       this.$oui.call('network', 'get_wan_networks').then(({ networks }) => {
-        this.wanNetworks = networks
+        this.wanNetworks = Object.values(networks)
       })
     },
     getWan6Networks() {
       this.$oui.call('network', 'get_wan6_networks').then(({ networks }) => {
-        this.wan6Networks = networks
+        this.wan6Networks = Object.values(networks)
       })
     },
     renderNetworkInfo(net, ipv6) {
@@ -202,14 +202,14 @@ export default {
         const prefix = net['ipv6-prefix'][0]
         if (prefix)
           info.push(['Prefix Delegated', prefix.address + '/' + prefix.mask])
-        info.push(['Address', net['ipv6-address'].map(a => a.address + '/' + a.mask)[0]])
-        info.push(['Gateway', net.route.filter(r => r.target === '::' && r.mask === 0).map(r => r.nexthop)[0]])
+        info.push(['Address', Object.values(net['ipv6-address']).map(a => a.address + '/' + a.mask)[0]])
+        info.push(['Gateway', Object.values(net.route).filter(r => r.target === '::' && r.mask === 0).map(r => r.nexthop)[0]])
       } else {
-        info.push(['Address', net['ipv4-address'].map(a => a.address + '/' + a.mask)[0]])
-        info.push(['Gateway', net.route.filter(r => r.target === '0.0.0.0' && r.mask === 0).map(r => r.nexthop)[0]])
+        info.push(['Address', Object.values(net['ipv4-address']).map(a => a.address + '/' + a.mask)[0]])
+        info.push(['Gateway', Object.values(net.route).filter(r => r.target === '0.0.0.0' && r.mask === 0).map(r => r.nexthop)[0]])
       }
 
-      info.push(['DNS', net['dns-server'].join(', ')])
+      info.push(['DNS', Object.values(net['dns-server']).join(', ')])
       info.push(['Connected', this.secondsToHuman(net.uptime)])
 
       return info

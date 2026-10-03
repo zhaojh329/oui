@@ -75,6 +75,10 @@ export default {
   },
   created() {
     this.$oui.call('acl', 'load').then(acls => {
+      for (const group in acls) {
+        acls[group] = Object.values(acls[group])
+        acls[group].forEach(rule => rule.matchs = Object.values(rule.matchs))
+      }
       this.acls = acls
       this.group = this.groups[0]
     })

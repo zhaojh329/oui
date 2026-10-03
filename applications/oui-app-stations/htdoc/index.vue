@@ -58,7 +58,7 @@ export default {
     },
     getStations() {
       this.$oui.call('station', 'stations').then(({ stations }) => {
-        this.stations = stations
+        this.stations = Object.values(stations)
       })
     }
   },

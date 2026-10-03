@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     getUsers() {
-      this.$oui.call('user', 'get_users').then(({ users }) => this.users = users)
+      this.$oui.call('user', 'get_users').then(({ users }) => this.users = Object.values(users))
     },
     deleteUser(user) {
       this.$confirm(this.$t('delete-user-confirm', { username: user.username }), this.$t('Delete'), {

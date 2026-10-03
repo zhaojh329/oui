@@ -194,9 +194,7 @@ rpc_methods['call'] = function(req, params)
         return 500
     end
 
-    if result then
-        return { result = result }
-    end
+    return { result = result == nil and cjson.null or result }
 end
 
 
@@ -262,7 +260,7 @@ local function handle_rpc(con, req)
 
     if res then
         local data = cjson.encode(res)
-        con:send(data:gsub('{}','[]'))
+        con:send(data)
     end
 end
 
