@@ -174,7 +174,7 @@ rpc_methods['call'] = function(req, params)
     local session = rpc.get_session(sid) or { remote_addr = remote_addr }
 
     local result, err = rpc.call(mod, func, args, session)
-    if type(err) == 'number' then
+    if err ~= nil then
         if err == rpc.ERROR_CODE_INVALID_ARGUMENT then
             return 400
         end
