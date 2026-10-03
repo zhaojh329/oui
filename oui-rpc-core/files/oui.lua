@@ -201,7 +201,7 @@ end
 
 
 local function send_scgi_status(con, status)
-    con:send('Status: ' .. status .. '\r\n\r\n')
+    con:send('Status: ' .. status .. '\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n')
 end
 
 local function read_scgi_body(con, req)
