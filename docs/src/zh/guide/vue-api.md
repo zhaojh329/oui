@@ -70,23 +70,10 @@ return M
   </CodeGroupItem>
 </CodeGroup>
 
-### ubus: 对 `call` 的封装
+校验已上传的固件：
 
 ```js
-this.$oui.ubus('system', 'validate_firmware_image',
-    {
-        path: '/tmp/firmware.bin'
-    }
-).then(({ valid }) => {
-})
-```
-等价于
-```js
-this.$oui.call('ubus', 'call', {
-    object: 'system',
-    method: 'validate_firmware_image',
-    { path: '/tmp/firmware.bin' }
-}).then(r => {
+this.$oui.call('system', 'validate_firmware_image').then(({ valid }) => {
 })
 ```
 
@@ -125,17 +112,6 @@ this.$oui.setHostname('OpenWrt')
 :::tip
 你需要通过调用该函数来设置主机名，这样 `$oui.state.hostname` 才能得到更新。
 :::
-
-### reloadConfig: 重载配置
-
-对下面的 ubus 操作的封装
-```sh
-ubus call service event '{"type":"config.change", "data": {"package": "system"}}'
-```
-
-```js
-this.$oui.reloadConfig('system')
-```
 
 ### reconnect: 等待系统重启完成
 

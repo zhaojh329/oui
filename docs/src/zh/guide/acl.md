@@ -13,22 +13,14 @@ Oui 默认具有一个名为 `admin` 的权限组，其配置文件为：/usr/sh
     },
     "menu": {
         "matchs": [".+"]
-    },
-    "ubus": {
-        "matchs": [".+"]
-    },
-    "uci": {
-        "matchs": [".+"]
     }
 }
 ```
 
-目前共有 4 个权限类：
+目前共有 2 个权限类：
 
 * rpc - `rpc` 接口调用权限
 * menu - 菜单隐藏或显示
-* ubus - `ubus` 调用权限
-* uci - `uci` 操作权限
 
 匹配项为一个数组，`admin` 权限组中全部的匹配项均为 `.+`，表示匹配任意，即每一类都拥有所有权限。
 
@@ -41,7 +33,7 @@ Oui 默认具有一个名为 `admin` 的权限组，其配置文件为：/usr/sh
 ```json
 {
     "rpc": {
-        "matchs": ["^uci.get$"],
+        "matchs": ["^ui%.set_theme$"],
         "reverse": true
     }
 }
@@ -64,39 +56,39 @@ Oui 默认具有一个名为 `admin` 的权限组，其配置文件为：/usr/sh
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%..+"]
+        "matchs": ["^ui%..+"]
     }
 }
 ```
-匹配 `uci` 模块里面所有的方法
+匹配 `ui` 模块里面所有的方法
 
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%..+", "^system%..+"]
+        "matchs": ["^ui%..+", "^system%..+"]
     }
 }
 ```
-匹配 `uci` 和 `system` 模块里面所有的方法
+匹配 `ui` 和 `system` 模块里面所有的方法
 
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%.get$"]
+        "matchs": ["^ui%.set_theme$"]
     }
 }
 ```
-匹配 `uci` 模块里面的 `get` 方法
+匹配 `ui` 模块里面的 `set_theme` 方法
 
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%.get$"],
+        "matchs": ["^ui%.set_theme$"],
         "reverse": true
     }
 }
 ```
-不匹配 `uci` 模块的 `get` 方法，即除了 `uci` 模块的 `get` 方法不能调用，其余所有接口均能调用。
+不匹配 `ui` 模块的 `set_theme` 方法，即除了 `ui` 模块的 `set_theme` 方法不能调用，其余所有接口均能调用。
 
 ### menu
 
@@ -128,13 +120,4 @@ Oui 默认具有一个名为 `admin` 的权限组，其配置文件为：/usr/sh
 ```
 隐藏 `/system/upgrade` 菜单
 
-### uci
-
-```json
-{
-    "uci": {
-        "matchs": ["^system$"]
-    }
-}
-```
-只允许操作 `/etc/config/system`
+前端操作只通过具体业务模块的 RPC 接口授权。

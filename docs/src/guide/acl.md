@@ -14,22 +14,14 @@ By default, Oui has a permission group named `admin`, whose configuration file i
     },
     "menu": {
         "matchs": [".+"]
-    },
-    "ubus": {
-        "matchs": [".+"]
-    },
-    "uci": {
-        "matchs": [".+"]
     }
 }
 ```
 
-Currently, there are four permission classes:
+Currently, there are two permission classes:
 
 * rpc - `rpc` interface call permission
 * menu - Hidden or show menu
-* ubus - `ubus` call permission
-* uci - `uci` operating permission
 
 The matching items are an array, and all the matching items in the `admin` permission group are `.+ `, indicating any matching, that is, each category has all permissions.
 
@@ -42,7 +34,7 @@ The match here is actually a regular expression. Can be any `Lua` regular expres
 ```json
 {
     "rpc": {
-        "matchs": ["^uci.get$"],
+        "matchs": ["^ui%.set_theme$"],
         "reverse": true
     }
 }
@@ -65,39 +57,39 @@ Matches all `rpc` interfaces
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%..+"]
+        "matchs": ["^ui%..+"]
     }
 }
 ```
-Matches all methods in the `uci` module
+Matches all methods in the `ui` module
 
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%..+", "^system%..+"]
+        "matchs": ["^ui%..+", "^system%..+"]
     }
 }
 ```
-Matches all methods in the `uci` and `system` modules
+Matches all methods in the `ui` and `system` modules
 
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%.get$"]
+        "matchs": ["^ui%.set_theme$"]
     }
 }
 ```
-Matches the `get` method in the `uci` module
+Matches the `set_theme` method in the `ui` module
 
 ```json
 {
     "rpc": {
-        "matchs": ["^uci%.get$"],
+        "matchs": ["^ui%.set_theme$"],
         "reverse": true
     }
 }
 ```
-Does not match the `get` method of the `uci` module, that is, except the `get` method of the `uci` module cannot be called, all other interfaces can be called.
+Does not match the `set_theme` method of the `ui` module, that is, except the `set_theme` method of the `ui` module cannot be called, all other interfaces can be called.
 
 ### menu
 
@@ -129,13 +121,4 @@ Match `/system/upgrade` menu
 ```
 Hide the `/system/upgrade` menu
 
-### uci
-
-```json
-{
-    "uci": {
-        "matchs": ["^system$"]
-    }
-}
-```
-Only `/etc/config/system` is allowed
+Frontend operations are authorized through business-specific RPC methods.

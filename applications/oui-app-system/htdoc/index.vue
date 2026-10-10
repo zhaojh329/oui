@@ -43,11 +43,7 @@ export default {
     }
   },
   created() {
-    this.$oui.call('uci', 'get', {
-      config: 'system',
-      section: '@system[0]',
-      option: 'zonename'
-    }).then(zonename => {
+    this.$oui.call('system', 'get_timezone').then(({ zonename }) => {
       this.formValue.zonename = zonename || 'UTC'
     })
   },
@@ -67,13 +63,7 @@ export default {
         if (zonename === 'UTC')
           zonename = ''
 
-        await this.$oui.call('uci', 'set', {
-          config: 'system',
-          section: '@system[0]',
-          values: { timezone, zonename }
-        })
-
-        await this.$oui.reloadConfig('system')
+        await this.$oui.call('system', 'set_timezone', { timezone, zonename })
 
         this.loading = false
 

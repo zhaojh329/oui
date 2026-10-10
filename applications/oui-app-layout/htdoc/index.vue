@@ -152,7 +152,7 @@ export default {
         this.$confirm(this.$t('RebootConfirm'), this.$t('Reboot'), {
           type: 'warning'
         }).then(() => {
-          this.$oui.ubus('system', 'reboot').then(() => {
+          this.$oui.call('system', 'reboot').then(() => {
             const loading = this.$loading({
               lock: true,
               text: this.$t('Rebooting') + '...',

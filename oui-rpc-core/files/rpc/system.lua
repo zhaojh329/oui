@@ -1,7 +1,92 @@
 local time = require 'eco.time'
 local sys = require 'eco.sys'
+local rpc = require 'oui.rpc'
+local uci = require 'eco.uci'
+local ubus = require 'eco.ubus'
 
 local M = {}
+
+function M.board()
+    local result, err = ubus.call('system', 'board', {})
+    if err then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
+
+    return result
+end
+
+function M.info()
+    local result, err = ubus.call('system', 'info', {})
+    if err then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
+
+    return result
+end
+
+function M.reboot()
+    local result, err = ubus.call('system', 'reboot', {})
+    if err then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
+
+    return result
+end
+
+function M.validate_firmware_image()
+    local result, err = ubus.call('system', 'validate_firmware_image', { path = '/tmp/firmware.bin' })
+    if err then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
+
+    return result
+end
+
+function M.set_hostname(params)
+    local hostname = params.hostname
+
+    if type(hostname) ~= 'string' or #hostname == 0 or #hostname > 253 then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    if not hostname:match('^[%w_]+$') and
+       not (hostname:match('^[%w_][%w_%.%-]*[%w]$') and hostname:find('[^%d%.]')) then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    local c<close> = uci.cursor()
+
+    c:set('system', '@system[0]', 'hostname', hostname)
+    c:commit('system')
+
+    rpc.reload_config('system')
+end
+
+function M.get_timezone()
+    local c<close> = uci.cursor()
+    local timezone = c:get('system', '@system[0]', 'timezone')
+    local zonename = c:get('system', '@system[0]', 'zonename')
+
+    return { timezone = timezone, zonename = zonename }
+end
+
+function M.set_timezone(params)
+    local timezone = params.timezone
+    local zonename = params.zonename
+
+    if type(timezone) ~= 'string' or type(zonename) ~= 'string' or
+       timezone:find('%c') or zonename:find('%c') then
+        return nil, rpc.ERROR_CODE_INVALID_ARGUMENT
+    end
+
+    local c<close> = uci.cursor()
+
+    c:set('system', '@system[0]', 'timezone', timezone)
+    c:set('system', '@system[0]', 'zonename', zonename)
+    c:commit('system')
+
+    rpc.reload_config('system')
+end
 
 function M.get_cpu_time()
     local result = {}

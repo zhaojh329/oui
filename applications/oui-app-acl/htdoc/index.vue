@@ -53,7 +53,7 @@ export default {
         if (!value)
           return
 
-        this.acls[value] = [ 'rpc', 'menu', 'ubus', 'uci' ].map(cls => {
+        this.acls[value] = [ 'rpc', 'menu' ].map(cls => {
           return {
             cls: cls,
             matchs: [ '.+' ],

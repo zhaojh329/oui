@@ -3,9 +3,10 @@ local M = {}
 local ubus = require 'eco.ubus'
 local file = require 'eco.file'
 local uci = require 'eco.uci'
+local rpc = require 'oui.rpc'
 
 function M.dhcp_leases()
-    local c = uci.cursor()
+    local c<close> = uci.cursor()
     local leases = {}
     local leasefile = c:get('dhcp', '@dnsmasq[0]', 'leasefile') or '/tmp/dhcp.leases'
 
@@ -38,6 +39,15 @@ function M.dhcp_leases()
     end
 
     return { leases = leases }
+end
+
+function M.dhcp6_leases()
+    local result, err = ubus.call('dhcp', 'ipv6leases', {})
+    if err then
+        return nil, rpc.ERROR_CODE_UNKNOWN
+    end
+
+    return result
 end
 
 local function get_networks()

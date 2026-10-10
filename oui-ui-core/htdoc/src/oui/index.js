@@ -45,7 +45,7 @@ class Oui {
         isDark.value = dark
         const theme = dark ? 'dark' : 'light'
         if (this.inited)
-          this.call('uci', 'set', { config: 'oui', section: 'global', values: { theme }})
+          this.call('ui', 'set_theme', { theme })
       }
     })
 
@@ -99,7 +99,7 @@ class Oui {
   initWithAlived(sid) {
     this.state.sid = sid
 
-    this.ubus('system', 'board').then(({ hostname }) => this.state.hostname = hostname)
+    this.call('system', 'board').then(({ hostname }) => this.state.hostname = hostname)
 
     this.aliveTimer = setInterval(() => {
       this.rpc('alive', { sid })
@@ -112,14 +112,6 @@ class Oui {
 
   async call(mod, func, params = {}) {
     return (await this.rpc('call', [getSID(), mod, func, params])).result
-  }
-
-  ubus(obj, method, params) {
-    return this.call('ubus', 'call', {object: obj, method, params})
-  }
-
-  reloadConfig(config) {
-    return this.ubus('service', 'event', { type: 'config.change', data: { package: config }})
   }
 
   async login(username, password) {
@@ -232,7 +224,7 @@ class Oui {
     if (locale !== 'auto' && !i18n.global.availableLocales.includes(locale))
       return
 
-    await this.call('uci', 'set', { config: 'oui', section: 'global', values: { locale }})
+    await this.call('ui', 'set_locale', { locale })
 
     this.state.locale = locale
 
@@ -247,8 +239,7 @@ class Oui {
   }
 
   async setHostname(hostname) {
-    await this.call('uci', 'set', { config: 'system', section: '@system[0]', values: { hostname }})
-    await this.reloadConfig('system')
+    await this.call('system', 'set_hostname', { hostname })
     this.state.hostname = hostname
   }
 

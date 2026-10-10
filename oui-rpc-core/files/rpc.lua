@@ -2,6 +2,7 @@ local hex = require 'eco.encoding.hex'
 local md5 = require 'eco.hash.md5'
 local time = require 'eco.time'
 local file = require 'eco.file'
+local ubus = require 'eco.ubus'
 local log = require 'eco.log'
 local cjson = require 'cjson'
 local uci = require 'eco.uci'
@@ -225,6 +226,17 @@ function M.call(mod, func, args, session)
     end
 
     return funcs[mod][func](args, session)
+end
+
+function M.reload_config(config)
+    if type(config) ~= 'string' or #config == 0 then
+        return
+    end
+
+    ubus.call('service', 'event', {
+        type = 'config.change',
+        data = { package = config }
+    })
 end
 
 return M

@@ -4,8 +4,8 @@ In Oui, Lua API are organized as `module-methods`.
 
 ```sh
 root@OpenWrt:~# ls /usr/share/oui/rpc/
-acl.lua       network.lua   ubus.lua      ui.lua        wireless.lua
-demo.lua      system.lua    uci.lua       user.lua
+acl.lua       network.lua   ui.lua        wireless.lua
+demo.lua      system.lua    user.lua
 ```
 
 Each Lua file here represents a module. Module name is Lua file name(without suffix). 

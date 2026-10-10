@@ -58,7 +58,7 @@ export default {
     },
     getDhcpLeases6() {
       let leases6 = []
-      this.$oui.ubus('dhcp', 'ipv6leases').then(({ device }) => {
+      this.$oui.call('network', 'dhcp6_leases').then(({ device }) => {
         Object.keys(device).forEach(dev => {
           const leases = Object.values(device[dev].leases).map(l => {
             return {

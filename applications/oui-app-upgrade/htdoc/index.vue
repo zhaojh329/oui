@@ -48,7 +48,7 @@ export default {
     onUploadSuccess(res) {
       this.loading = false
 
-      this.$oui.ubus('system', 'validate_firmware_image', { path: '/tmp/firmware.bin' }).then(({ valid }) => {
+      this.$oui.call('system', 'validate_firmware_image').then(({ valid }) => {
         if (!valid) {
           this.$message.error(this.$t('Firmware verification failed. Please upload the firmware again'))
         } else {

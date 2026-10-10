@@ -179,7 +179,7 @@ export default {
       })
     },
     getSysinfo() {
-      this.$oui.ubus('system', 'info').then(r => {
+      this.$oui.call('system', 'info').then(r => {
         this.sysinfo = r
       })
     },
@@ -221,7 +221,7 @@ export default {
     this.$timer.create('getWanNetworks', this.getWanNetworks, {repeat: true, immediate: true, time: 5000})
     this.$timer.create('getWan6Networks', this.getWan6Networks, {repeat: true, immediate: true, time: 5000})
 
-    this.$oui.ubus('system', 'board').then(r => {
+    this.$oui.call('system', 'board').then(r => {
       this.boardinfo = r
     })
   }

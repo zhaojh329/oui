@@ -70,24 +70,10 @@ return M
   </CodeGroupItem>
 </CodeGroup>
 
-### ubus: Encapsulation of `call`
+Validate the uploaded firmware:
 
 ```js
-this.$oui.ubus('system', 'validate_firmware_image',
-    {
-        path: '/tmp/firmware.bin'
-    }
-).then(({ valid }) => {
-})
-```
-Equivalent to
-
-```js
-this.$oui.call('ubus', 'call', {
-    object: 'system',
-    method: 'validate_firmware_image',
-    { path: '/tmp/firmware.bin' }
-}).then(r => {
+this.$oui.call('system', 'validate_firmware_image').then(({ valid }) => {
 })
 ```
 
@@ -126,18 +112,6 @@ this.$oui.setHostname('OpenWrt')
 :::tip
 You need to set the hostname by calling this function so that `$oui.state.hostname` can be updated.
 :::
-
-### reloadConfig: reload config
-
-Encapsulation of the following UBUS operations
-
-```sh
-ubus call service event '{"type":"config.change", "data": {"package": "system"}}'
-```
-
-```js
-this.$oui.reloadConfig('system')
-```
 
 ### reconnect: Wait until the system restarts finish
 

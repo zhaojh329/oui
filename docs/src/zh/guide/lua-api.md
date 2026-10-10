@@ -4,8 +4,8 @@
 
 ```sh
 root@OpenWrt:~# ls /usr/share/oui/rpc/
-acl.lua       network.lua   ubus.lua      ui.lua        wireless.lua
-demo.lua      system.lua    uci.lua       user.lua
+acl.lua       network.lua   ui.lua        wireless.lua
+demo.lua      system.lua    user.lua
 ```
 
 这里的每个 Lua 文件代表着一个模块。模块名为 Lua 文件名（不带后缀）。
