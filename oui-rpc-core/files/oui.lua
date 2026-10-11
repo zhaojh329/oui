@@ -552,6 +552,8 @@ local function run_scgi_server()
         end
     end
 
+    log.info('SCGI server listening on', sock_path)
+
     while true do
         local c, peer = s:accept()
         if not c then
