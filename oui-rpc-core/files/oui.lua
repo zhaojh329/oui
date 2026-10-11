@@ -7,8 +7,6 @@ local hex = require 'eco.encoding.hex'
 local socket = require 'eco.socket'
 local md5 = require 'eco.hash.md5'
 local file = require 'eco.file'
-local ubus = require 'eco.ubus'
-local time = require 'eco.time'
 local sys = require 'eco.sys'
 local log = require 'eco.log'
 local cjson = require 'cjson'
@@ -565,41 +563,10 @@ local function run_scgi_server()
     end
 end
 
-local function ubus_init()
-    local con, err = ubus.connect()
-    if not con then
-        error(err)
-    end
-
-    con:add('oui', {
-        get_session = {
-            function(req, msg)
-                local sid = msg.sid
-                if type(sid) ~= 'string' then
-                    return ubus.STATUS_INVALID_ARGUMENT
-                end
-
-                local s = rpc.get_session(sid)
-                if not s then
-                    return ubus.STATUS_NOT_FOUND
-                end
-
-                con:reply(req, {
-                    remote_addr = s.remote_addr,
-                    username = s.username,
-                    acls = s.acls,
-                    acl = s.acl
-                })
-            end, { sid = ubus.STRING }
-        }
-    })
-end
-
 rpc.init()
 rpc.load_acl()
 
 parse_config()
 init_signal()
-ubus_init()
 
 run_scgi_server()
