@@ -11,17 +11,12 @@ local sys = require 'eco.sys'
 local log = require 'eco.log'
 local cjson = require 'cjson'
 local uci = require 'eco.uci'
+local cli = require 'eco.cli'
 local eco = require 'eco'
 
 local rpc = require 'oui.rpc'
 
 local sock_path = '/var/run/oui.sock'
-
-eco.set_panic_hook(function(traceback1, traceback2)
-    os.remove(sock_path)
-    log.err(traceback1)
-    log.err(traceback2)
-end)
 
 local function trace_hook(event)
     local info3 = debug.getinfo(3, 'Sl')
@@ -45,10 +40,6 @@ local function set_trace()
     for _, co in ipairs(eco.all()) do
         debug.sethook(co, trace_hook, 'rc')
     end
-end
-
-if arg[1] == '-trace' then
-    set_trace()
 end
 
 local function init_signal()
@@ -565,10 +556,44 @@ local function run_scgi_server()
     end
 end
 
-rpc.init()
-rpc.load_acl()
+local function main()
+    local opts, err = cli.parse_args({
+        { name = 'trace' },
+        { name = 'help', short = 'h' }
+    })
+    if not opts then
+        io.stderr:write(err, '\n')
+        os.exit(1)
+    end
 
-parse_config()
-init_signal()
+    if #opts.args > 0 then
+        io.stderr:write('Unexpected positional argument: ', opts.args[1], '\n')
+        os.exit(1)
+    end
 
-run_scgi_server()
+    if opts.help then
+        print([[Usage: oui [--trace] [--help]
+  --trace     Enable Lua call tracing
+  -h, --help  Show this help]])
+        return
+    end
+
+    eco.set_panic_hook(function(traceback1, traceback2)
+        os.remove(sock_path)
+        log.err(traceback1)
+        log.err(traceback2)
+    end)
+
+    if opts.trace then
+        set_trace()
+    end
+
+    rpc.init()
+    rpc.load_acl()
+
+    parse_config()
+    init_signal()
+    run_scgi_server()
+end
+
+main()

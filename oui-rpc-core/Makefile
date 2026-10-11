@@ -21,7 +21,7 @@ define Package/oui-rpc-core
   CATEGORY:=Oui
   TITLE:=Oui rpc core
   URL:=https://github.com/zhaojh329/oui
-  DEPENDS:=+lua-cjson-lua5.4 +lua-eco-uci +lua-eco-md5 +lua-eco-ubus +lua-eco-log \
+  DEPENDS:=+lua-cjson-lua5.4 +lua-eco-cli +lua-eco-uci +lua-eco-md5 +lua-eco-ubus +lua-eco-log \
   		+lua-eco-socket +lighttpd +lighttpd-mod-scgi +lighttpd-mod-magnet
 endef
 
