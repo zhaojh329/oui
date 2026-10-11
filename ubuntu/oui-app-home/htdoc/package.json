@@ -1,0 +1,13 @@
+{
+  "name": "oui-app",
+  "scripts": {
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^4.0.0",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "vite": "^5.4.1",
+    "vite-plugin-compression": "^0.5.1",
+    "vue-i18n": "^9.14.0"
+  }
+}

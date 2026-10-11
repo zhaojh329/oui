@@ -29,7 +29,7 @@ Build/Compile=
 
 define Package/oui-rpc-core/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config
-	$(INSTALL_BIN) ./files/oui.lua $(1)/usr/sbin/oui
+	$(INSTALL_BIN) ./files/oui-openwrt.lua $(1)/usr/sbin/oui
 	$(INSTALL_BIN) ./files/oui.init $(1)/etc/init.d/oui
 	$(INSTALL_CONF) ./files/oui.config $(1)/etc/config/oui
 
@@ -37,6 +37,7 @@ define Package/oui-rpc-core/install
 	$(CP) ./files/rpc.lua $(1)/usr/lib/lua/5.4/oui
 
 	$(INSTALL_DIR) $(1)/usr/share/oui/acl
+	$(INSTALL_DATA) ./files/oui.lua $(1)/usr/share/oui/oui.lua
 	$(CP) ./files/rpc $(1)/usr/share/oui
 	$(INSTALL_CONF) ./files/admin.acl $(1)/usr/share/oui/acl/admin.json
 

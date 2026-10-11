@@ -1,0 +1,30 @@
+{
+  "en": {
+    "System": "System",
+    "Hostname": "Hostname",
+    "Operating system": "Operating system",
+    "Kernel": "Kernel",
+    "Uptime": "Uptime",
+    "Memory": "Memory",
+    "Used": "Used",
+    "Total": "Total",
+    "days": "days",
+    "hours": "hours",
+    "minutes": "minutes",
+    "Unable to load system information": "Unable to load system information"
+  },
+  "zh-CN": {
+    "System": "系统",
+    "Hostname": "主机名",
+    "Operating system": "操作系统",
+    "Kernel": "内核",
+    "Uptime": "运行时间",
+    "Memory": "内存",
+    "Used": "已用",
+    "Total": "总计",
+    "days": "天",
+    "hours": "小时",
+    "minutes": "分钟",
+    "Unable to load system information": "无法加载系统信息"
+  }
+}

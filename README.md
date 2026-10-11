@@ -35,6 +35,8 @@ A `framework` used to develop Web interface for OpenWrt.
 
 [中文](https://zhaojh329.github.io/oui/zh/)
 
+[Ubuntu quick start](ubuntu/README.md) · [Ubuntu 快速运行](ubuntu/README_ZH.md)
+
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=zhaojh329/oui&type=Date)](https://www.star-history.com/#zhaojh329/oui&Date)
 
