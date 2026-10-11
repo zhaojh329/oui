@@ -1,0 +1,1 @@
+const a=JSON.parse('{"key":"v-397d1420","path":"/guide/lua-api.html","title":"Lua API","lang":"en","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1791641681000,"contributors":[{"name":"Jianhui Zhao","email":"zhaojh329@gmail.com","commits":4}]},"filePathRelative":"guide/lua-api.md"}');export{a as data};
