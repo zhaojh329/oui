@@ -190,8 +190,16 @@ rpc_methods['call'] = function(req, params)
 end
 
 
-local function send_scgi_status(con, status)
-    con:send('Status: ' .. status .. '\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n')
+local scgi_headers = {}
+
+local function send_scgi_resp(con, status, body)
+    local headers = scgi_headers[status]
+
+    if body then
+        con:send(headers .. body)
+    else
+        con:send(headers)
+    end
 end
 
 local function read_scgi_body(con, req)
@@ -248,12 +256,7 @@ local function handle_rpc(con, req)
         return res
     end
 
-    send_scgi_status(con, 200)
-
-    if res then
-        local data = cjson.encode(res)
-        con:send(data)
-    end
+    send_scgi_resp(con, 200, res and cjson.encode(res) or nil)
 end
 
 local function handle_download(con, req)
@@ -275,7 +278,7 @@ local function handle_download(con, req)
         return 404
     end
 
-    send_scgi_status(con, 200)
+    send_scgi_resp(con, 200)
 
     while true do
         local data = f:read(4096)
@@ -424,9 +427,7 @@ local function handle_upload(con, req)
         return 400
     end
 
-    send_scgi_status(con, 200)
-
-    con:send(cjson.encode({ size = total, md5 = hex.encode(md5ctx:final()) }))
+    send_scgi_resp(con, 200, cjson.encode({ size = total, md5 = hex.encode(md5ctx:final()) }))
 end
 
 local handlers = {
@@ -446,62 +447,59 @@ local function handle_scgi(c)
     local digits = ''
 
     while true do
-        local ch = con:recv(1, 3)
-        if ch == ':' then
+        local chunk, found = con:readuntil(':', 3)
+        if not chunk or #digits + #chunk > 5 or chunk:find('%D') then
+            return send_scgi_resp(con, 400)
+        end
+
+        digits = digits .. chunk
+
+        if found then
             break
         end
-
-        if not ch or not ch:match('^%d$') or #digits >= 5 then
-            return send_scgi_status(con, 400)
-        end
-
-        digits = digits .. ch
     end
 
     local length = tonumber(digits)
     if not length or length < 1 or length > 16384 then
-        return send_scgi_status(con, 400)
+        return send_scgi_resp(con, 400)
     end
 
     local data, err = con:readfull(length, 10)
     if not data then
         log.err('read scgi:', err)
-        return send_scgi_status(con, 400)
+        return send_scgi_resp(con, 400)
     end
 
     local headers = {}
+    local offset = 1
 
-    repeat
-        local pos = data:find('%z')
-        if not pos or pos < 2 then
-            return send_scgi_status(con, 400)
+    while offset <= #data do
+        local name_end = data:find('\0', offset, true)
+        if not name_end or name_end == offset then
+            return send_scgi_resp(con, 400)
         end
 
-        local name = data:sub(1, pos - 1)
-
-        data = data:sub(pos + 1)
-
-        pos = data:find('%z')
-        if not pos then
-            return send_scgi_status(con, 400)
+        local value_end = data:find('\0', name_end + 1, true)
+        if not value_end then
+            return send_scgi_resp(con, 400)
         end
 
-        headers[name] = data:sub(1, pos - 1)
-        data = data:sub(pos + 1)
-    until #data == 0
+        headers[data:sub(offset, name_end - 1)] = data:sub(name_end + 1, value_end - 1)
+        offset = value_end + 1
+    end
 
     data, err = con:recv(1, 10)
     if not data then
         log.err('read scgi:', err)
-        return send_scgi_status(con, 400)
+        return send_scgi_resp(con, 400)
     end
 
     if data ~= ',' then
-        return send_scgi_status(con, 400)
+        return send_scgi_resp(con, 400)
     end
 
     if headers['SCGI'] ~= '1' then
-        return send_scgi_status(con, 400)
+        return send_scgi_resp(con, 400)
     end
 
     local req = { headers = headers }
@@ -522,13 +520,13 @@ local function handle_scgi(c)
     local script_name = headers['SCRIPT_NAME']
     local handler = handlers[script_name]
     if not handler then
-        return send_scgi_status(con, 404)
+        return send_scgi_resp(con, 404)
     end
 
     err = handler(con, req)
 
     if type(err) == 'number' then
-        send_scgi_status(con, err)
+        send_scgi_resp(con, err)
     end
 end
 
@@ -615,6 +613,10 @@ local function main()
             end
         end
     end)
+
+    for _, status in ipairs({ 200, 400, 401, 403, 404, 413, 500 }) do
+        scgi_headers[status] = 'Status: ' .. status .. '\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n'
+    end
 
     rpc.init()
     rpc.load_acl()
