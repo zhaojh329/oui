@@ -18,6 +18,9 @@ local rpc = require 'oui.rpc'
 
 local sock_path = '/var/run/oui.sock'
 
+local active_requests = 0
+local gc_pending = false
+
 local function trace_hook(event)
     local info3 = debug.getinfo(3, 'Sl')
 
@@ -552,7 +555,13 @@ local function run_scgi_server()
             break
         end
 
-        eco.run(handle_scgi, c)
+        active_requests = active_requests + 1
+
+        eco.run(function()
+            handle_scgi(c)
+            active_requests = active_requests - 1
+            gc_pending = true
+        end)
     end
 end
 
@@ -587,6 +596,25 @@ local function main()
     if opts.trace then
         set_trace()
     end
+
+    -- Start collection earlier and take smaller steps during sustained traffic.
+    collectgarbage('incremental', 120, 200, 10)
+
+    -- Reclaim completed requests within one idle polling interval.
+    eco.run(function()
+        while true do
+            eco.sleep(5)
+
+            if active_requests == 0 and gc_pending then
+                collectgarbage('collect')
+                -- Reclaim objects retained until their finalizers ran.
+                collectgarbage('collect')
+                gc_pending = false
+            elseif active_requests > 0 then
+                collectgarbage('step', 64)
+            end
+        end
+    end)
 
     rpc.init()
     rpc.load_acl()
