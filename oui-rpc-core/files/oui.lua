@@ -191,6 +191,7 @@ end
 
 
 local scgi_headers = {}
+local scgi_fields = {}
 
 local function send_scgi_resp(con, status, body)
     local headers = scgi_headers[status]
@@ -484,7 +485,11 @@ local function handle_scgi(c)
             return send_scgi_resp(con, 400)
         end
 
-        headers[data:sub(offset, name_end - 1)] = data:sub(name_end + 1, value_end - 1)
+        local name = data:sub(offset, name_end - 1)
+        if scgi_fields[name] then
+            headers[name] = data:sub(name_end + 1, value_end - 1)
+        end
+
         offset = value_end + 1
     end
 
@@ -617,6 +622,16 @@ local function main()
     for _, status in ipairs({ 200, 400, 401, 403, 404, 413, 500 }) do
         scgi_headers[status] = 'Status: ' .. status .. '\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\n\r\n'
     end
+
+    scgi_fields = {
+        SCGI = true,
+        REQUEST_METHOD = true,
+        CONTENT_LENGTH = true,
+        CONTENT_TYPE = true,
+        REMOTE_ADDR = true,
+        SCRIPT_NAME = true,
+        QUERY_STRING = true
+    }
 
     rpc.init()
     rpc.load_acl()
