@@ -80,4 +80,20 @@ define Package/oui-ui-core/install
 	mv $(1)/www/index.html $(1)/www/oui.html
 endef
 
+define Package/oui-ui-core/postinst
+#!/bin/sh
+
+if [ -z "$$IPKG_INSTROOT" ] && [ -x /etc/init.d/lighttpd ] && /etc/init.d/lighttpd running; then
+	/etc/init.d/lighttpd reload
+fi
+endef
+
+define Package/oui-ui-core/postrm
+#!/bin/sh
+
+if [ -z "$$IPKG_INSTROOT" ] && [ -x /etc/init.d/lighttpd ] && /etc/init.d/lighttpd running; then
+	/etc/init.d/lighttpd reload
+fi
+endef
+
 $(eval $(call BuildPackage,oui-ui-core))

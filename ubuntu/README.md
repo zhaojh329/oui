@@ -18,7 +18,7 @@ releases, check the Lua 5.4 and Node.js versions; Lua 5.1/5.3 modules cannot rep
 ```sh
 sudo apt update
 sudo apt install -y build-essential cmake git pkg-config libjson-c-dev \
-    lua5.4 liblua5.4-dev lighttpd lighttpd-modules-lua nodejs npm
+    lua5.4 liblua5.4-dev lighttpd nodejs npm
 node --version
 ```
 
@@ -171,7 +171,8 @@ sudo chmod -R a+rX /var/www/oui
 ```
 
 Keep the entry filename `index.html`. Builds compress some resources into `.gz` files.
-The magnet handler below serves them according to the browser's `Accept-Encoding` header.
+The configuration generator below serves them according to the browser's `Accept-Encoding` header.
+After replacing static resources, reload lighttpd to regenerate the rules.
 
 ### lighttpd
 
@@ -179,16 +180,15 @@ Ubuntu uses `conf-available/conf-enabled`. Do not copy the OpenWrt `conf.d` conf
 or run `oui.default`.
 
 ```sh
-sudo install -m 0644 oui-rpc-core/files/lighttpd/handler.lua /etc/lighttpd/oui-handler.lua
+sudo install -m 0644 oui-rpc-core/files/lighttpd/gzip.sh /etc/lighttpd/oui-gzip.sh
 sudo install -m 0644 ubuntu/files/lighttpd.conf /etc/lighttpd/conf-available/50-oui.conf
 sudo lighty-enable-mod oui
 sudo lighttpd -tt -f /etc/lighttpd/lighttpd.conf
 ```
 
-`50-oui.conf` loads `mod_scgi` and `mod_magnet`. If another configuration already loads
-these modules, keep only one loading declaration. Ubuntu 26.04 includes SCGI support in
-lighttpd and supplies magnet through `lighttpd-modules-lua`; do not use the OpenWrt package
-name `lighttpd-mod-scgi`.
+`50-oui.conf` loads `mod_rewrite`, `mod_setenv`, and `mod_scgi`. If another configuration
+already loads these modules, keep only one loading declaration. No magnet or lighttpd Lua
+module is required. Do not use the OpenWrt package name `lighttpd-mod-scgi` on Ubuntu.
 
 The configuration adds a `127.0.0.1:8080` listener without replacing the existing port 80 site.
 The backend reads `server.username` from `/etc/lighttpd/lighttpd.conf` to set ownership of

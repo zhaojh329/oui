@@ -53,4 +53,20 @@ define Package/$(PKG_NAME)/install
 	fi
 endef
 
+define Package/$(PKG_NAME)/postinst
+#!/bin/sh
+
+if [ -z "$$IPKG_INSTROOT" ] && [ -x /etc/init.d/lighttpd ] && /etc/init.d/lighttpd running; then
+	/etc/init.d/lighttpd reload
+fi
+endef
+
+define Package/$(PKG_NAME)/postrm
+#!/bin/sh
+
+if [ -z "$$IPKG_INSTROOT" ] && [ -x /etc/init.d/lighttpd ] && /etc/init.d/lighttpd running; then
+	/etc/init.d/lighttpd reload
+fi
+endef
+
 $(eval $(call BuildPackage,$(PKG_NAME)))
