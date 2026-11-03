@@ -22,7 +22,7 @@ define Package/oui-rpc-core
   TITLE:=Oui rpc core
   URL:=https://github.com/zhaojh329/oui
   DEPENDS:=+lua-cjson-lua5.4 +lua-eco-cli +lua-eco-uci +lua-eco-md5 +lua-eco-ubus +lua-eco-log \
-    +lua-eco-socket +lighttpd +lighttpd-mod-scgi +lighttpd-mod-rewrite +lighttpd-mod-setenv
+  		+lua-eco-socket +lighttpd +lighttpd-mod-scgi +lighttpd-mod-magnet
 endef
 
 Build/Compile=
@@ -46,23 +46,7 @@ define Package/oui-rpc-core/install
 
 	$(INSTALL_DIR) $(1)/etc/lighttpd/conf.d
 	$(INSTALL_DATA) ./files/lighttpd/oui.conf $(1)/etc/lighttpd/conf.d/50-oui.conf
-	$(INSTALL_DATA) ./files/lighttpd/gzip.sh $(1)/etc/lighttpd/oui-gzip.sh
-endef
-
-define Package/oui-rpc-core/postinst
-#!/bin/sh
-
-if [ -z "$$IPKG_INSTROOT" ] && [ -x /etc/init.d/lighttpd ] && /etc/init.d/lighttpd running; then
-	/etc/init.d/lighttpd reload
-fi
-endef
-
-define Package/oui-rpc-core/postrm
-#!/bin/sh
-
-if [ -z "$$IPKG_INSTROOT" ] && [ -x /etc/init.d/lighttpd ] && /etc/init.d/lighttpd running; then
-	/etc/init.d/lighttpd reload
-fi
+	$(INSTALL_DATA) ./files/lighttpd/handler.lua $(1)/etc/lighttpd/oui-handler.lua
 endef
 
 $(eval $(call BuildPackage,oui-rpc-core))

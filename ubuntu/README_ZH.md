@@ -18,7 +18,7 @@ Lua 5.4 和 Node.js 版本，不能用 Lua 5.1/5.3 的模块替代 Lua 5.4 模�
 ```sh
 sudo apt update
 sudo apt install -y build-essential cmake git pkg-config libjson-c-dev \
-    lua5.4 liblua5.4-dev lighttpd nodejs npm
+    lua5.4 liblua5.4-dev lighttpd lighttpd-modules-lua nodejs npm
 node --version
 ```
 
@@ -169,8 +169,8 @@ sudo cp -R ubuntu/oui-app-home/htdoc/dist/. /var/www/oui/views/
 sudo chmod -R a+rX /var/www/oui
 ```
 
-保持入口名 `index.html`。构建会把部分资源压缩成 `.gz`，下面的配置生成脚本负责
-按照浏览器的 `Accept-Encoding` 返回资源。替换静态资源后，重载 lighttpd 以重新生成规则。
+保持入口名 `index.html`。构建会把部分资源压缩成 `.gz`，下面的 magnet 脚本负责
+按照浏览器的 `Accept-Encoding` 返回资源。
 
 ### lighttpd
 
@@ -178,15 +178,15 @@ Ubuntu 使用 `conf-available/conf-enabled`，不直接使用 OpenWrt 的 `conf.
 也不执行 `oui.default`。
 
 ```sh
-sudo install -m 0644 oui-rpc-core/files/lighttpd/gzip.sh /etc/lighttpd/oui-gzip.sh
+sudo install -m 0644 oui-rpc-core/files/lighttpd/handler.lua /etc/lighttpd/oui-handler.lua
 sudo install -m 0644 ubuntu/files/lighttpd.conf /etc/lighttpd/conf-available/50-oui.conf
 sudo lighty-enable-mod oui
 sudo lighttpd -tt -f /etc/lighttpd/lighttpd.conf
 ```
 
-`50-oui.conf` 加载 `mod_rewrite`、`mod_setenv` 和 `mod_scgi`。若已在其他配置启用
-这些模块，只保留一处模块加载声明。不再需要 magnet 或 lighttpd 的 Lua 模块，
-Ubuntu 不使用 OpenWrt 的 `lighttpd-mod-scgi` 包名。
+`50-oui.conf` 加载 `mod_scgi` 和 `mod_magnet`。若已在其他配置启用这两个模块，
+只保留一处模块加载声明。Ubuntu 26.04 的 SCGI 支持在 lighttpd 中，magnet 来自
+`lighttpd-modules-lua`，不使用 OpenWrt 的 `lighttpd-mod-scgi` 包名。
 
 该配置增加 `127.0.0.1:8080` 监听，不替换已有 80 端口站点。
 公共后端读取 `/etc/lighttpd/lighttpd.conf` 中的 `server.username`，设置
